@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{375b9b5c-45e7-425a-aef7-6fc54b0393f1}</ProjectGuid>
+    <RootNamespace>CG2DirectXGame</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Externals\assimp\include;$(ProjectDir)EngineLayers\FrameworkLayer\Log;$(ProjectDir)EngineLayers\FrameworkLayer\Framework;$(ProjectDir)EngineLayers\FrameworkLayer\WindowManagement\WindowsAPI;$(ProjectDir)EngineLayers\FrameworkLayer\WindowManagement;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer;$(ProjectDir)EngineLayers\FrameworkLayer;$(ProjectDir)EngineLayers\EngineLayer\Vectors;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker\ReleseCheck;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker\LeakCheck;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker;$(ProjectDir)EngineLayers\EngineLayer\Quaternion;$(ProjectDir)EngineLayers\EngineLayer\WorldTransform;$(ProjectDir)EngineLayers\EngineLayer\Matrix;$(ProjectDir)EngineLayers\EngineLayer\MultipleStructs;$(ProjectDir)EngineLayers\EngineLayer\Audio;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\ResourceManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\ModelManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\TextureManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\AnimationManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\ShaderManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO;$(ProjectDir)EngineLayers\EngineLayer\Rendering\SRVManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12SwapChain;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12Descriptor;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12Device;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib;$(ProjectDir)EngineLayers\EngineLayer\Rendering;$(ProjectDir)EngineLayers\EngineLayer;$(ProjectDir)EngineLayers\EffectLayer;$(ProjectDir)EngineLayers\ApplicationLayer\Colliders;$(ProjectDir)EngineLayers\ApplicationLayer\Input;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement\DebugCamera;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement\Camera;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Object3DCommon;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Object3D;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Model;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D\Wireframe;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D\Sprite;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D;$(ProjectDir)EngineLayers\ApplicationLayer\Object;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\SceneManager;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\BaseScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\SceneFactory;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\AbstractSceneFactory;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement;$(ProjectDir)EngineLayers\ApplicationLayer;$(ProjectDir)EngineLayers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalOptions>/ignore:4049 /ignore:4098 %(AdditionalOptions)</AdditionalOptions>
+      <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalLibraryDirectories>$(ProjectDir)Externals\assimp\lib\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Externals\assimp\include;$(ProjectDir)EngineLayers\FrameworkLayer\Log;$(ProjectDir)EngineLayers\FrameworkLayer\Framework;$(ProjectDir)EngineLayers\FrameworkLayer\WindowManagement\WindowsAPI;$(ProjectDir)EngineLayers\FrameworkLayer\WindowManagement;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager;$(ProjectDir)EngineLayers\FrameworkLayer\PresentationLayer;$(ProjectDir)EngineLayers\FrameworkLayer;$(ProjectDir)EngineLayers\EngineLayer\Vectors;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker\ReleseCheck;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker\LeakCheck;$(ProjectDir)EngineLayers\EngineLayer\ResourceChecker;$(ProjectDir)EngineLayers\EngineLayer\Quaternion;$(ProjectDir)EngineLayers\EngineLayer\WorldTransform;$(ProjectDir)EngineLayers\EngineLayer\Matrix;$(ProjectDir)EngineLayers\EngineLayer\MultipleStructs;$(ProjectDir)EngineLayers\EngineLayer\Audio;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\ResourceManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\ModelManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\TextureManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement\AnimationManager;$(ProjectDir)EngineLayers\EngineLayer\ResourceManagement;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\ShaderManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\PSO;$(ProjectDir)EngineLayers\EngineLayer\Rendering\SRVManager;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12SwapChain;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12Descriptor;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib\DX12Device;$(ProjectDir)EngineLayers\EngineLayer\Rendering\DXLib;$(ProjectDir)EngineLayers\EngineLayer\Rendering;$(ProjectDir)EngineLayers\EngineLayer;$(ProjectDir)EngineLayers\EffectLayer;$(ProjectDir)EngineLayers\ApplicationLayer\Colliders;$(ProjectDir)EngineLayers\ApplicationLayer\Input;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement\DebugCamera;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement\Camera;$(ProjectDir)EngineLayers\ApplicationLayer\CameraManagement;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Object3DCommon;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Object3D;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D\Model;$(ProjectDir)EngineLayers\ApplicationLayer\Object\3D;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D\Wireframe;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D\Sprite;$(ProjectDir)EngineLayers\ApplicationLayer\Object\2D;$(ProjectDir)EngineLayers\ApplicationLayer\Object;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\SceneManager;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\BaseScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\SceneFactory;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\AbstractSceneFactory;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement\LogicLayer;$(ProjectDir)EngineLayers\ApplicationLayer\SceneManagement;$(ProjectDir)EngineLayers\ApplicationLayer;$(ProjectDir)EngineLayers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MinSpace</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Externals\assimp\lib\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
+copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderModel>4.0_level_9_3</ShaderModel>
+    </FxCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="EngineLayers\EngineLayer\Quaternion\Quaternion.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\AnimationManager\AnimationManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\CameraManagement\DebugCamera\DebugCamera.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Colliders\Collider.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Colliders\CollisionManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Colliders\ContactRecord.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\BaseScene\BaseScene.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Audio\AudioManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\CameraManagement\Camera\Camera.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\WorldTransform\WorldTransform.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager\BlendStateManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil\DX12DepthStencil.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon\DirectXCommon.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12Descriptor\DX12Descriptor.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12Device\DX12Device.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12SwapChain\DX12SwapChain.cpp" />
+    <ClCompile Include="Externals\imgui\imgui.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager\ImGuiManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Input\Input.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager\InputLayoutManager.cpp" />
+    <ClCompile Include="EngineLayers\FrameworkLayer\Log\LogString.cpp" />
+    <ClCompile Include="EngineLayers\FrameworkLayer\Framework\GameEngine.cpp">
+      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ClCompile Include="EngineLayers\FrameworkLayer\Framework\Framework.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\GamePlayScene.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Matrix\Matrix4x4.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\3D\Model\Model.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\ModelManager\ModelManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\3D\Object3D\Object3D.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager\PipelineStateManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager\RasterizerStateManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\ResourceManager\ResourceManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceChecker\ReleseCheck\ResourceObject.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\RootSignatureManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\ShaderManager\ShaderManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\2D\Sprite\Sprite.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\TextureManager\TextureManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Vectors\Vector2.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Vectors\Vector3.cpp" />
+    <ClCompile Include="EngineLayers\FrameworkLayer\WindowManagement\WindowsAPI\WinApp.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\3D\Object3DCommon\Object3DCommon.cpp" />
+    <ClCompile Include="EngineLayers\EffectLayer\ParticleEmitter.cpp" />
+    <ClCompile Include="EngineLayers\EffectLayer\ParticleManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Audio\WavLoader.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\SRVManager\SRVManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\SceneManager\SceneManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene\TitleScene.cpp" />
+    <ClCompile Include="EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager\ParameterManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\LightManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene\GameClearScene.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene\GameOverScene.cpp" />
+    <ClCompile Include="WinMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\2D\Wireframe\Wireframe.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shaders\Object3d.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Object3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Particle.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Particle.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Wireframe.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Wireframe.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EngineLayers\EngineLayer\Quaternion\Quaternion.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\AnimationManager\AnimationManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\CameraManagement\DebugCamera\DebugCamera.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Colliders\Collider.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Colliders\CollisionManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Colliders\CollisionTypeIdDef.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Colliders\ContactRecord.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\BaseScene\BaseScene.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\AABB.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Audio\AudioManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\AudioStructs.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\Emitter.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\CameraManagement\Camera\Camera.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\VertexData.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\WorldTransform\WorldTransform.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager\BlendStateManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil\DX12DepthStencil.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon\DirectXCommon.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12Descriptor\DX12Descriptor.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12Device\DX12Device.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12Include.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12SwapChain\DX12SwapChain.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\BlendModeType.h" />
+    <ClInclude Include="Externals\imgui\imconfig.h" />
+    <ClInclude Include="Externals\imgui\imgui.h" />
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Externals\imgui\imgui_internal.h" />
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="Externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager\ImGuiManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Input\Input.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager\InputLayoutManager.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\Log\LogString.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\Material.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\MaterialData.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Matrix\Matrix4x4.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\3D\Model\Model.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\ModelData.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\ModelManager\ModelManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\3D\Object3D\Object3D.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager\PipelineStateManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager\RasterizerStateManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\ResourceManager\ResourceManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceChecker\ReleseCheck\ResourceObject.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\RootSignatureManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\ShaderManager\ShaderManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\2D\Sprite\Sprite.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\TextureManager\TextureManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Vectors\Vector2.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Vectors\Vector3.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Vectors\Vector4.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\WindowManagement\WindowsAPI\WinApp.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\3D\Object3DCommon\Object3DCommon.h" />
+    <ClInclude Include="EngineLayers\EffectLayer\ParticleEmitter.h" />
+    <ClInclude Include="EngineLayers\EffectLayer\ParticleManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Audio\WavLoader.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\Framework\GameEngine.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\SRVManager\SRVManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Audio\PlaybackManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Audio\WavLoaderException.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\Framework\Framework.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\GamePlayScene.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\SceneManager\SceneManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene\TitleScene.h" />
+    <ClInclude Include="EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager\ParameterManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\LightManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene\GameClearScene.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene\GameOverScene.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\OBB.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\2D\Wireframe\Wireframe.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
+    <ProjectReference Include="Externals\imgui\imgui.vcxproj">
+      <Project>{b8a68560-bb16-4991-bd9f-6fcff39522b9}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\Object3d.hlsli" />
+    <None Include="Resources\Shaders\Particle.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
