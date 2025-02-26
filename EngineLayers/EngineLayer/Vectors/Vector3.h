@@ -32,6 +32,9 @@ public:
 	//正規化
 	static Vector3 Normalize(const Vector3& v);
 
+	// 距離
+	static float Distance(const Vector3& v1, const Vector3& v2) { return static_cast<float>(sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y) + (v1.z - v2.z) * (v1.z - v2.z))); }
+
 	//座標変換
 	static Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 

@@ -3,7 +3,7 @@
 #include <TitleScene.h>
 #include <GamePlayScene.h>
 #include "AbstractSceneFactory.h"
-
+#include"Camera.h"
 
 #include "Player.h"
 
@@ -51,5 +51,11 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// Playerクラスのインスタンス
 	std::unique_ptr<Player> player_ = nullptr;
+
+	// カメラ
+	Camera* camera_ = nullptr;
+	Vector3 cameraPos_ = {0.0f, 45.0f, 0.0f};
+	Vector3 cameraRotate_ = {1.6f, 0.0f, 0.0f};
+	Vector3 cameraScale_ = {1.0f, 1.0f, 1.0f};
 };
 
