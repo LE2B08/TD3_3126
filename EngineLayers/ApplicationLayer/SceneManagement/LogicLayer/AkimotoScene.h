@@ -5,6 +5,7 @@
 #include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
+#include "GamePlayScene/Enemy/Enemy.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -43,5 +44,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
+
+	// オブジェクト3D
+	std::unique_ptr<Enemy> enemy_;
 };
 
