@@ -1,7 +1,6 @@
 #pragma once
 #include "Object3D/Object3D.h"
 #include <memory>
-#include <imgui.h>
 
 /// === 敵 === ///
 class Enemy {
@@ -47,10 +46,10 @@ private:
 	std::unique_ptr<Object3D> objectEnemy_;
 
 	// スケール
-	Vector3 Scale_;
+	Vector3 scale_;
 
 	// 回転
-	Vector3 Rotate_;
+	Vector3 rotate_;
 
 	// 位置
 	Vector3 position_;

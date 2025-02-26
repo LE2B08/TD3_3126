@@ -16,6 +16,9 @@ void AkimotoScene::Initialize()
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+
+	field_ = std::make_unique<Field>();
+	field_->Initialize();
 }
 
 void AkimotoScene::Update()
@@ -48,8 +51,10 @@ void AkimotoScene::Update()
 	}
 
 	enemy_->Update();
-
 	enemy_->ShowImGui("Enemy");
+
+	field_->Update();
+	field_->ShowImGui("Field");
 }
 
 void AkimotoScene::Draw()
@@ -61,6 +66,8 @@ void AkimotoScene::Draw()
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
 	enemy_->Draw();
+
+	field_->Draw();
 }
 
 void AkimotoScene::Finalize()
