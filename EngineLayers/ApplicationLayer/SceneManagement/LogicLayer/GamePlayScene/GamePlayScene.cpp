@@ -2,6 +2,7 @@
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
 #include <Input.h>
+#include "SceneManager.h"
 #include "Object3DCommon.h"
 #include <ParameterManager.h>
 #include <ParticleManager.h>
@@ -57,6 +58,44 @@ void GamePlayScene::Update()
 		isDebugCamera_ = !isDebugCamera_;
 	}
 #endif // _DEBUG
+
+	// 入力によるシーン切り替え
+	if (input_->TriggerKey(DIK_RETURN)) // Enterキーが押されたら
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
+		}
+
+		wavLoader_->StopBGM();
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_1))
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("TuboScene");
+		}
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_2))
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("AkimotoScene");
+		}
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_3))
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("SatouScene");
+		}
+	}
 
 	// オブジェクトの更新処理
 	objectTerrain_->Update();
