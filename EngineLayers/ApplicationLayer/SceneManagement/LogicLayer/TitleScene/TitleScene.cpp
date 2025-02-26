@@ -65,6 +65,22 @@ void TitleScene::Update()
 		wavLoader_->StopBGM();
 	}
 
+	if (input->TriggerKey(DIK_1))
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("TuboScene");
+		}
+	}
+
+	if (input->TriggerKey(DIK_2))
+	{
+		if (sceneManager_)
+		{
+			sceneManager_->ChangeScene("AkimotoScene");
+		}
+	}
+
 	// スプライトの更新処理
 	for (auto& sprite : sprites_)
 	{
