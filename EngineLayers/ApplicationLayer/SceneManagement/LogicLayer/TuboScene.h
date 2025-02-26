@@ -4,6 +4,10 @@
 #include <GamePlayScene.h>
 #include "AbstractSceneFactory.h"
 
+
+#include "Player.h"
+
+
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
@@ -44,5 +48,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
+
+	// Playerクラスのインスタンス
+	std::unique_ptr<Player> player_ = nullptr;
 };
 
