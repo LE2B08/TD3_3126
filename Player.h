@@ -9,15 +9,15 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
-	// フックの投げる処理
-	void HookThrow();
-	// フックの更新処理
-	void HookUpdate();
-	
-	// フックの引っ張り処理
-	void HookPull();
+	//// フックの投げる処理
+	//void HookThrow();
+	//// フックの更新処理
+	//void HookUpdate();
+	//
+	//// フックの引っ張り処理
+	//void HookPull();
 
-	void MoveToOrigin();
+	//void MoveToOrigin();
 	
 
 public:
