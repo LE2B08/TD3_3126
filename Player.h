@@ -9,15 +9,13 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
-	//// フックの投げる処理
-	//void HookThrow();
-	//// フックの更新処理
-	//void HookUpdate();
-	//
-	//// フックの引っ張り処理
-	//void HookPull();
-
-	//void MoveToOrigin();
+	// フックの投げる処理
+	void HookThrow();
+	// フックの更新処理
+	void MoveToHook();
+	// フックの元の位置に戻る処理
+	void ExtendHook();
+	
 	
 
 public:
@@ -71,10 +69,15 @@ private:
 	// 角速度
 	Vector3 angularVelocity_;
 
+	Vector3 maxPosition_ = {8.0f, 0.0f, 8.0f};
+	Vector3 minPosition_ = {-8.0f, 0.0f, -8.0f};
+
 	///===========================
 	//フック
 	//  フックの開始位置
 	Vector3 hookStartPos_;
+	//  フックの現在位置
+	Vector3 hookCurrentPos_;
 	//  フックの終了位置
 	Vector3 hookEndPos_ = {};
 	//  フックの回転
@@ -89,17 +92,21 @@ private:
 	Vector3 hookAngularVelocity_;
 	//  フックのオブジェクト3D
 	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
-	//  フックのフラグ
-	bool isHookActive_ = false;
-	//  フックが対象に当たったかどうかのフラグ
-	bool isHookAttached_ = false;
-	//  フックが対象に到達したかどうかの閾値
-	float hookReachThreshold_ = 1.0f;
-	//  フックの引っ張り速度
-	float hookPullSpeed_ = 0.1f;
-	//  フックの解除距離
-	float hookDetachThreshold_ = 0.5f;
 
-	// フックの対象位置
-	Vector3 targetPosition_ = {0.0f, 0.0f, 0.0f};
+	// フックの状態を管理する変数
+	bool isHookActive_ = false;
+	// フックが伸びているかどうか
+	bool isHookExtending_ = false;
+
+	// フックの開始時間
+	std::chrono::time_point<std::chrono::steady_clock> hookStartTime_;
+
+	// フックの移動速度
+	float hookSpeed_ = 5.0f; 
+
+	///============================
+	/// Debug
+	/// 
+	//デバッグフラグ
+	bool isDebug_ = false;
 };
