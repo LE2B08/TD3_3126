@@ -67,6 +67,9 @@ public:
 
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
+	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
+	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+
 private:
 	///============================
 	/// メンバ変数

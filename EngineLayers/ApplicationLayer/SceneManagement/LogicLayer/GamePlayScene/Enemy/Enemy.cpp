@@ -10,7 +10,7 @@ Enemy::~Enemy() {
 void Enemy::Initialize() {
 
 	objectEnemy_ = std::make_unique<Object3D>();
-	objectEnemy_->Initialize("Enemy.obj");
+	objectEnemy_->Initialize("sphere.gltf");
 }
 
 void Enemy::Update() {

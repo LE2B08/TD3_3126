@@ -100,13 +100,7 @@ void Player::Draw() {
 	// Hookの描画
 	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
 
-	// ワイヤーフレームの描画
-	// Fieldの描画
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-
+	
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	Vector3 endPos = position_ + -direction * 5.0f;                                  // 5.0fは線の長さ

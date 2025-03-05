@@ -70,14 +70,19 @@ void TuboScene::Update()
 	camera_->SetRotate(cameraRotate_);
 	camera_->SetScale(cameraScale_);
 	camera_->Update();
-	
+
+	field_->Update();
+
+
 	player_->SetCamera(camera_);
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->Update();
 
 	enemy_->Update();
 	
 
-	field_->Update();
+	
 	
 }
 

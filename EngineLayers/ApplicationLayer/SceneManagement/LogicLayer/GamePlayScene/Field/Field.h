@@ -35,7 +35,7 @@ public:
 ///-------------------------------------------///
 private:
 
-	std::unique_ptr<Object3D> objectField_ = nullptr;
+	
 
 	// スケール
 	Vector3 scale_;
