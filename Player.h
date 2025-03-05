@@ -1,6 +1,7 @@
 #pragma once
 #include <Object3D.h>
 #include"Collider.h"
+#include"Weapon.h"
 
 class Player :public Collider {
 public:
@@ -14,6 +15,8 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
+	// 攻撃処理
+	void Attack();
 	// フックの投げる処理
 	void HookThrow();
 	// フックの更新処理
@@ -21,11 +24,17 @@ public:
 	// フックの元の位置に戻る処理
 	void ExtendHook();
 
+
+
+	
+	
+
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
+
 
 public:
 	///============================
@@ -116,6 +125,15 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> hookStartTime_;
 
 	// フックの移動速度
+
+	float hookSpeed_ = 5.0f; 
+	
+	///===========================
+	/// 武器
+	/// 
+	
+	std::unique_ptr<Weapon> weapon_ = nullptr;
+
 	float hookSpeed_ = 5.0f;
 
 	///============================
