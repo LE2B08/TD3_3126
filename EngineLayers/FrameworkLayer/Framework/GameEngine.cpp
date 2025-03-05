@@ -70,6 +70,8 @@ void GameEngine::Update()
 
 	Object3DCommon::GetInstance()->DrawImGui();
 
+	defaultCamera_->ShowImGui();
+
 	// シーンのImGuiの描画処理
 	SceneManager::GetInstance()->DrawImGui();
 

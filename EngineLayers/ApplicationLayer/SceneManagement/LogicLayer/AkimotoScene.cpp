@@ -6,6 +6,7 @@
 #include <ParticleManager.h>
 #include "SceneManager.h"
 #include "Object3DCommon.h"
+#include "Wireframe.h"
 
 void AkimotoScene::Initialize()
 {
