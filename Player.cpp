@@ -181,10 +181,14 @@ void Player::Move() {
 #endif // _DEBUG
 
 	///================
+	/// プレイヤーのフック使用時の移動処理
+	/// 
+
+	///================
 	/// プレイヤーの回転処理
 	///
 
-	//========================================
+
 	// プレイヤーの向きを左スティックの向きにする
 
 	// 右スティックの入力があるとき
@@ -271,17 +275,14 @@ Vector3 Player::GetCenterPosition() const
 
 	return worldPosition;
 }
-
-// フックが止まった位置にプレイヤーを移動させる関数
-
 void Player::MoveToHook() {
 	// フックの方向ベクトルを計算
-	Vector3 direction = hookCurrentPos_ - position_;
+	Vector3 direction = hookEndPos_ - position_;
 	float distance = direction.Length(direction);
 
 	// フックの位置に到達したらフックを非アクティブにする
 	if (distance < hookSpeed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
-		position_ = hookCurrentPos_;
+		position_ = hookEndPos_;
 		isHookActive_ = false;
 	} else {
 		// フックの方向に向かって移動
@@ -291,9 +292,27 @@ void Player::MoveToHook() {
 		// 壁に触れたらそれ以上ポジションを追加しない
 		if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 			isHookActive_ = false;
-
 		} else {
 			position_ = newPosition;
 		}
+
+		// 円周上を移動するように位置を更新
+		Vector3 toCenter = position_ - hookEndPos_;
+		float radius = toCenter.Length(toCenter);
+		float angle = atan2(toCenter.z, toCenter.x);
+		float angularSpeed = 3.0f; // 角速度（調整可能）
+
+		// 左スティックの入力を取得
+		Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+
+		if (leftStick.x < -0.1f) {
+			angle += angularSpeed * 0.016f; // 左に移動
+		} else if (leftStick.x > 0.1f) {
+			angle -= angularSpeed * 0.016f; // 右に移動
+		}
+
+		// 新しい位置を計算
+		position_.x = hookEndPos_.x + radius * cos(angle);
+		position_.z = hookEndPos_.z + radius * sin(angle);
 	}
 }
