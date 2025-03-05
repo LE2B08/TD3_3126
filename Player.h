@@ -1,7 +1,12 @@
 #pragma once
 #include <Object3D.h>
-class Player {
+#include"Collider.h"
+class Player:public Collider {
+
 public:
+	///============================
+	/// メンバ関数
+	/// 
 	void Initialize();
 	void Update();
 	void Draw();
