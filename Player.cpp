@@ -251,6 +251,21 @@ void Player::ExtendHook() {
 	}
 }
 
+void Player::OnCollision(Collider* other)
+{
+
+}
+
+Vector3 Player::GetCenterPosition() const
+{
+	// ローカル座標でのオフセット
+	const Vector3 offset = { 0.0f,1.5f,0.0f };
+	// ワールド座標に変換
+	Vector3 worldPosition = Vector3::Transform(offset, worldTransform_.matWorld_);
+
+	return worldPosition;
+}
+
 // フックが止まった位置にプレイヤーを移動させる関数
 
 void Player::MoveToHook() {

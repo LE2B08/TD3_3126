@@ -16,6 +16,12 @@ class CollisionManager
 {
 public: /// ---------- メンバ関数 ---------- ///
 
+	// 更新処理
+	void Update();
+
+	// 描画処理
+	void Draw();
+
 	// リセット処理
 	void Reset();
 

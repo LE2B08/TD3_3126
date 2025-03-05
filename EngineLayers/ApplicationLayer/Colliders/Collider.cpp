@@ -1,5 +1,5 @@
 #include "Collider.h"
-
+#include "Wireframe.h"
 
 /// -------------------------------------------------------------
 ///						　	初期化処理
@@ -24,5 +24,5 @@ void Collider::Update()
 /// -------------------------------------------------------------
 void Collider::Draw()
 {
-
+	Wireframe::GetInstance()->DrawSphere({ 0.0f,0.0f,0.0f }, 1.5f, { 1.0f,1.0f,0.0f, 1.0f });
 }

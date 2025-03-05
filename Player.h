@@ -2,8 +2,8 @@
 #include <Object3D.h>
 #include"Collider.h"
 #include"Weapon.h"
-class Player {
 
+class Player :public Collider {
 public:
 	///============================
 	/// メンバ関数
@@ -25,13 +25,21 @@ public:
 	void ExtendHook();
 
 
+
 	
 	
+
+	// 衝突判定
+	void OnCollision(Collider* other) override;
+
+	// 中心座標を取得する純粋仮想関数
+	Vector3 GetCenterPosition() const override;
+
 
 public:
 	///============================
 	/// Getter & Setter
-	
+
 	// 位置の取得
 	Vector3 GetPosition() const { return position_; }
 	// 位置の設定
@@ -64,6 +72,8 @@ private:
 	/// メンバ変数
 	///
 
+	WorldTransform worldTransform_;
+
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
 	// 位置
@@ -81,9 +91,9 @@ private:
 
 	// 移動制限
 	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = {8.0f, 0.0f, 8.0f};
+	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
 	//  移動制限の最小値
-	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
+	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
 
 	///===========================
 	//フック
@@ -115,6 +125,7 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> hookStartTime_;
 
 	// フックの移動速度
+
 	float hookSpeed_ = 5.0f; 
 	
 	///===========================
@@ -122,6 +133,9 @@ private:
 	/// 
 	
 	std::unique_ptr<Weapon> weapon_ = nullptr;
+
+	float hookSpeed_ = 5.0f;
+
 	///============================
 	/// Debug
 	/// 
