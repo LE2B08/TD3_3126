@@ -1,0 +1,245 @@
+#include "Player.h"
+#include "Input.h"
+#include "Wireframe.h"
+#include "imgui.h"
+
+void Player::Initialize() {
+	// オブジェクト3D
+	object3D_ = std::make_unique<Object3D>();
+	object3D_->Initialize("sphere.gltf");
+	// 位置
+	position_ = {0.0f, 0.0f, 0.0f};
+	// 回転
+	rotation_ = {0.0f, 0.0f, 0.0f};
+	// スケール
+	scale_ = {1.0f, 1.0f, 1.0f};
+	// 速度
+	velocity_ = {0.0f, 0.0f, 0.0f};
+	// 加速度
+	acceleration_ = {0.0f, 0.0f, 0.0f};
+	// 角速度
+	angularVelocity_ = {0.0f, 0.0f, 0.0f};
+	// フックの初期化
+	isHookExtending_ = true;
+}
+
+void Player::Update() {
+
+#ifdef _DEBUG
+
+	// コントローラーのStartボタンとBackボタンを同時に押すとデバックモードになる
+	if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
+		isDebug_ = true;
+	}
+	// デバックモード
+	// プレイヤーをの移動が
+	// 左スティックとキーボードで入力できる。
+
+#endif // DEBUG
+
+	// フックの開始位置をプレイヤーの位置に設定
+	hookStartPos_ = position_;
+
+	// フックを投げるボタンを押した瞬間
+	if (Input::GetInstance()->TriggerButton(9)) {
+		HookThrow();
+	}
+	// フックを投げるボタンを押している間
+	if (isHookActive_) {
+		ExtendHook();
+	}
+	//// フックを戻すボタンを押した瞬間
+	// if (Input::GetInstance()->TriggerButton(8) && isHookActive_) {
+	//	isHookExtending_ = false;
+	// }
+
+	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
+	if (isHookActive_) {
+		MoveToHook();
+	}
+
+	// 移動処理
+	Move();
+
+	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
+	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
+
+	// Transform更新処理
+	object3D_->SetTranslate(position_);
+	object3D_->SetRotate(rotation_);
+	object3D_->SetScale(scale_);
+	object3D_->Update();
+}
+
+void Player::Draw() {
+	// 描画処理
+	object3D_->Draw();
+
+	// Hookの描画
+	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
+
+	// ワイヤーフレームの描画
+	// Fieldの描画
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+
+	// プレイヤーの向きを示す線を描画
+	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	Vector3 endPos = position_ + -direction * 5.0f;                                  // 5.0fは線の長さ
+	Wireframe::GetInstance()->DrawLine(position_, endPos, {0.0f, 1.0f, 0.0f, 1.0f}); // 緑色の線
+}
+
+void Player::Finalize() {}
+
+void Player::DrawImGui() {
+
+	ImGui::Begin("Player");
+	ImGui::Text("Position");
+	ImGui::SliderFloat3("", &position_.x, -10.0f, 10.0f);
+	ImGui::Text("Rotation");
+	ImGui::SliderFloat3("", &rotation_.x, -10.0f, 10.0f);
+	ImGui::Text("Scale");
+	ImGui::SliderFloat3("", &scale_.x, 0.0f, 10.0f);
+	ImGui::Text("Velocity");
+	ImGui::SliderFloat3("", &velocity_.x, -10.0f, 10.0f);
+	ImGui::Text("Acceleration");
+	ImGui::SliderFloat3("", &acceleration_.x, -10.0f, 10.0f);
+	ImGui::Text("AngularVelocity");
+	ImGui::SliderFloat3("", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::End();
+}
+void Player::Move() {
+
+	///============================
+	/// 移動処理
+	/// はデバック用に残しておく
+	/// 最終的には消す
+	///
+#ifdef _DEBUG
+	if (isDebug_) {
+		// コントローラーが接続されてる時
+		if (Input::GetInstance()->GetGamePadState().Gamepad.sThumbLX || Input::GetInstance()->GetGamePadState().Gamepad.sThumbLY) {
+			// 左スティックの入力があるとき
+			// プレイヤーを移動させる
+			acceleration_.x = Input::GetInstance()->GetLeftStick().x * 0.01f;
+			acceleration_.z = Input::GetInstance()->GetLeftStick().y * 0.01f;
+
+		} else {
+			// コントローラーが接続されてないとき
+
+			// WとSキーでプレイヤーを上下に移動
+			if (Input::GetInstance()->PushKey(DIK_W)) {
+				acceleration_.z = 0.005f;
+			} else if (Input::GetInstance()->PushKey(DIK_S)) {
+				acceleration_.z = -0.005f;
+			} else {
+
+				acceleration_.z = 0.0f;
+			}
+			// AとDキーでプレイヤーを左右に移動
+			if (Input::GetInstance()->PushKey(DIK_A)) {
+				acceleration_.x = -0.005f;
+			} else if (Input::GetInstance()->PushKey(DIK_D)) {
+				acceleration_.x = 0.005f;
+			} else {
+				acceleration_.x = 0.0f;
+			}
+		}
+		// Y軸は固定
+		acceleration_.y = -0.0f;
+	}
+#endif // _DEBUG
+
+	///================
+	/// プレイヤーの回転処理
+	///
+
+	//========================================
+	// プレイヤーの向きを左スティックの向きにする
+
+	// 右スティックの入力があるとき
+	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
+		// プレイヤーの向きを変える
+		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
+	} else {
+	}
+	// 右スティックの向きを優先
+
+	// プレイヤーの移動処理
+	velocity_ += acceleration_;
+	position_ += velocity_;
+
+	// 減速処理
+	const float friction = 0.98f; // 摩擦係数
+	velocity_ *= friction;
+}
+
+void Player::HookThrow() {
+	// フックの終了位置を計算（壁に当たるまでの数値にする）
+	float maxDistance = 22.0f;
+	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	Vector3 potentialEndPos = position_ - direction * maxDistance;
+
+	// 壁に当たるまでの距離を計算
+	if (potentialEndPos.x < minMoveLimit_.x) {
+		potentialEndPos.x = minMoveLimit_.x;
+	} else if (potentialEndPos.x > maxMoveLimit_.x) {
+		potentialEndPos.x = maxMoveLimit_.x;
+	}
+
+	if (potentialEndPos.z < minMoveLimit_.z) {
+		potentialEndPos.z = minMoveLimit_.z;
+	} else if (potentialEndPos.z > maxMoveLimit_.z) {
+		potentialEndPos.z = maxMoveLimit_.z;
+	}
+
+	hookEndPos_ = potentialEndPos;
+	// フックの現在位置を開始位置に設定
+	hookCurrentPos_ = hookStartPos_;
+	// フックの開始時間を記録
+	hookStartTime_ = std::chrono::steady_clock::now();
+	// フックをアクティブにする
+	isHookActive_ = true;
+}
+
+// フックが伸びる処理
+void Player::ExtendHook() {
+	// フックの方向ベクトルを計算
+	Vector3 direction = hookEndPos_ - hookStartPos_;
+	direction.Normalize(direction);
+	// フックの現在位置を更新
+	hookCurrentPos_ += direction * hookSpeed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+	// フックが終了位置に到達したらフックの伸びを止める
+	if ((hookCurrentPos_ - hookStartPos_).Length((hookCurrentPos_ - hookStartPos_)) >= (hookEndPos_ - hookStartPos_).Length((hookEndPos_ - hookStartPos_))) {
+		hookCurrentPos_ = hookEndPos_;
+	}
+}
+
+// フックが止まった位置にプレイヤーを移動させる関数
+
+void Player::MoveToHook() {
+	// フックの方向ベクトルを計算
+	Vector3 direction = hookCurrentPos_ - position_;
+	float distance = direction.Length(direction);
+
+	// フックの位置に到達したらフックを非アクティブにする
+	if (distance < hookSpeed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
+		position_ = hookCurrentPos_;
+		isHookActive_ = false;
+	} else {
+		// フックの方向に向かって移動
+		direction.Normalize(direction);
+		Vector3 newPosition = position_ + direction * hookSpeed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+		// 壁に触れたらそれ以上ポジションを追加しない
+		if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
+			isHookActive_ = false;
+
+		} else {
+			position_ = newPosition;
+		}
+	}
+}
