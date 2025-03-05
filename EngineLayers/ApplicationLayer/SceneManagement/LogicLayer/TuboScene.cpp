@@ -27,6 +27,12 @@ void TuboScene::Initialize()
 	camera_->SetScale(cameraScale_);
 	//cameraPos_ = {};
 
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
+
+	field_ = std::make_unique<Field>();
+	field_->Initialize();
+
 }
 
 void TuboScene::Update()
@@ -67,6 +73,12 @@ void TuboScene::Update()
 	
 	player_->SetCamera(camera_);
 	player_->Update();
+
+	enemy_->Update();
+	
+
+	field_->Update();
+	
 }
 
 void TuboScene::Draw()
@@ -75,6 +87,10 @@ void TuboScene::Draw()
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
 	player_->Draw();
+
+	enemy_->Draw();
+
+	field_->Draw();
 
 }
 
@@ -86,7 +102,9 @@ void TuboScene::Finalize()
 void TuboScene::DrawImGui()
 { 
 	player_->DrawImGui(); 
-	
+	enemy_->ShowImGui("Enemy");
+	field_->ShowImGui("Field");
+
 	ImGui::Begin("Camera");
 	ImGui::DragFloat3("Position", &cameraPos_.x, 0.1f, -100.0f, 100.0f);
 	ImGui::DragFloat3("Rotation", &cameraRotate_.x, 0.1f, -10.0f, 10.0f);

@@ -134,7 +134,6 @@ private:
 	
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
-	float hookSpeed_ = 5.0f;
 
 	///============================
 	/// Debug
