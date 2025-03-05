@@ -204,7 +204,7 @@ void Player::Attack() {
 
 void Player::HookThrow() {
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
-	float maxDistance = 22.0f;
+	float maxDistance = 50.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
 	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	// フックの終了位置を計算

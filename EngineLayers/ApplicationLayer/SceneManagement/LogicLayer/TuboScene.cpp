@@ -25,7 +25,6 @@ void TuboScene::Initialize()
 	camera_->SetTranslate(cameraPos_);
 	camera_->SetRotate(cameraRotate_);
 	camera_->SetScale(cameraScale_);
-	//cameraPos_ = {};
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
