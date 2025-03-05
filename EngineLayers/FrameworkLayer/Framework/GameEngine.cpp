@@ -54,7 +54,7 @@ void GameEngine::Update()
 	else
 	{
 		// デフォルトカメラの更新処理
-		defaultCamera_->Update();
+		//defaultCamera_->Update();
 	}
 
 	/// ---------- ImGuiフレーム開始 ---------- ///

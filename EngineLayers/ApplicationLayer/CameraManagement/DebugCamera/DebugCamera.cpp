@@ -2,6 +2,7 @@
 #include "WinApp.h"
 #include "Input.h"
 #include "ParameterManager.h"
+#include <imgui.h>
 
 /// -------------------------------------------------------------
 ///					シングルトンインスタンス
@@ -52,6 +53,17 @@ void DebugCamera::Update()
 
 	// ビュー射影行列を更新
 	viewProjectionMatrix_ = Matrix4x4::Multiply(viewMatrix_, projectionMatrix_);
+}
+
+void DebugCamera::DrawImGui()
+{
+	// カメラの情報を表示
+	ImGui::Begin("DebugCamera");
+
+	ImGui::SliderFloat3("Translate", &worldTransform_.translate_.x, -100.0f, 100.0f);
+	ImGui::SliderFloat3("Rotate", &worldTransform_.rotate_.x, -3.14f, 3.14f);
+
+	ImGui::End();
 }
 
 

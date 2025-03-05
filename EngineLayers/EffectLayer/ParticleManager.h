@@ -98,6 +98,12 @@ public: /// ---------- メンバ関数 ---------- ///
 	void Emit(const std::string name, const Vector3 position, uint32_t count);
 
 	std::unordered_map<std::string, ParticleManager::ParticleGroup> GetParticleGroups() { return particleGroups; }
+
+	/*------カメラのセット------*/
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
+	/*------カメラの取得------*/
+	Camera* GetCamera() { return camera_; }
 	
 	// ImGuiの描画
 	void DrawImGui();

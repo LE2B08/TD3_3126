@@ -53,7 +53,7 @@ protected: /// ---------- メンバ変数 ---------- ///
 	ImGuiManager* imguiManager_ = nullptr;
 
 	// カメラ
-	std::unique_ptr<Camera> defaultCamera_;
+	//std::unique_ptr<Camera> defaultCamera_;
 
 	// シーンマネージャー
 	std::unique_ptr<SceneManager> sceneManager_;

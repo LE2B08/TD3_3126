@@ -8,7 +8,7 @@
 #include <Object3DCommon.h>
 #include <DebugCamera.h>
 #include <Wireframe.h>
-
+#include <CameraManager.h>
 
 /// -------------------------------------------------------------
 ///				　		ゲーム全体の実行処理
@@ -63,24 +63,26 @@ void Framework::Initialize()
 	DebugCamera::GetInstance()->Initialize();
 
 	// デフォルトカメラの生成と初期化
-	defaultCamera_ = std::make_unique<Camera>();
+	/*defaultCamera_ = std::make_unique<Camera>();
 	defaultCamera_->SetRotate({ 0.3f,0.0f,0.0f });
-	defaultCamera_->SetTranslate({ 0.0f,15.0f,-50.0f });
-	
+	defaultCamera_->SetTranslate({ 0.0f,15.0f,-50.0f });*/
+	CameraManager::GetInstance()->Initialize();
+
+
 	// デフォルトカメラの設定
-	Object3DCommon::GetInstance()->SetDefaultCamera(defaultCamera_.get());
+	Object3DCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetCurrentCamera());
 
 	// ImGuiManagerの生成
 	ImGuiManager::GetInstance()->Initialize(winApp_, dxCommon_);
 
 	// ワイヤーフレームのカメラ設定
-	Wireframe::GetInstance()->SetCamera(defaultCamera_.get());
+	Wireframe::GetInstance()->SetCamera(CameraManager::GetInstance()->GetCurrentCamera());
 	
 	// ワイヤーフレームの生成
 	Wireframe::GetInstance()->Initialize(dxCommon_);
 
 	// ParticleManagerの生成
-	ParticleManager::GetInstance()->Initialize(dxCommon_, defaultCamera_.get());
+	ParticleManager::GetInstance()->Initialize(dxCommon_, CameraManager::GetInstance()->GetCurrentCamera());
 
 #pragma endregion -------------------------------------------
 
@@ -112,6 +114,16 @@ void Framework::Update()
 
 	// シーンマネージャーの更新処理
 	//sceneManager_->Update();
+
+	/*------カメラの更新------*/
+	CameraManager::GetInstance()->Update();
+
+	/*------各種カメラの更新------*/
+	Object3DCommon::GetInstance()->SetDefaultCamera(CameraManager::GetInstance()->GetCurrentCamera());
+
+	Wireframe::GetInstance()->SetCamera(CameraManager::GetInstance()->GetCurrentCamera());
+
+	ParticleManager::GetInstance()->SetCamera(CameraManager::GetInstance()->GetCurrentCamera());
 }
 
 

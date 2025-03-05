@@ -50,6 +50,9 @@ public: /// ---------- セッター ---------- ///
 	// ビュー射影行列の設定
 	void SetViewProjectionMatrix(const Matrix4x4& viewProjectionMatrix) { viewProjectionMatrix_ = viewProjectionMatrix; }
 
+	/*------カメラトランスフォームのセット------*/
+	void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
+
 public: /// ---------- ゲッター ---------- ///
 
 	// スケールの取得
@@ -72,6 +75,9 @@ public: /// ---------- ゲッター ---------- ///
 
 	// 合成行列データを取得
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
+
+	/*------カメラトランスフォームのセット------*/
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 private: /// ---------- メンバ変数 ----- ///
 

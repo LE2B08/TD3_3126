@@ -11,6 +11,7 @@
 #ifdef _DEBUG
 #include <DebugCamera.h>
 #endif // _DEBUG
+#include <CameraManager.h>
 
 
 /// -------------------------------------------------------------
@@ -18,6 +19,12 @@
 /// -------------------------------------------------------------
 void GamePlayScene::Initialize()
 {
+	cameraTransform_.Initialize();
+	cameraTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	cameraTransform_.rotate_ = { 0.3f,0.0f,0.0f };
+	cameraTransform_.translate_ = { 0.0f,15.0f,-50.0f };
+
+	CameraManager::GetInstance()->GetCamera("DefaultCamera")->SetWorldTransform(cameraTransform_);
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -100,6 +107,9 @@ void GamePlayScene::Update()
 	// オブジェクトの更新処理
 	objectTerrain_->Update();
 	objectBall_->Update();
+
+	/*------カメラの更新------*/
+	CameraManager::GetInstance()->GetCamera("DefaultCamera")->SetWorldTransform(cameraTransform_);
 }
 
 
@@ -153,6 +163,9 @@ void GamePlayScene::DrawImGui()
 
 	// TerrainのImGui
 	objectTerrain_->DrawImGui();
+#ifdef _DEBUG
+	DebugCamera::GetInstance()->DrawImGui();
+#endif // _DEBUG
 
 	ImGui::End();
 }

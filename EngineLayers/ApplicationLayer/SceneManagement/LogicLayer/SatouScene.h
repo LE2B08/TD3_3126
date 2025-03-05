@@ -46,5 +46,15 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
+
+	// 3Dオブジェクト
+	std::unique_ptr<Object3D> objectTerrain_;
+	std::unique_ptr<Object3D> objectBall_;
+
+	// デバッグカメラのON/OFF用
+	bool isDebugCamera_ = false;
+
+	/*------カメラのトランスフォーム------*/
+	WorldTransform cameraTransform_;
 };
 
