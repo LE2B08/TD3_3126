@@ -69,8 +69,11 @@ private:
 	// 角速度
 	Vector3 angularVelocity_;
 
-	Vector3 maxPosition_ = {8.0f, 0.0f, 8.0f};
-	Vector3 minPosition_ = {-8.0f, 0.0f, -8.0f};
+	// 移動制限
+	//  移動制限の最大値
+	Vector3 maxMoveLimit_ = {8.0f, 0.0f, 8.0f};
+	//  移動制限の最小値
+	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
 
 	///===========================
 	//フック
@@ -108,5 +111,6 @@ private:
 	/// Debug
 	/// 
 	//デバッグフラグ
+	// デバッグモードになるとプレイヤーの移動ができるようになる
 	bool isDebug_ = false;
 };

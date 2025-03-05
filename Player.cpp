@@ -61,8 +61,8 @@ void Player::Update() {
 	// 移動処理
 	Move();
 
-	position_.x = std::clamp(position_.x, minPosition_.x, maxPosition_.x);
-	position_.z = std::clamp(position_.z, minPosition_.z, maxPosition_.z);
+	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
+	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
 	// Transform更新処理
 	object3D_->SetTranslate(position_);
@@ -81,10 +81,10 @@ void Player::Draw() {
 	}
 	// ワイヤーフレームの描画
 	// Fieldの描画
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, maxPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, minPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {maxPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({minPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
 
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
@@ -186,16 +186,16 @@ void Player::HookThrow() {
 	Vector3 potentialEndPos = position_ - direction * maxDistance;
 
 	// 壁に当たるまでの距離を計算
-	if (potentialEndPos.x < minPosition_.x) {
-		potentialEndPos.x = minPosition_.x;
-	} else if (potentialEndPos.x > maxPosition_.x) {
-		potentialEndPos.x = maxPosition_.x;
+	if (potentialEndPos.x < minMoveLimit_.x) {
+		potentialEndPos.x = minMoveLimit_.x;
+	} else if (potentialEndPos.x > maxMoveLimit_.x) {
+		potentialEndPos.x = maxMoveLimit_.x;
 	}
 
-	if (potentialEndPos.z < minPosition_.z) {
-		potentialEndPos.z = minPosition_.z;
-	} else if (potentialEndPos.z > maxPosition_.z) {
-		potentialEndPos.z = maxPosition_.z;
+	if (potentialEndPos.z < minMoveLimit_.z) {
+		potentialEndPos.z = minMoveLimit_.z;
+	} else if (potentialEndPos.z > maxMoveLimit_.z) {
+		potentialEndPos.z = maxMoveLimit_.z;
 	}
 
 	hookEndPos_ = potentialEndPos;
@@ -239,7 +239,7 @@ void Player::MoveToHook() {
 		Vector3 newPosition = position_ + direction * hookSpeed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
 
 		// 壁に触れたらそれ以上ポジションを追加しない
-		if (newPosition.x < minPosition_.x || newPosition.x > maxPosition_.x || newPosition.z < minPosition_.z || newPosition.z > maxPosition_.z) {
+		if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 			isHookActive_ = false;
 
 		} else {
