@@ -16,7 +16,7 @@ public:
 	// 移動処理
 	void Move();
 	// 攻撃処理
-	void Attack() { weapon_->Attack(); }
+	void Attack();
 	// フックの投げる処理
 	void HookThrow();
 	// フックの更新処理

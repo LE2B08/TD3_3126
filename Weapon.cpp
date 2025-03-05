@@ -1,8 +1,12 @@
 #include "Weapon.h"
 #include <cmath>
-#include<imgui.h>
-void Weapon::Initialize() { 
-	//位置
+#include <imgui.h>
+
+#include <chrono>
+#include <thread>
+
+void Weapon::Initialize() {
+	// 位置
 	position_ = playerPosition_;
 	// 回転
 	rotation_ = playerRotation_;
@@ -17,6 +21,10 @@ void Weapon::Initialize() {
 }
 
 void Weapon::Update() {
+	// 攻撃処理
+	if (isAttack_) {
+		Attack();
+	}
 	// 位置
 	position_ = playerPosition_;
 	// 回転
@@ -25,11 +33,7 @@ void Weapon::Update() {
 	scale_ = playerScale_;
 
 	// プレイヤーの向いている方向に武器を配置
-	Vector3 offset = {
-		distance_ * std::cos(rotation_.y),
-		0.0f,
-		distance_ * std::sin(rotation_.y)
-	};
+	Vector3 offset = {distance_ * std::cos(rotation_.y), 0.0f, distance_ * std::sin(rotation_.y)};
 	Vector3 weaponPosition = position_ - offset;
 
 	// Transform更新処理
@@ -39,11 +43,16 @@ void Weapon::Update() {
 	object3D_->Update();
 }
 
-void Weapon::Draw() { object3D_->Draw(); }
+void Weapon::Draw() {
+	// 描画処理
+	if (isAttack_) {
+		object3D_->Draw();
+	}
+}
 
 void Weapon::Finalize() {}
 
-void Weapon::DrawImGui() { 
+void Weapon::DrawImGui() {
 
 	ImGui::Begin("Weapon");
 	ImGui::Text("Weapon");
@@ -51,14 +60,6 @@ void Weapon::DrawImGui() {
 	ImGui::SliderFloat3("Rotation", &rotation_.x, -10.0f, 10.0f);
 	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
 	ImGui::End();
-
 }
 
-void Weapon::Attack() {
-
-	// 攻撃処理
-	// ここでは何もしない
-
-
-
-}
+void Weapon::Attack() {}

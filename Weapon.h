@@ -23,9 +23,19 @@ public:
 	/// Getter & Setter
 	///
 public:
+	// 位置
 	void SetPlayerPosition(const Vector3& position) { playerPosition_ = position; }
+	Vector3 GetPlayerPosition() const { return playerPosition_; }
+	// 回転
 	void SetPlayerRotation(const Vector3& rotation) { playerRotation_ = rotation; }
+	Vector3 GetPlayerRotation() const { return playerRotation_; }
+	// スケール
 	void SetPlayerScale(const Vector3& scale) { playerScale_ = scale; }
+	Vector3 GetPlayerScale() const { return playerScale_; }
+	// 攻撃のフラグ
+	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }
+	bool GetIsAttack() const { return isAttack_; }
+	// カメラの設定
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
 private:
@@ -52,4 +62,6 @@ private:
 	float radius_ = 0.5f;
 	// プレイヤーと武器の距離
 	float distance_ = 2.0f;
+
+	bool isAttack_ = false;
 };

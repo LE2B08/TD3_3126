@@ -50,6 +50,8 @@ void Player::Update() {
 	// フックの開始位置をプレイヤーの位置に設定
 	hookStartPos_ = position_;
 
+	
+
 	// フックを投げるボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(9)) {
 		HookThrow();
@@ -67,6 +69,9 @@ void Player::Update() {
 
 	// 移動処理
 	Move();
+
+	// 攻撃処理
+	Attack();
 
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
@@ -193,10 +198,22 @@ void Player::Move() {
 	velocity_ *= friction;
 }
 
+void Player::Attack() {
+	// 攻撃処理
+	// 攻撃ボタンを押した瞬間
+	if (Input::GetInstance()->TriggerButton(8)) {
+		// 武器の攻撃フラグを立てる
+		weapon_->SetIsAttack(true);
+	}
+
+}
+
 void Player::HookThrow() {
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
 	float maxDistance = 22.0f;
+	// プレイヤーの向きからフックの方向ベクトルを計算
 	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	// フックの終了位置を計算
 	Vector3 potentialEndPos = position_ - direction * maxDistance;
 
 	// 壁に当たるまでの距離を計算
@@ -205,13 +222,12 @@ void Player::HookThrow() {
 	} else if (potentialEndPos.x > maxMoveLimit_.x) {
 		potentialEndPos.x = maxMoveLimit_.x;
 	}
-
 	if (potentialEndPos.z < minMoveLimit_.z) {
 		potentialEndPos.z = minMoveLimit_.z;
 	} else if (potentialEndPos.z > maxMoveLimit_.z) {
 		potentialEndPos.z = maxMoveLimit_.z;
 	}
-
+	// フックの終了位置を設定
 	hookEndPos_ = potentialEndPos;
 	// フックの現在位置を開始位置に設定
 	hookCurrentPos_ = hookStartPos_;
