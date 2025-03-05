@@ -1,7 +1,7 @@
 #pragma once
 #include <Object3D.h>
 #include"Collider.h"
-class Player:public Collider {
+class Player {
 
 public:
 	///============================
