@@ -5,7 +5,8 @@
 #include <ParameterManager.h>
 #include <ParticleManager.h>
 #include "SceneManager.h"
-
+#include "Object3DCommon.h"
+#include "Wireframe.h"
 
 void AkimotoScene::Initialize()
 {
@@ -13,6 +14,12 @@ void AkimotoScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
+
+	field_ = std::make_unique<Field>();
+	field_->Initialize();
 }
 
 void AkimotoScene::Update()
@@ -43,10 +50,25 @@ void AkimotoScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
+
+	enemy_->Update();
+	enemy_->ShowImGui("Enemy");
+
+	field_->Update();
+	field_->ShowImGui("Field");
 }
 
 void AkimotoScene::Draw()
 {
+	/// ---------------------------------------- ///
+	/// ---------- オブジェクト3D描画 ---------- ///
+	/// ---------------------------------------- ///
+	// オブジェクト3D共通描画設定
+	Object3DCommon::GetInstance()->SetRenderSetting();
+
+	enemy_->Draw();
+
+	field_->Draw();
 }
 
 void AkimotoScene::Finalize()

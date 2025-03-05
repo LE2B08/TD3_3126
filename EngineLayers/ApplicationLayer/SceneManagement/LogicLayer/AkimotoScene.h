@@ -5,12 +5,13 @@
 #include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
+#include "GamePlayScene/Enemy/Enemy.h"
+#include "GamePlayScene/Field/Field.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
 class ImGuiManager;
-
 
 /// -------------------------------------------------------------
 ///				　		アキモト専用シーン
@@ -18,6 +19,7 @@ class ImGuiManager;
 class AkimotoScene : public BaseScene
 {
 public: /// ---------- メンバ関数 ---------- ///
+
 	// 初期化処理
 	void Initialize();
 	
@@ -43,5 +45,11 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
+
+	// 敵
+	std::unique_ptr<Enemy> enemy_;
+
+	// フィールド
+	std::unique_ptr<Field> field_;
 };
 
