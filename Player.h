@@ -1,7 +1,8 @@
 #pragma once
 #include <Object3D.h>
 #include"Collider.h"
-class Player:public Collider {
+#include"Weapon.h"
+class Player {
 
 public:
 	///============================
@@ -14,12 +15,16 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
+	// 攻撃処理
+	void Attack() { weapon_->Attack(); }
 	// フックの投げる処理
 	void HookThrow();
 	// フックの更新処理
 	void MoveToHook();
 	// フックの元の位置に戻る処理
 	void ExtendHook();
+
+
 	
 	
 
@@ -111,7 +116,12 @@ private:
 
 	// フックの移動速度
 	float hookSpeed_ = 5.0f; 
-
+	
+	///===========================
+	/// 武器
+	/// 
+	
+	std::unique_ptr<Weapon> weapon_ = nullptr;
 	///============================
 	/// Debug
 	/// 

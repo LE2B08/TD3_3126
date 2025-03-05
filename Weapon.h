@@ -1,5 +1,4 @@
 #pragma once
-#include "Player.h"
 #include "Object3D.h"
 class Weapon {
 public:
@@ -24,7 +23,9 @@ public:
 	/// Getter & Setter
 	///
 public:
-	void SetPlayer(Player* player) { player_ = player; }
+	void SetPlayerPosition(const Vector3& position) { playerPosition_ = position; }
+	void SetPlayerRotation(const Vector3& rotation) { playerRotation_ = rotation; }
+	void SetPlayerScale(const Vector3& scale) { playerScale_ = scale; }
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
 private:
@@ -34,14 +35,19 @@ private:
 
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
-	// プレイヤー
-	Player* player_;
+	
 	// 位置
 	Vector3 position_;
 	// 回転
 	Vector3 rotation_;
 	// スケール
 	Vector3 scale_;
+	// プレイヤーの位置
+	Vector3 playerPosition_;
+	// プレイヤーの回転
+	Vector3 playerRotation_;
+	// プレイヤーのスケール
+	Vector3 playerScale_;
 	//半径
 	float radius_ = 0.5f;
 	// プレイヤーと武器の距離

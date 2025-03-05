@@ -21,6 +21,10 @@ void Player::Initialize() {
 	angularVelocity_ = {0.0f, 0.0f, 0.0f};
 	// フックの初期化
 	isHookExtending_ = true;
+
+	// 武器の初期化
+	weapon_ = std::make_unique<Weapon>();
+	weapon_->Initialize();
 }
 
 void Player::Update() {
@@ -28,8 +32,14 @@ void Player::Update() {
 #ifdef _DEBUG
 
 	// コントローラーのStartボタンとBackボタンを同時に押すとデバックモードになる
-	if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
-		isDebug_ = true;
+	if (!isDebug_) {
+		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
+			isDebug_ = true;
+		}
+	} else {
+		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
+			isDebug_ = false;
+		}
 	}
 	// デバックモード
 	// プレイヤーをの移動が
@@ -48,10 +58,7 @@ void Player::Update() {
 	if (isHookActive_) {
 		ExtendHook();
 	}
-	//// フックを戻すボタンを押した瞬間
-	// if (Input::GetInstance()->TriggerButton(8) && isHookActive_) {
-	//	isHookExtending_ = false;
-	// }
+	
 
 	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
 	if (isHookActive_) {
@@ -61,8 +68,15 @@ void Player::Update() {
 	// 移動処理
 	Move();
 
+	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
+
+	// 武器の更新処理
+	weapon_->SetPlayerPosition(position_);
+	weapon_->SetPlayerRotation(rotation_);
+	weapon_->SetPlayerScale(scale_);
+	weapon_->Update();
 
 	// Transform更新処理
 	object3D_->SetTranslate(position_);
@@ -74,6 +88,9 @@ void Player::Update() {
 void Player::Draw() {
 	// 描画処理
 	object3D_->Draw();
+
+	// 武器の描画
+	weapon_->Draw();
 
 	// Hookの描画
 	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
