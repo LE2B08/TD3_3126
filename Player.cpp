@@ -45,13 +45,13 @@ void Player::Update() {
 		HookThrow();
 	}
 	// フックを投げるボタンを押している間
-	if (Input::GetInstance()->PushButton(9) && isHookActive_) {
+	if (isHookActive_) {
 		ExtendHook();
 	}
 	//// フックを戻すボタンを押した瞬間
-	//if (Input::GetInstance()->TriggerButton(8) && isHookActive_) {
+	// if (Input::GetInstance()->TriggerButton(8) && isHookActive_) {
 	//	isHookExtending_ = false;
-	//}
+	// }
 
 	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
 	if (isHookActive_) {
@@ -75,10 +75,9 @@ void Player::Draw() {
 	// 描画処理
 	object3D_->Draw();
 
-	if (isHookActive_) {
-		// Hookの描画
-		Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
-	}
+	// Hookの描画
+	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
+
 	// ワイヤーフレームの描画
 	// Fieldの描画
 	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
@@ -111,7 +110,6 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("", &angularVelocity_.x, -10.0f, 10.0f);
 	ImGui::End();
 }
-
 void Player::Move() {
 
 	///============================
@@ -154,9 +152,9 @@ void Player::Move() {
 	}
 #endif // _DEBUG
 
-       ///================
-       /// プレイヤーの回転処理
-       ///
+	///================
+	/// プレイヤーの回転処理
+	///
 
 	//========================================
 	// プレイヤーの向きを左スティックの向きにする
@@ -166,7 +164,6 @@ void Player::Move() {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 	} else {
-		// マウスでプレイヤーの向きを変える
 	}
 	// 右スティックの向きを優先
 
@@ -205,7 +202,6 @@ void Player::HookThrow() {
 	hookStartTime_ = std::chrono::steady_clock::now();
 	// フックをアクティブにする
 	isHookActive_ = true;
-	
 }
 
 // フックが伸びる処理
