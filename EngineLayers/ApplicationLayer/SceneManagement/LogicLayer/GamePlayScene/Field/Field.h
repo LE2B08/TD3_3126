@@ -22,6 +22,15 @@ public:
 	void ShowImGui(const char* name);
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	Vector3 GetMinPosition() { return minPosition_; }
+
+	Vector3 GetMaxPosition() { return maxPosition_; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -36,5 +45,8 @@ private:
 
 	// 位置
 	Vector3 position_;
+
+	Vector3 minPosition_;
+	Vector3 maxPosition_;
 };
 

@@ -3,6 +3,7 @@
 #include <WinApp.h>
 #include <ParameterManager.h>
 #include "Matrix4x4.h"
+#include <imgui.h>
 
 Camera::Camera() :
 	fovY_(0.45f),
@@ -29,4 +30,12 @@ void Camera::Update()
 	// プロジェクション行列の更新
 	projectionMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(fovY_, aspectRatio_, nearClip_, farClip_);
 	viewProjectionMatrix_ = Matrix4x4::Multiply(viewMatrix_, projectionMatrix_);
+}
+
+void Camera::ShowImGui()
+{
+	ImGui::Begin("camera");
+	ImGui::DragFloat3("rotate", &worldTransform_.rotate_.x, 0.01f);
+	ImGui::DragFloat3("translate", &worldTransform_.translate_.x, 0.01f);
+	ImGui::End();
 }
