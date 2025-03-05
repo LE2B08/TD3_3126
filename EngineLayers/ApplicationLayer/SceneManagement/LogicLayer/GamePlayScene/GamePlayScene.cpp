@@ -40,6 +40,9 @@ void GamePlayScene::Initialize()
 	objectBall_ = std::make_unique<Object3D>();
 	objectBall_->Initialize("sphere.gltf");
 
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 }
@@ -100,6 +103,12 @@ void GamePlayScene::Update()
 	// オブジェクトの更新処理
 	objectTerrain_->Update();
 	objectBall_->Update();
+
+	player_->Update();
+
+	collisionManager_->Update();
+	// 衝突判定と応答
+	CheckAllCollisions();
 }
 
 
@@ -120,11 +129,12 @@ void GamePlayScene::Draw()
 	objectTerrain_->Draw();
 	objectBall_->Draw();
 
+	player_->Draw();
+
+	collisionManager_->Draw();
+
 	// ワイヤーフレームの描画
 	Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
-
-	// 衝突判定と応答
-	CheckAllCollisions();
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -167,7 +177,7 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->Reset();
 
 	// コライダーをリストに登録
-	// collisionManager_->AddCollider();
+	collisionManager_->AddCollider(player_.get());
 
 	// 複数について
 
