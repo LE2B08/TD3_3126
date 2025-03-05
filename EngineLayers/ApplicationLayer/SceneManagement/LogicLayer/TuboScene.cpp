@@ -9,6 +9,9 @@
 
 #include "Object3DCommon.h"
 
+/// -------------------------------------------------------------
+///				　			　初期化処理
+/// -------------------------------------------------------------
 void TuboScene::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -32,7 +35,14 @@ void TuboScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
+	// 衝突マネージャの生成
+	collisionManager_ = std::make_unique<CollisionManager>();
+
 }
+
+///-------------------------------------------------------------
+///					更新処理
+/// -------------------------------------------------------------
 
 void TuboScene::Update()
 {
@@ -80,10 +90,14 @@ void TuboScene::Update()
 
 	enemy_->Update();
 	
-
+	collisionManager_->Update();
 	
 	
 }
+
+///-------------------------------------------------------------
+///					描画処理
+///-------------------------------------------------------------
 
 void TuboScene::Draw()
 { 
@@ -96,12 +110,22 @@ void TuboScene::Draw()
 
 	field_->Draw();
 
+	collisionManager_->Draw();
+
 }
+
+///-------------------------------------------------------------
+///					終了処理
+///-------------------------------------------------------------
 
 void TuboScene::Finalize()
 { 
 	player_->Finalize(); 
 }
+
+///-------------------------------------------------------------
+///					ImGui描画処理
+/// -------------------------------------------------------------
 
 void TuboScene::DrawImGui()
 { 
@@ -114,4 +138,23 @@ void TuboScene::DrawImGui()
 	ImGui::DragFloat3("Rotation", &cameraRotate_.x, 0.1f, -10.0f, 10.0f);
 	ImGui::End();
 
+}
+
+/// -------------------------------------------------------------
+///				　			衝突判定と応答
+/// -------------------------------------------------------------
+void TuboScene::CheckAllCollisions() {
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(player_->GetWeapon());
+	collisionManager_->AddCollider(enemy_.get());
+
+
+	// 複数について
+
+	// 衝突判定と応答
+	collisionManager_->CheckAllCollisions();
 }

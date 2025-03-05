@@ -25,6 +25,11 @@ void Player::Initialize() {
 	// 武器の初期化
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
+
+	worldTransform_.Initialize();
+	worldTransform_.translate_ = position_;
+	worldTransform_.rotate_ = rotation_;
+	worldTransform_.scale_ = scale_;
 }
 
 void Player::Update() {
@@ -77,7 +82,14 @@ void Player::Update() {
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
+	// WorldTransformの更新
+	worldTransform_.translate_ = position_;
+	worldTransform_.rotate_ = rotation_;
+	worldTransform_.scale_ = scale_;
+	worldTransform_.Update();
+
 	// 武器の更新処理
+
 	weapon_->SetPlayerPosition(position_);
 	weapon_->SetPlayerRotation(rotation_);
 	weapon_->SetPlayerScale(scale_);
@@ -246,8 +258,8 @@ void Player::ExtendHook() {
 }
 
 void Player::OnCollision(Collider* other)
-{
-
+{ 
+	
 }
 
 Vector3 Player::GetCenterPosition() const

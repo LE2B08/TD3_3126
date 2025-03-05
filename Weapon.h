@@ -1,6 +1,7 @@
 #pragma once
 #include "Object3D.h"
-class Weapon {
+#include"Collider.h"
+class Weapon :public Collider {
 public:
 	///============================
 	/// メンバ関数
@@ -18,6 +19,12 @@ public:
 	void DrawImGui();
 	// 攻撃処理
 	void Attack();
+
+	// 衝突判定
+	void OnCollision(Collider* other) override;
+
+	// 中心座標を取得する純粋仮想関数
+	Vector3 GetCenterPosition() const override;
 
 	///============================
 	/// Getter & Setter
@@ -43,6 +50,7 @@ private:
 	/// メンバ変数
 	/// 
 
+	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
 	

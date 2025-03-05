@@ -24,11 +24,6 @@ public:
 	// フックの元の位置に戻る処理
 	void ExtendHook();
 
-
-
-	
-	
-
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
@@ -69,6 +64,10 @@ public:
 
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+
+
+	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
+	Weapon* GetWeapon() { return weapon_.get(); }
 
 private:
 	///============================

@@ -1,9 +1,10 @@
 #pragma once
 #include "Object3D/Object3D.h"
 #include <memory>
+#include "Collider.h"
 
 /// === 敵 === ///
-class Enemy {
+class Enemy:public Collider {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -31,6 +32,13 @@ public:
 	/// 移動
 	void Move();
 
+	// 衝突判定
+	void OnCollision(Collider* other) override;
+
+	// 中心座標を取得する純粋仮想関数
+	Vector3 GetCenterPosition() const override;
+
+
 	///-------------------------------------------/// 
 	/// ゲッター&セッター
 	///-------------------------------------------///
@@ -41,6 +49,8 @@ public:
 	/// メンバ変数
 	///-------------------------------------------///
 private:
+
+	WorldTransform worldTransform_;
 
 	// 敵のオブジェクト
 	std::unique_ptr<Object3D> objectEnemy_;
