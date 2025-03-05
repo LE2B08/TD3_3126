@@ -8,6 +8,7 @@
 #include "AnimationManager.h"
 
 #include "CollisionManager.h"
+#include "Player.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -59,6 +60,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
+	std::unique_ptr<Player> player_;
 
 	std::string particleGroupName;
 
