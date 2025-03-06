@@ -7,16 +7,12 @@ void Field::Initialize() {
 	scale_ = { 8.0f,1.0f,8.0f };
 	rotate_ = { 0.0f,0.0f,0.0f };
 	position_ = { 0.0f,0.0f,0.0f };
-
-	
 }
 
 void Field::Update() {
 
 	minPosition_ = position_ - scale_;
 	maxPosition_ = position_ + scale_;
-
-	
 }
 
 void Field::Draw() {
