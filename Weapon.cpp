@@ -63,3 +63,15 @@ void Weapon::DrawImGui() {
 }
 
 void Weapon::Attack() {}
+
+
+void Weapon::OnCollision(Collider* other) {}
+
+Vector3 Weapon::GetCenterPosition() const {
+	// ローカル座標でのオフセット
+	const Vector3 offset = {0.0f, 1.5f, 0.0f};
+	// ワールド座標に変換
+	Vector3 worldPosition = Vector3::Transform(offset, worldTransform_.matWorld_);
+
+	return worldPosition;
+}

@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "GamePlayScene/Field/Field.h"
+#include "CollisionManager.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -37,10 +38,14 @@ public: /// ---------- メンバ関数 ---------- ///
 	// ImGui描画処理
 	void DrawImGui() override;
 
+	// 衝突判定と応答
+	void CheckAllCollisions();
+
 private: /// ---------- メンバ変数 ---------- ///
 
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
+	std::unique_ptr<CollisionManager> collisionManager_;
 	Input* input_ = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;

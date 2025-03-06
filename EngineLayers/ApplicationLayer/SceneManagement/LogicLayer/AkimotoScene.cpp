@@ -52,10 +52,8 @@ void AkimotoScene::Update()
 	}
 
 	enemy_->Update();
-	enemy_->ShowImGui("Enemy");
 
 	field_->Update();
-	field_->ShowImGui("Field");
 }
 
 void AkimotoScene::Draw()
@@ -77,4 +75,7 @@ void AkimotoScene::Finalize()
 
 void AkimotoScene::DrawImGui()
 {
+	enemy_->ShowImGui("Enemy");
+
+	field_->ShowImGui("Field");
 }

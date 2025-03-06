@@ -25,6 +25,11 @@ void Player::Initialize() {
 	// 武器の初期化
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
+
+	worldTransform_.Initialize();
+	worldTransform_.translate_ = position_;
+	worldTransform_.rotate_ = rotation_;
+	worldTransform_.scale_ = scale_;
 }
 
 void Player::Update() {
@@ -77,7 +82,14 @@ void Player::Update() {
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
+	// WorldTransformの更新
+	worldTransform_.translate_ = position_;
+	worldTransform_.rotate_ = rotation_;
+	worldTransform_.scale_ = scale_;
+	worldTransform_.Update();
+
 	// 武器の更新処理
+
 	weapon_->SetPlayerPosition(position_);
 	weapon_->SetPlayerRotation(rotation_);
 	weapon_->SetPlayerScale(scale_);
@@ -100,13 +112,7 @@ void Player::Draw() {
 	// Hookの描画
 	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
 
-	// ワイヤーフレームの描画
-	// Fieldの描画
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {maxMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({minMoveLimit_.x, 0.0f, maxMoveLimit_.z}, {minMoveLimit_.x, 0.0f, minMoveLimit_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-
+	
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	Vector3 endPos = position_ + -direction * 5.0f;                                  // 5.0fは線の長さ
@@ -210,7 +216,7 @@ void Player::Attack() {
 
 void Player::HookThrow() {
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
-	float maxDistance = 22.0f;
+	float maxDistance = 50.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
 	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	// フックの終了位置を計算
@@ -252,8 +258,8 @@ void Player::ExtendHook() {
 }
 
 void Player::OnCollision(Collider* other)
-{
-
+{ 
+	
 }
 
 Vector3 Player::GetCenterPosition() const
