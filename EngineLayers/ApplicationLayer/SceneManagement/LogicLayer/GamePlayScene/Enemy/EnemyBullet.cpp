@@ -14,6 +14,7 @@ void EnemyBullet::Initialize() {
 	// オブジェクトの生成・初期化
 	objectBullet_ = std::make_unique<Object3D>();
 	objectBullet_->Initialize("sphere.gltf");
+	objectBullet_->SetScale({ 0.4f, 0.4f, 0.4f });
 }
 
 void EnemyBullet::Update() {

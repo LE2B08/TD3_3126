@@ -9,6 +9,8 @@
 
 #include "CollisionManager.h"
 #include "Player.h"
+#include "Enemy/Enemy.h"
+#include "Field/Field.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -55,8 +57,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	ParticleManager* particleManager = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;
-	std::unique_ptr<Object3D> objectTerrain_;
-	std::unique_ptr<Object3D> objectBall_;
+	//std::unique_ptr<Object3D> objectTerrain_;
+	//std::unique_ptr<Object3D> objectBall_;
 	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
@@ -66,4 +68,10 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// デバッグカメラのON/OFF用
 	bool isDebugCamera_ = false;
+
+	// 敵
+	std::unique_ptr<Enemy> enemy_;
+
+	// フィールド
+	std::unique_ptr<Field> field_;
 };

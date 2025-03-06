@@ -34,14 +34,21 @@ void GamePlayScene::Initialize()
 	wavLoader_->StreamAudioAsync(fileName, 0.0f, 1.0f, false);
 
 	// terrainの生成と初期化
-	objectTerrain_ = std::make_unique<Object3D>();
-	objectTerrain_->Initialize("terrain.obj");
+	//objectTerrain_ = std::make_unique<Object3D>();
+	//objectTerrain_->Initialize("terrain.obj");
 
-	objectBall_ = std::make_unique<Object3D>();
-	objectBall_->Initialize("sphere.gltf");
+	//objectBall_ = std::make_unique<Object3D>();
+	//objectBall_->Initialize("sphere.gltf");
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize();
+	enemy_->SetPlayer(player_.get());
+
+	field_ = std::make_unique<Field>();
+	field_->Initialize();
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -101,10 +108,14 @@ void GamePlayScene::Update()
 	}
 
 	// オブジェクトの更新処理
-	objectTerrain_->Update();
-	objectBall_->Update();
+	//objectTerrain_->Update();
+	//objectBall_->Update();
 
 	player_->Update();
+
+	enemy_->Update();
+
+	field_->Update();
 
 	collisionManager_->Update();
 	// 衝突判定と応答
@@ -126,12 +137,16 @@ void GamePlayScene::Draw()
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
 	// Terrain.obj の描画
-	objectTerrain_->Draw();
-	objectBall_->Draw();
+	//objectTerrain_->Draw();
+	//objectBall_->Draw();
 
 	player_->Draw();
 
-	collisionManager_->Draw();
+	enemy_->Draw();
+
+	field_->Draw();
+
+	//collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
 	Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
@@ -162,9 +177,13 @@ void GamePlayScene::DrawImGui()
 	ImGui::Begin("Test Window");
 
 	// TerrainのImGui
-	objectTerrain_->DrawImGui();
+	//objectTerrain_->DrawImGui();
 
 	ImGui::End();
+
+	enemy_->ShowImGui("Enemy");
+
+	field_->ShowImGui("Field");
 }
 
 

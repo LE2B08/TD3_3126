@@ -15,6 +15,7 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	//worldTransform_.translate_ = { 0.0f, 0.0f, 20.0f };
 
 	// オブジェクトの生成・初期化
 	objectEnemy_ = std::make_unique<Object3D>();
@@ -169,7 +170,7 @@ void Enemy::BehaviorNormalInitialize() {
 void Enemy::BehaviorNormalUpdate() {
 
 	// プレイヤーとの距離を計算
-	const float distance = Vector3::Length(player_->GetCenterPosition() - worldTransform_.translate_);
+	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
 
 	// 一定距離まで近づいたら離脱状態にする
 	if (distance < 10.0f) {
@@ -201,7 +202,7 @@ void Enemy::BehaviorAttackUpdate() {
 		bullet->SetPosition(worldTransform_.translate_);
 
 		// プレイヤーとの向きを計算
-		const Vector3 direction = player_->GetCenterPosition() - worldTransform_.translate_;
+		const Vector3 direction = player_->GetPosition() - worldTransform_.translate_;
 		// 弾に向きを設定
 		bullet->SetDirection(direction);
 
@@ -229,7 +230,7 @@ void Enemy::BehaviorAttackUpdate() {
 void Enemy::BehaviorLeaveInitialize() {
 
 	// プレイヤーの位置を取得
-	const Vector3 playerPosition = player_->GetCenterPosition();
+	const Vector3 playerPosition = player_->GetPosition();
 
 	// プレイヤーとの向きを計算
 	const Vector3 direction = playerPosition - worldTransform_.translate_;
@@ -247,10 +248,10 @@ void Enemy::BehaviorLeaveUpdate() {
 	Move();
 
 	// プレイヤーとの距離を計算
-	const float distance = Vector3::Length(player_->GetCenterPosition() - worldTransform_.translate_);
+	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
 
 	// 一定距離まで離れたら攻撃状態にする
-	if (distance < 20.0f) {
+	if (distance > 20.0f) {
 		requestBehavior_ = Behavior::Attack;
 	}
 }
