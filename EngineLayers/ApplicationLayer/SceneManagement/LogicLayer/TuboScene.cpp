@@ -31,6 +31,7 @@ void TuboScene::Initialize()
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	enemy_->SetPlayer(player_.get());
 
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
