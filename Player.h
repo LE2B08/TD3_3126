@@ -23,12 +23,14 @@ public:
 	void MoveToHook();
 	// フックの元の位置に戻る処理
 	void ExtendHook();
-
+	
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
+
+
 
 
 public:
@@ -115,6 +117,10 @@ private:
 	Vector3 hookAcceleration_;
 	//  フックの角速度
 	Vector3 hookAngularVelocity_;
+	//  フックの方向ベクトル
+	Vector3 direction_ = {};
+	// フックの終了位置を計算（壁に当たるまでの数値にする）
+	float maxDistance = 50.0f;
 	//  フックのオブジェクト3D
 	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
 

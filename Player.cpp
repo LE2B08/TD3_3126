@@ -3,6 +3,9 @@
 #include "Wireframe.h"
 #include "imgui.h"
 
+#undef max
+#undef min
+
 void Player::Initialize() {
 	// オブジェクト3D
 	object3D_ = std::make_unique<Object3D>();
@@ -125,17 +128,19 @@ void Player::DrawImGui() {
 
 	ImGui::Begin("Player");
 	ImGui::Text("Position");
-	ImGui::SliderFloat3("", &position_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
 	ImGui::Text("Rotation");
-	ImGui::SliderFloat3("", &rotation_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Rotate", &rotation_.x, -10.0f, 10.0f);
 	ImGui::Text("Scale");
-	ImGui::SliderFloat3("", &scale_.x, 0.0f, 10.0f);
+	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
 	ImGui::Text("Velocity");
-	ImGui::SliderFloat3("", &velocity_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Velocity", &velocity_.x, -10.0f, 10.0f);
 	ImGui::Text("Acceleration");
-	ImGui::SliderFloat3("", &acceleration_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
 	ImGui::Text("AngularVelocity");
-	ImGui::SliderFloat3("", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::Text("MaxDistance");
+	ImGui::SliderFloat("MaxDistance", &maxDistance, 0.0f, 50.0f);
 	ImGui::End();
 }
 void Player::Move() {
@@ -217,26 +222,29 @@ void Player::Attack() {
 	}
 
 }
-
 void Player::HookThrow() {
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
 	float maxDistance = 50.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
-	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	direction_ = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	// フックの終了位置を計算
-	Vector3 potentialEndPos = position_ - direction * maxDistance;
+	Vector3 potentialEndPos = position_ - direction_ * maxDistance;
 
 	// 壁に当たるまでの距離を計算
 	if (potentialEndPos.x < minMoveLimit_.x) {
-		potentialEndPos.x = minMoveLimit_.x;
+		maxDistance = std::min(maxDistance, (position_.x - minMoveLimit_.x) / direction_.x);
 	} else if (potentialEndPos.x > maxMoveLimit_.x) {
-		potentialEndPos.x = maxMoveLimit_.x;
+		maxDistance = std::min(maxDistance, (position_.x - maxMoveLimit_.x) / direction_.x);
 	}
 	if (potentialEndPos.z < minMoveLimit_.z) {
-		potentialEndPos.z = minMoveLimit_.z;
+		maxDistance = std::min(maxDistance, (position_.z - minMoveLimit_.z) / direction_.z);
 	} else if (potentialEndPos.z > maxMoveLimit_.z) {
-		potentialEndPos.z = maxMoveLimit_.z;
+		maxDistance = std::min(maxDistance, (position_.z - maxMoveLimit_.z) / direction_.z);
 	}
+
+	// フックの終了位置を再計算
+	potentialEndPos = position_ - direction_ * maxDistance;
+
 	// フックの終了位置を設定
 	hookEndPos_ = potentialEndPos;
 	// フックの現在位置を開始位置に設定
@@ -247,13 +255,14 @@ void Player::HookThrow() {
 	isHookActive_ = true;
 }
 
+
 // フックが伸びる処理
 void Player::ExtendHook() {
 	// フックの方向ベクトルを計算
-	Vector3 direction = hookEndPos_ - hookStartPos_;
-	direction.Normalize(direction);
+	direction_ = hookEndPos_ - hookStartPos_;
+	
 	// フックの現在位置を更新
-	hookCurrentPos_ += direction * hookSpeed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+	hookCurrentPos_ += direction_ * hookSpeed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
 
 	// フックが終了位置に到達したらフックの伸びを止める
 	if ((hookCurrentPos_ - hookStartPos_).Length((hookCurrentPos_ - hookStartPos_)) >= (hookEndPos_ - hookStartPos_).Length((hookEndPos_ - hookStartPos_))) {
