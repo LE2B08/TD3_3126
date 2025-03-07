@@ -7,11 +7,12 @@
 #include <BaseScene.h>
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "GamePlayScene/Field/Field.h"
+#include "Player.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class ImGuiManager;
+
 
 /// -------------------------------------------------------------
 ///				　		アキモト専用シーン
@@ -45,6 +46,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
+	
+	std::unique_ptr<Player> player_;
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;

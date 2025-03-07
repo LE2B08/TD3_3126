@@ -13,6 +13,9 @@ void SatouScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
+
+
+
 }
 
 void SatouScene::Update()
@@ -26,7 +29,7 @@ void SatouScene::Update()
 		}
 	}
 
-	if (input_->TriggerKey(DIK_1))
+	if (input_->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -35,7 +38,7 @@ void SatouScene::Update()
 	}
 
 	// シーン切り替え（必要なら）
-	if (input_->TriggerKey(DIK_2))
+	if (input_->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{

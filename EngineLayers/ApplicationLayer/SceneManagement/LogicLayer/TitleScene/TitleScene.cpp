@@ -65,7 +65,7 @@ void TitleScene::Update()
 		wavLoader_->StopBGM();
 	}
 
-	if (input->TriggerKey(DIK_1))
+	if (input->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -73,12 +73,17 @@ void TitleScene::Update()
 		}
 	}
 
-	if (input->TriggerKey(DIK_2))
+	if (input->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
+	}
+
+	if (input->TriggerKey(DIK_F3))
+	{
+
 	}
 
 	// スプライトの更新処理
