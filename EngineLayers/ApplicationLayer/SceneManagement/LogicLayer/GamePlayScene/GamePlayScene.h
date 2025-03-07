@@ -18,7 +18,7 @@
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class ImGuiManager;
+class Camera;
 
 /// -------------------------------------------------------------
 ///				　		ゲームプレイシーン
@@ -54,10 +54,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	TextureManager* textureManager = nullptr;
 	Input* input_ = nullptr;
 	ParticleManager* particleManager = nullptr;
+	Camera* camera_ = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;
-	//std::unique_ptr<Object3D> objectTerrain_;
-	//std::unique_ptr<Object3D> objectBall_;
 	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;

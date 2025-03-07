@@ -29,17 +29,14 @@ void GamePlayScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
 
+	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	camera_->SetRotate({ 1.57f,0.0f,0.0f });
+	camera_->SetTranslate({ 0.0f,50.0f,0.0f });
+
 	/// ---------- サウンドの初期化 ---------- ///
 	const char* fileName = "Resources/Sounds/Get-Ready.wav";
 	wavLoader_ = std::make_unique<WavLoader>();
 	wavLoader_->StreamAudioAsync(fileName, 0.0f, 1.0f, false);
-
-	// terrainの生成と初期化
-	//objectTerrain_ = std::make_unique<Object3D>();
-	//objectTerrain_->Initialize("terrain.obj");
-
-	//objectBall_ = std::make_unique<Object3D>();
-	//objectBall_->Initialize("sphere.gltf");
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
@@ -70,19 +67,8 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-	// 入力によるシーン切り替え
-	if (input_->TriggerKey(DIK_RETURN)) // Enterキーが押されたら
-	{
-		if (sceneManager_)
-		{
-			sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
-		}
-
-		wavLoader_->StopBGM();
-	}
-
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_1))
+	if (input_->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -91,7 +77,7 @@ void GamePlayScene::Update()
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_2))
+	if (input_->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{
@@ -100,7 +86,7 @@ void GamePlayScene::Update()
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_3))
+	if (input_->TriggerKey(DIK_F3))
 	{
 		if (sceneManager_)
 		{
@@ -108,9 +94,8 @@ void GamePlayScene::Update()
 		}
 	}
 
-	// オブジェクトの更新処理
-	//objectTerrain_->Update();
-	//objectBall_->Update();
+
+	camera_->Update();
 
 	field_->Update();
 	
@@ -139,10 +124,6 @@ void GamePlayScene::Draw()
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
-	// Terrain.obj の描画
-	//objectTerrain_->Draw();
-	//objectBall_->Draw();
-
 	player_->Draw();
 
 	enemy_->Draw();
@@ -153,12 +134,6 @@ void GamePlayScene::Draw()
 
 	// ワイヤーフレームの描画
 	//Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
-
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
-
-
 
 }
 
@@ -178,9 +153,6 @@ void GamePlayScene::Finalize()
 void GamePlayScene::DrawImGui()
 {
 	ImGui::Begin("Test Window");
-
-	// TerrainのImGui
-	//objectTerrain_->DrawImGui();
 
 	ImGui::End();
 

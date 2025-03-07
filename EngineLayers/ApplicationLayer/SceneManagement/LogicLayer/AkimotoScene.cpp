@@ -15,8 +15,12 @@ void AkimotoScene::Initialize()
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	enemy_->SetPlayer(player_.get());
 
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
@@ -34,7 +38,7 @@ void AkimotoScene::Update()
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_1))
+	if (input_->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -43,7 +47,7 @@ void AkimotoScene::Update()
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_3))
+	if (input_->TriggerKey(DIK_F3))
 	{
 		if (sceneManager_)
 		{
