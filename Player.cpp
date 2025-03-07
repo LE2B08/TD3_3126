@@ -124,18 +124,12 @@ void Player::Finalize() {}
 void Player::DrawImGui() {
 
 	ImGui::Begin("Player");
-	ImGui::Text("Position");
-	ImGui::SliderFloat3("", &position_.x, -10.0f, 10.0f);
-	ImGui::Text("Rotation");
-	ImGui::SliderFloat3("", &rotation_.x, -10.0f, 10.0f);
-	ImGui::Text("Scale");
-	ImGui::SliderFloat3("", &scale_.x, 0.0f, 10.0f);
-	ImGui::Text("Velocity");
-	ImGui::SliderFloat3("", &velocity_.x, -10.0f, 10.0f);
-	ImGui::Text("Acceleration");
-	ImGui::SliderFloat3("", &acceleration_.x, -10.0f, 10.0f);
-	ImGui::Text("AngularVelocity");
-	ImGui::SliderFloat3("", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Rotation", &rotation_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
+	ImGui::SliderFloat3("Velocity", &velocity_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Acceleration", &acceleration_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("AngularVelocity", &angularVelocity_.x, -10.0f, 10.0f);
 	ImGui::End();
 }
 void Player::Move() {

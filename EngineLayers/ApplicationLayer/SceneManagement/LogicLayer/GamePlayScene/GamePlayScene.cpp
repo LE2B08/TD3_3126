@@ -7,6 +7,7 @@
 #include <ParameterManager.h>
 #include <ParticleManager.h>
 #include "Wireframe.h"
+#include "Camera.h"
 
 #ifdef _DEBUG
 #include <DebugCamera.h>
@@ -111,11 +112,13 @@ void GamePlayScene::Update()
 	//objectTerrain_->Update();
 	//objectBall_->Update();
 
+	field_->Update();
+	
+	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 	player_->Update();
 
 	enemy_->Update();
-
-	field_->Update();
 
 	collisionManager_->Update();
 	// 衝突判定と応答
@@ -149,7 +152,7 @@ void GamePlayScene::Draw()
 	//collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
-	Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
+	//Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -180,6 +183,8 @@ void GamePlayScene::DrawImGui()
 	//objectTerrain_->DrawImGui();
 
 	ImGui::End();
+
+	player_->DrawImGui();
 
 	enemy_->ShowImGui("Enemy");
 

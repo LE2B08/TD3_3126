@@ -83,7 +83,7 @@ public:
 	///-------------------------------------------///
 public:
 
-	void SetPlayer(Player* player) { player_ = std::unique_ptr<Player>(player); }
+	void SetPlayer(Player* player) { player_ = player; }
 
 	///-------------------------------------------/// 
 	/// 列挙
@@ -121,7 +121,7 @@ private:
 	float accelerationLimit_ = 0.01f;
 
 	// プレイヤー
-	std::unique_ptr<Player> player_;
+	Player* player_;
 
 	// 状態
 	Behavior behavior_ = Behavior::Normal;
@@ -130,7 +130,7 @@ private:
 	std::optional<Behavior> requestBehavior_ = std::nullopt;
 
 	// 離脱時の向き
-	Vector3 leaveDirection = {};
+	Vector3 leaveDirection_ = {};
 
 	//  移動制限の最大値
 	Vector3 maxMoveLimit_ = {};
@@ -141,9 +141,11 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
 	// 弾の発射間隔
-	uint32_t attackInterval_ = 300;
+	uint32_t attackInterval_ = 120;
 
 	// 弾の発射回数
 	uint32_t attackCount_ = 0;
+
+	const float maxDistance_ = 10.0f;
 };
 

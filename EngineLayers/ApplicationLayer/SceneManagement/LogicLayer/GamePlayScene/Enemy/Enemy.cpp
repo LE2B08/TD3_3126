@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include <algorithm>
 #include <imgui.h>
+#include <Wireframe.h>
 
 Enemy::Enemy() {
 }
@@ -38,7 +39,7 @@ void Enemy::Update() {
 			break;
 
 		case Enemy::Behavior::Attack:
-			BehaviorNormalUpdate();
+			BehaviorAttackInitialize();
 			break;
 
 		case Enemy::Behavior::Leave:
@@ -72,6 +73,9 @@ void Enemy::Update() {
 		break;
 	}
 
+	// 移動する
+	Move();
+
 	// WorldTransformの更新
 	worldTransform_.Update();
 
@@ -83,7 +87,7 @@ void Enemy::Update() {
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
 
 		// 弾が死んでいる場合
-		if (bullet->IsDead()) {
+		if (!bullet->IsAlive()) {
 
 			// リセット
 			bullet.reset();
@@ -91,12 +95,16 @@ void Enemy::Update() {
 		}
 
 		return false;
-	});
+		});
 
 	// 弾の更新
 	for (auto& bullet : bullets_) {
 		bullet->Update();
 	}
+
+	// ワイヤーフレームの処理
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, 10.0f, 32, { 1.0f, 1.0f, 1.0f,1.0f });
+
 }
 
 void Enemy::Draw() {
@@ -125,6 +133,8 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::Begin(name);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	ImGui::DragFloat3("LeaveDirection", &leaveDirection_.x, 0.01f);
+	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	// 状態の表示
 	switch (behavior_) {
@@ -173,7 +183,7 @@ void Enemy::BehaviorNormalUpdate() {
 	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
 
 	// 一定距離まで近づいたら離脱状態にする
-	if (distance < 10.0f) {
+	if (distance < maxDistance_) {
 		requestBehavior_ = Behavior::Leave;
 	}
 }
@@ -236,22 +246,19 @@ void Enemy::BehaviorLeaveInitialize() {
 	const Vector3 direction = playerPosition - worldTransform_.translate_;
 
 	// 向きを180度回転
-	leaveDirection = -direction;
+	leaveDirection_ = -direction;
 }
 
 void Enemy::BehaviorLeaveUpdate() {
 
 	// 速度に向きを設定
-	velocity_ = leaveDirection * 0.01f;
-
-	// 移動する
-	Move();
+	velocity_ = leaveDirection_ * 0.01f;
 
 	// プレイヤーとの距離を計算
 	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
 
 	// 一定距離まで離れたら攻撃状態にする
-	if (distance > 20.0f) {
+	if (distance > maxDistance_) {
 		requestBehavior_ = Behavior::Attack;
 	}
 }

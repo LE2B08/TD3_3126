@@ -51,10 +51,10 @@ public:
 	void SetDirection(const Vector3& direction) { direction_ = direction; }
 
 	/// <summary>
-	/// フラグのゲッター
+	/// 生存フラグのゲッター
 	/// </summary>
 	/// <returns></returns>
-	bool IsDead() const { return isDead_; }
+	bool IsAlive() const { return isAlive_; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -74,6 +74,9 @@ private:
 	Vector3 direction_ = {};
 	
 	// 生存フラグ
-	bool isDead_ = false;
+	bool isAlive_ = true;
+
+	// 生存フレーム
+	uint32_t lifeFrame_ = 180;
 };
 
