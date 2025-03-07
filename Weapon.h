@@ -72,4 +72,15 @@ private:
 	float distance_ = 2.0f;
 
 	bool isAttack_ = false;
+
+	/*------攻撃の持続時間------*/
+	float attackTime_ = 0.0f;
+
+	float attackMaxTime_ = 60.0f;
+
+	/*-------攻撃中の回転角度------*/
+	float attackRotationAngle_ = 0.0f;
+
+	/*------回転速度------*/
+	float rotationSpeed_ = 5.0f; // デフォルトの回転速度
 };

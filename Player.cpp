@@ -131,6 +131,7 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("Acceleration", &acceleration_.x, -10.0f, 10.0f);
 	ImGui::SliderFloat3("AngularVelocity", &angularVelocity_.x, -10.0f, 10.0f);
 	ImGui::End();
+	weapon_->DrawImGui();
 }
 void Player::Move() {
 

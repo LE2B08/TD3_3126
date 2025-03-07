@@ -18,6 +18,9 @@ void Weapon::Initialize() {
 	object3D_->SetTranslate(position_);
 	object3D_->SetRotate(rotation_);
 	object3D_->SetScale(scale_);
+
+	attackTime_ = 0;
+	attackRotationAngle_ = 0.0f;
 }
 
 void Weapon::Update() {
@@ -33,7 +36,9 @@ void Weapon::Update() {
 	scale_ = playerScale_;
 
 	// プレイヤーの向いている方向に武器を配置
-	Vector3 offset = {distance_ * std::cos(rotation_.y), 0.0f, distance_ * std::sin(rotation_.y)};
+
+	// プレイヤーの向いている方向に武器を配置
+	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };
 	Vector3 weaponPosition = position_ - offset;
 
 	// Transform更新処理
@@ -59,10 +64,23 @@ void Weapon::DrawImGui() {
 	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
 	ImGui::SliderFloat3("Rotation", &rotation_.x, -10.0f, 10.0f);
 	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
+	ImGui::SliderFloat("Rotation Speed", &rotationSpeed_,0.0f,5.0f);
 	ImGui::End();
 }
 
-void Weapon::Attack() {}
+void Weapon::Attack() {
+	/*------攻撃時間をカウント------*/
+	attackTime_++;
+	/*------攻撃時間が最大値を超えたら攻撃を終了------*/
+	if (attackTime_ > attackMaxTime_) {
+		isAttack_ = false;
+		attackTime_ = 0;
+		attackRotationAngle_ = 0.0f;
+	} else {
+		/*------回転角度を更新------*/
+		attackRotationAngle_ += (2.0f * 3.14159265358979323846f * rotationSpeed_) / attackMaxTime_;
+	}
+}
 
 
 void Weapon::OnCollision(Collider* other) {}
