@@ -350,11 +350,11 @@ void Player::MoveToHook() {
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
-				angle -= angularSpeed * 0.016f;
+				angle += angularSpeed * 0.016f;
 
 			} else if (leftStick.x > 0.1f) {
 				// 左に移動
-				angle += angularSpeed * 0.016f;
+				angle -= angularSpeed * 0.016f;
 			}
 
 			// 新しい位置を計算
@@ -380,10 +380,10 @@ void Player::MoveToHook() {
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
-				angle -= angularSpeed * 0.016f;
+				angle += angularSpeed * 0.016f;
 			} else if (leftStick.x > 0.1f) {
 				// 左に移動
-				angle += angularSpeed * 0.016f;
+				angle -= angularSpeed * 0.016f;
 			}
 			// 新しい位置を計算
 			position_.x = hookEndPos_.x + radius * cos(angle);
