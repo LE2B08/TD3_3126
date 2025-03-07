@@ -12,12 +12,8 @@ Enemy::Enemy() {
 Enemy::~Enemy() {
 }
 
-void Enemy::Initialize() {
-
-	// ワールド変換の初期化
-	worldTransform_.Initialize();
-	//worldTransform_.translate_ = { 0.0f, 0.0f, 20.0f };
-
+void Enemy::Initialize()
+{
 	// オブジェクトの生成・初期化
 	objectEnemy_ = std::make_unique<Object3D>();
 	objectEnemy_->Initialize("sphere.gltf");
@@ -78,13 +74,6 @@ void Enemy::Update() {
 
 	// 向きを設定
 	worldTransform_.rotate_.y = direction;
-	// WorldTransformの更新
-	worldTransform_.Update();
-
-	// Object3Dの更新
-	objectEnemy_->SetRotate(worldTransform_.rotate_);
-	objectEnemy_->SetTranslate(worldTransform_.translate_);
-	objectEnemy_->Update();
 
 	// 弾の削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
@@ -108,10 +97,14 @@ void Enemy::Update() {
 	// ワイヤーフレームの処理
 	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, 10.0f, 32, { 1.0f, 1.0f, 1.0f,1.0f });
 
+	// Object3Dの更新
+	objectEnemy_->SetRotate(worldTransform_.rotate_);
+	objectEnemy_->SetTranslate(worldTransform_.translate_);
+	objectEnemy_->Update();
 }
 
-void Enemy::Draw() {
-
+void Enemy::Draw()
+{
 	// 描画
 	objectEnemy_->Draw();
 
@@ -167,15 +160,15 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-void Enemy::OnCollision(Collider* other) {}
+void Enemy::OnCollision(Collider* other)
+{
 
-Vector3 Enemy::GetCenterPosition() const {
+}
 
-	// ローカル座標でのオフセット
-	const Vector3 offset = { 0.0f, 1.5f, 0.0f };
-	// ワールド座標に変換
-	Vector3 worldPosition = Vector3::Transform(offset, worldTransform_.matWorld_);
-
+Vector3 Enemy::GetCenterPosition() const
+{
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
+	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 

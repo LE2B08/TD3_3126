@@ -50,6 +50,7 @@ void GamePlayScene::Initialize()
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
 }
 
 
@@ -130,7 +131,7 @@ void GamePlayScene::Draw()
 
 	field_->Draw();
 
-	//collisionManager_->Draw();
+	collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
 	//Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
@@ -174,6 +175,7 @@ void GamePlayScene::CheckAllCollisions()
 
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(enemy_.get());
 
 	// 複数について
 
