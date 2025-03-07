@@ -3,6 +3,9 @@
 #include "Wireframe.h"
 #include "imgui.h"
 
+#undef max
+#undef min
+
 void Player::Initialize() {
 	// オブジェクト3D
 	object3D_ = std::make_unique<Object3D>();
@@ -211,23 +214,27 @@ void Player::Attack() {
 
 void Player::HookThrow() {
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
-	float maxDistance = 50.0f;
+	maxDistance_ = 50.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
-	Vector3 direction = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	direction_ = Vector3{cos(rotation_.y), 0.0f, sin(rotation_.y)};
 	// フックの終了位置を計算
-	Vector3 potentialEndPos = position_ - direction * maxDistance;
+	Vector3 potentialEndPos = position_ - direction_ * maxDistance_;
 
 	// 壁に当たるまでの距離を計算
 	if (potentialEndPos.x < minMoveLimit_.x) {
-		potentialEndPos.x = minMoveLimit_.x;
+		maxDistance_ = std::min(maxDistance_, (position_.x - minMoveLimit_.x) / direction_.x);
 	} else if (potentialEndPos.x > maxMoveLimit_.x) {
-		potentialEndPos.x = maxMoveLimit_.x;
+		maxDistance_ = std::min(maxDistance_, (position_.x - maxMoveLimit_.x) / direction_.x);
 	}
 	if (potentialEndPos.z < minMoveLimit_.z) {
-		potentialEndPos.z = minMoveLimit_.z;
+		maxDistance_ = std::min(maxDistance_, (position_.z - minMoveLimit_.z) / direction_.z);
 	} else if (potentialEndPos.z > maxMoveLimit_.z) {
-		potentialEndPos.z = maxMoveLimit_.z;
+		maxDistance_ = std::min(maxDistance_, (position_.z - maxMoveLimit_.z) / direction_.z);
 	}
+
+	// フックの終了位置を再計算
+	potentialEndPos = position_ - direction_ * maxDistance_;
+
 	// フックの終了位置を設定
 	hookEndPos_ = potentialEndPos;
 	// フックの現在位置を開始位置に設定

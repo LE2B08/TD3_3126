@@ -117,6 +117,10 @@ private:
 	Vector3 hookAngularVelocity_;
 	//  フックのオブジェクト3D
 	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
+	//フックの方向
+	Vector3 direction_;
+	// フックの最大距離
+	float maxDistance_ = 50.0f;
 
 	// フックの状態を管理する変数
 	bool isHookActive_ = false;
