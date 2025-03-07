@@ -73,13 +73,16 @@ void Enemy::Update() {
 		break;
 	}
 
-	// 移動する
-	Move();
+	// Y軸回転のみ対応した向きを設定
+	const float direction = atan2(worldTransform_.translate_.z - player_->GetPosition().z, worldTransform_.translate_.x - player_->GetPosition().x);
 
+	// 向きを設定
+	worldTransform_.rotate_.y = direction;
 	// WorldTransformの更新
 	worldTransform_.Update();
 
 	// Object3Dの更新
+	objectEnemy_->SetRotate(worldTransform_.rotate_);
 	objectEnemy_->SetTranslate(worldTransform_.translate_);
 	objectEnemy_->Update();
 
@@ -131,9 +134,10 @@ void Enemy::Move() {
 void Enemy::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
+
+	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
-	ImGui::DragFloat3("LeaveDirection", &leaveDirection_.x, 0.01f);
 	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	// 状態の表示
@@ -166,6 +170,7 @@ void Enemy::ShowImGui(const char* name) {
 void Enemy::OnCollision(Collider* other) {}
 
 Vector3 Enemy::GetCenterPosition() const {
+
 	// ローカル座標でのオフセット
 	const Vector3 offset = { 0.0f, 1.5f, 0.0f };
 	// ワールド座標に変換
@@ -211,8 +216,9 @@ void Enemy::BehaviorAttackUpdate() {
 		// 弾の位置を設定
 		bullet->SetPosition(worldTransform_.translate_);
 
-		// プレイヤーとの向きを計算
+		// プレイヤーの位置を向きを設定
 		const Vector3 direction = player_->GetPosition() - worldTransform_.translate_;
+
 		// 弾に向きを設定
 		bullet->SetDirection(direction);
 
@@ -242,11 +248,8 @@ void Enemy::BehaviorLeaveInitialize() {
 	// プレイヤーの位置を取得
 	const Vector3 playerPosition = player_->GetPosition();
 
-	// プレイヤーとの向きを計算
-	const Vector3 direction = playerPosition - worldTransform_.translate_;
-
 	// 向きを180度回転
-	leaveDirection_ = -direction;
+	leaveDirection_ = -worldTransform_.rotate_;
 }
 
 void Enemy::BehaviorLeaveUpdate() {
@@ -254,8 +257,11 @@ void Enemy::BehaviorLeaveUpdate() {
 	// 速度に向きを設定
 	velocity_ = leaveDirection_ * 0.01f;
 
+	// プレイヤーの位置を向きを設定
+	const Vector3 direction = player_->GetPosition() - worldTransform_.translate_;
+
 	// プレイヤーとの距離を計算
-	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
+	const float distance = Vector3::Length(direction);
 
 	// 一定距離まで離れたら攻撃状態にする
 	if (distance > maxDistance_) {
