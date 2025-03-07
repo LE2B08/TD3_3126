@@ -8,6 +8,9 @@ EnemyBullet::~EnemyBullet() {
 
 void EnemyBullet::Initialize() {
 
+	isAlive_ = true;	
+	lifeFrame_ = 180;
+
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 
@@ -21,6 +24,13 @@ void EnemyBullet::Update() {
 
 	// 移動
 	Move();
+
+	if (lifeFrame_ > 0) {
+		lifeFrame_--;
+	}
+	else {
+		isAlive_ = false;
+	}
 
 	// WorldTransformの更新
 	worldTransform_.Update();

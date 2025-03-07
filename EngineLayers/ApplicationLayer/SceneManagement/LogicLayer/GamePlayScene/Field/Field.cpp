@@ -4,7 +4,7 @@
 
 void Field::Initialize() {
 
-	scale_ = { 8.0f,1.0f,8.0f };
+	scale_ = { 10.0f,1.0f,10.0f };
 	rotate_ = { 0.0f,0.0f,0.0f };
 	position_ = { 0.0f,0.0f,0.0f };
 }
