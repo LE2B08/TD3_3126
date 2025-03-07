@@ -11,7 +11,7 @@ void Player::Initialize() {
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("sphere.gltf");
 	// 位置
-	position_ = {0.0f, 0.0f, 0.0f};
+	position_ = {8.0f, 0.0f, 8.0f};
 	// 回転
 	rotation_ = {0.0f, 0.0f, 0.0f};
 	// スケール
@@ -28,11 +28,6 @@ void Player::Initialize() {
 	// 武器の初期化
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
-
-	worldTransform_.Initialize();
-	worldTransform_.translate_ = position_;
-	worldTransform_.rotate_ = rotation_;
-	worldTransform_.scale_ = scale_;
 }
 
 void Player::Update() {
@@ -83,13 +78,7 @@ void Player::Update() {
 
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
-	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
-
-	// WorldTransformの更新
-	worldTransform_.translate_ = position_;
-	worldTransform_.rotate_ = rotation_;
-	worldTransform_.scale_ = scale_;
-	worldTransform_.Update();
+	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);;
 
 	// 武器の更新処理
 
@@ -260,17 +249,14 @@ void Player::ExtendHook() {
 }
 
 void Player::OnCollision(Collider* other)
-{ 
-	
+{
+		
 }
 
 Vector3 Player::GetCenterPosition() const
 {
-	// ローカル座標でのオフセット
-	const Vector3 offset = { 0.0f,1.5f,0.0f };
-	// ワールド座標に変換
-	Vector3 worldPosition = Vector3::Transform(offset, worldTransform_.matWorld_);
-
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // プレイヤーの中心を考慮
+	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
 }
 

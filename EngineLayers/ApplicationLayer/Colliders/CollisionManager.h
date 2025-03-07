@@ -16,6 +16,9 @@ class CollisionManager
 {
 public: /// ---------- メンバ関数 ---------- ///
 
+	// 初期化処理
+	void Initialize();
+
 	// 更新処理
 	void Update();
 
@@ -35,6 +38,9 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	// コライダー2つの衝突判定と応答処理
 	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
+
+	// 球体同士の衝突判定
+	bool CheckSphereCollision(Collider* colliderA, Collider* colliderB);
 
 private: /// ---------- メンバ変数 ---------- ///
 
