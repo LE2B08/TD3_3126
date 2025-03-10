@@ -5,8 +5,12 @@
 #include <algorithm>
 #include <imgui.h>
 #include <Wireframe.h>
+#include "CollisionTypeIdDef.h"
+
 
 Enemy::Enemy() {
+	serialNumber_ = nextSerialNumber_;
+	nextSerialNumber_++;
 }
 
 Enemy::~Enemy() {
@@ -17,6 +21,8 @@ void Enemy::Initialize()
 	// オブジェクトの生成・初期化
 	objectEnemy_ = std::make_unique<Object3D>();
 	objectEnemy_->Initialize("sphere.gltf");
+
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
 }
 
 void Enemy::Update() {

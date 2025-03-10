@@ -67,6 +67,8 @@ public:
 	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
 	Weapon* GetWeapon() { return weapon_.get(); }
 
+	Hook* GetHook() { return hook_.get(); }
+
 private:
 	///============================
 	/// メンバ変数
