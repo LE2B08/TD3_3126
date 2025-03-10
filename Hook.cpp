@@ -12,6 +12,8 @@ void Hook::Initialize() {
 	isExtending_ = false;
 	isThrowing_ = false;
 
+	endPos_ = playerPosition_;
+
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 }
 void Hook::Update() {
@@ -118,10 +120,21 @@ void Hook::OnCollision(Collider* other) {
 	// フックがアクティブで、敵と衝突した場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
 		
+	// フックの終了位置を計算
+		//Vector3 enemyPosition = other->GetCenterPosition();
+		//direction_ = Vector3::Normalize(enemyPosition - playerPosition_);
+		//maxDistance_ = Vector3::Distance(playerPosition_, enemyPosition);
+		//potentialEndPos = playerPosition_ + direction_ * maxDistance_;
+
+		//// フックの終了位置を設定
+		//endPos_ = potentialEndPos;
+		//isActive_ = true;
+		//isThrowing_ = false;
 
 		ImGui::Begin("Hook");
 		ImGui::Text("EnemyHit");
 		ImGui::End();
+
 	}
 }
 

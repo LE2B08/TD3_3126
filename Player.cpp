@@ -377,7 +377,10 @@ void Player::Attack() {
 	}
 }
 
-void Player::OnCollision(Collider* other) {
+void Player::OnCollision(Collider* other) { 
+
+
+
 }
 
 Vector3 Player::GetCenterPosition() const
