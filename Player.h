@@ -1,14 +1,14 @@
 #pragma once
+#include "Collider.h"
+#include "Weapon.h"
 #include <Object3D.h>
-#include"Collider.h"
-#include"Weapon.h"
 
-class Player :public Collider {
+class Player : public Collider {
 public:
 	///============================
 	/// メンバ関数
-	/// 
-	
+	///
+
 	// 初期化処理
 	void Initialize();
 	// 更新処理
@@ -35,7 +35,6 @@ public:
 
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
-
 
 public:
 	///============================
@@ -65,14 +64,20 @@ public:
 	Vector3 GetAngularVelocity() const { return angularVelocity_; }
 	// 角速度の設定
 	void SetAngularVelocity(const Vector3& angularVelocity) { angularVelocity_ = angularVelocity; }
-
+	// カメラの設定
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
+	// 移動制限の設定
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
+	// Enemyの位置を取得
+	Vector3 GetEnemyPosition() const { return enemyPosition_; }
+	void SetEnemyPosition(const Vector3& enemyPosition) { enemyPosition_ = enemyPosition; }
 
+	// フックの状態を取得
 	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
+	// 武器の取得
 	Weapon* GetWeapon() { return weapon_.get(); }
 
 private:
@@ -99,13 +104,14 @@ private:
 
 	// 移動制限
 	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
+	Vector3 maxMoveLimit_ = {8.0f, 0.0f, 8.0f};
 	//  移動制限の最小値
-	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
+	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
 
 	///===========================
-	//フック
-	//  フックの開始位置
+	/// フック
+	///
+	//   フックの開始位置
 	Vector3 hookStartPos_;
 	//  フックの現在位置
 	Vector3 hookCurrentPos_;
@@ -123,7 +129,7 @@ private:
 	Vector3 hookAngularVelocity_;
 	//  フックのオブジェクト3D
 	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
-	//フックの方向
+	// フックの方向
 	Vector3 direction_;
 	// フックの最大距離
 	float maxDistance_ = 50.0f;
@@ -138,19 +144,23 @@ private:
 
 	// フックの移動速度
 
-	float hookSpeed_ = 5.0f; 
-	
+	float hookSpeed_ = 5.0f;
+
 	///===========================
 	/// 武器
-	/// 
-	
+	///
+
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
+	///===========================
+	/// 敵
+	///
+	Vector3 enemyPosition_ = {0.0f, 0.0f, 0.0f};
 
 	///============================
 	/// Debug
-	/// 
-	//デバッグフラグ
-	// デバッグモードになるとプレイヤーの移動ができるようになる
+	///
+	// デバッグフラグ
+	//  デバッグモードになるとプレイヤーの移動ができるようになる
 	bool isDebug_ = false;
 };
