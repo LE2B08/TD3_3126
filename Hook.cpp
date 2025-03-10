@@ -2,6 +2,8 @@
 #include "Input.h"
 #include "Wireframe.h"
 
+#include <imgui.h>
+
 #undef max
 #undef min
 
@@ -80,134 +82,6 @@ void Hook::Move() {
 		if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 			isActive_ = false;
 		}
-
-		///===================================
-		/// フック使用時の弧の移動
-		///
-
-		///
-		/// 壁の上辺
-		///
-		if (endPos_.z >= maxMoveLimit_.z) {
-			// フックの終点が上辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = playerPosition_ - endPos_;
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-
-			// 左スティックの入力に応じて角度を変更
-			if (leftStick.x < -0.1f) {
-				// 右に移動
-				angle -= angularSpeed * 0.016f;
-
-			}
-			else if (leftStick.x > 0.1f) {
-				// 左に移動
-				angle += angularSpeed * 0.016f;
-			}
-
-			// 新しい位置を計算
-			playerPosition_.x = endPos_.x + radius * cos(angle);
-			playerPosition_.z = endPos_.z + radius * sin(angle);
-		}
-
-		///
-		/// 壁の下辺
-		///
-		if (endPos_.z <= minMoveLimit_.z) {
-			// フックの終点が下辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = playerPosition_ - endPos_;
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-
-			// 左スティックの入力に応じて角度を変更
-			if (leftStick.x < -0.1f) {
-				// 右に移動
-				angle += angularSpeed * 0.016f;
-
-			}
-			else if (leftStick.x > 0.1f) {
-				// 左に移動
-				angle -= angularSpeed * 0.016f;
-			}
-
-			// 新しい位置を計算
-			playerPosition_.x = endPos_.x + radius * cos(angle);
-			playerPosition_.z = endPos_.z + radius * sin(angle);
-		}
-
-		///
-		/// 壁の左辺
-		///
-		if (endPos_.x <= minMoveLimit_.x) {
-			// フックの終点が左辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = playerPosition_ - endPos_;
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-			// 左スティックの入力に応じて角度を変更
-			if (leftStick.x < -0.1f) {
-				// 右に移動
-				angle += angularSpeed * 0.016f;
-			}
-			else if (leftStick.x > 0.1f) {
-				// 左に移動
-				angle -= angularSpeed * 0.016f;
-			}
-			// 新しい位置を計算
-			playerPosition_.x = endPos_.x + radius * cos(angle);
-			playerPosition_.z = endPos_.z + radius * sin(angle);
-		}
-
-		///
-		/// 壁の右辺
-		///
-		if (endPos_.x >= maxMoveLimit_.x) {
-			// フックの終点が右辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = playerPosition_ - endPos_;
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-			// 左スティックの入力に応じて角度を変更
-			if (leftStick.x < -0.1f) {
-				// 右に移動
-				angle -= angularSpeed * 0.016f;
-			}
-			else if (leftStick.x > 0.1f) {
-				// 左に移動
-				angle += angularSpeed * 0.016f;
-			}
-			// 新しい位置を計算
-			playerPosition_.x = endPos_.x + radius * cos(angle);
-			playerPosition_.z = endPos_.z + radius * sin(angle);
-		}
 	}
 }
 
@@ -226,6 +100,24 @@ void Hook::Extend() {
 }
 
 void Hook::OnCollision(Collider* other) {
+}
+
+void Hook::ShowImGui() {
+
+	ImGui::Begin("Hook");
+
+	ImGui::Checkbox("IsActive", &isActive_);
+	
+	ImGui::DragFloat3("StartPos", &startPos_.x, 0.1f);
+	ImGui::DragFloat3("CurrentPos", &currentPos_.x, 0.1f);
+	ImGui::DragFloat3("EndPos", &endPos_.x, 0.1f);
+	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
+	ImGui::DragFloat3("Acceleration", &acceleration_.x, 0.1f);
+	ImGui::DragFloat3("AngularVelocity", &angularVelocity_.x, 0.1f);
+	ImGui::DragFloat3("Direction", &direction_.x, 0.1f);
+	ImGui::DragFloat("MaxDistance", &maxDistance_, 0.1f);
+
+	ImGui::End();
 }
 
 Vector3 Hook::GetCenterPosition() const {

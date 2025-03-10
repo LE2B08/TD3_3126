@@ -31,6 +31,8 @@ public:
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
+	void ShowImGui();
+
 ///-------------------------------------------/// 
 /// ゲッター & セッター
 ///-------------------------------------------///
@@ -82,7 +84,7 @@ private:
 	Vector3 direction_;
 
 	// 速さ
-	const float speed_ = 0.5f;
+	const float speed_ = 5.0f;
 
 	// 最大距離
 	float maxDistance_ = 50.0f;
