@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "Enemy/Enemy.h"
 #include "Field/Field.h"
+#include "Weapon.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -72,4 +73,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// フィールド
 	std::unique_ptr<Field> field_;
+
+	// 武器
+	Weapon* weapon_;
 };
