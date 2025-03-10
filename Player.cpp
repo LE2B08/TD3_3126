@@ -386,3 +386,6 @@ Vector3 Player::GetCenterPosition() const
 	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
 }
+
+void Player::CheckAllCollisions(Enemy* enemy) {
+}
