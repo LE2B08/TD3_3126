@@ -69,37 +69,37 @@ private: /// ---------- メンバ関数・テンプレート関数 ---------- //
 	template <typename T>
 	inline T CalculateValue(const std::vector<Keyframe<T>>& keyframes, float time)
 	{
-		assert(!keyframes.empty()); // キーがないものは返す値が分からないのでダメ
-		if (keyframes.size() == 1 || time <= keyframes[0].time) // キーが１つか、時刻がキーフレーム前なら最初の値とする
-		{
-			return keyframes[0].value;
-		}
+		//assert(!keyframes.empty()); // キーがないものは返す値が分からないのでダメ
+		//if (keyframes.size() == 1 || time <= keyframes[0].time) // キーが１つか、時刻がキーフレーム前なら最初の値とする
+		//{
+		//	return keyframes[0].value;
+		//}
 
-		// 
-		for (size_t index = 0; index < keyframes.size() - 1; ++index)
-		{
-			size_t nextIndex = index + 1;
-			// indexとnextIndexの2つのkeyframeを取得して範囲内に自国があるかを判定
-			if (keyframes[index].time <= time && time <= keyframes[nextIndex].time)
-			{
-				// 範囲内を保管する
-				float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
-				if constexpr (std::is_same_v<T, Vector3>)
-				{
-					// T が Vector3 の場合のみ Lerp を使用
-					return Vector3::Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
-				}
-				else if constexpr (std::is_same_v<T, Quaternion>)
-				{
-					// T が Quaternion の場合のみ Slerp を使用
-					return Quaternion::Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
-				}
-				else
-				{
-					static_assert(false, "Unsupported type for interpolation");
-				}
-			}
-		}
+		//// 
+		//for (size_t index = 0; index < keyframes.size() - 1; ++index)
+		//{
+		//	size_t nextIndex = index + 1;
+		//	// indexとnextIndexの2つのkeyframeを取得して範囲内に自国があるかを判定
+		//	if (keyframes[index].time <= time && time <= keyframes[nextIndex].time)
+		//	{
+		//		// 範囲内を保管する
+		//		float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
+		//		if constexpr (std::is_same_v<T, Vector3>)
+		//		{
+		//			// T が Vector3 の場合のみ Lerp を使用
+		//			return Vector3::Lerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		//		}
+		//		else if constexpr (std::is_same_v<T, Quaternion>)
+		//		{
+		//			// T が Quaternion の場合のみ Slerp を使用
+		//			return Quaternion::Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
+		//		}
+		//		else
+		//		{
+		//			static_assert(false, "Unsupported type for interpolation");
+		//		}
+		//	}
+		//}
 		// ここまでできた場合は一番後の時刻よりも後ろなので最後の値を返すことにする
 		return (*keyframes.rbegin()).value;
 	}

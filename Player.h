@@ -2,6 +2,8 @@
 #include <Object3D.h>
 #include"Collider.h"
 #include"Weapon.h"
+#include "CollisionManager.h"
+#include "Enemy/Enemy.h"
 
 class Player :public Collider {
 public:
@@ -30,6 +32,7 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+	void CheckAllCollisions(Enemy* enemy);
 
 public:
 	///============================
@@ -147,4 +150,7 @@ private:
 	//デバッグフラグ
 	// デバッグモードになるとプレイヤーの移動ができるようになる
 	bool isDebug_ = false;
+
+	/*------当たり判定マネージャ------*/
+	std::unique_ptr<CollisionManager> collisionManager_;
 };

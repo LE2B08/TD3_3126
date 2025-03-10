@@ -100,6 +100,8 @@ void GamePlayScene::Update()
 
 	field_->Update();
 	
+	weapon_ = player_->GetWeapon();
+
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 	player_->Update();
@@ -109,6 +111,7 @@ void GamePlayScene::Update()
 	collisionManager_->Update();
 	// 衝突判定と応答
 	CheckAllCollisions();
+	player_->CheckAllCollisions(enemy_.get());
 }
 
 
@@ -176,7 +179,7 @@ void GamePlayScene::CheckAllCollisions()
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(enemy_.get());
-
+	
 	// 複数について
 
 	// 衝突判定と応答

@@ -28,6 +28,10 @@ void Player::Initialize() {
 	// 武器の初期化
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
+
+	// 衝突マネージャの生成
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
 }
 
 void Player::Update() {
@@ -89,6 +93,8 @@ void Player::Update() {
 	object3D_->SetRotate(rotation_);
 	object3D_->SetScale(scale_);
 	object3D_->Update();
+
+	collisionManager_->Update();
 }
 
 void Player::Draw() {
@@ -97,6 +103,8 @@ void Player::Draw() {
 
 	// 武器の描画
 	weapon_->Draw();
+
+	collisionManager_->Draw();
 
 	// Hookの描画
 	Wireframe::GetInstance()->DrawLine(hookStartPos_, hookEndPos_, {1.0f, 1.0f, 1.0f, 1.0f});
@@ -263,6 +271,25 @@ Vector3 Player::GetCenterPosition() const
 	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
 }
+void Player::CheckAllCollisions(Enemy* enemy)
+{
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(weapon_.get());
+	collisionManager_->AddCollider(enemy);
+
+	// 複数について
+
+	// 攻撃中の場合
+	if (weapon_->GetIsAttack())
+	{
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+	}
+}
+
 void Player::MoveToHook() {
 	// フックの方向ベクトルを計算
 	Vector3 direction = hookEndPos_ - position_;
