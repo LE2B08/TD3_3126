@@ -43,6 +43,12 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+	// シリアルナンバーを取得
+	uint32_t GetSerialNumber() const { return serialNumber_; }
+
+	// シリアルナンバーを設定
+	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
+
 	///-------------------------------------------/// 
 	/// 行動別処理
 	///-------------------------------------------///
@@ -147,5 +153,10 @@ private:
 	uint32_t attackCount_ = 0;
 
 	const float maxDistance_ = 10.0f;
+
+	// シリアルナンバー
+	uint32_t serialNumber_ = 0;
+	// 次のシリアルナンバー
+	uint32_t nextSerialNumber_;
 };
 

@@ -56,15 +56,6 @@ void Player::Update() {
 
 #endif // DEBUG
 
-	// フックにプレイヤーの向きと位置を与える
-	hook_->SetPlayerRotation(rotation_);
-	hook_->SetPlayerPosition(position_);
-	hook_->SetMinMoveLimit(minMoveLimit_);
-	hook_->SetMaxMoveLimit(maxMoveLimit_);
-
-	// フックの更新処理
-	hook_->Update();
-
 	// フックを投げるボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(9)) {
 		hook_->Throw();
@@ -89,8 +80,17 @@ void Player::Update() {
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);;
 
-	// 武器の更新処理
+	// フックの更新処理
+	hook_->SetPlayerRotation(rotation_);
+	hook_->SetPlayerPosition(position_);
+	hook_->SetMinMoveLimit(minMoveLimit_);
+	hook_->SetMaxMoveLimit(maxMoveLimit_);
 
+	// フックの更新処理
+	hook_->Update();
+
+
+	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
 	weapon_->SetPlayerRotation(rotation_);
 	weapon_->SetPlayerScale(scale_);
@@ -143,7 +143,7 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
 	ImGui::End();
 
-	//hook_->ShowImGui();
+	hook_->ShowImGui();
 }
 void Player::Move() {
 

@@ -151,6 +151,7 @@ void TuboScene::CheckAllCollisions() {
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(player_->GetWeapon());
+	collisionManager_->AddCollider(player_->GetHook());
 	collisionManager_->AddCollider(enemy_.get());
 
 

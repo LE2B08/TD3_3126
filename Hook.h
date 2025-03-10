@@ -1,6 +1,8 @@
 #pragma once
 #include "Collider.h"
 #include "Object3D.h"
+#include "GamePlayScene/Enemy/Enemy.h"
+
 
 /// === フック === ///
 class Hook : public Collider {
@@ -30,6 +32,11 @@ public:
 
 	// 衝突判定
 	void OnCollision(Collider* other) override;
+	
+	// 中心座標を取得する純粋仮想関数
+	Vector3 GetCenterPosition() const override;
+
+	
 
 	void ShowImGui();
 
@@ -54,8 +61,7 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-	// 中心座標を取得する純粋仮想関数
-	Vector3 GetCenterPosition() const override;
+	
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -107,5 +113,15 @@ private:
 
 	// プレイヤーの位置
 	Vector3 playerPosition_ = { 0.0f, 0.0f, 0.0f };
+
+	bool isMoving_ = false;
+
+	Vector3 potentialEndPos;
+
+	// 敵のリスト
+	std::vector<Enemy*> enemies_;
+
+	// 新しいフラグ
+	bool isThrowing_;
 };
 
