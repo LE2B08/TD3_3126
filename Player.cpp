@@ -391,5 +391,24 @@ Vector3 Player::GetCenterPosition() const
 	return worldPosition;
 }
 
-void Player::CheckAllCollisions(Enemy* enemy) {
+void Player::CheckAllCollisions() {
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(weapon_.get());
+	collisionManager_->AddCollider(enemy_);
+
+	// 複数について
+
+	// 攻撃中の場合
+	if (weapon_->GetIsAttack())
+	{
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+		if (enemy_->GetIsHit()) {
+			enemy_->HitParticle();
+			//enemy_->SetIsHit(false);
+		}
+	}
 }
