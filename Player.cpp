@@ -30,6 +30,10 @@ void Player::Initialize() {
 	// 武器の初期化
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
+
+	// 衝突マネージャの生成
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
 }
 
 void Player::Update() {
@@ -97,6 +101,8 @@ void Player::Update() {
 	object3D_->SetRotate(rotation_);
 	object3D_->SetScale(scale_);
 	object3D_->Update();
+
+	collisionManager_->Update();
 }
 
 void Player::Draw() {
@@ -109,6 +115,8 @@ void Player::Draw() {
 
 	// 武器の描画
 	weapon_->Draw();
+
+	collisionManager_->Draw();
 
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
@@ -182,7 +190,7 @@ void Player::Move() {
 	///================
 	/// プレイヤーのフック使用時の移動処理
 	///
-	
+
 	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
 	if (hook_->GetIsActive()) {
 		// フックの方向ベクトルを計算
