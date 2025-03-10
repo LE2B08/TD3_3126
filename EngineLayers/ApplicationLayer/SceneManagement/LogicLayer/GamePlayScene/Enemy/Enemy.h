@@ -47,8 +47,16 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+
 	// ヒット時のパーティクル
 	void HitParticle();
+
+	// シリアルナンバーを取得
+	uint32_t GetSerialNumber() const { return serialNumber_; }
+
+	// シリアルナンバーを設定
+	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
+
 
 	///-------------------------------------------/// 
 	/// 行動別処理
@@ -162,6 +170,7 @@ private:
 
 	const float maxDistance_ = 10.0f;
 
+
 	/*------パーティクル------*/
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
 
@@ -173,5 +182,11 @@ private:
 
 	/*------ヒットの最大時間------*/
 	float hitMaxTime_ = 2.0f;
+
+	// シリアルナンバー
+	uint32_t serialNumber_ = 0;
+	// 次のシリアルナンバー
+	uint32_t nextSerialNumber_;
+
 };
 
