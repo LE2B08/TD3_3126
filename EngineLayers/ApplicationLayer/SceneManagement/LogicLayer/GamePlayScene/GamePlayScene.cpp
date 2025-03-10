@@ -51,6 +51,9 @@ void GamePlayScene::Initialize()
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	
+	
 }
 
 
@@ -104,6 +107,7 @@ void GamePlayScene::Update()
 
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+	player_->SetEnemy(enemy_.get());
 	player_->Update();
 
 	enemy_->Update();
@@ -111,7 +115,7 @@ void GamePlayScene::Update()
 	collisionManager_->Update();
 	// 衝突判定と応答
 	CheckAllCollisions();
-	player_->CheckAllCollisions(enemy_.get());
+	player_->CheckAllCollisions();
 }
 
 

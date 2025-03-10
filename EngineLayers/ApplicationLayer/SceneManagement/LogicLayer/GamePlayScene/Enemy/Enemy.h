@@ -3,10 +3,14 @@
 #include "Collider.h"
 #include <memory>
 #include <optional>
+#include "ParticleEmitter.h"
+#include "ParticleManager.h"
+#include "TextureManager.h"
 
 /// ===== 前方宣言 ===== ///
 class Player;
 class EnemyBullet;
+class ParticleManager;
 
 /// === 敵 === ///
 class Enemy :public Collider {
@@ -43,11 +47,16 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+
+	// ヒット時のパーティクル
+	void HitParticle();
+
 	// シリアルナンバーを取得
 	uint32_t GetSerialNumber() const { return serialNumber_; }
 
 	// シリアルナンバーを設定
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
+
 
 	///-------------------------------------------/// 
 	/// 行動別処理
@@ -91,6 +100,11 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 
+	/*------ヒットの取得、セット------*/
+	void SetIsHit(bool isHit) { isHit_ = isHit; }
+
+	bool GetIsHit() const { return isHit_; }
+
 	///-------------------------------------------/// 
 	/// 列挙
 	///-------------------------------------------///
@@ -126,6 +140,8 @@ private:
 	// 加速度の最大値
 	float accelerationLimit_ = 0.01f;
 
+	ParticleManager* particleManager_ = nullptr;
+
 	// プレイヤー
 	Player* player_;
 
@@ -154,9 +170,23 @@ private:
 
 	const float maxDistance_ = 10.0f;
 
+
+	/*------パーティクル------*/
+	std::unique_ptr<ParticleEmitter> particleEmitter_;
+
+	/*------ヒットフラグ------*/
+	bool isHit_ = false;
+
+	/*------ヒットの時間------*/
+	float hitTime_ = 0.0f;
+
+	/*------ヒットの最大時間------*/
+	float hitMaxTime_ = 2.0f;
+
 	// シリアルナンバー
 	uint32_t serialNumber_ = 0;
 	// 次のシリアルナンバー
 	uint32_t nextSerialNumber_;
+
 };
 

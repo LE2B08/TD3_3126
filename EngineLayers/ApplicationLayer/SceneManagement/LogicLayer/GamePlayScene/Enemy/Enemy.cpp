@@ -22,7 +22,18 @@ void Enemy::Initialize()
 	objectEnemy_ = std::make_unique<Object3D>();
 	objectEnemy_->Initialize("sphere.gltf");
 
+	particleManager_ = ParticleManager::GetInstance();
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("EnemyHitParticles", "Resources/uvChecker.png");
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
+	hitTime_ = 0;
+
+
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
+
 }
 
 void Enemy::Update() {
@@ -99,6 +110,14 @@ void Enemy::Update() {
 	for (auto& bullet : bullets_) {
 		bullet->Update();
 	}
+	if (isHit_) {
+		hitTime_++;
+		if (hitTime_ >= hitMaxTime_)
+		{
+			isHit_ = false;
+			hitTime_ = 0;
+		}
+	}
 
 	// ワイヤーフレームの処理
 	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, 10.0f, 32, { 1.0f, 1.0f, 1.0f,1.0f });
@@ -137,6 +156,7 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	// 状態の表示
@@ -168,7 +188,8 @@ void Enemy::ShowImGui(const char* name) {
 
 void Enemy::OnCollision(Collider* other)
 {
-
+	isHit_ = true;
+	
 }
 
 Vector3 Enemy::GetCenterPosition() const
@@ -176,6 +197,18 @@ Vector3 Enemy::GetCenterPosition() const
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
+}
+
+void Enemy::HitParticle()
+{
+	// エネミーの中心位置を取得
+	Vector3 enemyCenter = GetCenterPosition();
+
+	// パーティクルエミッターの位置をエネミーの中心に設定
+	particleEmitter_->SetPosition(enemyCenter);
+	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	// パーティクルを生成
+	particleEmitter_->Update(1.0f/60.0f); // deltaTime は 0 で呼び出し
 }
 
 void Enemy::BehaviorNormalInitialize() {

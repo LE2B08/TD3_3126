@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Wireframe.h"
 #include "imgui.h"
+#include "ParticleManager.h"
 
 #undef max
 #undef min
@@ -34,6 +35,9 @@ void Player::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "EnemyHitParticles");
 }
 
 void Player::Update() {
