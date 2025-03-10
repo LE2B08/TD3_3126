@@ -1,7 +1,8 @@
 #pragma once
 #include <Object3D.h>
 #include"Collider.h"
-#include"Weapon.h"
+#include "Hook.h"
+#include "Weapon.h"
 
 class Player :public Collider {
 public:
@@ -17,12 +18,6 @@ public:
 	void Move();
 	// 攻撃処理
 	void Attack();
-	// フックの投げる処理
-	void HookThrow();
-	// フックの更新処理
-	void MoveToHook();
-	// フックの元の位置に戻る処理
-	void ExtendHook();
 
 	// 衝突判定
 	void OnCollision(Collider* other) override;
@@ -97,47 +92,10 @@ private:
 	//  移動制限の最小値
 	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
 
-	///===========================
-	//フック
-	//  フックの開始位置
-	Vector3 hookStartPos_;
-	//  フックの現在位置
-	Vector3 hookCurrentPos_;
-	//  フックの終了位置
-	Vector3 hookEndPos_ = {};
-	//  フックの回転
-	Vector3 hookRotation_;
-	//  フックのスケール
-	Vector3 hookScale_;
-	//  フックの速度
-	Vector3 hookVelocity_;
-	//  フックの加速度
-	Vector3 hookAcceleration_;
-	//  フックの角速度
-	Vector3 hookAngularVelocity_;
-	//  フックのオブジェクト3D
-	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
-	//フックの方向
-	Vector3 direction_;
-	// フックの最大距離
-	float maxDistance_ = 50.0f;
-
-	// フックの状態を管理する変数
-	bool isHookActive_ = false;
-	// フックが伸びているかどうか
-	bool isHookExtending_ = false;
-
-	// フックの開始時間
-	std::chrono::time_point<std::chrono::steady_clock> hookStartTime_;
-
-	// フックの移動速度
-
-	float hookSpeed_ = 5.0f; 
+	// フック
+	std::unique_ptr<Hook> hook_ = nullptr;
 	
-	///===========================
-	/// 武器
-	/// 
-	
+	// 武器
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
 
