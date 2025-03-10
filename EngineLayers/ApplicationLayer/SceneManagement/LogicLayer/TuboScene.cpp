@@ -36,6 +36,10 @@ void TuboScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
+	// skydome
+	/*skyDome_ = std::make_unique<SkyDome>();
+	skyDome_->Initialize();*/
+
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 
@@ -83,6 +87,8 @@ void TuboScene::Update()
 
 	field_->Update();
 
+	//skyDome_->Update();
+
 
 	player_->SetCamera(camera_);
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
@@ -111,6 +117,8 @@ void TuboScene::Draw()
 
 	field_->Draw();
 
+	//skyDome_->Draw();
+
 	collisionManager_->Draw();
 
 }
@@ -133,6 +141,7 @@ void TuboScene::DrawImGui()
 	player_->DrawImGui(); 
 	enemy_->ShowImGui("Enemy");
 	field_->ShowImGui("Field");
+	//skyDome_->DrawImGui();
 
 	ImGui::Begin("Camera");
 	ImGui::DragFloat3("Position", &cameraPos_.x, 0.1f, -100.0f, 100.0f);

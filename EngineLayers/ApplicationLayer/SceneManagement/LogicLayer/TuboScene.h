@@ -9,6 +9,7 @@
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "GamePlayScene/Field/Field.h"
 #include "CollisionManager.h"
+#include"SkyDome.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -68,5 +69,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// フィールド
 	std::unique_ptr<Field> field_;
+
+	// SkyDome
+	std::unique_ptr<SkyDome> skyDome_;
 };
 
