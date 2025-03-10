@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Wireframe.h"
 #include "imgui.h"
+#include "ParticleManager.h"
 
 #undef max
 #undef min
@@ -32,6 +33,9 @@ void Player::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "EnemyHitParticles");
 }
 
 void Player::Update() {
@@ -271,14 +275,14 @@ Vector3 Player::GetCenterPosition() const
 	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
 }
-void Player::CheckAllCollisions(Enemy* enemy)
+void Player::CheckAllCollisions()
 {
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(weapon_.get());
-	collisionManager_->AddCollider(enemy);
+	collisionManager_->AddCollider(enemy_);
 
 	// 複数について
 
@@ -287,7 +291,12 @@ void Player::CheckAllCollisions(Enemy* enemy)
 	{
 		// 衝突判定と応答
 		collisionManager_->CheckAllCollisions();
+		if (enemy_->GetIsHit()) {
+			enemy_->HitParticle();
+			//enemy_->SetIsHit(false);
+		}
 	}
+
 }
 
 void Player::MoveToHook() {

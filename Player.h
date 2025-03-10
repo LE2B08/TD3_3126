@@ -4,6 +4,7 @@
 #include"Weapon.h"
 #include "CollisionManager.h"
 #include "Enemy/Enemy.h"
+#include <ParticleEmitter.h>
 
 class Player :public Collider {
 public:
@@ -32,7 +33,7 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
-	void CheckAllCollisions(Enemy* enemy);
+	void CheckAllCollisions();
 
 public:
 	///============================
@@ -71,6 +72,8 @@ public:
 
 	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
 	Weapon* GetWeapon() { return weapon_.get(); }
+
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
 private:
 	///============================
@@ -153,4 +156,10 @@ private:
 
 	/*------当たり判定マネージャ------*/
 	std::unique_ptr<CollisionManager> collisionManager_;
+
+	/*------パーティクル------*/
+	std::unique_ptr<ParticleEmitter> particleEmitter_;
+
+	/*------敵------*/
+	Enemy* enemy_;
 };
