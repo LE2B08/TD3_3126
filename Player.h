@@ -8,10 +8,16 @@ public:
 	///============================
 	/// メンバ関数
 	/// 
+	
+	// 初期化処理
 	void Initialize();
+	// 更新処理
 	void Update();
+	// 描画処理
 	void Draw();
+	// 終了処理
 	void Finalize();
+	// ImGui描画処理
 	void DrawImGui();
 	// 移動処理
 	void Move();
