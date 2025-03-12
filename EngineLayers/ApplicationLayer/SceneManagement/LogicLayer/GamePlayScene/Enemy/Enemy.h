@@ -105,6 +105,9 @@ public:
 
 	bool GetIsHit() const { return isHit_; }
 
+	/*------弾の取得------*/
+	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
 	///-------------------------------------------/// 
 	/// 列挙
 	///-------------------------------------------///
@@ -181,7 +184,7 @@ private:
 	float hitTime_ = 0.0f;
 
 	/*------ヒットの最大時間------*/
-	float hitMaxTime_ = 2.0f;
+	float hitMaxTime_ = 60.0f;
 
 	// シリアルナンバー
 	uint32_t serialNumber_ = 0;
