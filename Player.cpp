@@ -12,18 +12,18 @@ void Player::Initialize() {
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("sphere.gltf");
 	// 位置
-	position_ = {8.0f, 0.0f, 8.0f};
+	position_ = { 8.0f, 0.0f, 8.0f };
 	// 回転
-	rotation_ = {0.0f, 0.0f, 0.0f};
+	rotation_ = { 0.0f, 0.0f, 0.0f };
 	// スケール
-	scale_ = {1.0f, 1.0f, 1.0f};
+	scale_ = { 1.0f, 1.0f, 1.0f };
 	// 速度
-	velocity_ = {0.0f, 0.0f, 0.0f};
+	velocity_ = { 0.0f, 0.0f, 0.0f };
 	// 加速度
-	acceleration_ = {0.0f, 0.0f, 0.0f};
+	acceleration_ = { 0.0f, 0.0f, 0.0f };
 	// 角速度
-	angularVelocity_ = {0.0f, 0.0f, 0.0f};
-	
+	angularVelocity_ = { 0.0f, 0.0f, 0.0f };
+
 	// フックの生成 初期化
 	hook_ = std::make_unique<Hook>();
 	hook_->Initialize();
@@ -49,7 +49,8 @@ void Player::Update() {
 		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
 			isDebug_ = true;
 		}
-	} else {
+	}
+	else {
 		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
 			isDebug_ = false;
 		}
@@ -62,12 +63,11 @@ void Player::Update() {
 
 	// フックを投げるボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(9)) {
-		hook_->SetState(State::Throw);
-	}
 
-	// フックを引っ込めるボタンを押した瞬間
-	if (Input::GetInstance()->TriggerButton(15)) {
-		hook_->SetState(State::Pull);
+		if (hook_->GetState() == State::Idle) {
+
+			hook_->SetState(State::Throw);
+		}
 	}
 
 	// 移動処理
@@ -118,9 +118,9 @@ void Player::Draw() {
 	collisionManager_->Draw();
 
 	// プレイヤーの向きを示す線を描画
-	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
+	Vector3 direction = { cos(rotation_.y), 0.0f, sin(rotation_.y) };
 	Vector3 endPos = position_ + -direction * 5.0f;                                  // 5.0fは線の長さ
-	Wireframe::GetInstance()->DrawLine(position_, endPos, {0.0f, 1.0f, 0.0f, 1.0f}); // 緑色の線
+	Wireframe::GetInstance()->DrawLine(position_, endPos, { 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色の線
 }
 
 void Player::Finalize() {}
@@ -160,24 +160,29 @@ void Player::Move() {
 			acceleration_.x = Input::GetInstance()->GetLeftStick().x * 0.01f;
 			acceleration_.z = Input::GetInstance()->GetLeftStick().y * 0.01f;
 
-		} else {
+		}
+		else {
 			// コントローラーが接続されてないとき
 
 			// WとSキーでプレイヤーを上下に移動
 			if (Input::GetInstance()->PushKey(DIK_W)) {
 				acceleration_.z = 0.005f;
-			} else if (Input::GetInstance()->PushKey(DIK_S)) {
+			}
+			else if (Input::GetInstance()->PushKey(DIK_S)) {
 				acceleration_.z = -0.005f;
-			} else {
+			}
+			else {
 
 				acceleration_.z = 0.0f;
 			}
 			// AとDキーでプレイヤーを左右に移動
 			if (Input::GetInstance()->PushKey(DIK_A)) {
 				acceleration_.x = -0.005f;
-			} else if (Input::GetInstance()->PushKey(DIK_D)) {
+			}
+			else if (Input::GetInstance()->PushKey(DIK_D)) {
 				acceleration_.x = 0.005f;
-			} else {
+			}
+			else {
 				acceleration_.x = 0.0f;
 			}
 		}
@@ -198,24 +203,20 @@ void Player::Move() {
 		// フックの方向ベクトルを計算
 		Vector3 direction = hook_->GetEndPos() - position_;
 		float distance = Vector3::Length(direction);
-		
+
 		// フックの位置に到達したらフックを非アクティブにする
 		if (distance < hook_->GetSpeed() * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
 			position_ = hook_->GetEndPos();
-			hook_->SetIsActive(false);
 		}
 		else {
 			// フックの方向に向かって移動
-			direction.Normalize(direction);
-			Vector3 newPosition = hook_->GetStartPos(); + direction * hook_->GetSpeed() * 0.016f; // 0.016fは1フレームの時間（約60FPS）
-		
-			// 壁に触れたらそれ以上ポジションを追加しない
-			if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
-				hook_->SetIsActive(false);
-			}
-			else {
-				position_ = newPosition;
-			}
+			Vector3::Normalize(direction);
+			Vector3 newPosition = hook_->GetStartPos(); +direction * hook_->GetSpeed() * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+			// 壁より内側になるようにクランプする
+			newPosition.x = std::clamp(newPosition.x, minMoveLimit_.x, maxMoveLimit_.x);
+			newPosition.z = std::clamp(newPosition.z, minMoveLimit_.z, maxMoveLimit_.z);
+			position_ = newPosition;
 		}
 
 		///===================================
@@ -257,7 +258,7 @@ void Player::Move() {
 		if (hook_->GetEndPos().z <= minMoveLimit_.z) {
 
 			// フックの終点が下辺にある場合の弧の移動処理
-			
+
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
@@ -275,7 +276,7 @@ void Player::Move() {
 		if (hook_->GetEndPos().x <= minMoveLimit_.x) {
 
 			// フックの終点が左辺にある場合の弧の移動処理
-			
+
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
@@ -293,7 +294,7 @@ void Player::Move() {
 		if (hook_->GetEndPos().x >= maxMoveLimit_.x) {
 
 			// フックの終点が右辺にある場合の弧の移動処理
-			
+
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
@@ -322,7 +323,8 @@ void Player::Move() {
 	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
-	} else {
+	}
+	else {
 	}
 	// 右スティックの向きを優先
 
@@ -347,8 +349,7 @@ void Player::Attack() {
 void Player::OnCollision(Collider* other) {
 }
 
-Vector3 Player::GetCenterPosition() const
-{
+Vector3 Player::GetCenterPosition() const {
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // プレイヤーの中心を考慮
 	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
@@ -365,8 +366,7 @@ void Player::CheckAllCollisions() {
 	// 複数について
 
 	// 攻撃中の場合
-	if (weapon_->GetIsAttack())
-	{
+	if (weapon_->GetIsAttack()) {
 		// 衝突判定と応答
 		collisionManager_->CheckAllCollisions();
 		if (enemy_->GetIsHit()) {

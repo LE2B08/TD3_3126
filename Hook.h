@@ -79,6 +79,8 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
+	State GetState() { return state_; }
+
 	void SetState(State state) { requestState_ = state; }
 
 	///-------------------------------------------/// 

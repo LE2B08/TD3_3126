@@ -17,7 +17,7 @@ void Hook::Update() {
 
 	// 状態がリクエストされていたら
 	if (requestState_) {
-		
+
 		// 状態を変更
 		state_ = requestState_.value();
 
@@ -163,7 +163,7 @@ void Hook::ThrowUpdate() {
 	if (distance < speed_ * 0.016f) {
 		endPos_ = potentialEndPos;
 		isActive_ = true;
-		requestState_ = State::Idle; // 待機状態にする
+		requestState_ = State::Pull; // 引っ張り可能状態にする
 	}
 	else {
 		Vector3::Normalize(moveDirection);
@@ -188,8 +188,11 @@ void Hook::PullUpdate() {
 		requestState_ = State::Idle; // 待機状態にする
 	}
 	else {
-		Vector3::Normalize(moveDirection);
-		startPos_ += moveDirection * speed_ * 0.016f;
+
+		if (Input::GetInstance()->PushButton(15)) {
+			Vector3::Normalize(moveDirection);
+			startPos_ += moveDirection * speed_ * 0.016f;
+		}
 	}
 }
 
