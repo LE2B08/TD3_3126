@@ -32,6 +32,10 @@ void Hook::Update() {
 			PullInitialize();
 			break;
 
+		case State::Back:
+			BackInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -49,6 +53,10 @@ void Hook::Update() {
 
 	case State::Pull:
 		PullUpdate();
+		break;
+
+	case State::Back:
+		BackUpdate();
 		break;
 
 	default:
@@ -194,6 +202,12 @@ void Hook::PullUpdate() {
 			startPos_ += moveDirection * speed_ * 0.016f;
 		}
 	}
+}
+
+void Hook::BackInitialize() {
+}
+
+void Hook::BackUpdate() {
 }
 
 Vector3 Hook::GetCenterPosition() const {

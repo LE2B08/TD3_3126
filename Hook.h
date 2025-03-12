@@ -10,6 +10,7 @@ enum class State {
 	Idle,  // 待機
 	Throw, // 投げる
 	Pull,  // 引っ張る
+	Back,  // 戻す
 };
 
 /// === フック === ///
@@ -53,6 +54,12 @@ public:
 
 	// 引っ張る更新
 	void PullUpdate();
+
+	// 戻す初期化
+	void BackInitialize();
+
+	// 戻す更新
+	void BackUpdate();
 
 	///-------------------------------------------/// 
 	/// ゲッター & セッター
