@@ -3,13 +3,21 @@
 #include "Object3D.h"
 #include "GamePlayScene/Enemy/Enemy.h"
 
+#include <optional>
+
+enum class State {
+
+	Idle,  // 待機
+	Throw, // 投げる
+	Pull,  // 引っ張る
+};
 
 /// === フック === ///
 class Hook : public Collider {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	// 初期化処理
@@ -21,37 +29,47 @@ public:
 	// 描画処理
 	void Draw();
 
-	// 投げる処理
-	void Throw();
-
-	// 移動処理
-	void Move();
-
-	// 元の位置に戻る処理
-	void Extend();
-
 	// 衝突判定
 	void OnCollision(Collider* other) override;
-	
+
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
-	
-
+	// ImGui表示
 	void ShowImGui();
 
-///-------------------------------------------/// 
-/// ゲッター & セッター
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// 状態別の処理
+	///-------------------------------------------///
+	
+	// 投げる初期化
+	void ThrowInitialize();
+	
+	// 投げる更新
+	void ThrowUpdate();
+
+	// 引っ張る初期化
+	void PullInitialize();
+
+	// 引っ張る更新
+	void PullUpdate();
+
+	///-------------------------------------------/// 
+	/// ゲッター & セッター
+	///-------------------------------------------///
 public:
 
 	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
 
 	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
-	
+
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
 
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+
+	Vector3 GetStartPos() { return startPos_; }
+
+	void SetStartPos(Vector3 startPos) { startPos_ = startPos; }
 
 	Vector3 GetEndPos() { return endPos_; }
 
@@ -61,11 +79,11 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-	
+	void SetState(State state) { requestState_ = state; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	// 開始位置
@@ -90,7 +108,7 @@ private:
 	Vector3 direction_;
 
 	// 速さ
-	const float speed_ = 5.0f;
+	const float speed_ = 2.0f;
 
 	// 最大距離
 	float maxDistance_ = 50.0f;
@@ -100,8 +118,6 @@ private:
 
 	// アクティブかどうか
 	bool isActive_ = false;
-	// 伸びているかどうか
-	bool isExtending_ = false;
 
 	//  移動制限の最大値
 	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
@@ -114,14 +130,15 @@ private:
 	// プレイヤーの位置
 	Vector3 playerPosition_ = { 0.0f, 0.0f, 0.0f };
 
-	bool isMoving_ = false;
-
 	Vector3 potentialEndPos;
 
 	// 敵のリスト
 	std::vector<Enemy*> enemies_;
 
-	// 新しいフラグ
-	bool isThrowing_;
+	// 状態
+	State state_ = State::Idle;
+
+	// 状態リクエスト
+	std::optional<State> requestState_ = std::nullopt;
 };
 

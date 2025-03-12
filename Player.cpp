@@ -62,16 +62,12 @@ void Player::Update() {
 
 	// フックを投げるボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(9)) {
-		hook_->Throw();
-	}
-	// フックを投げるボタンを押している間
-	if (hook_->GetIsActive()) {
-		hook_->Extend();
+		hook_->SetState(State::Throw);
 	}
 
-	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
-	if (hook_->GetIsActive()) {
-		hook_->Move();
+	// フックを引っ込めるボタンを押した瞬間
+	if (Input::GetInstance()->TriggerButton(15)) {
+		hook_->SetState(State::Pull);
 	}
 
 	// 移動処理
@@ -93,7 +89,6 @@ void Player::Update() {
 	// フックの更新処理
 	hook_->Update();
 
-
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
 	weapon_->SetPlayerRotation(rotation_);
@@ -112,7 +107,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 描画処理
-	object3D_->Draw();
+	//object3D_->Draw();
 
 	// フックの描画
 	hook_->Draw();
@@ -195,12 +190,15 @@ void Player::Move() {
 	/// プレイヤーのフック使用時の移動処理
 	///
 
+	position_ = hook_->GetStartPos();
+
 	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
 	if (hook_->GetIsActive()) {
+
 		// フックの方向ベクトルを計算
 		Vector3 direction = hook_->GetEndPos() - position_;
 		float distance = Vector3::Length(direction);
-
+		
 		// フックの位置に到達したらフックを非アクティブにする
 		if (distance < hook_->GetSpeed() * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
 			position_ = hook_->GetEndPos();
@@ -209,8 +207,8 @@ void Player::Move() {
 		else {
 			// フックの方向に向かって移動
 			direction.Normalize(direction);
-			Vector3 newPosition = position_ + direction * hook_->GetSpeed() * 0.016f; // 0.016fは1フレームの時間（約60FPS）
-
+			Vector3 newPosition = hook_->GetStartPos(); + direction * hook_->GetSpeed() * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+		
 			// 壁に触れたらそれ以上ポジションを追加しない
 			if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 				hook_->SetIsActive(false);
@@ -224,87 +222,60 @@ void Player::Move() {
 		/// フック使用時の弧の移動
 		///
 
+		// フックの終点から中心へのベクトルを計算
+		Vector3 toCenter = position_ - hook_->GetEndPos();
+		// フックの終点から中心までの距離を計算
+		float radius = toCenter.Length(toCenter);
+		// フックの終点から中心までの角度を計算
+		float angle = atan2(toCenter.z, toCenter.x);
+		float angularSpeed = 3.0f; // 角速度（調整可能）
+
+		// 左スティックの入力を取得
+		Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+
 		///
 		/// 壁の上辺
 		///
 		if (hook_->GetEndPos().z >= maxMoveLimit_.z) {
-			// フックの終点が上辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = position_ - hook_->GetEndPos();
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
 
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+			// フックの終点が上辺にある場合の弧の移動処理
 
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
 				angle -= angularSpeed * 0.016f;
-
 			}
 			else if (leftStick.x > 0.1f) {
 				// 左に移動
 				angle += angularSpeed * 0.016f;
 			}
-
-			// 新しい位置を計算
-			position_.x = hook_->GetEndPos().x + radius * cos(angle);
-			position_.z = hook_->GetEndPos().z + radius * sin(angle);
 		}
 
 		///
 		/// 壁の下辺
 		///
 		if (hook_->GetEndPos().z <= minMoveLimit_.z) {
+
 			// フックの終点が下辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = position_ - hook_->GetEndPos();
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-
+			
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
 				angle += angularSpeed * 0.016f;
-
 			}
 			else if (leftStick.x > 0.1f) {
 				// 左に移動
 				angle -= angularSpeed * 0.016f;
 			}
-
-			// 新しい位置を計算
-			position_.x = hook_->GetEndPos().x + radius * cos(angle);
-			position_.z = hook_->GetEndPos().z + radius * sin(angle);
 		}
 
 		///
 		/// 壁の左辺
 		///
 		if (hook_->GetEndPos().x <= minMoveLimit_.x) {
+
 			// フックの終点が左辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = position_ - hook_->GetEndPos();
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+			
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
@@ -314,26 +285,15 @@ void Player::Move() {
 				// 左に移動
 				angle -= angularSpeed * 0.016f;
 			}
-			// 新しい位置を計算
-			position_.x = hook_->GetEndPos().x + radius * cos(angle);
-			position_.z = hook_->GetEndPos().z + radius * sin(angle);
 		}
 
 		///
 		/// 壁の右辺
 		///
 		if (hook_->GetEndPos().x >= maxMoveLimit_.x) {
+
 			// フックの終点が右辺にある場合の弧の移動処理
-			//
-			// フックの終点から中心へのベクトルを計算
-			Vector3 toCenter = position_ - hook_->GetEndPos();
-			// フックの終点から中心までの距離を計算
-			float radius = toCenter.Length(toCenter);
-			// フックの終点から中心までの角度を計算
-			float angle = atan2(toCenter.z, toCenter.x);
-			float angularSpeed = 3.0f; // 角速度（調整可能）
-			// 左スティックの入力を取得
-			Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+			
 			// 左スティックの入力に応じて角度を変更
 			if (leftStick.x < -0.1f) {
 				// 右に移動
@@ -343,10 +303,13 @@ void Player::Move() {
 				// 左に移動
 				angle += angularSpeed * 0.016f;
 			}
-			// 新しい位置を計算
-			position_.x = hook_->GetEndPos().x + radius * cos(angle);
-			position_.z = hook_->GetEndPos().z + radius * sin(angle);
 		}
+
+		// 新しい位置を計算
+		position_.x = hook_->GetEndPos().x + radius * cos(angle);
+		position_.z = hook_->GetEndPos().z + radius * sin(angle);
+
+		hook_->SetStartPos(position_);
 	}
 
 	///================
