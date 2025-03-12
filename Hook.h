@@ -90,7 +90,7 @@ private:
 	Vector3 direction_;
 
 	// 速さ
-	const float speed_ = 5.0f;
+	float speed_ = 5.0f;
 
 	// 最大距離
 	float maxDistance_ = 50.0f;

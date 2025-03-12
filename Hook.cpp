@@ -44,7 +44,9 @@ void Hook::Draw() {
 }
 
 void Hook::Throw() {
-
+	if (isActive_) {
+		return;
+	}
 	if (enemyHit_) {
 		hookToEnemyHitBeforeThrow_ = true;
 	} else {
@@ -169,6 +171,7 @@ void Hook::ShowImGui() {
 	ImGui::DragFloat3("AngularVelocity", &angularVelocity_.x, 0.1f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.1f);
 	ImGui::DragFloat("MaxDistance", &maxDistance_, 0.1f);
+	ImGui::DragFloat("Speed", &speed_, 0.1f);
 
 	ImGui::End();
 }

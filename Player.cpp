@@ -59,10 +59,10 @@ void Player::Update() {
 #endif // DEBUG
 
 	hookToEnemyHit_ = hook_->GetEnemyHit();
-	
+
 	// フックを投げるボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(9)) {
-		
+
 		hook_->Throw();
 	}
 	// フックを投げるボタンを押している間
@@ -87,7 +87,7 @@ void Player::Update() {
 	;
 
 	// フックの更新処理
-	
+
 	hook_->SetPlayerRotation(rotation_);
 	hook_->SetPlayerPosition(position_);
 	hook_->SetMinMoveLimit(minMoveLimit_);
@@ -162,8 +162,8 @@ void Player::Move() {
 	if (!hookToEnemyHit_) {
 
 		///===================================
-		///壁
-		/// 
+		/// 壁
+		///
 
 		if (hook_->GetIsActive()) {
 			// フックの方向ベクトルを計算
@@ -313,8 +313,8 @@ void Player::Move() {
 		}
 	} else {
 		///===============
-		///Enemy
-		/// 
+		/// Enemy
+		///
 
 		if (hook_->GetIsActive()) {
 			// フックの方向ベクトルを計算
@@ -341,7 +341,7 @@ void Player::Move() {
 			///===================================
 			/// フック使用時の弧の移動
 			///
-			/// 
+			///
 			if (hook_->GetEnemyHit()) {
 				// フックの終点がエネミーにある場合の弧の移動処理
 				//
@@ -366,9 +366,7 @@ void Player::Move() {
 				position_.x = hook_->GetEndPos().x + radius * cos(angle);
 				position_.z = hook_->GetEndPos().z + radius * sin(angle);
 			}
-
 		}
-	
 	}
 
 	///================
