@@ -61,7 +61,7 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-	
+	bool GetEnemyHit() { return enemyHit_; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -123,5 +123,13 @@ private:
 
 	// 新しいフラグ
 	bool isThrowing_;
+
+	Vector3 enemyHitPosition_; // 敵に当たった位置を保存するメンバ変数
+	bool enemyHit_;            // 敵に当たったかどうかを示すフラグ
+	float distanceToEnemy;     // 敵に当たったときの距離を保存するメンバ変数
+
+	// フックを投げる前に敵に当たったかどうか
+	bool hookToEnemyHitBeforeThrow_ = false;
+
 };
 

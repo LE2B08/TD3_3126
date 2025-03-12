@@ -108,9 +108,12 @@ private:
 	/// Debug
 	/// 
 	//デバッグフラグ
-	// デバッグモードになるとプレイヤーの移動ができるようになる
+	// デバッグモードになると今は特にない
 	bool isDebug_ = false;
 
 	/*------当たり判定マネージャ------*/
 	std::unique_ptr<CollisionManager> collisionManager_;
+	// フックが敵に当たったかどうか
+	bool hookToEnemyHit_ = false;
+	
 };
