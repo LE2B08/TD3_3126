@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "CollisionManager.h"
 #include "Enemy/Enemy.h"
+#include <ParticleManager.h>
 #include <ParticleEmitter.h>
 
 class Player :public Collider {
@@ -29,6 +30,9 @@ public:
 	Vector3 GetCenterPosition() const override;
 
 	void CheckAllCollisions();
+
+	/*------ヒット時のパーティクル------*/
+	void HitParticle();
 
 public:
 	///============================
@@ -118,8 +122,18 @@ private:
 	std::unique_ptr<CollisionManager> collisionManager_;
 
 	/*------パーティクル------*/
+	ParticleManager* particleManager_;
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
 
 	/*------敵------*/
 	Enemy* enemy_;
+
+	/*------ヒット判定------*/
+	bool isHit_ = false;
+
+	/*------ヒットの時間------*/
+	float hitTime_ = 0.0f;
+
+	/*------ヒットの最大時間------*/
+	float hitMaxTime_ = 2.0f;
 };

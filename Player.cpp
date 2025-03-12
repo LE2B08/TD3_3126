@@ -36,8 +36,17 @@ void Player::Initialize() {
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 
+	// パーティクルマネージャの生成
+	particleManager_ = ParticleManager::GetInstance();
+
+	// テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("PlayerHitParticles", "Resources/uvChecker.png");
+
 	// パーティクルエミッターの初期化
-	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "EnemyHitParticles");
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "PlayerHitParticles");
 }
 
 void Player::Update() {
@@ -348,6 +357,16 @@ void Player::Move() {
 			position_.z = hook_->GetEndPos().z + radius * sin(angle);
 		}
 	}
+	/*------ヒット時の処理------*/
+	if (isHit_) {
+		HitParticle();
+		hitTime_++;
+		if (hitTime_ >= hitMaxTime_)
+		{
+			isHit_ = false;
+			hitTime_ = 0;
+		}
+	}
 
 	///================
 	/// プレイヤーの回転処理
@@ -382,6 +401,7 @@ void Player::Attack() {
 }
 
 void Player::OnCollision(Collider* other) {
+	isHit_ = true;
 }
 
 Vector3 Player::GetCenterPosition() const
@@ -411,4 +431,16 @@ void Player::CheckAllCollisions() {
 			//enemy_->SetIsHit(false);
 		}
 	}
+}
+
+void Player::HitParticle()
+{
+	// エネミーの中心位置を取得
+	Vector3 playerCenter = GetCenterPosition();
+
+	// パーティクルエミッターの位置をエネミーの中心に設定
+	particleEmitter_->SetPosition(playerCenter);
+	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	// パーティクルを生成
+	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
 }

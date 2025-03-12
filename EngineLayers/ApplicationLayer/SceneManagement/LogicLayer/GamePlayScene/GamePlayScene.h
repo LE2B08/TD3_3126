@@ -12,6 +12,7 @@
 #include "Enemy/Enemy.h"
 #include "Field/Field.h"
 #include "Weapon.h"
+#include "Enemy/EnemyBullet.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -76,4 +77,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 武器
 	Weapon* weapon_;
+
+	// 敵の弾
+	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;
 };
