@@ -7,10 +7,11 @@
 
 enum class State {
 
-	Idle,  // 待機
-	Throw, // 投げる
-	Pull,  // 引っ張る
-	Back,  // 戻す
+	Idle,   // 待機
+	Throw,  // 投げる
+	Extend, // 伸びてる
+	Pull,   // 引っ張る
+	Back,   // 戻す
 };
 
 /// === フック === ///
@@ -43,11 +44,23 @@ public:
 	/// 状態別の処理
 	///-------------------------------------------///
 	
+	// 待機時の初期化
+	void IdleInitialize();
+
+	// 待機時の更新
+	void IdleUpdate();
+
 	// 投げる初期化
 	void ThrowInitialize();
 	
 	// 投げる更新
 	void ThrowUpdate();
+
+	// 伸びてる初期化
+	void ExtendInitialize();
+
+	// 伸びてる更新
+	void ExtendUpdate();
 
 	// 引っ張る初期化
 	void PullInitialize();
@@ -86,10 +99,6 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-	State GetState() { return state_; }
-
-	void SetState(State state) { requestState_ = state; }
-
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -97,9 +106,6 @@ private:
 
 	// 開始位置
 	Vector3 startPos_;
-
-	// 現在位置
-	Vector3 currentPos_;
 
 	// 終了位置
 	Vector3 endPos_ = {};

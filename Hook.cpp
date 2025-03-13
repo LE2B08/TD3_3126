@@ -24,8 +24,16 @@ void Hook::Update() {
 		// 状態ごとの初期化
 		switch (state_) {
 
+		case State::Idle:
+			IdleInitialize();
+			break;
+
 		case State::Throw:
 			ThrowInitialize();
+			break;
+
+		case State::Extend:
+			ExtendInitialize();
 			break;
 
 		case State::Pull:
@@ -47,8 +55,16 @@ void Hook::Update() {
 	// 状態ごとの更新
 	switch (state_) {
 
+	case State::Idle:
+		IdleUpdate();
+		break;
+
 	case State::Throw:
 		ThrowUpdate();
+		break;
+
+	case State::Extend:
+		ExtendUpdate();
 		break;
 
 	case State::Pull:
@@ -108,8 +124,16 @@ void Hook::ShowImGui() {
 		ImGui::Text("State: Throw");
 		break;
 
+	case State::Extend:
+		ImGui::Text("State: Extend");
+		break;
+
 	case State::Pull:
 		ImGui::Text("State: Pull");
+		break;
+
+	case State::Back:
+		ImGui::Text("State: Back");
 		break;
 
 	default:
@@ -117,6 +141,19 @@ void Hook::ShowImGui() {
 	}
 
 	ImGui::End();
+}
+
+void Hook::IdleInitialize() {
+}
+
+void Hook::IdleUpdate() {
+
+	// RBを押したら
+	if (Input::GetInstance()->TriggerButton(9)) {
+
+		// フックを投げる
+		requestState_ = State::Throw;
+	}
 }
 
 void Hook::ThrowInitialize() {
@@ -153,8 +190,6 @@ void Hook::ThrowInitialize() {
 	// フックの終了位置を再計算
 	potentialEndPos = playerPosition_ - direction_ * maxDistance_;
 
-	// フックの現在位置を開始位置に設定
-	currentPos_ = startPos_;
 	// フックの開始時間を記録
 	startTime_ = std::chrono::steady_clock::now();
 	// フックを投げるフラグを設定
@@ -162,6 +197,13 @@ void Hook::ThrowInitialize() {
 }
 
 void Hook::ThrowUpdate() {
+
+	// RBを押したら
+	if (Input::GetInstance()->TriggerButton(9)) {
+
+		// フックを戻す
+		requestState_ = State::Back;
+	}
 
 	// フックの方向ベクトルを計算
 	Vector3 moveDirection = potentialEndPos - endPos_;
@@ -171,7 +213,7 @@ void Hook::ThrowUpdate() {
 	if (distance < speed_ * 0.016f) {
 		endPos_ = potentialEndPos;
 		isActive_ = true;
-		requestState_ = State::Pull; // 引っ張り可能状態にする
+		requestState_ = State::Extend; // 伸びてる状態にする
 	}
 	else {
 		Vector3::Normalize(moveDirection);
@@ -179,11 +221,37 @@ void Hook::ThrowUpdate() {
 	}
 }
 
-void Hook::PullInitialize() {
+void Hook::ExtendInitialize() {
+}
 
+void Hook::ExtendUpdate() {
+
+	// RBを押したら
+	if (Input::GetInstance()->TriggerButton(9)) {
+
+		// フックを戻す
+		requestState_ = State::Back;
+	}
+
+	// RTを押したら
+	if (Input::GetInstance()->TriggerButton(15)) {
+
+		// フックを投げる
+		requestState_ = State::Pull;
+	}
+}
+
+void Hook::PullInitialize() {
 }
 
 void Hook::PullUpdate() {
+
+	// RBを押したら
+	if (Input::GetInstance()->TriggerButton(9)) {
+
+		// フックを戻す
+		requestState_ = State::Back;
+	}
 
 	// 始点を終点へ徐々に近づける
 	Vector3 moveDirection = endPos_ - startPos_;
@@ -208,6 +276,21 @@ void Hook::BackInitialize() {
 }
 
 void Hook::BackUpdate() {
+
+	// フックの方向ベクトルを計算
+	Vector3 moveDirection = startPos_ - endPos_;
+	float distance = Vector3::Length(moveDirection);
+
+	// 終了位置に到達したらフラグを更新
+	if (distance < speed_ * 0.016f) {
+		endPos_ = startPos_;
+		isActive_ = true;
+		requestState_ = State::Idle; // 待機状態にする
+	}
+	else {
+		Vector3::Normalize(moveDirection);
+		endPos_ += moveDirection * speed_ * 0.016f;
+	}
 }
 
 Vector3 Hook::GetCenterPosition() const {

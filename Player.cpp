@@ -61,15 +61,6 @@ void Player::Update() {
 
 #endif // DEBUG
 
-	// フックを投げるボタンを押した瞬間
-	if (Input::GetInstance()->TriggerButton(9)) {
-
-		if (hook_->GetState() == State::Idle) {
-
-			hook_->SetState(State::Throw);
-		}
-	}
-
 	// 移動処理
 	Move();
 
@@ -107,7 +98,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 描画処理
-	//object3D_->Draw();
+	object3D_->Draw();
 
 	// フックの描画
 	hook_->Draw();
