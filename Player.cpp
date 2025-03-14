@@ -154,6 +154,7 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
 	ImGui::Text("AngularVelocity");
 	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::End();
 
 	hook_->ShowImGui();
@@ -401,7 +402,9 @@ void Player::Attack() {
 }
 
 void Player::OnCollision(Collider* other) {
-	isHit_ = true;
+	if (!weapon_->GetIsAttack()) {
+		isHit_ = true;
+	}
 }
 
 Vector3 Player::GetCenterPosition() const
@@ -427,8 +430,7 @@ void Player::CheckAllCollisions() {
 		// 衝突判定と応答
 		collisionManager_->CheckAllCollisions();
 		if (enemy_->GetIsHit()) {
-			enemy_->HitParticle();
-			//enemy_->SetIsHit(false);
+			enemy_->SetIsHitFromAttack(true);
 		}
 	}
 }

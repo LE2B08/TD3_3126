@@ -105,6 +105,8 @@ public:
 
 	bool GetIsHit() const { return isHit_; }
 
+	void SetIsHitFromAttack(bool isHitFromAttack) { isHitFromAttack_ = isHitFromAttack; }
+
 	/*------弾の取得------*/
 	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
@@ -179,6 +181,9 @@ private:
 
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
+
+	/*------プレイヤーの攻撃によるヒット------*/
+	bool isHitFromAttack_ = false;
 
 	/*------ヒットの時間------*/
 	float hitTime_ = 0.0f;
