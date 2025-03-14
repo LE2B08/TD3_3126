@@ -18,6 +18,8 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
+	//回転処理
+	void Rotate();
 	// 攻撃処理
 	void Attack();
 
@@ -115,5 +117,7 @@ private:
 	std::unique_ptr<CollisionManager> collisionManager_;
 	// フックが敵に当たったかどうか
 	bool hookToEnemyHit_ = false;
+	// フックが敵に当たる前に投げたかどうか
+	bool isWindingTheHook=false;
 	
 };

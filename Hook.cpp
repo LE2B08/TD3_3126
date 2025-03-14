@@ -11,7 +11,6 @@ void Hook::Initialize() {
 	// フックの初期化
 	isExtending_ = false;
 	isThrowing_ = false;
-	playerPosition_ = endPos_ = playerPosition_;
 
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 }

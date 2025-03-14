@@ -75,8 +75,24 @@ void Player::Update() {
 		hook_->Move();
 	}
 
-	// 移動処理
-	Move();
+	if (Input::GetInstance()->TriggerButton(8)) {
+		//フックの巻取りを有効
+		isWindingTheHook = true;
+	}
+
+	if (isWindingTheHook) {
+		// フックの巻取りを行う
+		// 移動処理
+		Move();
+	}
+
+	if (!hook_->GetIsActive()) {
+		isWindingTheHook = false;
+	}
+
+	
+	//回転処理
+	Rotate();
 
 	// 攻撃処理
 	Attack();
@@ -333,6 +349,7 @@ void Player::Move() {
 				// 壁に触れたらそれ以上ポジションを追加しない
 				if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 					hook_->SetIsActive(false);
+					isWindingTheHook = false;
 				} else {
 					position_ = newPosition;
 				}
@@ -369,18 +386,7 @@ void Player::Move() {
 		}
 	}
 
-	///================
-	/// プレイヤーの回転処理
-	///
-
-	// プレイヤーの向きを左スティックの向きにする
-
-	// 右スティックの入力があるとき
-	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
-		// プレイヤーの向きを変える
-		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
-	} else {
-	}
+	
 	// 右スティックの向きを優先
 
 	// プレイヤーの移動処理
@@ -401,6 +407,23 @@ void Player::Move() {
 	// 減速処理
 	const float friction = 0.98f; // 摩擦係数
 	velocity_ *= friction;
+}
+
+void Player::Rotate() {
+
+	///================
+	/// プレイヤーの回転処理
+	///
+
+	// プレイヤーの向きを左スティックの向きにする
+
+	// 右スティックの入力があるとき
+	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
+		// プレイヤーの向きを変える
+		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
+	} else {
+	}
+
 }
 
 void Player::Attack() {
