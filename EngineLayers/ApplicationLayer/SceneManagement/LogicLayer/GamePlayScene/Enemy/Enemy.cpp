@@ -38,73 +38,75 @@ void Enemy::Initialize()
 
 void Enemy::Update() {
 	if (!isHit_) {
-		// 状態の変更がリクエストされている場合
-		if (requestBehavior_) {
+		if (!isHitFromAttack_) {
+			// 状態の変更がリクエストされている場合
+			if (requestBehavior_) {
 
-			// 状態を変更する
-			behavior_ = requestBehavior_.value();
+				// 状態を変更する
+				behavior_ = requestBehavior_.value();
 
-			// 状態ごとの初期化を行う
+				// 状態ごとの初期化を行う
+				switch (behavior_) {
+
+				case Enemy::Behavior::Normal:
+					BehaviorNormalInitialize();
+					break;
+
+				case Enemy::Behavior::Attack:
+					BehaviorAttackInitialize();
+					break;
+
+				case Enemy::Behavior::Leave:
+					BehaviorLeaveInitialize();
+					break;
+
+				default:
+					break;
+				}
+
+				// リクエストをクリア
+				requestBehavior_ = std::nullopt;
+			}
+
+			// 状態ごとの更新を行う
 			switch (behavior_) {
 
 			case Enemy::Behavior::Normal:
-				BehaviorNormalInitialize();
+				BehaviorNormalUpdate();
 				break;
 
 			case Enemy::Behavior::Attack:
-				BehaviorAttackInitialize();
+				BehaviorAttackUpdate();
 				break;
 
 			case Enemy::Behavior::Leave:
-				BehaviorLeaveInitialize();
+				BehaviorLeaveUpdate();
 				break;
 
 			default:
 				break;
 			}
 
-			// リクエストをクリア
-			requestBehavior_ = std::nullopt;
+			// Y軸回転のみ対応した向きを設定
+			const float direction = atan2(worldTransform_.translate_.z - player_->GetPosition().z, worldTransform_.translate_.x - player_->GetPosition().x);
+
+			// 向きを設定
+			worldTransform_.rotate_.y = direction;
+
+			// 弾の削除
+			bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+
+				// 弾が死んでいる場合
+				if (!bullet->IsAlive()) {
+
+					// リセット
+					bullet.reset();
+					return true;
+				}
+
+				return false;
+				});
 		}
-
-		// 状態ごとの更新を行う
-		switch (behavior_) {
-
-		case Enemy::Behavior::Normal:
-			BehaviorNormalUpdate();
-			break;
-
-		case Enemy::Behavior::Attack:
-			BehaviorAttackUpdate();
-			break;
-
-		case Enemy::Behavior::Leave:
-			BehaviorLeaveUpdate();
-			break;
-
-		default:
-			break;
-		}
-
-		// Y軸回転のみ対応した向きを設定
-		const float direction = atan2(worldTransform_.translate_.z - player_->GetPosition().z, worldTransform_.translate_.x - player_->GetPosition().x);
-
-		// 向きを設定
-		worldTransform_.rotate_.y = direction;
-
-		// 弾の削除
-		bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-
-			// 弾が死んでいる場合
-			if (!bullet->IsAlive()) {
-
-				// リセット
-				bullet.reset();
-				return true;
-			}
-
-			return false;
-			});
 	}
 	// 弾の更新
 	for (auto& bullet : bullets_) {
@@ -112,12 +114,19 @@ void Enemy::Update() {
 	}
 	/*------ヒット時の処理------*/
 	if (isHit_) {
-		hitTime_++;
-		// タイマーが最大値に達したらヒットフラグをオフにする
-		if (hitTime_ >= hitMaxTime_)
-		{
+		if (isHitFromAttack_) {
+			// ヒット時のパーティクルを生成
+			HitParticle();
+			hitTime_++;
+			// タイマーが最大値に達したらヒットフラグをオフにする
+			if (hitTime_ >= hitMaxTime_)
+			{
+				isHit_ = false;
+				isHitFromAttack_ = false;
+				hitTime_ = 0;
+			}
+		} else {
 			isHit_ = false;
-			hitTime_ = 0;
 		}
 	}
 
@@ -132,7 +141,7 @@ void Enemy::Update() {
 
 void Enemy::Draw()
 {
-	if (!isHit_) {
+	if (!isHitFromAttack_) {
 		// 描画
 		objectEnemy_->Draw();
 	}
@@ -160,8 +169,9 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
+	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
 	ImGui::Text("HitTime : %f", hitTime_);
-	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_,0.0f,600.0f);
+	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
 	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	// 状態の表示
@@ -194,7 +204,7 @@ void Enemy::ShowImGui(const char* name) {
 void Enemy::OnCollision(Collider* other)
 {
 	isHit_ = true;
-	
+
 }
 
 Vector3 Enemy::GetCenterPosition() const
@@ -213,7 +223,7 @@ void Enemy::HitParticle()
 	particleEmitter_->SetPosition(enemyCenter);
 	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
-	particleEmitter_->Update(1.0f/60.0f); // deltaTime は 0 で呼び出し
+	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
 }
 
 void Enemy::BehaviorNormalInitialize() {
@@ -267,8 +277,7 @@ void Enemy::BehaviorAttackUpdate() {
 
 		// 攻撃間隔をリセット
 		attackInterval_ = 300;
-	}
-	else {
+	} else {
 
 		// 攻撃間隔を減らす
 		attackInterval_--;

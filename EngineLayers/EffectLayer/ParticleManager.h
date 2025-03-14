@@ -155,7 +155,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 描画数
 	const uint32_t kNumMaxInstance = 128;
 
-	bool useBillboard = false;
+	bool useBillboard = true;
 
 	bool isWind = false;
 
