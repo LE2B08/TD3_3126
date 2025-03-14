@@ -45,12 +45,17 @@ void GamePlayScene::Initialize()
 	enemy_->Initialize();
 	enemy_->SetPlayer(player_.get());
 
+	enemyBullets_ = &enemy_->GetBullets();
+
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	
+	
 }
 
 
@@ -104,6 +109,7 @@ void GamePlayScene::Update()
 
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+	player_->SetEnemy(enemy_.get());
 	player_->Update();
 
 	enemy_->Update();
@@ -111,7 +117,7 @@ void GamePlayScene::Update()
 	collisionManager_->Update();
 	// 衝突判定と応答
 	CheckAllCollisions();
-	player_->CheckAllCollisions(enemy_.get());
+	player_->CheckAllCollisions();
 }
 
 
@@ -173,6 +179,7 @@ void GamePlayScene::DrawImGui()
 /// -------------------------------------------------------------
 void GamePlayScene::CheckAllCollisions()
 {
+	/*------プレイヤーと敵------*/
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
@@ -180,7 +187,22 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(enemy_.get());
 	
+	
 	// 複数について
+
+	// 衝突判定と応答
+	collisionManager_->CheckAllCollisions();
+
+	/*------プレイヤーと敵の弾------*/
+
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(player_.get());
+	for (const auto& bullet : *enemyBullets_) {
+		collisionManager_->AddCollider(bullet.get());
+	}
 
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();

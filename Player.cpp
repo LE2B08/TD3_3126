@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Wireframe.h"
 #include "imgui.h"
+#include "ParticleManager.h"
 
 #undef max
 #undef min
@@ -36,6 +37,18 @@ void Player::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// パーティクルマネージャの生成
+	particleManager_ = ParticleManager::GetInstance();
+
+	// テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("PlayerHitParticles", "Resources/uvChecker.png");
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "PlayerHitParticles");
 }
 
 void Player::Update() {
@@ -147,6 +160,7 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
 	ImGui::Text("AngularVelocity");
 	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::End();
 
 	hook_->ShowImGui();
@@ -370,6 +384,16 @@ void Player::Move() {
 		}
 	
 	}
+	/*------ヒット時の処理------*/
+	if (isHit_) {
+		HitParticle();
+		hitTime_++;
+		if (hitTime_ >= hitMaxTime_)
+		{
+			isHit_ = false;
+			hitTime_ = 0;
+		}
+	}
 
 	///================
 	/// プレイヤーの回転処理
@@ -414,7 +438,12 @@ void Player::Attack() {
 	}
 }
 
-void Player::OnCollision(Collider* other) {}
+
+void Player::OnCollision(Collider* other) {
+	if (!weapon_->GetIsAttack()) {
+		isHit_ = true;
+	}
+
 
 Vector3 Player::GetCenterPosition() const {
 	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
@@ -422,4 +451,36 @@ Vector3 Player::GetCenterPosition() const {
 	return worldPosition;
 }
 
-void Player::CheckAllCollisions(Enemy* enemy) {}
+void Player::CheckAllCollisions() {
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(weapon_.get());
+	collisionManager_->AddCollider(enemy_);
+
+	// 複数について
+
+	// 攻撃中の場合
+	if (weapon_->GetIsAttack())
+	{
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+		if (enemy_->GetIsHit()) {
+			enemy_->SetIsHitFromAttack(true);
+		}
+	}
+}
+
+void Player::HitParticle()
+{
+	// エネミーの中心位置を取得
+	Vector3 playerCenter = GetCenterPosition();
+
+	// パーティクルエミッターの位置をエネミーの中心に設定
+	particleEmitter_->SetPosition(playerCenter);
+	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	// パーティクルを生成
+	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+}
+
