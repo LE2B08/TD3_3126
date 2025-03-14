@@ -443,6 +443,7 @@ void Player::OnCollision(Collider* other) {
 	if (!weapon_->GetIsAttack()) {
 		isHit_ = true;
 	}
+}
 
 
 Vector3 Player::GetCenterPosition() const {
