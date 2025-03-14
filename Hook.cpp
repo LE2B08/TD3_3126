@@ -11,10 +11,64 @@ void Hook::Initialize() {
 	// フックの初期化
 	isExtending_ = false;
 	isThrowing_ = false;
+	// フックの位置を初期化
+	endPos_ = playerPosition_;
 
+	// フックのコライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 }
 void Hook::Update() {
+
+
+	// 状態の変更がリクエストされている場合
+	if (requestBehavior_) {
+
+		// 状態を変更する
+		behavior_ = requestBehavior_.value();
+
+		// 状態ごとの初期化を行う
+		switch (behavior_) {
+		case Hook::Behavior::None:
+			BehaviorNoneInitialize();
+			break;
+		case Hook::Behavior::Throw:
+			BehaviorThrowInitialize();
+			break;
+		case Hook::Behavior::Extend:
+			BehaviorExtendInitialize();
+			break;
+		case Hook::Behavior::Move:
+			BehaviorMoveInitialize();
+			break;
+		default:
+			break;
+		}
+
+		// リクエストをクリア
+		requestBehavior_ = std::nullopt;
+	}
+
+	// 状態ごとの更新を行う
+	switch (behavior_) {
+	case Hook::Behavior::None:
+		BehaviorNoneUpdate();
+		break;
+	case Hook::Behavior::Throw:
+		BehaviorThrowUpdate();
+		break;
+	case Hook::Behavior::Extend:
+		BehaviorExtendUpdate();
+		break;
+	case Hook::Behavior::Move:
+		BehaviorMoveUpdate();
+		break;
+	default:
+		break;
+	}
+
+
+
+
 
 	// 開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
@@ -43,24 +97,40 @@ void Hook::Draw() {
 }
 
 void Hook::Throw() {
+
+	///===========================================
+	/// 事前確認
+	///
+
+	// フックがアクティブなら何もしない
 	if (isActive_) {
 		return;
 	}
+	// フックが敵に当たっている場合
 	if (enemyHit_) {
+		// フックが敵に当たる前に投げられたフラグを立てる
 		hookToEnemyHitBeforeThrow_ = true;
 	} else {
+		// あたってなければフラグを解除
 		hookToEnemyHitBeforeThrow_ = false;
 	}
+
+	///===========================================
+	/// フックの投げる処理
+	/// 
+
 	// フックの開始位置をプレイヤーの位置に設定
 	endPos_ = playerPosition_;
-	// フックの終了位置を計算（壁に当たるまでの数値にする）
+	// プレイヤーとフックの長さ
 	maxDistance_ = 50.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
 	direction_ = Vector3{cos(playerRotation_.y), 0.0f, sin(playerRotation_.y)};
+
 	// フックの終了位置を計算
 	potentialEndPos = playerPosition_ - direction_ * maxDistance_;
 
-	// 壁に当たるまでの距離を計算
+	// プレイヤーとフックの長さ
+	// 壁に当たる距離を計算
 	if (potentialEndPos.x < minMoveLimit_.x) {
 		maxDistance_ = std::min(maxDistance_, (playerPosition_.x - minMoveLimit_.x) / direction_.x);
 	} else if (potentialEndPos.x > maxMoveLimit_.x) {
@@ -82,42 +152,28 @@ void Hook::Throw() {
 	// フックを投げるフラグを設定
 	isThrowing_ = true;
 	isActive_ = false;
-	
 }
 void Hook::Move() {
 
-	// フックの方向ベクトルを計算
-	Vector3 direction = endPos_ - startPos_;
-	float distance = Vector3::Length(direction);
-
-	// フックの位置に到達したらフックを非アクティブにする
-	if (distance < speed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
-		isActive_ = false;
-	} else {
-		// フックの方向に向かって移動
-		direction.Normalize(direction);
-		Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
-
-		// 壁に触れたらそれ以上ポジションを追加しない
-		if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
-			isActive_ = false;
-		}
-	}
+	
 }
 
-void Hook::Extend() {
+void Hook::BehaviorNoneInitialize() {}
 
-	// フックの方向ベクトルを計算
-	direction_ = endPos_ - startPos_;
+void Hook::BehaviorNoneUpdate() {}
 
-	// フックの現在位置を更新
-	currentPos_ += direction_ * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+void Hook::BehaviorThrowInitialize() {}
 
-	// フックが終了位置に到達したらフックの伸びを止める
-	if ((currentPos_ - startPos_).Length((currentPos_ - startPos_)) >= (endPos_ - startPos_).Length((endPos_ - startPos_))) {
-		currentPos_ = endPos_;
-	}
-}
+void Hook::BehaviorThrowUpdate() {}
+
+void Hook::BehaviorExtendInitialize() {}
+
+void Hook::BehaviorExtendUpdate() {}
+
+void Hook::BehaviorMoveInitialize() {}
+
+void Hook::BehaviorMoveUpdate() {}
+
 
 void Hook::OnCollision(Collider* other) {
 	// 種別IDを種別
@@ -127,15 +183,20 @@ void Hook::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
 		// 敵の位置を取得して保存
 		enemyHitPosition_ = other->GetCenterPosition();
+		// フックが敵に当たったフラグを立てる
 		enemyHit_ = true;
 
 		// Enemyにあたったときの距離を計算
 		if (enemyHit_) {
+			// プレイヤーと敵の距離を計算
 			distanceToEnemy = Vector3::Distance(playerPosition_, enemyHitPosition_);
+			// プレイヤーと敵の距離が最小距離より小さければ最小距離を更新
 			if (distanceToEnemy < maxDistance_) {
+				// プレイヤーと敵の距離が最小距離より小さければ最小距離を更新
 				maxDistance_ = distanceToEnemy;
 			}
 		}
+		// フックを投げる前に敵にあたってなければ
 		if (!hookToEnemyHitBeforeThrow_) {
 
 			// フックの終了位置を再計算
@@ -148,28 +209,56 @@ void Hook::OnCollision(Collider* other) {
 		}
 
 	} else {
+		// 敵以外に当経ってない場合はフラグを解除
 		enemyHit_ = false;
 	}
 }
 
 void Hook::ShowImGui() {
-
+	// フックの情報を表示
 	ImGui::Begin("Hook");
 
-	ImGui::Checkbox("IsActive", &isActive_);
-	ImGui::Checkbox("IsExtending", &isExtending_);
-	ImGui::Checkbox("IsThrowing", &isThrowing_);
-	ImGui::Checkbox("EnemyHit", &enemyHit_);
-	ImGui::Checkbox("EnemyHitBeforeThrow", &hookToEnemyHitBeforeThrow_);
+	// 状態の表示
+	switch (behavior_) {
+	case Hook::Behavior::None:
+		ImGui::Text("Behavior: None");
+		break;
+	case Hook::Behavior::Throw:
+		ImGui::Text("Behavior: Throw");
+		break;
+	case Hook::Behavior::Extend:
+		ImGui::Text("Behavior: Extend");
+		break;
+	case Hook::Behavior::Move:
+		ImGui::Text("Behavior: Move");
+		break;
+	default:
+		break;
+	}
 
+	// フックが起動してプレイヤーの移動ができるかどうか
+	ImGui::Checkbox("IsActive", &isActive_);
+	// フックが投げられているかどうか
+	ImGui::Checkbox("IsThrowing", &isThrowing_);
+	// フックが敵に当たったかどうか
+	ImGui::Checkbox("EnemyHit", &enemyHit_);
+	// フックを投げる前に敵に当たっていたかどうか
+	ImGui::Checkbox("EnemyHitBeforeThrow", &hookToEnemyHitBeforeThrow_);
+	// フックの開始位置(基本的プレイヤーの位置)
 	ImGui::DragFloat3("StartPos", &startPos_.x, 0.1f);
-	ImGui::DragFloat3("CurrentPos", &currentPos_.x, 0.1f);
+	// フックの終了位置
 	ImGui::DragFloat3("EndPos", &endPos_.x, 0.1f);
+	//フックの速度
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
+	// フックの加速度
 	ImGui::DragFloat3("Acceleration", &acceleration_.x, 0.1f);
+	// フックの角速度
 	ImGui::DragFloat3("AngularVelocity", &angularVelocity_.x, 0.1f);
+	// フックの方向
 	ImGui::DragFloat3("Direction", &direction_.x, 0.1f);
+	// フックとプレイヤーの距離
 	ImGui::DragFloat("MaxDistance", &maxDistance_, 0.1f);
+
 	ImGui::DragFloat("Speed", &speed_, 0.1f);
 
 	ImGui::End();
@@ -177,6 +266,8 @@ void Hook::ShowImGui() {
 
 Vector3 Hook::GetCenterPosition() const {
 	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
+	// フックの中心を計算
 	Vector3 worldPosition = endPos_ + offset;
+	// フックの中心を返す
 	return worldPosition;
 }

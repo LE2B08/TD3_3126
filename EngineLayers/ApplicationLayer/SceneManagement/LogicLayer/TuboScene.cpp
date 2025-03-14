@@ -136,7 +136,7 @@ void TuboScene::DrawImGui()
 	field_->ShowImGui("Field");
 
 	ImGui::Begin("Camera");
-	ImGui::DragFloat3("Position", &cameraPos_.x, 0.1f, -100.0f, 100.0f);
+	ImGui::DragFloat3("Position", &cameraPos_.x, 1.0f, -100.0f, 100.0f);
 	ImGui::DragFloat3("Rotation", &cameraRotate_.x, 0.1f, -10.0f, 10.0f);
 	ImGui::End();
 

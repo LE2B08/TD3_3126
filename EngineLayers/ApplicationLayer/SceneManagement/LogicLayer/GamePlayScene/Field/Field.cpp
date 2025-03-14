@@ -13,6 +13,7 @@ void Field::Update() {
 
 	minPosition_ = position_ - scale_;
 	maxPosition_ = position_ + scale_;
+
 }
 
 void Field::Draw() {
@@ -29,7 +30,7 @@ void Field::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	ImGui::DragFloat3("Scale", &scale_.x, 0.01f);
+	ImGui::DragFloat3("Scale", &scale_.x, 1.0f);
 
 	ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
 
