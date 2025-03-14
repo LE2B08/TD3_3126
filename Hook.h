@@ -99,9 +99,11 @@ public:
 
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+	bool GetEnemyHit() { return enemyHit_; }
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
 private:
 
 	// 開始位置
@@ -155,5 +157,12 @@ private:
 
 	// 状態リクエスト
 	std::optional<State> requestState_ = std::nullopt;
+
+	Vector3 enemyHitPosition_; // 敵に当たった位置を保存するメンバ変数
+	bool enemyHit_;            // 敵に当たったかどうかを示すフラグ
+	float distanceToEnemy;     // 敵に当たったときの距離を保存するメンバ変数
+
+	// フックを投げる前に敵に当たったかどうか
+	bool hookToEnemyHitBeforeThrow_ = false;
 };
 

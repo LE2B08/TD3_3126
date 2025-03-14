@@ -18,6 +18,8 @@ void EnemyBullet::Initialize() {
 	objectBullet_ = std::make_unique<Object3D>();
 	objectBullet_->Initialize("sphere.gltf");
 	objectBullet_->SetScale({ 0.4f, 0.4f, 0.4f });
+
+	SetRadius(0.4f);
 }
 
 void EnemyBullet::Update() {
@@ -59,5 +61,7 @@ void EnemyBullet::OnCollision(Collider* other) {
 }
 
 Vector3 EnemyBullet::GetCenterPosition() const {
-	return Vector3();
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
+	Vector3 worldPosition = worldTransform_.translate_ + offset;
+	return worldPosition;
 }
