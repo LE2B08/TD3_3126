@@ -91,9 +91,10 @@ void TuboScene::Update()
 
 	enemy_->Update();
 	
+	CheckAllCollisions();
 	collisionManager_->Update();
 	
-	
+
 }
 
 ///-------------------------------------------------------------

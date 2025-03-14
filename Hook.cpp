@@ -11,10 +11,12 @@ void Hook::Initialize() {
 	// フックの初期化
 	isExtending_ = false;
 	isThrowing_ = false;
+	playerPosition_ = endPos_ = playerPosition_;
 
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 }
 void Hook::Update() {
+
 	// 開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
@@ -37,11 +39,17 @@ void Hook::Update() {
 }
 
 void Hook::Draw() {
-		// 描画
-		Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
-	
+	// 描画
+	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
 }
+
 void Hook::Throw() {
+
+	if (enemyHit_) {
+		hookToEnemyHitBeforeThrow_ = true;
+	} else {
+		hookToEnemyHitBeforeThrow_ = false;
+	}
 	// フックの開始位置をプレイヤーの位置に設定
 	endPos_ = playerPosition_;
 	// フックの終了位置を計算（壁に当たるまでの数値にする）
@@ -73,8 +81,8 @@ void Hook::Throw() {
 	// フックを投げるフラグを設定
 	isThrowing_ = true;
 	isActive_ = false;
+	
 }
-
 void Hook::Move() {
 
 	// フックの方向ベクトルを計算
@@ -111,17 +119,35 @@ void Hook::Extend() {
 }
 
 void Hook::OnCollision(Collider* other) {
-
 	// 種別IDを種別
 	uint32_t typeID = other->GetTypeID();
 
 	// フックがアクティブで、敵と衝突した場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
-		
+		// 敵の位置を取得して保存
+		enemyHitPosition_ = other->GetCenterPosition();
+		enemyHit_ = true;
 
-		ImGui::Begin("Hook");
-		ImGui::Text("EnemyHit");
-		ImGui::End();
+		// Enemyにあたったときの距離を計算
+		if (enemyHit_) {
+			distanceToEnemy = Vector3::Distance(playerPosition_, enemyHitPosition_);
+			if (distanceToEnemy < maxDistance_) {
+				maxDistance_ = distanceToEnemy;
+			}
+		}
+		if (!hookToEnemyHitBeforeThrow_) {
+
+			// フックの終了位置を再計算
+			potentialEndPos = playerPosition_ - direction_ * maxDistance_;
+
+			// フックの現在位置を開始位置に設定
+			currentPos_ = startPos_;
+			// フックの開始時間を記録
+			startTime_ = std::chrono::steady_clock::now();
+		}
+
+	} else {
+		enemyHit_ = false;
 	}
 }
 
@@ -130,6 +156,10 @@ void Hook::ShowImGui() {
 	ImGui::Begin("Hook");
 
 	ImGui::Checkbox("IsActive", &isActive_);
+	ImGui::Checkbox("IsExtending", &isExtending_);
+	ImGui::Checkbox("IsThrowing", &isThrowing_);
+	ImGui::Checkbox("EnemyHit", &enemyHit_);
+	ImGui::Checkbox("EnemyHitBeforeThrow", &hookToEnemyHitBeforeThrow_);
 
 	ImGui::DragFloat3("StartPos", &startPos_.x, 0.1f);
 	ImGui::DragFloat3("CurrentPos", &currentPos_.x, 0.1f);
