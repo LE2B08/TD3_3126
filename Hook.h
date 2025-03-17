@@ -144,7 +144,7 @@ private:
 	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
 
 	// プレイヤーの回転
-	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};
+	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};3
 
 	// プレイヤーの位置
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f};
