@@ -36,9 +36,8 @@ void GamePlayScene::Initialize()
 	camera_->SetTranslate(cameraPosition_);
 
 	/// ---------- サウンドの初期化 ---------- ///
-	const char* fileName = "Resources/Sounds/Get-Ready.wav";
 	wavLoader_ = std::make_unique<WavLoader>();
-	wavLoader_->StreamAudioAsync(fileName, 0.0f, 1.0f, false);
+	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, false);
 
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
