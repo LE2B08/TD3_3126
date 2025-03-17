@@ -50,9 +50,10 @@ void GamePlayScene::Initialize()
 
 	enemyBullets_ = &enemy_->GetBullets();
 
+	//fieldScale_ = { 0.0f,0.0f,0.0f };
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
-
+	field_->SetScale(fieldScale_);
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
@@ -114,6 +115,12 @@ void GamePlayScene::Update()
 
 	camera_->Update();
 
+	// ゲーム開始演出
+	GameStart();
+	
+	
+
+	field_->SetScale(fieldScale_);
 	field_->Update();
 
 	weapon_ = player_->GetWeapon();
@@ -121,14 +128,17 @@ void GamePlayScene::Update()
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 	player_->SetEnemy(enemy_.get());
+	player_->SetIsGameStart(isGameStart_);
 	player_->Update();
 
 	enemy_->Update();
 
 	collisionManager_->Update();
-	// 衝突判定と応答
-	CheckAllCollisions();
-	player_->CheckAllCollisions();
+	if (isGameStart_) {
+		// 衝突判定と応答
+		CheckAllCollisions();
+		player_->CheckAllCollisions();
+	}
 }
 
 
@@ -176,7 +186,11 @@ void GamePlayScene::DrawImGui()
 
 	ImGui::SliderFloat("CameraShakeDuration", &shakeDuration_, 0.0f, 10.0f);
 	ImGui::SliderFloat("CameraShakeMagnitude", &shakeMagnitude_, 0.0f, 10.0f);
-
+	ImGui::Text("isGameStart : %s", isGameStart_ ? "true" : "false");
+	ImGui::Text("startTimer : %f", startTimer_);
+	ImGui::Text("maxStartT : %f", maxStartT_);
+	ImGui::Text("isStartEasing : %s", isStartEasing_ ? "true" : "false");
+	ImGui::Text("isPlayerPositionSet : %s", isPlayerPositionSet_ ? "true" : "false");
 	ImGui::End();
 
 	player_->DrawImGui();
@@ -239,4 +253,46 @@ void GamePlayScene::CameraShake()
 			camera_->SetTranslate(cameraPosition_ + shakeOffset);
 		}
 	}
+}
+
+void GamePlayScene::GameStart()
+{
+	// エンターキーかAボタンが押されるたびに演出を開始
+	// デバッグ用なのであとで消すこと
+	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+		if (!isStartEasing_) {
+			startTimer_ = 0.0f;
+			playerStartTimer_ = 0.0f;
+			isStartEasing_ = true;
+		}
+	}
+	// イージングがスタートしているか
+	if (isStartEasing_) {
+		//easeTを40から0まで変動させる
+		if (startTimer_ >= maxStartT_) {
+			startTimer_ = maxStartT_;
+			isGameStart_ = true;
+			isStartEasing_ = false;
+			isPlayerPositionSet_ = true;
+		} else {
+			startTimer_ += 0.5f;
+		}
+		// ポヨンポヨンしてフィールドが広がる演出
+		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
+	}
+
+	// プレイヤーの位置がセットされたか
+	if (isPlayerPositionSet_) {
+		// プレイヤーの位置をセット
+		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
+		if(playerStartTimer_ >= maxPlayerStartT_){
+			playerStartTimer_ = maxPlayerStartT_;
+			isPlayerPositionSet_ = false;
+		} else {
+			playerStartTimer_ += 0.5f;
+		}
+		// 上からプレイヤーが登場する
+		player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+	}
+	
 }
