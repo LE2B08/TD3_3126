@@ -152,6 +152,18 @@ void Player::DrawImGui() {
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::End();
 
+
+	ImGui::Begin("Player_Controller");
+	ImGui::Text("Move");
+	ImGui::Text("Rotate: RightStick");
+	ImGui::Text("Attack: LeftShoulder");
+	ImGui::Text("Hook");
+	ImGui::Text("Throw: RightShoulder");
+	ImGui::Text("Back: RightShoulder");
+	ImGui::Text("Pulling: RightTrigger");
+	ImGui::Text("ArcMove: RightStick");
+	ImGui::End();
+
 	hook_->ShowImGui();
 }
 void Player::Move() {

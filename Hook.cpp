@@ -299,6 +299,9 @@ void Hook::BehaviorMoveUpdate() {
 	/// フック使用時の弧の移動
 	///
 
+	// 右スティックの入力を取得
+	Vector2 rightStick = Input::GetInstance()->GetRightStick();
+
 	if (isActive_) {
 		if (!enemyHit_) {
 
@@ -321,15 +324,13 @@ void Hook::BehaviorMoveUpdate() {
 				float angle = atan2(toCenter.z, toCenter.x);
 				float angularSpeed = 3.0f; // 角速度（調整可能）
 
-				// 左スティックの入力を取得
-				Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-
-				// 左スティックの入力に応じて角度を変更
-				if (leftStick.x < -0.1f) {
+			
+				// 右スティックの入力に応じて角度を変更
+				if (rightStick.x < -0.1f) {
 					// 右に移動
 					angle -= angularSpeed * 0.016f;
 
-				} else if (leftStick.x > 0.1f) {
+				} else if (rightStick.x > 0.1f) {
 					// 左に移動
 					angle += angularSpeed * 0.016f;
 				}
@@ -353,15 +354,13 @@ void Hook::BehaviorMoveUpdate() {
 				float angle = atan2(toCenter.z, toCenter.x);
 				float angularSpeed = 3.0f; // 角速度（調整可能）
 
-				// 左スティックの入力を取得
-				Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-
-				// 左スティックの入力に応じて角度を変更
-				if (leftStick.x < -0.1f) {
+				
+				// 右スティックの入力に応じて角度を変更
+				if (rightStick.x < -0.1f) {
 					// 右に移動
 					angle += angularSpeed * 0.016f;
 
-				} else if (leftStick.x > 0.1f) {
+				} else if (rightStick.x > 0.1f) {
 					// 左に移動
 					angle -= angularSpeed * 0.016f;
 				}
@@ -384,13 +383,12 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点から中心までの角度を計算
 				float angle = atan2(toCenter.z, toCenter.x);
 				float angularSpeed = 3.0f; // 角速度（調整可能）
-				// 左スティックの入力を取得
-				Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-				// 左スティックの入力に応じて角度を変更
-				if (leftStick.x < -0.1f) {
+				
+				// 右スティックの入力に応じて角度を変更
+				if (rightStick.x < -0.1f) {
 					// 右に移動
 					angle += angularSpeed * 0.016f;
-				} else if (leftStick.x > 0.1f) {
+				} else if (rightStick.x > 0.1f) {
 					// 左に移動
 					angle -= angularSpeed * 0.016f;
 				}
@@ -412,13 +410,12 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点から中心までの角度を計算
 				float angle = atan2(toCenter.z, toCenter.x);
 				float angularSpeed = 3.0f; // 角速度（調整可能）
-				// 左スティックの入力を取得
-				Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-				// 左スティックの入力に応じて角度を変更
-				if (leftStick.x < -0.1f) {
+				
+				// 右スティックの入力に応じて角度を変更
+				if (rightStick.x < -0.1f) {
 					// 右に移動
 					angle -= angularSpeed * 0.016f;
-				} else if (leftStick.x > 0.1f) {
+				} else if (rightStick.x > 0.1f) {
 					// 左に移動
 					angle += angularSpeed * 0.016f;
 				}
@@ -451,8 +448,6 @@ void Hook::BehaviorMoveUpdate() {
 				// プレイヤーの速度ベクトルの角度を計算
 				float velocityAngle = atan2(velocity_.z, velocity_.x);
 
-				// 左スティックの入力を取得
-				Vector2 rightStick = Input::GetInstance()->GetRightStick();
 				// 入力の角度を計算
 				float inputAngle = atan2(rightStick.y, rightStick.x);
 
@@ -585,6 +580,9 @@ void Hook::ShowImGui() {
 	ImGui::DragFloat("Speed", &speed_, 0.1f);
 
 	ImGui::End();
+
+
+	
 }
 
 Vector3 Hook::GetCenterPosition() const {
