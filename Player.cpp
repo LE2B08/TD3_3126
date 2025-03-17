@@ -2,6 +2,7 @@
 #include "Input.h"
 #include "Wireframe.h"
 #include "imgui.h"
+#include "ParticleManager.h"
 
 #undef max
 #undef min
@@ -36,6 +37,18 @@ void Player::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// パーティクルマネージャの生成
+	particleManager_ = ParticleManager::GetInstance();
+
+	// テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("PlayerHitParticles", "Resources/uvChecker.png");
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "PlayerHitParticles");
 }
 
 void Player::Update() {
@@ -52,28 +65,14 @@ void Player::Update() {
 			isDebug_ = false;
 		}
 	}
-	// デバックモード
-	// プレイヤーをの移動が
-	// 左スティックとキーボードで入力できる。
+	
 
 #endif // DEBUG
 
-	hookToEnemyHit_ = hook_->GetEnemyHit();
-
-	// if (Input::GetInstance()->TriggerButton(8)) {
-	//	// フックの巻取りを有効
-	//	isWindingTheHook = true;
-	// }
-
-	// if (isWindingTheHook) {
-	//	// フックの巻取りを行う
-	//	// 移動処理
-	//	Move();
-	// }
-
-	// if (!hook_->GetIsActive()) {
-	//	isWindingTheHook = false;
-	// }
+	
+	
+	// 移動処理
+	Move();
 
 	// 回転処理
 	Rotate();
@@ -84,13 +83,15 @@ void Player::Update() {
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
+	
 
 	// フックの更新処理
-
 	hook_->SetPlayerRotation(rotation_);
 	hook_->SetPlayerPosition(position_);
 	hook_->SetMinMoveLimit(minMoveLimit_);
 	hook_->SetMaxMoveLimit(maxMoveLimit_);
+
+	// フックの更新処理
 	hook_->Update();
 	// フックの位置を取得
 	position_ = hook_->GetPlayerPosition();
@@ -121,7 +122,6 @@ void Player::Draw() {
 	// 武器の描画
 	weapon_->Draw();
 
-	// 衝突判定の描画
 	collisionManager_->Draw();
 
 	// プレイヤーの向きを示す線を描画
@@ -135,6 +135,8 @@ void Player::Finalize() {}
 void Player::DrawImGui() {
 
 	ImGui::Begin("Player");
+	ImGui::Text("DebugMode : %s", isDebug_ ? "true" : "false");
+	ImGui::Checkbox("DebugMode", &isDebug_);
 	ImGui::Text("Position");
 	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
 	ImGui::Text("Rotation");
@@ -147,17 +149,30 @@ void Player::DrawImGui() {
 	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
 	ImGui::Text("AngularVelocity");
 	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
-	ImGui::Checkbox("IsDebug", &isDebug_);
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::End();
 
 	hook_->ShowImGui();
 }
 void Player::Move() {
-	///================
-	/// プレイヤーの移動処理
-	///
 
-	// 最大速度を定義
+	/*------ヒット時の処理------*/
+	if (isHit_) {
+		HitParticle();
+		hitTime_++;
+		if (hitTime_ >= hitMaxTime_)
+		{
+			isHit_ = false;
+			hitTime_ = 0;
+		}
+	}
+
+	///============================
+	/// プレイヤーの移動処理
+	///		
+	
+
+	//速度制限
 	const float maxSpeed = 10.0f; // 最大速度（調整可能）
 	// 速度の大きさを計算
 	float speed = Vector3::Length(velocity_);
@@ -165,18 +180,19 @@ void Player::Move() {
 	if (speed > maxSpeed) {
 		velocity_ = (velocity_ / speed) * maxSpeed;
 	}
+
 	// 減速処理
 	const float friction = 0.98f; // 摩擦係数
 	velocity_ *= friction;
 
-	//
-	// プレイヤーの移動処理
+	// プレイヤーの位置を更新
 	velocity_ += acceleration_;
 	position_ += velocity_;
+
+	
 }
 
 void Player::Rotate() {
-
 	///================
 	/// プレイヤーの回転処理
 	///
@@ -187,15 +203,12 @@ void Player::Rotate() {
 	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
-	} else {
-	}
+	} 
+
 }
 
 void Player::Attack() {
-	///================
-	/// 攻撃処理
-	///
-
+	// 攻撃処理
 	// 攻撃ボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(8)) {
 		// 武器の攻撃フラグを立てる
@@ -203,7 +216,13 @@ void Player::Attack() {
 	}
 }
 
-void Player::OnCollision(Collider* other) {}
+
+void Player::OnCollision(Collider* other) {
+	if (!weapon_->GetIsAttack()) {
+		isHit_ = true;
+	}
+}
+
 
 Vector3 Player::GetCenterPosition() const {
 	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
@@ -211,4 +230,36 @@ Vector3 Player::GetCenterPosition() const {
 	return worldPosition;
 }
 
-void Player::CheckAllCollisions(Enemy* enemy) {}
+void Player::CheckAllCollisions() {
+	// 衝突マネージャのリセット
+	collisionManager_->Reset();
+
+	// コライダーをリストに登録
+	collisionManager_->AddCollider(weapon_.get());
+	collisionManager_->AddCollider(enemy_);
+
+	// 複数について
+
+	// 攻撃中の場合
+	if (weapon_->GetIsAttack())
+	{
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+		if (enemy_->GetIsHit()) {
+			enemy_->SetIsHitFromAttack(true);
+		}
+	}
+}
+
+void Player::HitParticle()
+{
+	// エネミーの中心位置を取得
+	Vector3 playerCenter = GetCenterPosition();
+
+	// パーティクルエミッターの位置をエネミーの中心に設定
+	particleEmitter_->SetPosition(playerCenter);
+	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	// パーティクルを生成
+	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+}
+
