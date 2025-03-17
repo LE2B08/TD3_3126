@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "Easing.h"
 
+#include "FadeManager.h"
+
 #ifdef _DEBUG
 #include <DebugCamera.h>
 #endif // _DEBUG
@@ -21,6 +23,8 @@ using namespace Easing;
 /// -------------------------------------------------------------
 void GamePlayScene::Initialize()
 {
+	FadeManager::GetInstance()->StartFadeOut();
+
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -32,8 +36,6 @@ void GamePlayScene::Initialize()
 	particleManager = ParticleManager::GetInstance();
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
-	camera_->SetRotate({ 1.57f,0.0f,0.0f });
-	camera_->SetTranslate(cameraPosition_);
 
 	/// ---------- サウンドの初期化 ---------- ///
 	wavLoader_ = std::make_unique<WavLoader>();
@@ -55,9 +57,6 @@ void GamePlayScene::Initialize()
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
-
-	
-	
 }
 
 
@@ -74,6 +73,12 @@ void GamePlayScene::Update()
 		isDebugCamera_ = !isDebugCamera_;
 	}
 #endif // _DEBUG
+
+	if (FadeManager::GetInstance()->IsFadeComplete())
+	{
+		camera_->SetRotate({ 1.57f,0.0f,0.0f });
+		camera_->SetTranslate(cameraPosition_);
+	}
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1))
@@ -117,7 +122,7 @@ void GamePlayScene::Update()
 
 	field_->SetScale(fieldScale_);
 	field_->Update();
-	
+
 	weapon_ = player_->GetWeapon();
 
 	player_->SetMinMoveLimit(field_->GetMinPosition());
@@ -160,7 +165,6 @@ void GamePlayScene::Draw()
 
 	// ワイヤーフレームの描画
 	//Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
-
 }
 
 
@@ -209,8 +213,8 @@ void GamePlayScene::CheckAllCollisions()
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(enemy_.get());
-	
-	
+
+
 	// 複数について
 
 	// 衝突判定と応答
@@ -239,7 +243,8 @@ void GamePlayScene::CameraShake()
 		if (shakeElapsedTime_ >= shakeDuration_) {
 			isCameraShaking_ = false;
 			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
-		} else {
+		}
+		else {
 			// ランダムな揺れを生成
 			std::random_device rd;
 			std::mt19937 gen(rd());
