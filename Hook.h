@@ -144,11 +144,11 @@ private:
 	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
 
 	// プレイヤーの回転
-	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};3
+	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};
 
 	// プレイヤーの位置
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f};
-
+	
 	bool isMoving_ = false;
 
 	Vector3 potentialEndPos;
@@ -164,6 +164,9 @@ private:
 
 	// フックを投げる前に敵に当たったかどうか
 	bool hookToEnemyHitBeforeThrow_ = false;
+
+	//フックの引っ張るフラグ
+	bool isPulling_ = false;
 
 	//================================================
 	// Behavior

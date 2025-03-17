@@ -177,8 +177,8 @@ void Hook::BehaviorExtendUpdate() {
 		// 終了位置に到達したらフラグを更新
 		if (distance < moveStep) {
 			endPos_ = potentialEndPos;
-			isActive_ = true;
 			isThrowing_ = false;
+			isActive_ = true;
 
 			// フックの状態を移動に変更
 			requestBehavior_ = Behavior::Move;
@@ -190,50 +190,114 @@ void Hook::BehaviorExtendUpdate() {
 	}
 }
 
-void Hook::BehaviorMoveInitialize() {}
+void Hook::BehaviorMoveInitialize() {
+	// フックの初期化
+	isPulling_ = false;
+}
 
 void Hook::BehaviorMoveUpdate() {
 
+	// フックの開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
-	///================
+
+	///===========================================
+	///　キー入力
+	/// 
+	if (isPulling_) {
+		// フックがアクティブのときにボタンを押すとフックを非アクティブにする
+		if (Input::GetInstance()->TriggerButton(15)) {
+			// フックを非アクティブにする
+			isPulling_ = false;
+		}
+	} else {
+		// フックが非アクティブのときにボタンを押すとフックをアクティブにする
+		if (Input::GetInstance()->TriggerButton(15)) {
+			// フックを非アクティブにする
+			isPulling_ = true;
+		}
+	}
+
+
+
+	
+
+	///===========================================
 	/// プレイヤーのフック使用時の移動処理
 	///
-
-	// フックがアクティブで、フックの伸びが止まっている場合、プレイヤーを移動させる
-	// フックがエネミーに刺さってない時
-	if (!enemyHit_) {
-
-		///===================================
-		/// 壁
-		///
+	if (isPulling_) {
 
 		if (isActive_) {
-			// フックの方向ベクトルを計算
-			Vector3 direction = endPos_ - playerPosition_;
-			float distance = Vector3::Length(direction);
+			if (!enemyHit_) {
+				///===================================
+				/// 壁
+				///
 
-			// フックの位置に到達したらフックを非アクティブにする
-			if (distance < speed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
-				playerPosition_ = endPos_;
-				isActive_ = false;
-				// フックの状態をなしに変更
-				requestBehavior_ = Behavior::None;
-			} else {
-				// フックの方向に向かって移動
-				direction.Normalize(direction);
-				Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+				// フックの方向ベクトルを計算
+				Vector3 direction = endPos_ - playerPosition_;
+				float distance = Vector3::Length(direction);
 
-				// 壁に触れたらそれ以上ポジションを追加しない
-				if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
+				// フックの位置に到達したらフックを非アクティブにする
+				if (distance < speed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
+					playerPosition_ = endPos_;
 					isActive_ = false;
+					// フックの状態をなしに変更
+					requestBehavior_ = Behavior::None;
 				} else {
-					playerPosition_ = newPosition;
+					// フックの方向に向かって移動
+					direction.Normalize(direction);
+					Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+					// 壁に触れたらそれ以上ポジションを追加しない
+					if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
+						isActive_ = false;
+					} else {
+						playerPosition_ = newPosition;
+					}
+				}
+
+			} else {
+
+				///===============
+				/// Enemy
+				///
+
+				// フックの方向ベクトルを計算
+				Vector3 direction = endPos_ - playerPosition_;
+				float distance = Vector3::Length(direction);
+
+				// フックの位置に到達したらフックを非アクティブにする
+				if (distance < speed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
+					playerPosition_ = endPos_;
+					isActive_ = false;
+					// フックの状態をなしに変更
+					requestBehavior_ = Behavior::None;
+				} else {
+					// フックの方向に向かって移動
+					direction.Normalize(direction);
+					Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+					// 壁に触れたらそれ以上ポジションを追加しない
+					if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
+						isActive_ = false;
+
+					} else {
+						playerPosition_ = newPosition;
+					}
 				}
 			}
+		}
+	}
+
+	///===================================
+	/// フック使用時の弧の移動
+	///
+
+	if (isActive_) {
+		if (!enemyHit_) {
 
 			///===================================
-			/// フック使用時の弧の移動
+			/// 壁
 			///
 
 			///
@@ -356,37 +420,11 @@ void Hook::BehaviorMoveUpdate() {
 				playerPosition_.x = endPos_.x + radius * cos(angle);
 				playerPosition_.z = endPos_.z + radius * sin(angle);
 			}
-		}
 
-	} else {
-		///===============
-		/// Enemy
-		///
-
-		if (isActive_) {
-			// フックの方向ベクトルを計算
-			Vector3 direction = endPos_ - playerPosition_;
-			float distance = Vector3::Length(direction);
-
-			// フックの位置に到達したらフックを非アクティブにする
-			if (distance < speed_ * 0.016f) { // 0.016fは1フレームの時間（約60FPS）
-				playerPosition_ = endPos_;
-				isActive_ = false;
-				// フックの状態をなしに変更
-				requestBehavior_ = Behavior::None;
-			} else {
-				// フックの方向に向かって移動
-				direction.Normalize(direction);
-				Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
-
-				// 壁に触れたらそれ以上ポジションを追加しない
-				if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
-					isActive_ = false;
-
-				} else {
-					playerPosition_ = newPosition;
-				}
-			}
+		} else {
+			///===============
+			/// Enemy
+			///
 
 			///===================================
 			/// フック使用時の弧の移動
