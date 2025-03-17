@@ -253,7 +253,7 @@ void GamePlayScene::CameraShake()
 
 void GamePlayScene::GameStart()
 {
-	// エンターキーが押されるたびに演出を開始
+	// エンターキーかAボタンが押されるたびに演出を開始
 	// デバッグ用なのであとで消すこと
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
 		if (!isStartEasing_) {
