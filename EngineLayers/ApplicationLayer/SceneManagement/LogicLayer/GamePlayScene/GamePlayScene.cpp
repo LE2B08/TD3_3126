@@ -8,11 +8,13 @@
 #include <ParticleManager.h>
 #include "Wireframe.h"
 #include "Camera.h"
+#include "Easing.h"
 
 #ifdef _DEBUG
 #include <DebugCamera.h>
 #endif // _DEBUG
 
+using namespace Easing;
 
 /// -------------------------------------------------------------
 ///				　			　初期化処理
@@ -31,7 +33,7 @@ void GamePlayScene::Initialize()
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	camera_->SetRotate({ 1.57f,0.0f,0.0f });
-	camera_->SetTranslate({ 0.0f,50.0f,0.0f });
+	camera_->SetTranslate(cameraPosition_);
 
 	/// ---------- サウンドの初期化 ---------- ///
 	const char* fileName = "Resources/Sounds/Get-Ready.wav";
@@ -99,7 +101,12 @@ void GamePlayScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
-
+	if (player_->GetIsHit()) {
+		// カメラの揺れを開始
+		isCameraShaking_ = true;
+		shakeElapsedTime_ = 0.0f;
+	}
+	CameraShake();
 
 	camera_->Update();
 
@@ -164,6 +171,9 @@ void GamePlayScene::DrawImGui()
 {
 	ImGui::Begin("Test Window");
 
+	ImGui::SliderFloat("CameraShakeDuration", &shakeDuration_, 0.0f, 10.0f);
+	ImGui::SliderFloat("CameraShakeMagnitude", &shakeMagnitude_, 0.0f, 10.0f);
+
 	ImGui::End();
 
 	player_->DrawImGui();
@@ -206,4 +216,23 @@ void GamePlayScene::CheckAllCollisions()
 
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();
+}
+
+void GamePlayScene::CameraShake()
+{
+	// カメラの揺れを更新
+	if (isCameraShaking_) {
+		shakeElapsedTime_ += 1.0f / 60.0f;
+		if (shakeElapsedTime_ >= shakeDuration_) {
+			isCameraShaking_ = false;
+			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
+		} else {
+			// ランダムな揺れを生成
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dis(-shakeMagnitude_, shakeMagnitude_);
+			Vector3 shakeOffset = { dis(gen), dis(gen), dis(gen) };
+			camera_->SetTranslate(cameraPosition_ + shakeOffset);
+		}
+	}
 }

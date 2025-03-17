@@ -75,6 +75,8 @@ public:
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
   
 	Hook* GetHook() { return hook_.get(); }
+
+	bool GetIsHit() const { return isHit_; }	
   
 private:
 	///============================
