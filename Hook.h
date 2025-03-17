@@ -31,12 +31,6 @@ public:
 	// 描画処理
 	void Draw();
 
-	// 投げる処理
-	void Throw();
-
-	// 移動処理
-	void Move();
-
 	// 何もしてない状態の初期化
 	void BehaviorNoneInitialize();
 
@@ -76,23 +70,37 @@ public:
 	/// ゲッター & セッター
 	///-------------------------------------------///
 public:
+	// プレイヤーの回転
+	Vector3 GetPlayerRotation() { return playerRotation_; }
 	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
-	// プレイヤーの位置を設定
+
+	// プレイヤーの位置
+	Vector3 GetPlayerPosition() { return playerPosition_; }
 	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
-	// フックの最大移動制限を設定
+
+	// フックの最大移動制限
+	Vector3 GetMaxMoveLimit() { return maxMoveLimit_; }
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
-	// フックの最小移動制限を設定
+
+	// フックの最小移動制限
+	Vector3 GetMinMoveLimit() { return minMoveLimit_; }
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
-	// フックの速度を設定
+
+	// フックの終点
 	Vector3 GetEndPos() { return endPos_; }
-	// フックの速度を設定
+	void SetEndPos(const Vector3& endPos) { endPos_ = endPos; }
+
+	// フックの速度
 	float GetSpeed() { return speed_; }
-	// フックのアクティブかどうかを取得
+	void SetSpeed(float speed) { speed_ = speed; }
+
+	// フックのアクティブかどうか
 	bool GetIsActive() { return isActive_; }
-	// フックのアクティブかどうかを設定
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
+
 	// フックの伸びているかどうかを取得
 	bool GetEnemyHit() { return enemyHit_; }
+	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 
 	///-------------------------------------------///
 	/// メンバ変数
