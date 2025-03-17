@@ -20,6 +20,10 @@ public:
 	void DrawImGui();
 	// 移動処理
 	void Move();
+
+	//回転処理
+	void Rotate();
+
 	// 攻撃処理
 	void Attack();
 
@@ -87,6 +91,7 @@ private:
 
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
+
 	// 位置
 	Vector3 position_;
 	// 回転
@@ -100,7 +105,7 @@ private:
 	// 角速度
 	Vector3 angularVelocity_;
 
-	// 移動制限
+	/*----- 移動制限-----*/
 	//  移動制限の最大値
 	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
 	//  移動制限の最小値
@@ -112,20 +117,12 @@ private:
 	// 武器
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
-
-	///============================
-	/// Debug
-	/// 
+	/*-----DebugMode-----*/
 	//デバッグフラグ
-	// デバッグモードになると今は特にない
 	bool isDebug_ = false;
 
 	/*------当たり判定マネージャ------*/
 	std::unique_ptr<CollisionManager> collisionManager_;
-
-	// フックが敵に当たったかどうか
-	bool hookToEnemyHit_ = false;
-
 
 	/*------パーティクル------*/
 	ParticleManager* particleManager_;
