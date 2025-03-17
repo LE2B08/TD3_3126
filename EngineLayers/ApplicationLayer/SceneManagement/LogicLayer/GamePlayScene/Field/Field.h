@@ -30,6 +30,15 @@ public:
 
 	Vector3 GetMaxPosition() { return maxPosition_; }
 
+	void SetMinPosition(const Vector3& minPosition) { minPosition_ = minPosition; }
+
+	void SetMaxPosition(const Vector3& maxPosition) { maxPosition_ = maxPosition; }
+
+	void SetScale(const Vector3& scale) { scale_ = scale; }
+
+	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+
+	void SetPosition(const Vector3& position) { position_ = position; }
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

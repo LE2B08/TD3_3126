@@ -53,6 +53,9 @@ private: /// ---------- メンバ関数 ---------- ///
 	/*------カメラのシェイク------*/
 	void CameraShake();
 
+	/*------ゲーム開始演出------*/
+	void GameStart();
+
 private: /// ---------- メンバ変数 ---------- ///
 
 	DirectXCommon* dxCommon_ = nullptr;
@@ -94,4 +97,34 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 揺れの強さ
 	float shakeMagnitude_ = 0.5f;
 	float shakeElapsedTime_ = 0.0f;
+
+	/*------ゲーム開始演出------*/
+	// スタートしたか
+	bool isGameStart_ = false;
+
+	// イージングがスタートしたか
+	bool isStartEasing_ = false;
+
+	// プレイヤーの位置がセットされたか
+	bool isPlayerPositionSet_ = false;
+
+	// タイマー用のメンバ変数
+	float startTimer_ = 0;
+	const float maxStartT_ = 40;
+
+	// プレイヤー用のタイマー
+	float playerStartTimer_ = 0;
+	const float maxPlayerStartT_ = 40;
+
+	// デフォルトのフィールド
+	const Vector3 defaultFieldScale_ = { 10.0f,1.0f,10.0f };
+	const Vector3 defaultFieldPosition_ = { 0.0f,0.0f,0.0f };
+
+	// 初期のフィールド
+	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
+	const Vector3 startFieldPosition_ = { 0.0f,0.0f,0.0f };
+
+	// 拡大するフィールド
+	Vector3 fieldScale_ = startFieldScale_;
+	Vector3 fieldPosition_ = startFieldPosition_;
 };
