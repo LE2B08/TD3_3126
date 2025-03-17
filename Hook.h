@@ -113,6 +113,12 @@ public:
 	bool GetEnemyHit() { return enemyHit_; }
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 
+	bool GetIsDebug() { return isDebug_; }
+	void SetIsDebug(bool isDebug) { isDebug_ = isDebug; }
+
+	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
+	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
+
 	///-------------------------------------------///
 	/// メンバ変数
 	///-------------------------------------------///
@@ -162,6 +168,7 @@ private:
 
 	// プレイヤーの位置
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f};
+
 	// プレイヤーの速度
 	Vector3 playerVelocity_ = {};
 	// プレイヤーの加速度
@@ -183,8 +190,12 @@ private:
 	// フックを投げる前に敵に当たったかどうか
 	bool hookToEnemyHitBeforeThrow_ = false;
 
+	bool isHitPlayerToEnemy_ = false;
+
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
+
+	bool isDebug_ = false;
 
 	//================================================
 	// Behavior

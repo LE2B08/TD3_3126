@@ -87,7 +87,11 @@ public:
 
 	// ヒット判定
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
-	bool GetIsHit() const { return isHit_; }	
+	bool GetIsHit() const { return isHit_; }
+
+	void SetIsHitEnemy(bool isHitEnemy) { isHitEnemy_ = isHitEnemy; }
+	bool GetIsHitEnemy() const { return isHitEnemy_; }
+
 	// DebugMode
 	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
 	bool GetDebug() const { return isDebug_; }
@@ -143,6 +147,7 @@ private:
 
 	/*------ヒット判定------*/
 	bool isHit_ = false;
+	bool isHitEnemy_ = false;
 
 	/*------ヒットの時間------*/
 	float hitTime_ = 0.0f;
