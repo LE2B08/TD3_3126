@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "Vector3.h"
+#include "Vector4.h"
 
 /// -------------------------------------------------------------
 ///						　当たり判定クラス
@@ -34,15 +35,28 @@ public: /// ---------- 設定 ---------- ///
 	// 識別IDを取得
 	uint32_t GetTypeID() const { return typeID_; }
 
+	// 半径を取得
+	float GetRadius() const { return radius_; }
+
 public: /// ---------- 取得 ---------- ///
 
 	// 識別IDを設定
 	void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
 
+	// 半径を設定
+	void SetRadius(float radius) { radius_ = radius; }
+
+	// 色を設定
+	void SetColor(const Vector4& color) { defaultColor = color; }
+
 private: /// ---------- メンバ変数 ---------- ///
+
+	// 衝突半径
+	float radius_ = 1.0f;
 
 	// 識別ID
 	uint32_t typeID_ = 0u;
 
+	Vector4 defaultColor = { 1.0f,1.0f,1.0f,1.0f };
 };
 

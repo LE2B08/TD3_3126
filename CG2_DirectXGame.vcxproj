@@ -180,6 +180,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene\GameOverScene.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TuboScene.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\SatouScene.cpp" />
+    <ClCompile Include="Hook.cpp" />
+    <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.cpp" />
@@ -300,6 +302,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\2D\Wireframe\Wireframe.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TuboScene.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\SatouScene.h" />
+    <ClInclude Include="Hook.h" />
+    <ClInclude Include="Easing.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.h" />

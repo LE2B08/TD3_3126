@@ -23,8 +23,8 @@ static const WORD XINPUT_Buttons[] =
 	XINPUT_GAMEPAD_DPAD_RIGHT,	   // 右ボタン
 	XINPUT_GAMEPAD_LEFT_SHOULDER,  // LBボタン
 	XINPUT_GAMEPAD_RIGHT_SHOULDER, // RBボタン
-	XINPUT_GAMEPAD_LEFT_THUMB,	   // LTボタン
-	XINPUT_GAMEPAD_RIGHT_THUMB,	   // RTボタン
+	XINPUT_GAMEPAD_LEFT_THUMB,	   // Lスティックボタン
+	XINPUT_GAMEPAD_RIGHT_THUMB,	   // Rスティックボタン
 	XINPUT_GAMEPAD_START,		   // スタートボタン
 	XINPUT_GAMEPAD_BACK			   // バックボタン
 };
@@ -49,6 +49,9 @@ struct XButtonIDs
 
 	int Start; // 'START' ボタン
 	int Back;  // 'BACK' ボタン
+
+	// トリガーボタン
+	int L_Trigger, R_Trigger;
 };
 
 /// -------------------------------------------------------------
@@ -231,17 +234,17 @@ private: /// ---------- キーボードのメンバ変数 ---------- ///
 private: /// ---------- マウスのメンバ変数 ---------- ///
 
 	ComPtr<IDirectInputDevice8> mouseDevice_; // マウスデバイス
-	DIMOUSESTATE mouseState_;				  // マウスの状態
-	DIMOUSESTATE prevMouseState_;			  // 前フレームのマウスの状態
+	DIMOUSESTATE mouseState_ = {};			  // マウスの状態
+	DIMOUSESTATE prevMouseState_ = {};		  // 前フレームのマウスの状態
 	POINT mousePosition_ = {};				  // マウスの座標
 
 private: /// ---------- ゲームパッドのメンバ変数 ---------- ///
 
-	XINPUT_STATE state_;						// ゲームパッドの状態
-	static const int GAMEPAD_BUTTON_NUM = 14;	// ゲームパッドのボタンの数
-	bool buttonStates_[GAMEPAD_BUTTON_NUM];		// ゲームパッドのボタンの状態
-	bool prevButtonStates_[GAMEPAD_BUTTON_NUM]; // 前フレームのゲームパッドのボタンの状態
-	bool buttonsTriger_[GAMEPAD_BUTTON_NUM];	// ゲームパッドのトリガーの状態
+	XINPUT_STATE state_;							 // ゲームパッドの状態
+	static const int GAMEPAD_BUTTON_NUM = 16;		 // ゲームパッドのボタンの数
+	bool buttonStates_[GAMEPAD_BUTTON_NUM] = {};	 // ゲームパッドのボタンの状態
+	bool prevButtonStates_[GAMEPAD_BUTTON_NUM] = {}; // 前フレームのゲームパッドのボタンの状態
+	bool buttonsTriger_[GAMEPAD_BUTTON_NUM] = {};	 // ゲームパッドのトリガーの状態
 
 private: /// ---------- コピー禁止 ---------- ///
 

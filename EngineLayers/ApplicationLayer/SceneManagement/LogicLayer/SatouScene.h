@@ -6,14 +6,14 @@
 #include "ParticleManager.h"
 #include <BaseScene.h>
 
+
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class ImGuiManager;
 
 
 /// -------------------------------------------------------------
-///				　		アキモト専用シーン
+///				　		サトウ専用シーン
 /// -------------------------------------------------------------
 class SatouScene : public BaseScene
 {

@@ -11,6 +11,8 @@
 #include "Player.h"
 #include "Enemy/Enemy.h"
 #include "Field/Field.h"
+#include "Weapon.h"
+#include "Enemy/EnemyBullet.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -18,7 +20,7 @@
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class ImGuiManager;
+class Camera;
 
 /// -------------------------------------------------------------
 ///				　		ゲームプレイシーン
@@ -48,16 +50,18 @@ private: /// ---------- メンバ関数 ---------- ///
 	// 衝突判定と応答
 	void CheckAllCollisions();
 
+	/*------カメラのシェイク------*/
+	void CameraShake();
+
 private: /// ---------- メンバ変数 ---------- ///
 
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
 	Input* input_ = nullptr;
 	ParticleManager* particleManager = nullptr;
+	Camera* camera_ = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;
-	//std::unique_ptr<Object3D> objectTerrain_;
-	//std::unique_ptr<Object3D> objectBall_;
 	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
@@ -73,4 +77,21 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// フィールド
 	std::unique_ptr<Field> field_;
+
+	// 武器
+	Weapon* weapon_;
+
+	// 敵の弾
+	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;
+
+	/*------カメラの座標------*/
+	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };
+
+	// カメラの揺れを管理する変数
+	bool isCameraShaking_ = false;
+	// 揺れの持続時間
+	float shakeDuration_ = 0.05f;
+	// 揺れの強さ
+	float shakeMagnitude_ = 0.5f;
+	float shakeElapsedTime_ = 0.0f;
 };

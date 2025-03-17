@@ -31,6 +31,7 @@ void TuboScene::Initialize()
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
+	enemy_->SetPlayer(player_.get());
 
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
@@ -57,7 +58,7 @@ void TuboScene::Update()
 	}
 
 	// シーン切り替え（必要なら）
-	if (input_->TriggerKey(DIK_2))
+	if (input_->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{
@@ -65,7 +66,7 @@ void TuboScene::Update()
 		}
 	}
 
-	if (input_->TriggerKey(DIK_3))
+	if (input_->TriggerKey(DIK_F3))
 	{
 		if (sceneManager_)
 		{
@@ -90,9 +91,10 @@ void TuboScene::Update()
 
 	enemy_->Update();
 	
+	CheckAllCollisions();
 	collisionManager_->Update();
 	
-	
+
 }
 
 ///-------------------------------------------------------------
@@ -150,6 +152,7 @@ void TuboScene::CheckAllCollisions() {
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
 	collisionManager_->AddCollider(player_->GetWeapon());
+	collisionManager_->AddCollider(player_->GetHook());
 	collisionManager_->AddCollider(enemy_.get());
 
 

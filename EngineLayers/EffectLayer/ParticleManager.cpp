@@ -244,7 +244,7 @@ void ParticleManager::Finalize()
 /// -------------------------------------------------------------
 ///					　パーティクル射出処理
 /// -------------------------------------------------------------
-void ParticleManager::Emit(const std::string name, const Vector3 position, uint32_t count)
+void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count)
 {
 	// パーティクルグループが存在するかどうか
 	assert(particleGroups.find(name) != particleGroups.end() && "Particle Group is not found");
@@ -261,6 +261,54 @@ void ParticleManager::Emit(const std::string name, const Vector3 position, uint3
 		// パーティクルの生成と追加
 		particleGroup.particles.push_back(MakeNewParticle(randomEngin, position));
 	}
+}
+
+void ParticleManager::Explode(const std::string& name, const Vector3& position, uint32_t count, float speedMin, float speedMax)
+{
+	assert(particleGroups.find(name) != particleGroups.end() && "Particle Group is not found");
+	ParticleGroup& particleGroup = particleGroups[name];
+
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		Particle particle;
+
+		// ランダムな方向を決定
+		std::uniform_real_distribution<float> distDirection(-1.0f, 1.0f);
+		Vector3 randomDir = {
+			distDirection(randomEngin),
+			distDirection(randomEngin),
+			distDirection(randomEngin)
+		};
+		randomDir = Vector3::Normalize(randomDir); // 正規化して方向ベクトルにする
+
+		// 速度の大きさをランダムに決定
+		std::uniform_real_distribution<float> distSpeed(speedMin, speedMax);
+		float speed = distSpeed(randomEngin);
+		particle.velocity = randomDir * speed;
+
+		// 位置は発生位置
+		particle.worldTransform.translate_ = position;
+		particle.worldTransform.scale_ = { 0.5f, 0.5f, 0.5f }; // 少し小さめ
+		particle.worldTransform.rotate_ = { 0.0f, 0.0f, 0.0f };
+
+		// 色もランダムで
+		std::uniform_real_distribution<float> distColor(0.5f, 1.0f);
+		particle.color = {
+			distColor(randomEngin),
+			distColor(randomEngin),
+			distColor(randomEngin),
+			1.0f
+		};
+
+		// 寿命を短く
+		particle.lifeTime = 0.5f + distSpeed(randomEngin) * 0.5f; // 0.5秒〜1秒で消える
+		particle.currentTime = 0.0f;
+
+		particleGroup.particles.push_back(particle);
+	}
+
+	// デバッグ用ログ
+	Log("Explosion triggered for group: " + name);
 }
 
 

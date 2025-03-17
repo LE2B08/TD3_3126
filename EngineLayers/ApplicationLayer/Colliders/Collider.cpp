@@ -24,5 +24,6 @@ void Collider::Update()
 /// -------------------------------------------------------------
 void Collider::Draw()
 {
-	Wireframe::GetInstance()->DrawSphere({ 0.0f,0.0f,0.0f }, 1.5f, { 1.0f,1.0f,0.0f, 1.0f });
+	Vector3 center = GetCenterPosition();
+	Wireframe::GetInstance()->DrawSphere(center, radius_, defaultColor); // 白色の球で表示
 }

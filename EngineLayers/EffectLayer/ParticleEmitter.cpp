@@ -12,7 +12,7 @@ ParticleEmitter::ParticleEmitter(ParticleManager* manager, const std::string& gr
 void ParticleEmitter::Update(float deltaTime)
 {
     accumulatedTime_ += deltaTime;
-
+    
     // 発生させるパーティクルの数を計算
     int particleCount = static_cast<int>(emissionRate_ * accumulatedTime_);
     if (particleCount > 0) {

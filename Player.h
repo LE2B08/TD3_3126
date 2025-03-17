@@ -1,7 +1,12 @@
 #pragma once
 #include <Object3D.h>
 #include"Collider.h"
-#include"Weapon.h"
+#include "Hook.h"
+#include "Weapon.h"
+#include "CollisionManager.h"
+#include "Enemy/Enemy.h"
+#include <ParticleManager.h>
+#include <ParticleEmitter.h>
 
 class Player :public Collider {
 public:
@@ -17,12 +22,6 @@ public:
 	void Move();
 	// 攻撃処理
 	void Attack();
-	// フックの投げる処理
-	void HookThrow();
-	// フックの更新処理
-	void MoveToHook();
-	// フックの元の位置に戻る処理
-	void ExtendHook();
 
 	// 衝突判定
 	void OnCollision(Collider* other) override;
@@ -30,6 +29,10 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+	void CheckAllCollisions();
+
+	/*------ヒット時のパーティクル------*/
+	void HitParticle();
 
 public:
 	///============================
@@ -69,6 +72,12 @@ public:
 	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
 	Weapon* GetWeapon() { return weapon_.get(); }
 
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+  
+	Hook* GetHook() { return hook_.get(); }
+
+	bool GetIsHit() const { return isHit_; }	
+  
 private:
 	///============================
 	/// メンバ変数
@@ -97,43 +106,10 @@ private:
 	//  移動制限の最小値
 	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
 
-	///===========================
-	//フック
-	//  フックの開始位置
-	Vector3 hookStartPos_;
-	//  フックの現在位置
-	Vector3 hookCurrentPos_;
-	//  フックの終了位置
-	Vector3 hookEndPos_ = {};
-	//  フックの回転
-	Vector3 hookRotation_;
-	//  フックのスケール
-	Vector3 hookScale_;
-	//  フックの速度
-	Vector3 hookVelocity_;
-	//  フックの加速度
-	Vector3 hookAcceleration_;
-	//  フックの角速度
-	Vector3 hookAngularVelocity_;
-	//  フックのオブジェクト3D
-	std::unique_ptr<Object3D> hookObject3D_ = nullptr;
-
-	// フックの状態を管理する変数
-	bool isHookActive_ = false;
-	// フックが伸びているかどうか
-	bool isHookExtending_ = false;
-
-	// フックの開始時間
-	std::chrono::time_point<std::chrono::steady_clock> hookStartTime_;
-
-	// フックの移動速度
-
-	float hookSpeed_ = 5.0f; 
+	// フック
+	std::unique_ptr<Hook> hook_ = nullptr;
 	
-	///===========================
-	/// 武器
-	/// 
-	
+	// 武器
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
 
@@ -141,6 +117,30 @@ private:
 	/// Debug
 	/// 
 	//デバッグフラグ
-	// デバッグモードになるとプレイヤーの移動ができるようになる
+	// デバッグモードになると今は特にない
 	bool isDebug_ = false;
+
+	/*------当たり判定マネージャ------*/
+	std::unique_ptr<CollisionManager> collisionManager_;
+
+	// フックが敵に当たったかどうか
+	bool hookToEnemyHit_ = false;
+
+
+	/*------パーティクル------*/
+	ParticleManager* particleManager_;
+	std::unique_ptr<ParticleEmitter> particleEmitter_;
+
+	/*------敵------*/
+	Enemy* enemy_;
+
+	/*------ヒット判定------*/
+	bool isHit_ = false;
+
+	/*------ヒットの時間------*/
+	float hitTime_ = 0.0f;
+
+	/*------ヒットの最大時間------*/
+	float hitMaxTime_ = 2.0f;
+
 };

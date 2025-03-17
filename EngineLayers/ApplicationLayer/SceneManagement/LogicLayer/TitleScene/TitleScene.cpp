@@ -44,8 +44,7 @@ void TitleScene::Initialize()
 	}
 
 	/// ---------- サウンドの初期化 ---------- ///
-	const char* fileName = "Resources/Sounds/RPGBattle01.wav";
-	wavLoader_->StreamAudioAsync(fileName, 0.0f, 1.0f, false);
+	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, false);
 }
 
 
@@ -65,7 +64,7 @@ void TitleScene::Update()
 		wavLoader_->StopBGM();
 	}
 
-	if (input->TriggerKey(DIK_1))
+	if (input->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -73,12 +72,17 @@ void TitleScene::Update()
 		}
 	}
 
-	if (input->TriggerKey(DIK_2))
+	if (input->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
+	}
+
+	if (input->TriggerKey(DIK_F3))
+	{
+
 	}
 
 	// スプライトの更新処理
