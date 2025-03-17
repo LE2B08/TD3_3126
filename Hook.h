@@ -16,6 +16,7 @@ public:
 		Throw,  // 投げる
 		Extend, // 伸ばす
 		Move,   // 移動
+		Back    // 戻す
 	};
 
 	///-------------------------------------------///
@@ -54,6 +55,11 @@ public:
 
 	// Move状態の更新
 	void BehaviorMoveUpdate();
+
+	// フックを戻す状態の初期化
+	void BehaviorBackInitialize();
+	// フックを戻す状態の更新
+	void BehaviorBackUpdate();
 
 	// 衝突判定
 	void OnCollision(Collider* other) override;

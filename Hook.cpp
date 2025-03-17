@@ -39,6 +39,9 @@ void Hook::Update() {
 		case Hook::Behavior::Move:
 			BehaviorMoveInitialize();
 			break;
+		case Hook::Behavior::Back:
+			BehaviorBackInitialize();
+			break;
 		default:
 			break;
 		}
@@ -60,6 +63,9 @@ void Hook::Update() {
 		break;
 	case Hook::Behavior::Move:
 		BehaviorMoveUpdate();
+		break;
+	case Hook::Behavior::Back:
+		BehaviorBackUpdate();
 		break;
 	default:
 		break;
@@ -200,10 +206,9 @@ void Hook::BehaviorMoveUpdate() {
 	// フックの開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
-
 	///===========================================
-	///　キー入力
-	/// 
+	/// 　キー入力
+	///
 	if (isPulling_) {
 		// フックがアクティブのときにボタンを押すとフックを非アクティブにする
 		if (Input::GetInstance()->TriggerButton(15)) {
@@ -218,9 +223,10 @@ void Hook::BehaviorMoveUpdate() {
 		}
 	}
 
-
-
-	
+	if (Input::GetInstance()->TriggerButton(9)) {
+		// フックを戻す状態に変更
+		requestBehavior_ = Behavior::Back;
+	}
 
 	///===========================================
 	/// プレイヤーのフック使用時の移動処理
@@ -470,6 +476,25 @@ void Hook::BehaviorMoveUpdate() {
 	}
 }
 
+void Hook::BehaviorBackInitialize() {}
+
+void Hook::BehaviorBackUpdate() {
+
+	// フックの方向ベクトルを計算
+	Vector3 moveDirection = startPos_ - endPos_;
+	float distance = Vector3::Length(moveDirection);
+
+	// 終了位置に到達したらフラグを更新
+	if (distance < speed_ * 0.016f) {
+		endPos_ = startPos_;
+		isActive_ = true;
+		requestBehavior_ = Behavior::None;
+	} else {
+		Vector3::Normalize(moveDirection);
+		endPos_ += moveDirection * speed_ * 0.016f;
+	}
+}
+
 void Hook::OnCollision(Collider* other) {
 	// 種別IDを種別
 	uint32_t typeID = other->GetTypeID();
@@ -526,6 +551,9 @@ void Hook::ShowImGui() {
 		break;
 	case Hook::Behavior::Move:
 		ImGui::Text("Behavior: Move");
+		break;
+	case Hook::Behavior::Back:
+		ImGui::Text("Behavior: Back");
 		break;
 	default:
 		break;
