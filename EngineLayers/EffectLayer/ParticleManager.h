@@ -5,12 +5,13 @@
 #include <VertexData.h>
 #include <Emitter.h>
 #include "BlendModeType.h"
+#include <AABB.h>
 
 #include <unordered_map>
 #include <list>
 #include <random>
 #include <numbers>
-#include <AABB.h>
+#include <chrono>
 
 /// ---------- 前方宣言 ----------///
 class DirectXCommon;
@@ -95,7 +96,10 @@ public: /// ---------- メンバ関数 ---------- ///
 	void Finalize();
 
 	// パーティクルの発生
-	void Emit(const std::string name, const Vector3 position, uint32_t count);
+	void Emit(const std::string name, const Vector3& position, uint32_t count);
+
+	// 爆散用関数
+	void Explode(const std::string& name, const Vector3& position, uint32_t count, float speedMin, float speedMax);
 
 	std::unordered_map<std::string, ParticleManager::ParticleGroup> GetParticleGroups() { return particleGroups; }
 	
