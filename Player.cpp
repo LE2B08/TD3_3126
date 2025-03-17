@@ -88,13 +88,16 @@ void Player::Update() {
 	// フックの更新処理
 	hook_->SetPlayerRotation(rotation_);
 	hook_->SetPlayerPosition(position_);
+	hook_->SetPlayerVelocity(velocity_);
+	hook_->SetPlayerAcceleration(acceleration_);
 	hook_->SetMinMoveLimit(minMoveLimit_);
 	hook_->SetMaxMoveLimit(maxMoveLimit_);
-
-	// フックの更新処理
 	hook_->Update();
+
 	// フックの位置を取得
 	position_ = hook_->GetPlayerPosition();
+	velocity_ = hook_->GetPlayerVelocity();
+	acceleration_ = hook_->GetPlayerAcceleration();
 
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
