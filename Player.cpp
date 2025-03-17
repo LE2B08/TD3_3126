@@ -69,7 +69,8 @@ void Player::Update() {
 
 #endif // DEBUG
 
-	
+	if (isGameStart_) {
+
 	
 	// 移動処理
 	Move();
@@ -80,6 +81,9 @@ void Player::Update() {
 	// 攻撃処理
 	Attack();
 
+
+		collisionManager_->Update();
+	}
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
@@ -108,14 +112,14 @@ void Player::Update() {
 	object3D_->SetScale(scale_);
 	object3D_->Update();
 
-	collisionManager_->Update();
+	
 }
 
 void Player::Draw() {
-
-	// 描画処理
-	object3D_->Draw();
-
+	if (isGameStart_) {
+		// 描画処理
+		object3D_->Draw();
+	}
 	// フックの描画
 	hook_->Draw();
 

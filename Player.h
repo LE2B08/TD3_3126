@@ -81,6 +81,8 @@ public:
 	Hook* GetHook() { return hook_.get(); }
 
 	bool GetIsHit() const { return isHit_; }	
+
+	void SetIsGameStart(bool isGameStart) { isGameStart_ = isGameStart; }
   
 private:
 	///============================
@@ -139,5 +141,8 @@ private:
 
 	/*------ヒットの最大時間------*/
 	float hitMaxTime_ = 2.0f;
+
+	// ゲームが開始しているか
+	bool isGameStart_ = false;
 
 };
