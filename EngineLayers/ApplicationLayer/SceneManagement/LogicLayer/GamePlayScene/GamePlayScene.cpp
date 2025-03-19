@@ -46,7 +46,6 @@ void GamePlayScene::Initialize()
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
-	enemy_->SetPlayer(player_.get());
 
 	enemyBullets_ = &enemy_->GetBullets();
 
@@ -131,6 +130,9 @@ void GamePlayScene::Update()
 	player_->SetIsGameStart(isGameStart_);
 	player_->Update();
 
+	enemy_->SetMinMoveLimit(field_->GetMinPosition());
+	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
+	enemy_->SetPlayer(player_.get());
 	enemy_->Update();
 
 	collisionManager_->Update();

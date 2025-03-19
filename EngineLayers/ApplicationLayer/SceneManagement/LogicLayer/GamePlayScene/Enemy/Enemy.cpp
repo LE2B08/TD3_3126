@@ -11,6 +11,8 @@
 Enemy::Enemy() {
 	serialNumber_ = nextSerialNumber_;
 	nextSerialNumber_++;
+
+	randomEngine.seed(seedGenerator());
 }
 
 Enemy::~Enemy() {
@@ -18,6 +20,9 @@ Enemy::~Enemy() {
 
 void Enemy::Initialize()
 {
+	// ワールド変換の初期化
+	worldTransform_.Initialize();
+
 	// オブジェクトの生成・初期化
 	objectEnemy_ = std::make_unique<Object3D>();
 	objectEnemy_->Initialize("sphere.gltf");
@@ -30,7 +35,6 @@ void Enemy::Initialize()
 	// パーティクルエミッターの初期化
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
 	hitTime_ = 0;
-
 
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
 
@@ -52,12 +56,12 @@ void Enemy::Update() {
 					BehaviorNormalInitialize();
 					break;
 
-				case Enemy::Behavior::Attack:
-					BehaviorAttackInitialize();
+				case Enemy::Behavior::Sarch:
+					BehaviorSarchInitialize();
 					break;
 
-				case Enemy::Behavior::Leave:
-					BehaviorLeaveInitialize();
+				case Enemy::Behavior::Attack:
+					BehaviorAttackInitialize();
 					break;
 
 				default:
@@ -75,23 +79,17 @@ void Enemy::Update() {
 				BehaviorNormalUpdate();
 				break;
 
-			case Enemy::Behavior::Attack:
-				BehaviorAttackUpdate();
+			case Enemy::Behavior::Sarch:
+				BehaviorSarchUpdate();
 				break;
 
-			case Enemy::Behavior::Leave:
-				BehaviorLeaveUpdate();
+			case Enemy::Behavior::Attack:
+				BehaviorAttackUpdate();
 				break;
 
 			default:
 				break;
 			}
-
-			// Y軸回転のみ対応した向きを設定
-			const float direction = atan2(worldTransform_.translate_.z - player_->GetPosition().z, worldTransform_.translate_.x - player_->GetPosition().x);
-
-			// 向きを設定
-			worldTransform_.rotate_.y = direction;
 
 			// 弾の削除
 			bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
@@ -105,13 +103,18 @@ void Enemy::Update() {
 				}
 
 				return false;
-				});
+			});
 		}
 	}
+
+	// 移動
+	Move();
+
 	// 弾の更新
 	for (auto& bullet : bullets_) {
 		bullet->Update();
 	}
+
 	/*------ヒット時の処理------*/
 	if (isHit_) {
 		if (isHitFromAttack_) {
@@ -130,8 +133,11 @@ void Enemy::Update() {
 		}
 	}
 
+	// ワールド変換の更新
+	worldTransform_.Update();
+
 	// ワイヤーフレームの処理
-	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, 10.0f, 32, { 1.0f, 1.0f, 1.0f,1.0f });
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f,1.0f });
 
 	// Object3Dの更新
 	objectEnemy_->SetRotate(worldTransform_.rotate_);
@@ -145,6 +151,7 @@ void Enemy::Draw()
 		// 描画
 		objectEnemy_->Draw();
 	}
+
 	// 弾の描画
 	for (auto& bullet : bullets_) {
 		bullet->Draw();
@@ -156,6 +163,9 @@ void Enemy::Move() {
 	// 速度を位置に加算
 	worldTransform_.translate_ += velocity_;
 
+	// 向きを合わせる
+	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
+
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
@@ -165,15 +175,6 @@ void Enemy::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
-	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
-	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
-	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
-	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
-	ImGui::Text("HitTime : %f", hitTime_);
-	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
-	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
-
 	// 状態の表示
 	switch (behavior_) {
 
@@ -181,22 +182,28 @@ void Enemy::ShowImGui(const char* name) {
 		ImGui::Text("Behavior: Normal");
 		break;
 
-	case Behavior::Attack:
-		ImGui::Text("Behavior: Attack");
+	case Behavior::Sarch:
+		ImGui::Text("Behavior: Sarch");
 		break;
 
-	case Behavior::Leave:
-		ImGui::Text("Behavior: Leave");
+	case Behavior::Attack:
+		ImGui::Text("Behavior: Attack");
 		break;
 
 	default:
 		break;
 	}
 
-	// ボタンを押したら攻撃状態にする
-	if (ImGui::Button("Attack")) {
-		requestBehavior_ = Behavior::Attack;
-	}
+	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
+	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
+	ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
+	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
+	ImGui::Text("HitTime : %f", hitTime_);
+	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
+	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	ImGui::End();
 }
@@ -226,17 +233,69 @@ void Enemy::HitParticle()
 	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
 }
 
+Vector3 Enemy::RondomDirection(float min, float max) {
+
+	// XZ平面上のランダムな方向を生成
+	std::uniform_real_distribution<float> dist(min, max);
+	Vector3 direction = { dist(randomEngine), 0.0f, dist(randomEngine) };
+	direction = Vector3::Normalize(direction);
+
+	return direction;
+}
+
 void Enemy::BehaviorNormalInitialize() {
+
+	// タイマー初期化
+	stateTimer_ = 5.0f;
 }
 
 void Enemy::BehaviorNormalUpdate() {
 
-	// プレイヤーとの距離を計算
-	const float distance = Vector3::Length(player_->GetPosition() - worldTransform_.translate_);
+	// タイマーが0になったら
+	if (stateTimer_ <= 0) {
 
-	// 一定距離まで近づいたら離脱状態にする
-	if (distance < maxDistance_) {
-		requestBehavior_ = Behavior::Leave;
+		// 探索状態にする
+		requestBehavior_ = Behavior::Sarch;
+	}
+	else {
+
+		// タイマーを減らす
+		stateTimer_ -= kDeltaTime;
+	}
+}
+
+void Enemy::BehaviorSarchInitialize() {
+
+	stateTimer_ = 5.0f;
+}
+
+void Enemy::BehaviorSarchUpdate() {
+
+	// タイマーが0になったら
+	if (stateTimer_ <= 0) {
+
+		// ランダムに向きを決める
+		direction_ = RondomDirection(-1.0f, 1.0f);
+
+		// タイマーをリセット
+		stateTimer_ = 2.0f;
+	}
+	else {
+
+		// タイマーを減らす
+		stateTimer_ -= kDeltaTime;
+	}
+
+	// 速度を向きに合わせる
+	velocity_ = direction_ * 0.1f;
+
+	// プレイヤーとの距離を計算
+	const float distance = Vector3::Distance(player_->GetPosition(), worldTransform_.translate_);
+
+	// プレイヤーが発見までの距離に入ったら
+	if (distance < foundDistance_) {
+		// 攻撃状態にする
+		requestBehavior_ = Behavior::Attack;
 	}
 }
 
@@ -247,6 +306,9 @@ void Enemy::BehaviorAttackInitialize() {
 
 	// 発射回数をリセット
 	attackCount_ = 0;
+
+	// 移動をストップ
+	velocity_ = { 0.0f, 0.0f, 0.0f };
 }
 
 void Enemy::BehaviorAttackUpdate() {
@@ -277,6 +339,7 @@ void Enemy::BehaviorAttackUpdate() {
 
 		// 攻撃間隔をリセット
 		attackInterval_ = 300;
+
 	} else {
 
 		// 攻撃間隔を減らす
@@ -286,31 +349,5 @@ void Enemy::BehaviorAttackUpdate() {
 	// 攻撃回数が5回になったら通常状態にする
 	if (attackCount_ >= 5) {
 		requestBehavior_ = Behavior::Normal;
-	}
-}
-
-void Enemy::BehaviorLeaveInitialize() {
-
-	// プレイヤーの位置を取得
-	const Vector3 playerPosition = player_->GetPosition();
-
-	// 向きを180度回転
-	leaveDirection_ = -worldTransform_.rotate_;
-}
-
-void Enemy::BehaviorLeaveUpdate() {
-
-	// 速度に向きを設定
-	velocity_ = leaveDirection_ * 0.01f;
-
-	// プレイヤーの位置を向きを設定
-	const Vector3 direction = player_->GetPosition() - worldTransform_.translate_;
-
-	// プレイヤーとの距離を計算
-	const float distance = Vector3::Length(direction);
-
-	// 一定距離まで離れたら攻撃状態にする
-	if (distance > maxDistance_) {
-		requestBehavior_ = Behavior::Attack;
 	}
 }
