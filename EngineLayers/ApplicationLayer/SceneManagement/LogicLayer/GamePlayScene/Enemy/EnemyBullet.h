@@ -77,6 +77,9 @@ private:
 	bool isAlive_ = true;
 
 	// 生存フレーム
-	uint32_t lifeFrame_ = 180;
+	uint32_t lifeFrame_ = 240;
+
+	// 速度
+	const float speed_ = 0.1f;
 };
 

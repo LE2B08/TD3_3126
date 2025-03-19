@@ -51,7 +51,7 @@ void EnemyBullet::Draw() {
 void EnemyBullet::Move() {
 
 	// 速度に向きを設定
-	velocity_ = direction_ * 0.01f;
+	velocity_ = direction_ * speed_;
 
 	// 速度を位置に加算
 	worldTransform_.translate_ += velocity_;
