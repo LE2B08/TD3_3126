@@ -47,7 +47,6 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
-
 	// ヒット時のパーティクル
 	void HitParticle();
 
@@ -57,6 +56,7 @@ public:
 	// シリアルナンバーを設定
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
 
+	Vector3 RondomDirection(float min, float max);
 
 	///-------------------------------------------/// 
 	/// 行動別処理
@@ -74,6 +74,16 @@ public:
 	void BehaviorNormalUpdate();
 
 	/// <summary>
+	/// 探索時初期化
+	/// </summary>
+	void BehaviorSarchInitialize();
+
+	/// <summary>
+	/// 探索時更新
+	/// </summary>
+	void BehaviorSarchUpdate();
+
+	/// <summary>
 	/// 攻撃時初期化
 	/// </summary>
 	void BehaviorAttackInitialize();
@@ -82,16 +92,6 @@ public:
 	/// 攻撃時更新
 	/// </summary>
 	void BehaviorAttackUpdate();
-
-	/// <summary>
-	/// 離脱時初期化
-	/// </summary>
-	void BehaviorLeaveInitialize();
-
-	/// <summary>
-	/// 離脱時更新
-	/// </summary>
-	void BehaviorLeaveUpdate();
 
 	///-------------------------------------------/// 
 	/// ゲッター&セッター
@@ -110,6 +110,18 @@ public:
 	/*------弾の取得------*/
 	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
+	/// <summary>
+	/// 移動制限の最大値のセッター
+	/// </summary>
+	/// <param name="maxMoveLimit"></param>
+	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
+
+	/// <summary>
+	/// 移動制限の最小値のセッター
+	/// </summary>
+	/// <param name="minMoveLimit"></param>
+	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+
 	///-------------------------------------------/// 
 	/// 列挙
 	///-------------------------------------------///
@@ -118,8 +130,8 @@ public:
 	enum class Behavior {
 
 		Normal, // 通常
+		Sarch, 	// 探索
 		Attack, // 攻撃
-		Leave,  // 離脱
 	};
 
 	///-------------------------------------------/// 
@@ -136,14 +148,8 @@ private:
 	// 速度
 	Vector3 velocity_;
 
-	// 加速度
-	Vector3 acceleration_;
-
-	// 速度の最大値
-	float velocityLimit_ = 0.1f;
-
-	// 加速度の最大値
-	float accelerationLimit_ = 0.01f;
+	// 向き
+	Vector3 direction_ = {};
 
 	ParticleManager* particleManager_ = nullptr;
 
@@ -155,9 +161,6 @@ private:
 
 	// 状態リクエスト
 	std::optional<Behavior> requestBehavior_ = std::nullopt;
-
-	// 離脱時の向き
-	Vector3 leaveDirection_ = {};
 
 	//  移動制限の最大値
 	Vector3 maxMoveLimit_ = {};
@@ -173,8 +176,14 @@ private:
 	// 弾の発射回数
 	uint32_t attackCount_ = 0;
 
-	const float maxDistance_ = 10.0f;
+	// 発見までの距離
+	const float foundDistance_ = 4.0f;
 
+	// 各状態で使うカウントダウンタイマー
+	float stateTimer_ = 5.0f;
+
+	// Δt
+	const float kDeltaTime = 1.0f / 60.0f;
 
 	/*------パーティクル------*/
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
@@ -196,5 +205,8 @@ private:
 	// 次のシリアルナンバー
 	uint32_t nextSerialNumber_;
 
+	// 乱数生成器
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
 };
 
