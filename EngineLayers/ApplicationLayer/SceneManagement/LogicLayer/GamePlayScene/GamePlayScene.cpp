@@ -241,6 +241,7 @@ void GamePlayScene::CameraShake()
 	if (isCameraShaking_) {
 		shakeElapsedTime_ += 1.0f / 60.0f;
 		if (shakeElapsedTime_ >= shakeDuration_) {
+			input_->SetVibration(0, 0);
 			isCameraShaking_ = false;
 			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
 		}
@@ -251,6 +252,8 @@ void GamePlayScene::CameraShake()
 			std::uniform_real_distribution<float> dis(-shakeMagnitude_, shakeMagnitude_);
 			Vector3 shakeOffset = { dis(gen), dis(gen), dis(gen) };
 			camera_->SetTranslate(cameraPosition_ + shakeOffset);
+			// コントローラーを振動させる
+			input_->SetVibration(1, 1);
 		}
 	}
 }
