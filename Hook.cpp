@@ -233,15 +233,13 @@ void Hook::BehaviorMoveUpdate() {
 	///========================================================================================
 	/// プレイヤーのフック使用時の移動処理
 	///
-	
+
 	if (isPulling_) {
 
 		if (isActive_) {
 
-
 			if (isDebug_) {
 
-				
 				if (!enemyHit_) {
 					///===================================
 					/// 壁
@@ -283,7 +281,6 @@ void Hook::BehaviorMoveUpdate() {
 					direction = Vector3::Normalize(direction);
 					playerVelocity_ = direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
 					playerAcceleration_ = playerVelocity_ * 0.1f;  // 加速度は速度の10%と仮定
-					
 
 					// EndPosに達したらフックを非アクティブにする
 					if (isHitPlayerToEnemy_) {
@@ -292,7 +289,6 @@ void Hook::BehaviorMoveUpdate() {
 						// フックの状態をなしに変更
 						requestBehavior_ = Behavior::None;
 					}
-					
 				}
 			} else {
 
@@ -358,17 +354,17 @@ void Hook::BehaviorMoveUpdate() {
 		}
 	}
 
-	///============================================================================================================	
+	///============================================================================================================
 	/// フック使用時の弧の移動
 	///
-	/// 
-	/// 
+	///
+	///
 	/// 弧の動きは外積を使って計算を一度やってみて
-	/// 
-	/// 
+	///
+	///
 
 	// 右スティックの入力を取得
-	Vector2 rightStick = Input::GetInstance()->GetRightStick();
+	rightStick_ = Input::GetInstance()->GetRightStick();
 	// フックの終点から中心へのベクトルを計算
 	Vector3 toCenter = playerPosition_ - endPos_;
 	// フックの終点から中心までの距離を計算
@@ -377,14 +373,14 @@ void Hook::BehaviorMoveUpdate() {
 	float angle = atan2(toCenter.z, toCenter.x);
 	float angularSpeed = 3.0f; // 角速度（調整可能）
 
-
 	if (isActive_) {
+
 		if (!enemyHit_) {
 
 			///===================================
 			/// 壁
 			///
-			
+
 			///
 			/// 壁の上辺
 			///
@@ -393,11 +389,11 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点が上辺にある場合の弧の移動処理
 				//
 				// 右スティックの入力に応じて角度を変更
-				if (rightStick.x < -0.1f) {
+				if (rightStick_.x < -0.1f) {
 					// 右に移動
 					angle -= angularSpeed * 0.016f;
 
-				} else if (rightStick.x > 0.1f) {
+				} else if (rightStick_.x > 0.1f) {
 					// 左に移動
 					angle += angularSpeed * 0.016f;
 				}
@@ -410,32 +406,29 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点が下辺にある場合の弧の移動処理
 				//
 				// 右スティックの入力に応じて角度を変更
-				if (rightStick.x < -0.1f) {
+				if (rightStick_.x < -0.1f) {
 					// 右に移動
 					angle += angularSpeed * 0.016f;
 
-				} else if (rightStick.x > 0.1f) {
+				} else if (rightStick_.x > 0.1f) {
 					// 左に移動
 					angle -= angularSpeed * 0.016f;
 				}
-
 			}
 
 			///
 			/// 壁の左辺
 			///
 			if (endPos_.x <= minMoveLimit_.x) {
-				
-				
+
 				// 右スティックの入力に応じて角度を変更
-				if (rightStick.x < -0.1f) {
+				if (rightStick_.x < -0.1f) {
 					// 右に移動
 					angle += angularSpeed * 0.016f;
-				} else if (rightStick.x > 0.1f) {
+				} else if (rightStick_.x > 0.1f) {
 					// 左に移動
 					angle -= angularSpeed * 0.016f;
 				}
-				
 			}
 
 			///
@@ -445,51 +438,55 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点が右辺にある場合の弧の移動処理
 				//
 				// 右スティックの入力に応じて角度を変更
-				if (rightStick.x < -0.1f) {
+				if (rightStick_.x < -0.1f) {
 					// 右に移動
 					angle -= angularSpeed * 0.016f;
-				} else if (rightStick.x > 0.1f) {
+				} else if (rightStick_.x > 0.1f) {
 					// 左に移動
 					angle += angularSpeed * 0.016f;
 				}
-				
 			}
 
 		} else {
 			///===================================
 			/// Enemy
 			///
+			// 右スティックの入力を取得
+			rightStick_ = Input::GetInstance()->GetRightStick();
 
-			if (enemyHit_) {
+			// 右スティックの入力がある場合のみ弧の動きを計算
+			if (rightStick_.x < -0.1f || rightStick_.x > 0.1f) {
+				// フックの終点から中心へのベクトルを計算
+				Vector3 toCenter = playerPosition_ - endPos_;
+				// フックの終点から中心までの距離を計算
+				float radius = Vector3::Length(toCenter);
+				// フックの終点から中心までの角度を計算
+				float startAngle = atan2(toCenter.z, toCenter.x);
+				float angularSpeed = 3.0f; // 角速度（調整可能）
 
-				// フックの終点がエネミーにある場合の弧の移動処理
-				//
-
-				// プレイヤーの速度ベクトルの角度を計算
-				float velocityAngle = atan2(velocity_.z, velocity_.x);
-
-				// 入力の角度を計算
-				float inputAngle = atan2(rightStick.y, rightStick.x);
-
-				// 角度差を計算
-				float angleDifference = inputAngle - velocityAngle;
-
-				// 角度差に応じて角度を変更
-				if (angleDifference < -0.1f) {
-					// 右に移動
-					angle -= angularSpeed * 0.016f;
-				} else if (angleDifference > 0.1f) {
-					// 左に移動
-					angle += angularSpeed * 0.016f;
+				// 右スティックの入力に応じて角度を変更
+				float endAngle = startAngle;
+				if (rightStick_.x < -0.1f) {
+					endAngle -= angularSpeed * 0.016f;
+				} else if (rightStick_.x > 0.1f) {
+					endAngle += angularSpeed * 0.016f;
 				}
 
-				
+				// 角度を線形補間
+				float angle = Vector3::AngleLerp(startAngle, endAngle, rightStick_.x);
+
+				// 新しい位置を計算
+				playerPosition_.x = endPos_.x + radius * cos(angle);
+				playerPosition_.z = endPos_.z + radius * sin(angle);
+
+				// 外積を使って速度を計算
+				Vector3 tangent = Vector3::Cross(Vector3(0, 1, 0), toCenter);
+				playerVelocity_ = Vector3::Normalize(tangent) * speed_ * 0.032f; // 速度を2倍に増加
+
+				// 位置を更新
+				playerPosition_ += playerVelocity_;
 			}
 		}
-
-		// 新しい位置を計算
-		playerPosition_.x = endPos_.x + radius * cos(angle);
-		playerPosition_.z = endPos_.z + radius * sin(angle);
 	}
 }
 
@@ -534,7 +531,6 @@ void Hook::OnCollision(Collider* other) {
 			}
 		}
 
-
 		// フックを投げる前に敵にあたってなければ
 		if (!hookToEnemyHitBeforeThrow_) {
 
@@ -577,7 +573,7 @@ void Hook::ShowImGui() {
 	default:
 		break;
 	}
-
+	ImGui::Text("rightStick: %f, %f", rightStick_.x, rightStick_.y);
 	// フックが起動してプレイヤーの移動ができるかどうか
 	ImGui::Checkbox("IsActive", &isActive_);
 	// フックが投げられているかどうか
@@ -604,9 +600,6 @@ void Hook::ShowImGui() {
 	ImGui::DragFloat("Speed", &speed_, 0.1f);
 
 	ImGui::End();
-
-
-	
 }
 
 Vector3 Hook::GetCenterPosition() const {

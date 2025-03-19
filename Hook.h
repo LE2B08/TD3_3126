@@ -205,4 +205,9 @@ private:
 
 	// 状態リクエスト
 	std::optional<Behavior> requestBehavior_ = std::nullopt;
+
+
+	///-------------------------------------------///
+
+	Vector2 rightStick_ = {0.0f, 0.0f};
 };
