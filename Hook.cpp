@@ -454,39 +454,46 @@ void Hook::BehaviorMoveUpdate() {
 			// 右スティックの入力を取得
 			rightStick_ = Input::GetInstance()->GetRightStick();
 
-			// 右スティックの入力がある場合のみ弧の動きを計算
-			if (rightStick_.x < -0.1f || rightStick_.x > 0.1f) {
-				// フックの終点から中心へのベクトルを計算
-				Vector3 toCenter = playerPosition_ - endPos_;
-				// フックの終点から中心までの距離を計算
-				float radius = Vector3::Length(toCenter);
-				// フックの終点から中心までの角度を計算
-				float startAngle = atan2(toCenter.z, toCenter.x);
-				float angularSpeed = 3.0f; // 角速度（調整可能）
+			// フックの終点から中心へのベクトルを計算
+			Vector3 toCenter = playerPosition_ - endPos_;
+			// フックの終点から中心までの距離を計算
+			float radius = Vector3::Length(toCenter);
+			// フックの終点から中心までの角度を計算
+			float startAngle = atan2(toCenter.z, toCenter.x);
+			float angularSpeed = 3.0f; // 角速度（調整可能）
 
-				// 右スティックの入力に応じて角度を変更
-				float endAngle = startAngle;
-				if (rightStick_.x < -0.1f) {
-					endAngle -= angularSpeed * 0.016f;
-				} else if (rightStick_.x > 0.1f) {
-					endAngle += angularSpeed * 0.016f;
-				}
+			// 右スティックの入力に応じて角度を変更
+			float endAngle = startAngle;
+			if (rightStick_.x < -0.1f) {
+				endAngle -= angularSpeed * 0.016f;
+			} else if (rightStick_.x > 0.1f) {
+				endAngle += angularSpeed * 0.016f;
+			}
 
-				// 角度を線形補間
-				float angle = Vector3::AngleLerp(startAngle, endAngle, rightStick_.x);
+			// 角度を線形補間
+			float angle = Vector3::AngleLerp(startAngle, endAngle, rightStick_.x);
 
-				// 新しい位置を計算
-				playerPosition_.x = endPos_.x + radius * cos(angle);
-				playerPosition_.z = endPos_.z + radius * sin(angle);
+			// 新しい位置を計算
+			playerPosition_.x = endPos_.x + radius * cos(angle);
+			playerPosition_.z = endPos_.z + radius * sin(angle);
 
-				// 外積を使って速度を計算
-				Vector3 tangent = Vector3::Cross(Vector3(0, 1, 0), toCenter);
-				playerVelocity_ = Vector3::Normalize(tangent) * speed_ * 0.032f; // 速度を2倍に増加
+			// 外積を使って速度を計算
+			Vector3 tangent = Vector3::Cross(Vector3(0, 1, 0), toCenter);
+			playerVelocity_ = Vector3::Normalize(tangent) * speed_ * 0.032f; // 速度を2倍に増加
 
-				// 位置を更新
-				playerPosition_ += playerVelocity_;
+			// 慣性を入れるために軽減処理を追加
+			playerVelocity_ *= 0.95f; // 速度を95%に軽減
+
+			// 位置を更新
+			playerPosition_ += playerVelocity_;
+			if (isHitPlayerToEnemy_) {
+				// フックを非アクティブにする
+				isActive_ = false;
+				// フックの状態をなしに変更
+				requestBehavior_ = Behavior::None;
 			}
 		}
+		
 	}
 }
 
