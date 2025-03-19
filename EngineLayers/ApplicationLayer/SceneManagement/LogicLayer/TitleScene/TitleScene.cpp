@@ -2,6 +2,8 @@
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
 #include "SceneManager.h"
+#include "FadeManager.h"
+
 
 /// -------------------------------------------------------------
 ///				　			　初期化処理
@@ -45,6 +47,8 @@ void TitleScene::Initialize()
 
 	/// ---------- サウンドの初期化 ---------- ///
 	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, false);
+
+	FadeManager::GetInstance()->StartFadeOut();
 }
 
 

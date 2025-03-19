@@ -85,6 +85,7 @@ public:
 	void SetHook(std::unique_ptr<Hook> hook) { hook_ = std::move(hook); }
 	Hook* GetHook() { return hook_.get(); }
 
+
 	// ヒット判定
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
 	bool GetIsHit() const { return isHit_; }
@@ -95,6 +96,7 @@ public:
 	// DebugMode
 	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
 	bool GetDebug() const { return isDebug_; }
+
   
 private:
 	///============================
@@ -154,5 +156,8 @@ private:
 
 	/*------ヒットの最大時間------*/
 	float hitMaxTime_ = 2.0f;
+
+	// ゲームが開始しているか
+	bool isGameStart_ = false;
 
 };

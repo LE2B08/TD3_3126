@@ -76,12 +76,18 @@ void Player::Update() {
 	
 
 #endif // DEBUG
+
 	// フックの位置を取得
 	position_ = hook_->GetPlayerPosition();
 	velocity_ = hook_->GetPlayerVelocity();
 	acceleration_ = hook_->GetPlayerAcceleration();
 	
 	
+
+
+	if (isGameStart_) {
+
+
 	
 	// 移動処理
 	Move();
@@ -92,6 +98,9 @@ void Player::Update() {
 	// 攻撃処理
 	Attack();
 
+
+		collisionManager_->Update();
+	}
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
@@ -122,14 +131,14 @@ void Player::Update() {
 	object3D_->SetScale(scale_);
 	object3D_->Update();
 
-	collisionManager_->Update();
+	
 }
 
 void Player::Draw() {
-
-	// 描画処理
-	object3D_->Draw();
-
+	if (isGameStart_) {
+		// 描画処理
+		object3D_->Draw();
+	}
 	// フックの描画
 	hook_->Draw();
 
@@ -226,7 +235,7 @@ void Player::Rotate() {
 	// プレイヤーの向きを左スティックの向きにする
 
 	// 右スティックの入力があるとき
-	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
+	if (!Input::GetInstance()->RStickInDeadZone()) {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 	} 
