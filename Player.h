@@ -42,61 +42,47 @@ public:
 	///============================
 	/// Getter & Setter
 
-	// 位置
+	// 位置の取得
 	Vector3 GetPosition() const { return position_; }
+	// 位置の設定
 	void SetPosition(const Vector3& position) { position_ = position; }
-
-	// 回転
+	// 回転の取得
 	Vector3 GetRotation() const { return rotation_; }
+	// 回転の設定
 	void SetRotation(const Vector3& rotation) { rotation_ = rotation; }
-
-	// スケール
+	// スケールの取得
 	Vector3 GetScale() const { return scale_; }
+	// スケールの設定
 	void SetScale(const Vector3& scale) { scale_ = scale; }
-
-	// 速度
+	// 速度の取得
 	Vector3 GetVelocity() const { return velocity_; }
+	// 速度の設定
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }
-
-	// 加速度
+	// 加速度の取得
 	Vector3 GetAcceleration() const { return acceleration_; }
+	// 加速度の設定
 	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }
-
-	// 角速度
+	// 角速度の取得
 	Vector3 GetAngularVelocity() const { return angularVelocity_; }
+	// 角速度の設定
 	void SetAngularVelocity(const Vector3& angularVelocity) { angularVelocity_ = angularVelocity; }
 
-	//カメラ
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
-	// フックの最大移動制限
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
-	//武器
+
 	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
 	Weapon* GetWeapon() { return weapon_.get(); }
 
-	// Enemy
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	Enemy* GetEnemy() { return enemy_; }
   
-	// フック
-	void SetHook(std::unique_ptr<Hook> hook) { hook_ = std::move(hook); }
 	Hook* GetHook() { return hook_.get(); }
 
+	bool GetIsHit() const { return isHit_; }	
 
-	// ヒット判定
-	void SetIsHit(bool isHit) { isHit_ = isHit; }
-	bool GetIsHit() const { return isHit_; }
-
-	void SetIsHitEnemy(bool isHitEnemy) { isHitEnemy_ = isHitEnemy; }
-	bool GetIsHitEnemy() const { return isHitEnemy_; }
-
-	// DebugMode
-	void SetDebug(bool isDebug) { isDebug_ = isDebug; }
-	bool GetDebug() const { return isDebug_; }
-
+	void SetIsGameStart(bool isGameStart) { isGameStart_ = isGameStart; }
   
 private:
 	///============================
@@ -149,7 +135,6 @@ private:
 
 	/*------ヒット判定------*/
 	bool isHit_ = false;
-	bool isHitEnemy_ = false;
 
 	/*------ヒットの時間------*/
 	float hitTime_ = 0.0f;
