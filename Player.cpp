@@ -216,7 +216,7 @@ void Player::Rotate() {
 	// プレイヤーの向きを左スティックの向きにする
 
 	// 右スティックの入力があるとき
-	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
+	if (!Input::GetInstance()->RStickInDeadZone()) {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 	} 

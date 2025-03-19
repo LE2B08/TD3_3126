@@ -241,7 +241,8 @@ void GamePlayScene::CameraShake()
 	if (isCameraShaking_) {
 		shakeElapsedTime_ += 1.0f / 60.0f;
 		if (shakeElapsedTime_ >= shakeDuration_) {
-			input_->SetVibration(0, 0);
+			// 振動を止める
+			input_->StopVibration();
 			isCameraShaking_ = false;
 			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
 		}
