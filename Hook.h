@@ -197,6 +197,10 @@ private:
 
 	bool isDebug_ = false;
 
+	float decelerationRate = 0.95f;
+	float angle;
+	float angularSpeed = 3.0f; // 角速度（調整可能）
+
 	//================================================
 	// Behavior
 
@@ -208,4 +212,6 @@ private:
 
 	//
 	Vector2 rightStick_ = {};
+	bool isRightStickRight = false;
+	bool isRightStickLeft = false;
 };
