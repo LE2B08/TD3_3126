@@ -275,9 +275,9 @@ void Hook::BehaviorMoveUpdate() {
 
 					// フックの方向ベクトルを計算
 					Vector3 direction = endPos_ - playerPosition_;
-					float distance = Vector3::Length(direction);
-					// フックの方向に向かって移動
-					direction = Vector3::Normalize(direction);
+					// float distance = Vector3::Length(direction);
+					//// フックの方向に向かって移動
+					// direction = Vector3::Normalize(direction);
 					playerVelocity_ = direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
 					playerAcceleration_ = playerVelocity_ * 0.1f;  // 加速度は速度の10%と仮定
 
@@ -368,86 +368,139 @@ void Hook::BehaviorMoveUpdate() {
 	Vector3 toCenter = playerPosition_ - endPos_;
 	// フックの終点から中心までの距離を計算
 	float radius = toCenter.Length(toCenter);
-	
 
 	if (isActive_) {
 		if (!enemyHit_) {
-			// フックの終点から中心までの角度を計算
-			angle = atan2(toCenter.z, toCenter.x);
-			angularSpeed = 3.0f; // 角速度（調整可能）
 
 			///===================================
 			/// 壁
 			///
 
-			///
-			/// 壁の上辺
-			///
+			// フックの終点から中心までの角度を計算
+			angle = atan2(toCenter.z, toCenter.x);
+
+			// 右スティックの小数点三桁の四捨五入
+			rightStick_.x = round(rightStick_.x * 1000) / 1000;
+			rightStick_.y = round(rightStick_.y * 1000) / 1000;
+
+			// 右スティックの入力に応じて角度を変更
+			// あたっている壁の方向ごとに角度を変更
+
+			/////
+			///// 壁の上辺
+			/////
 
 			if (endPos_.z >= maxMoveLimit_.z) {
-				// フックの終点が上辺にある場合の弧の移動処理
-				//
-				// 右スティックの入力に応じて角度を変更
 				if (rightStick_.x < -0.1f) {
-					// 右に移動
 					angle -= angularSpeed * 0.016f;
-
+					isRightStickLeft = true;
+					isRightStickRight = false;
 				} else if (rightStick_.x > 0.1f) {
-					// 左に移動
 					angle += angularSpeed * 0.016f;
+					isRightStickRight = true;
+					isRightStickLeft = false;
 				}
 			}
 
-			///
-			/// 壁の下辺
-			///
+			/////
+			///// 壁の下辺
+			/////
+
 			if (endPos_.z <= minMoveLimit_.z) {
-				// フックの終点が下辺にある場合の弧の移動処理
-				//
-				// 右スティックの入力に応じて角度を変更
 				if (rightStick_.x < -0.1f) {
-					// 右に移動
 					angle += angularSpeed * 0.016f;
-
+					isRightStickRight = true;
+					isRightStickLeft = false;
 				} else if (rightStick_.x > 0.1f) {
-					// 左に移動
 					angle -= angularSpeed * 0.016f;
+					isRightStickLeft = true;
+					isRightStickRight = false;
 				}
 			}
 
-			///
-			/// 壁の左辺
-			///
+			/////
+			///// 壁の左辺
+			/////
+
 			if (endPos_.x <= minMoveLimit_.x) {
-
-				// 右スティックの入力に応じて角度を変更
 				if (rightStick_.x < -0.1f) {
-					// 右に移動
 					angle += angularSpeed * 0.016f;
+					isRightStickRight = true;
+					isRightStickLeft = false;
 				} else if (rightStick_.x > 0.1f) {
-					// 左に移動
 					angle -= angularSpeed * 0.016f;
+					isRightStickLeft = true;
+					isRightStickRight = false;
 				}
 			}
 
-			///
-			/// 壁の右辺
-			///
+			/////
+			///// 壁の右辺
+			/////
+
 			if (endPos_.x >= maxMoveLimit_.x) {
-				// フックの終点が右辺にある場合の弧の移動処理
-				//
-				// 右スティックの入力に応じて角度を変更
 				if (rightStick_.x < -0.1f) {
-					// 右に移動
 					angle -= angularSpeed * 0.016f;
+					isRightStickLeft = true;
+					isRightStickRight = false;
 				} else if (rightStick_.x > 0.1f) {
-					// 左に移動
 					angle += angularSpeed * 0.016f;
+					isRightStickRight = true;
+					isRightStickLeft = false;
 				}
 			}
 
-			playerPosition_.x = endPos_.x + radius * cos(angle);
-			playerPosition_.z = endPos_.z + radius * sin(angle);
+			// 右スティックの入力がある場合のみ弧の動きを計算
+			if (!Input::GetInstance()->RStickInDeadZone()) {
+				angularSpeed = 3.0f; // 角速度（調整可能）
+
+				// 新しい位置を計算
+				Vector3 newPosition;
+				newPosition.x = endPos_.x + radius * cos(angle);
+				newPosition.z = endPos_.z + radius * sin(angle);
+
+				// 外積を使って速度を計算
+				Vector3 tangent = Vector3::Cross(Vector3(0, 1, 0), toCenter);
+				playerVelocity_ = Vector3::Normalize(tangent) * speed_ * 0.016f;
+				playerVelocity_.x = newPosition.x - playerPosition_.x;
+				playerVelocity_.z = newPosition.z - playerPosition_.z;
+
+			} else {
+
+				// 右スティックの入力がない場合は
+				// フックの長さは固定
+				// 先程まで入力していた方向に弧を描くが
+				// 少しずつ弧の動きが収まっていく
+
+				// 右スティックが入力されていない場合
+				// 先程まで移動していた方向に弧の動きをし、少しずつ減速する
+
+				// 角速度を減速
+				angularSpeed *= decelerationRate;
+
+				// 角度を更新
+				if (isRightStickRight) {
+					angle += angularSpeed * 0.016f;
+				} else if (isRightStickLeft) {
+					angle -= angularSpeed * 0.016f;
+				}
+
+				// 新しい位置を計算
+				Vector3 newPosition;
+				newPosition.x = endPos_.x + radius * cos(angle);
+				newPosition.z = endPos_.z + radius * sin(angle);
+
+				// 外積を使って速度を計算
+				Vector3 tangent = Vector3::Cross(Vector3(0, 1, 0), toCenter);
+				playerVelocity_ = Vector3::Normalize(tangent) * speed_ * 0.016f;
+				playerVelocity_.x = newPosition.x - playerPosition_.x;
+				playerVelocity_.z = newPosition.z - playerPosition_.z;
+
+				// 速度が非常に小さくなったら停止
+				if (Vector3::Length(playerVelocity_) < 0.01f) {
+					playerVelocity_ = Vector3(0.0f, 0.0f, 0.0f);
+				}
+			}
 
 		} else {
 			///===================================
@@ -462,15 +515,11 @@ void Hook::BehaviorMoveUpdate() {
 				// フックの終点から中心までの距離を計算
 				float radius = Vector3::Length(toCenter);
 				// フックの終点から中心までの角度を計算
-				 angle = atan2(toCenter.z, toCenter.x);
-				
-				
+				angle = atan2(toCenter.z, toCenter.x);
 
 				// 右スティックの小数点三桁の四捨五入
 				rightStick_.x = round(rightStick_.x * 1000) / 1000;
 				rightStick_.y = round(rightStick_.y * 1000) / 1000;
-
-				
 
 				// 右スティックの入力に応じて角度を変更
 				if (rightStick_.x < -0.1f) {
@@ -516,7 +565,7 @@ void Hook::BehaviorMoveUpdate() {
 					} else if (isRightStickLeft) {
 						angle -= angularSpeed * 0.016f;
 					}
-					
+
 					// 新しい位置を計算
 					Vector3 newPosition;
 					newPosition.x = endPos_.x + radius * cos(angle);
