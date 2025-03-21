@@ -245,8 +245,23 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 	
 	// ランダムに攻撃コマンドを選択
-	std::uniform_int_distribution<size_t> dist(0, attackCommands_.size() - 1);
-	return std::move(attackCommands_[dist(randomEngine)]);
+	std::uniform_int_distribution<int> dist(0, 1);
+	
+	// インデックスに結果を代入
+	int commandIndex = dist(randomEngine);
+
+	// 選ばれたコマンドを生成する
+	switch (commandIndex) {
+
+	case 0:
+		return std::make_unique<ShotCommand>();
+
+	case 1:
+		return std::make_unique<ShotCommand>();
+
+	default:
+		return nullptr;
+	}
 }
 
 void Enemy::BehaviorNormalInitialize() {
@@ -310,9 +325,6 @@ void Enemy::BehaviorSarchUpdate() {
 }
 
 void Enemy::BehaviorAttackInitialize() {
-
-	// 攻撃コマンドを登録
-	attackCommands_.emplace_back(std::make_unique<ShotCommand>());
 
 	// 攻撃方法を選択
 	attackCommand_ = RandomAttackCommand();

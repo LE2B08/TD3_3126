@@ -175,9 +175,6 @@ private:
 	// 弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
-	// コマンド配列
-	std::vector<std::unique_ptr<AttackCommand>> attackCommands_;
-
 	// アタックコマンド
 	std::unique_ptr<AttackCommand> attackCommand_;
 
