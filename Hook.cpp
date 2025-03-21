@@ -101,6 +101,8 @@ void Hook::BehaviorThrowInitialize() {
 
 	isActive_ = false;
 	isThrowing_ = false;
+	playerVelocity_ = {0.0f, 0.0f, 0.0f};
+	playerAcceleration_ = {0.0f, 0.0f, 0.0f};
 }
 
 void Hook::BehaviorThrowUpdate() {
@@ -275,15 +277,23 @@ void Hook::BehaviorMoveUpdate() {
 
 					// フックの方向ベクトルを計算
 					Vector3 direction = endPos_ - playerPosition_;
-					// float distance = Vector3::Length(direction);
-					//// フックの方向に向かって移動
-					// direction = Vector3::Normalize(direction);
+					float distance = Vector3::Length(direction);
+
+					// フックの方向ベクトルを正規化
+					direction = Vector3::Normalize(direction);
+
+					// フックの方向に対して垂直なベクトルを計算（外積を使用）
+					Vector3 up = {0.0f, 1.0f, 0.0f}; // 上方向のベクトル
+					Vector3 perpendicularDirection = Vector3::Cross(up, direction);
+
+
+					speed_ = 15.0f; // 速度（調整可能）
+					// フックの方向に向かう速度ベクトルを計算
 					playerVelocity_ = direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
-					playerAcceleration_ = playerVelocity_ * 0.1f;  // 加速度は速度の10%と仮定
 
 					// EndPosに達したらフックを非アクティブにする
-					if (isHitPlayerToEnemy_) {
-						// playerPosition_ = endPos_;
+					if (distance < speed_ * 0.016f) {
+						
 						isActive_ = false;
 						// フックの状態をなしに変更
 						requestBehavior_ = Behavior::None;
@@ -353,14 +363,14 @@ void Hook::BehaviorMoveUpdate() {
 		}
 	}
 
-	///============================================================================================================
-	/// フック使用時の弧の移動
-	///
-	///
-	///
-	/// 弧の動きは外積を使って計算を一度やってみて
-	///
-	///
+	============================================================================================================
+	 フック使用時の弧の移動
+	
+	
+	
+	 弧の動きは外積を使って計算を一度やってみて
+	
+	
 
 	// 右スティックの入力を取得
 	rightStick_ = Input::GetInstance()->GetRightStick();
