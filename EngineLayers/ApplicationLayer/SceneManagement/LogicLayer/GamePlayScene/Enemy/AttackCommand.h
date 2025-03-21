@@ -48,8 +48,29 @@ public:
 private:
 
 	// 弾の発射間隔
-	uint32_t attackInterval_ = 120;
+	uint32_t attackInterval_ = 90;
 
 	// 弾の発射回数
+	uint32_t attackCount_ = 0;
+};
+
+/// === 扇形の射撃コマンド === ///
+class FanShotCommand : public AttackCommand {
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	// 攻撃
+	void Attack(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	uint32_t attackInterval_ = 90;
+
 	uint32_t attackCount_ = 0;
 };

@@ -257,7 +257,7 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 		return std::make_unique<ShotCommand>();
 
 	case 1:
-		return std::make_unique<ShotCommand>();
+		return std::make_unique<FanShotCommand>();
 
 	default:
 		return nullptr;
