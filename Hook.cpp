@@ -286,14 +286,13 @@ void Hook::BehaviorMoveUpdate() {
 					Vector3 up = {0.0f, 1.0f, 0.0f}; // 上方向のベクトル
 					Vector3 perpendicularDirection = Vector3::Cross(up, direction);
 
-
 					speed_ = 15.0f; // 速度（調整可能）
 					// フックの方向に向かう速度ベクトルを計算
 					playerVelocity_ = direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
 
 					// EndPosに達したらフックを非アクティブにする
 					if (distance < speed_ * 0.016f) {
-						
+
 						isActive_ = false;
 						// フックの状態をなしに変更
 						requestBehavior_ = Behavior::None;
@@ -363,14 +362,10 @@ void Hook::BehaviorMoveUpdate() {
 		}
 	}
 
-	============================================================================================================
-	 フック使用時の弧の移動
-	
-	
-	
-	 弧の動きは外積を使って計算を一度やってみて
-	
-	
+	///============================================================================================================
+	/// フック使用時の弧の移動
+
+	// 弧の動きは外積を使って計算を一度やってみて
 
 	// 右スティックの入力を取得
 	rightStick_ = Input::GetInstance()->GetRightStick();
