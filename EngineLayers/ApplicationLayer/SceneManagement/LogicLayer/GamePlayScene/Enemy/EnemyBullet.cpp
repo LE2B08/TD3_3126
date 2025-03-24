@@ -1,12 +1,22 @@
 #include "EnemyBullet.h"
+#include "CollisionTypeIdDef.h"
 
 EnemyBullet::EnemyBullet() {
+
+	// シリアルナンバーを設定
+	serialNumber_ = nextSerialNumber_;
+
+	// 次のシリアルナンバーを設定
+	nextSerialNumber_++;
 }
 
 EnemyBullet::~EnemyBullet() {
 }
 
 void EnemyBullet::Initialize() {
+
+	// IDの設定
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet));
 
 	isAlive_ = true;	
 	lifeFrame_ = 180;
@@ -58,6 +68,19 @@ void EnemyBullet::Move() {
 }
 
 void EnemyBullet::OnCollision(Collider* other) {
+
+	// Idを取得
+	uint32_t typeID = other->GetTypeID();
+
+	// 弾同時の衝突だった場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) {
+
+		// 何も処理せずに終了
+		return;
+	}
+
+	// それ以外は死亡
+	isAlive_ = false;
 }
 
 Vector3 EnemyBullet::GetCenterPosition() const {

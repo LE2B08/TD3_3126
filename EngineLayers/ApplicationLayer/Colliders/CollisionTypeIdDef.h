@@ -9,4 +9,5 @@ enum class CollisionTypeIdDef : uint32_t
 	kWeapon,		 // 武器ID
 	kEnemy,			 // エネミーID
 	kHook,			 // フックID	
+	kEnemyBullet,	 // エネミー弾ID
 };

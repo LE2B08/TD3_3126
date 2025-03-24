@@ -18,8 +18,7 @@ Enemy::Enemy() {
 Enemy::~Enemy() {
 }
 
-void Enemy::Initialize()
-{
+void Enemy::Initialize() {
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 
@@ -103,12 +102,12 @@ void Enemy::Update() {
 				}
 
 				return false;
-			});
+				});
 		}
 	}
 
 	// 移動
-	Move();
+	//Move();
 
 	// 弾の更新
 	for (auto& bullet : bullets_) {
@@ -122,13 +121,13 @@ void Enemy::Update() {
 			HitParticle();
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
-			if (hitTime_ >= hitMaxTime_)
-			{
+			if (hitTime_ >= hitMaxTime_) {
 				isHit_ = false;
 				isHitFromAttack_ = false;
 				hitTime_ = 0;
 			}
-		} else {
+		}
+		else {
 			isHit_ = false;
 		}
 	}
@@ -145,8 +144,7 @@ void Enemy::Update() {
 	objectEnemy_->Update();
 }
 
-void Enemy::Draw()
-{
+void Enemy::Draw() {
 	if (!isHitFromAttack_) {
 		// 描画
 		objectEnemy_->Draw();
@@ -207,21 +205,18 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-void Enemy::OnCollision(Collider* other)
-{
+void Enemy::OnCollision(Collider* other) {
 	isHit_ = true;
 
 }
 
-Vector3 Enemy::GetCenterPosition() const
-{
+Vector3 Enemy::GetCenterPosition() const {
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Enemy::HitParticle()
-{
+void Enemy::HitParticle() {
 	// エネミーの中心位置を取得
 	Vector3 enemyCenter = GetCenterPosition();
 
@@ -243,10 +238,10 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 }
 
 std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
-	
+
 	// ランダムに攻撃コマンドを選択
-	std::uniform_int_distribution<int> dist(0, 1);
-	
+	std::uniform_int_distribution<int> dist(0, 2);
+
 	// インデックスに結果を代入
 	int commandIndex = dist(randomEngine);
 
@@ -254,13 +249,16 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 	switch (commandIndex) {
 
 	case 0:
-		return std::make_unique<ShotCommand>();
-
-	case 1:
 		return std::make_unique<FanShotCommand>();
 
+	case 1:
+		return std::make_unique<RotateShotCommand>();
+
+	case 2:
+		return std::make_unique<RecallCommand>();
+
 	default:
-		return nullptr;
+		return std::make_unique<ShotCommand>();
 	}
 }
 
@@ -329,6 +327,9 @@ void Enemy::BehaviorAttackInitialize() {
 	// 攻撃方法を選択
 	attackCommand_ = RandomAttackCommand();
 
+	// 攻撃を初期化
+	attackCommand_->Initialize();
+
 	// 移動をストップ
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 }
@@ -339,10 +340,10 @@ void Enemy::BehaviorAttackUpdate() {
 	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);
 
 	// 攻撃を実行
-	attackCommand_->Attack(worldTransform_.translate_, direction_, bullets_);
+	attackCommand_->Update(worldTransform_.translate_, direction_, bullets_);
 
 	// 攻撃が終了したら
-	if (attackCommand_->GetIsAttackEnd()) {
+	if (attackCommand_->GetIsEnd()) {
 
 		// 通常状態にする
 		requestBehavior_ = Behavior::Normal;

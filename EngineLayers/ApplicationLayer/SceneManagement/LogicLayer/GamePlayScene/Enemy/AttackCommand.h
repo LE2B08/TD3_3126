@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include <list>
 #include <memory>
+#include <random>
 
 class EnemyBullet;
 
@@ -16,11 +17,14 @@ public:
 	// 仮想デストラクタ
 	virtual ~AttackCommand() = default;
 
+	// 初期化
+	virtual void Initialize() = 0;
+
 	// 攻撃
-	virtual void Attack(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) = 0;
+	virtual void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) = 0;
 
 	// 終了フラグのゲッター
-	bool GetIsAttackEnd() const { return isAttackEnd_; }
+	bool GetIsEnd() const { return isEnd_; }
 	
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -28,7 +32,19 @@ public:
 protected:
 
 	// 終了フラグ
-	bool isAttackEnd_ = false;
+	bool isEnd_ = false;
+
+	// タイマー(秒)
+	float timer_ = 0.0f;
+
+	// タイマーのリセット値(秒)
+	float intervalReset_ = 0.0f;
+
+	// 攻撃回数
+	uint32_t attackCount_ = 0;
+
+	// Δt
+	const float kDeltaTime = 1.0f / 60.0f;
 };
 
 /// === 攻撃コマンド === ///
@@ -39,19 +55,16 @@ class ShotCommand : public AttackCommand {
 	///-------------------------------------------///
 public:
 
+	// 初期化
+	void Initialize() override;
+
 	// 攻撃
-	void Attack(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-
-	// 弾の発射間隔
-	uint32_t attackInterval_ = 90;
-
-	// 弾の発射回数
-	uint32_t attackCount_ = 0;
 };
 
 /// === 扇形の射撃コマンド === ///
@@ -62,15 +75,64 @@ class FanShotCommand : public AttackCommand {
 	///-------------------------------------------///
 public:
 
+	// 初期化
+	void Initialize() override;
+
 	// 攻撃
-	void Attack(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
+};
 
-	uint32_t attackInterval_ = 90;
+/// === 回転してる風射撃コマンド === ///
+class RotateShotCommand : public AttackCommand {
 
-	uint32_t attackCount_ = 0;
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	// 初期化
+	void Initialize() override;
+
+	// 攻撃
+	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+};
+
+/// === 呼び戻しコマンド === ///
+class RecallCommand : public AttackCommand {
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	// 初期化
+	void Initialize() override;
+
+	// 攻撃
+	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+
+	// ランダムに位置を決める
+	Vector3 RandomPosition(const Vector3& position, float min, float max);
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+	
+	// 位置
+	Vector3 position_ = {};
+
+	// 乱数生成器
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
 };
