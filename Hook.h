@@ -2,6 +2,10 @@
 #include "Collider.h"
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "Object3D.h"
+#include <chrono>
+#include <optional>
+#include <deque>
+
 
 /// === フック === ///
 class Hook : public Collider {
@@ -197,6 +201,10 @@ private:
 
 	bool isDebug_ = false;
 
+	float decelerationRate = 0.95f;
+	float angle;
+	float angularSpeed = 3.0f; // 角速度（調整可能）
+
 	//================================================
 	// Behavior
 
@@ -206,7 +214,11 @@ private:
 	// 状態リクエスト
 	std::optional<Behavior> requestBehavior_ = std::nullopt;
 
-	///-------------------------------------------///
+	//
+	Vector2 rightStick_ = {};
+	bool isRightStickRight = false;
+	bool isRightStickLeft = false;
 
-	Vector2 rightStick_ = {0.0f, 0.0f};
+	
+
 };

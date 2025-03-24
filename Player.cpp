@@ -72,6 +72,7 @@ void Player::Update() {
 	if (isGameStart_) {
 
 	
+	
 	// 移動処理
 	Move();
 
