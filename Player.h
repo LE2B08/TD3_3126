@@ -148,5 +148,8 @@ private:
 	// ゲームが開始しているか
 	bool isGameStart_ = false;
 
+	// プレイヤーが敵に当たったか
+	bool isHitEnemy_ = false;
+
 
 };
