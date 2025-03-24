@@ -38,6 +38,8 @@ public:
 	/*------ヒット時のパーティクル------*/
 	void HitParticle();
 
+	
+
 public:
 	///============================
 	/// Getter & Setter
@@ -154,5 +156,7 @@ private:
 
 	/*------ヒットの最大時間------*/
 	float hitMaxTime_ = 2.0f;
+
+	
 
 };
