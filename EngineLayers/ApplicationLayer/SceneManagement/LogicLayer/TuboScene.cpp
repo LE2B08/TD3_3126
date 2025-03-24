@@ -5,6 +5,7 @@
 #include <ParameterManager.h>
 #include <ParticleManager.h>
 #include "SceneManager.h"
+#include "FadeManager.h"
 
 
 #include "Object3DCommon.h"
@@ -14,6 +15,8 @@
 /// -------------------------------------------------------------
 void TuboScene::Initialize()
 {
+	FadeManager::GetInstance()->StartFadeOut();
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();
@@ -87,6 +90,7 @@ void TuboScene::Update()
 	player_->SetCamera(camera_);
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetIsGameStart(true);
 	player_->Update();
 
 	enemy_->Update();

@@ -107,6 +107,8 @@ public: /// ---------- 2D用の線の描画 ---------- ///
 	// 三角形を描画
 	void DrawTriangle(const Vector3& position1, const Vector3& position2, const Vector3& position3, const Vector4& color);
 
+	void DrawBox(const Vector3& position, const Vector3& size, const Vector4& color);
+
 	// 五芒星（ペンタグラム）を描画
 	void DrawPentagram(const Vector3& center, float radius, const Vector4& color);
 

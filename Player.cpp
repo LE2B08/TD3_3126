@@ -3,7 +3,6 @@
 #include "Wireframe.h"
 #include "imgui.h"
 #include "ParticleManager.h"
-#include "CollisionTypeIdDef.h"
 
 #undef max
 #undef min
@@ -28,9 +27,6 @@ void Player::Initialize() {
 	// フックの生成 初期化
 	hook_ = std::make_unique<Hook>();
 	hook_->SetPlayerPosition(position_);
-	hook_->SetPlayerRotation(rotation_);
-	hook_->SetPlayerVelocity(velocity_);
-	hook_->SetPlayerAcceleration(acceleration_);
 	hook_->SetMinMoveLimit(minMoveLimit_);
 	hook_->SetMaxMoveLimit(maxMoveLimit_);
 	hook_->Initialize();
@@ -41,9 +37,6 @@ void Player::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
-
-	// フックのコライダーの設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kPlayer));
 
 	// パーティクルマネージャの生成
 	particleManager_ = ParticleManager::GetInstance();
@@ -60,7 +53,6 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-
 #ifdef _DEBUG
 
 	// コントローラーのStartボタンとBackボタンを同時に押すとデバックモードになる
@@ -76,12 +68,9 @@ void Player::Update() {
 	
 
 #endif // DEBUG
-	// フックの位置を取得
-	position_ = hook_->GetPlayerPosition();
-	velocity_ = hook_->GetPlayerVelocity();
-	acceleration_ = hook_->GetPlayerAcceleration();
-	
-	
+
+	if (isGameStart_) {
+
 	
 	
 	// 移動処理
@@ -93,6 +82,9 @@ void Player::Update() {
 	// 攻撃処理
 	Attack();
 
+
+		collisionManager_->Update();
+	}
 	// 移動制限
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
@@ -101,15 +93,13 @@ void Player::Update() {
 	// フックの更新処理
 	hook_->SetPlayerRotation(rotation_);
 	hook_->SetPlayerPosition(position_);
-	hook_->SetPlayerVelocity(velocity_);
-	hook_->SetPlayerAcceleration(acceleration_);
 	hook_->SetMinMoveLimit(minMoveLimit_);
 	hook_->SetMaxMoveLimit(maxMoveLimit_);
-	hook_->SetIsDebug(isDebug_);
-	hook_->SetIsHitPlayerToEnemy(isHitEnemy_);
-	hook_->Update();
 
-	
+	// フックの更新処理
+	hook_->Update();
+	// フックの位置を取得
+	position_ = hook_->GetPlayerPosition();
 
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
@@ -123,14 +113,14 @@ void Player::Update() {
 	object3D_->SetScale(scale_);
 	object3D_->Update();
 
-	collisionManager_->Update();
+	
 }
 
 void Player::Draw() {
-
-	// 描画処理
-	object3D_->Draw();
-
+	if (isGameStart_) {
+		// 描画処理
+		object3D_->Draw();
+	}
 	// フックの描画
 	hook_->Draw();
 
@@ -227,7 +217,7 @@ void Player::Rotate() {
 	// プレイヤーの向きを左スティックの向きにする
 
 	// 右スティックの入力があるとき
-	if (Input::GetInstance()->GetRightStick().x != 0.0f || Input::GetInstance()->GetRightStick().y != 0.0f) {
+	if (!Input::GetInstance()->RStickInDeadZone()) {
 		// プレイヤーの向きを変える
 		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 	} 
@@ -245,19 +235,6 @@ void Player::Attack() {
 
 
 void Player::OnCollision(Collider* other) {
-
-	// 種別IDを種別
-	uint32_t typeID = other->GetTypeID();
-
-	// フックがアクティブで、敵と衝突した場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
-		// Playerが敵に当たった時の処理
-		isHitEnemy_ = true;
-
-	} else {
-		isHitEnemy_ = false;
-	}
-
 	if (!weapon_->GetIsAttack()) {
 		isHit_ = true;
 	}

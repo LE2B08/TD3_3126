@@ -80,6 +80,7 @@
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Hook.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="FadeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\Enemy.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\EnemyBullet.h" />
     <ClInclude Include="Hook.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="FadeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
