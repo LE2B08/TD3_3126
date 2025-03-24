@@ -3,9 +3,8 @@
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "Object3D.h"
 #include <chrono>
-#include <optional>
 #include <deque>
-
+#include <optional>
 
 /// === フック === ///
 class Hook : public Collider {
@@ -201,10 +200,6 @@ private:
 
 	bool isDebug_ = false;
 
-	float decelerationRate = 0.95f;
-	float angle;
-	float angularSpeed = 3.0f; // 角速度（調整可能）
-
 	//================================================
 	// Behavior
 
@@ -219,6 +214,14 @@ private:
 	bool isRightStickRight = false;
 	bool isRightStickLeft = false;
 
+	///===================================
+	/// 弧
+	/// 
 	
-
+	float decelerationRate = 0.95f; // 減速率（調整可能）
+	float angle;                    // 角度
+	float angularSpeed = 3.0f;      // 角速度（調整可能）
+	float initialAngularSpeed = 0.0f;   // 角速度の初期値
+	float maxAngularSpeed = 5.0f;       // 角速度の最大値
+	float angularSpeedIncrement = 1.0f; // 角速度の増加率
 };

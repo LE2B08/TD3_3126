@@ -73,7 +73,7 @@ void Hook::Update() {
 }
 
 void Hook::Draw() {
-	// 描画
+	// フックの線
 	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
 }
 
@@ -103,6 +103,8 @@ void Hook::BehaviorThrowInitialize() {
 
 	isActive_ = false;
 	isThrowing_ = false;
+	isExtending_ = false;
+	angularSpeed = 0.0f;
 	playerVelocity_ = {0.0f, 0.0f, 0.0f};
 	playerAcceleration_ = {0.0f, 0.0f, 0.0f};
 }
@@ -127,7 +129,7 @@ void Hook::BehaviorThrowUpdate() {
 	}
 
 	///===========================================
-	/// フックの投げる処理
+	/// フックの終点を計算する処理
 	///
 
 	// フックの開始位置をプレイヤーの位置に設定
@@ -175,6 +177,10 @@ void Hook::BehaviorThrowUpdate() {
 void Hook::BehaviorExtendInitialize() {}
 
 void Hook::BehaviorExtendUpdate() {
+
+	///===========================================
+	/// フックを投げる処理
+	/// 
 
 	// 開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
@@ -269,6 +275,7 @@ void Hook::BehaviorMoveUpdate() {
 			if (endPos_.z >= maxMoveLimit_.z) {
 				if (rightStick_.x < -0.1f) {
 					angle -= angularSpeed * 0.016f;
+
 					isRightStickLeft = true;
 					isRightStickRight = false;
 				} else if (rightStick_.x > 0.1f) {
@@ -328,7 +335,9 @@ void Hook::BehaviorMoveUpdate() {
 
 			// 右スティックの入力がある場合のみ弧の動きを計算
 			if (!Input::GetInstance()->RStickInDeadZone()) {
-				angularSpeed = 3.0f; // 角速度（調整可能）
+				// 角速度を徐々に増加させる
+				angularSpeed = std::min(maxAngularSpeed, angularSpeed + angularSpeedIncrement * 0.016f);
+
 
 				// 新しい位置を計算
 				Vector3 newPosition;
@@ -409,7 +418,9 @@ void Hook::BehaviorMoveUpdate() {
 				}
 				// 右スティックの入力がある場合のみ弧の動きを計算
 				if (!Input::GetInstance()->RStickInDeadZone()) {
-					angularSpeed = 3.0f; // 角速度（調整可能）
+					// 角速度を徐々に増加させる
+					angularSpeed = std::min(maxAngularSpeed, angularSpeed + angularSpeedIncrement * 0.016f);
+
 
 					// 新しい位置を計算
 					Vector3 newPosition;
