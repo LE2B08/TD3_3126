@@ -133,8 +133,11 @@ void Sprite::SetTexture(const std::string& filePath)
 /// -------------------------------------------------------------
 ///			　テクスチャの一部を指定して切り抜く処理
 /// -------------------------------------------------------------
-void Sprite::SetTextureRect(const Vector4& rect)
+void Sprite::SetTextureRect(const Vector2& position, const Vector4& rect)
 {
+	// スプライトの描画位置を設定
+	position_ = position;
+
 	// テクスチャの左上座標とサイズを設定
 	textureLeftTop_ = { rect.x, rect.y };
 

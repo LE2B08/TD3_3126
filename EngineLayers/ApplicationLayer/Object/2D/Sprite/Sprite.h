@@ -121,7 +121,7 @@ public: /// ---------- セッター ---------- ///
 	/// テクスチャの一部を指定して切り抜く
 	/// </summary>
 	/// <param name="rect">左上の座標（ x, y ）大きさを設定する( z, w )</param>
-	void SetTextureRect(const Vector4& rect);
+	void SetTextureRect(const Vector2& position, const Vector4& rect);
 
 private: /// ---------- メンバ関数 ---------- ///
 
