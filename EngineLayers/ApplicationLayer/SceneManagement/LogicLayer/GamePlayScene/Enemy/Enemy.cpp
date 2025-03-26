@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <Wireframe.h>
 #include "CollisionTypeIdDef.h"
-
+#include "AttackCommand.h"
 
 Enemy::Enemy() {
 	serialNumber_ = nextSerialNumber_;
@@ -18,8 +18,7 @@ Enemy::Enemy() {
 Enemy::~Enemy() {
 }
 
-void Enemy::Initialize()
-{
+void Enemy::Initialize() {
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 
@@ -103,7 +102,7 @@ void Enemy::Update() {
 				}
 
 				return false;
-			});
+				});
 		}
 	}
 
@@ -122,13 +121,13 @@ void Enemy::Update() {
 			HitParticle();
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
-			if (hitTime_ >= hitMaxTime_)
-			{
+			if (hitTime_ >= hitMaxTime_) {
 				isHit_ = false;
 				isHitFromAttack_ = false;
 				hitTime_ = 0;
 			}
-		} else {
+		}
+		else {
 			isHit_ = false;
 		}
 	}
@@ -145,8 +144,7 @@ void Enemy::Update() {
 	objectEnemy_->Update();
 }
 
-void Enemy::Draw()
-{
+void Enemy::Draw() {
 	if (!isHitFromAttack_) {
 		// 描画
 		objectEnemy_->Draw();
@@ -203,26 +201,22 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
 	ImGui::Text("HitTime : %f", hitTime_);
 	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
-	ImGui::DragInt("AttackCount", reinterpret_cast<int*>(&attackCount_));
 
 	ImGui::End();
 }
 
-void Enemy::OnCollision(Collider* other)
-{
+void Enemy::OnCollision(Collider* other) {
 	isHit_ = true;
 
 }
 
-Vector3 Enemy::GetCenterPosition() const
-{
+Vector3 Enemy::GetCenterPosition() const {
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Enemy::HitParticle()
-{
+void Enemy::HitParticle() {
 	// エネミーの中心位置を取得
 	Vector3 enemyCenter = GetCenterPosition();
 
@@ -241,6 +235,34 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 	direction = Vector3::Normalize(direction);
 
 	return direction;
+}
+
+std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
+
+	// ランダムに攻撃コマンドを選択
+	std::uniform_int_distribution<int> dist(0, 3);
+
+	// インデックスに結果を代入
+	int commandIndex = dist(randomEngine);
+
+	// 選ばれたコマンドを生成する
+	switch (commandIndex) {
+
+	case 0:
+		return std::make_unique<FanShotCommand>();
+
+	case 1:
+		return std::make_unique<RotateShotCommand>();
+
+	case 2:
+		return std::make_unique<RecallCommand>();
+	
+	case 3:
+		return std::make_unique<SpreadCenterShotCommand>();
+
+	default:
+		return std::make_unique<ShotCommand>();
+	}
 }
 
 void Enemy::BehaviorNormalInitialize() {
@@ -266,7 +288,11 @@ void Enemy::BehaviorNormalUpdate() {
 
 void Enemy::BehaviorSarchInitialize() {
 
+	// タイマー初期化
 	stateTimer_ = 5.0f;
+
+	// 初回の向きを決める
+	direction_ = RondomDirection(-1.0f, 1.0f);
 }
 
 void Enemy::BehaviorSarchUpdate() {
@@ -301,11 +327,11 @@ void Enemy::BehaviorSarchUpdate() {
 
 void Enemy::BehaviorAttackInitialize() {
 
-	// 攻撃間隔を設定
-	attackInterval_ = 300;
+	// 攻撃方法を選択
+	attackCommand_ = RandomAttackCommand();
 
-	// 発射回数をリセット
-	attackCount_ = 0;
+	// 攻撃を初期化
+	attackCommand_->Initialize();
 
 	// 移動をストップ
 	velocity_ = { 0.0f, 0.0f, 0.0f };
@@ -313,41 +339,16 @@ void Enemy::BehaviorAttackInitialize() {
 
 void Enemy::BehaviorAttackUpdate() {
 
-	// 射撃
-	if (attackInterval_ <= 0 && attackInterval_ < 5) {
+	// プレイヤーの方向を向く
+	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);
 
-		// 弾を生成
-		std::unique_ptr<EnemyBullet> bullet = std::make_unique<EnemyBullet>();
+	// 攻撃を実行
+	attackCommand_->Update(worldTransform_.translate_, direction_, bullets_);
 
-		// 弾の初期化
-		bullet->Initialize();
+	// 攻撃が終了したら
+	if (attackCommand_->GetIsEnd()) {
 
-		// 弾の位置を設定
-		bullet->SetPosition(worldTransform_.translate_);
-
-		// プレイヤーの位置を向きを設定
-		const Vector3 direction = player_->GetPosition() - worldTransform_.translate_;
-
-		// 弾に向きを設定
-		bullet->SetDirection(direction);
-
-		// 弾をリストに追加
-		bullets_.push_back(std::move(bullet));
-
-		// 攻撃回数をカウント
-		attackCount_++;
-
-		// 攻撃間隔をリセット
-		attackInterval_ = 300;
-
-	} else {
-
-		// 攻撃間隔を減らす
-		attackInterval_--;
-	}
-
-	// 攻撃回数が5回になったら通常状態にする
-	if (attackCount_ >= 5) {
+		// 通常状態にする
 		requestBehavior_ = Behavior::Normal;
 	}
 }
