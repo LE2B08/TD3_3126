@@ -7,6 +7,8 @@
 #include "SceneManager.h"
 #include "Object3DCommon.h"
 #include "Wireframe.h"
+#include <SkyBoxManager.h>
+#include <SpriteManager.h>
 
 void AkimotoScene::Initialize()
 {
@@ -62,6 +64,21 @@ void AkimotoScene::Update()
 
 void AkimotoScene::Draw()
 {
+	/// ------------------------------------------ ///
+	/// ---------- スカイボックスの描画 ---------- ///
+	/// ------------------------------------------ ///
+	SkyBoxManager::GetInstance()->SetRenderSetting();
+
+
+
+	/// ---------------------------------------- ///
+	/// ----------  スプライトの描画  ---------- ///
+	/// ---------------------------------------- ///
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting();
+
+
+
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
 	/// ---------------------------------------- ///

@@ -67,17 +67,14 @@ public: /// ---------- ゲッタ ---------- ///
 
 private: /// ---------- メンバ変数 ---------- ///
 
-	// 下4つの関数をまとめる関数
-	void preInitialize(DirectXCommon* dxCommon);
-
 	// 頂点データの初期化処理
-	void InitializeMaterial(DirectXCommon* dxCommon);
+	void InitializeMaterial();
 
 	// 頂点バッファデータの初期化
-	void InitializeVertexBufferData(DirectXCommon* dxCommon);
+	void InitializeVertexBufferData();
 
 	// カメラ用のリソース生成
-	void InitializeCameraResource(DirectXCommon* dxCommon);
+	void InitializeCameraResource();
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -109,13 +106,13 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// カメラにデータを書き込む
 	CameraForGPU* cameraData = nullptr;
-	
+
 	// OBJファイルのデータ
 	ModelData modelData;
 
 	// 頂点リソース内のデータを指すポインタ
 	VertexData* vertexData = nullptr;
-	
+
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 };

@@ -3,6 +3,9 @@
 #include <ImGuiManager.h>
 #include "SceneManager.h"
 #include "FadeManager.h"
+#include <SpriteManager.h>
+#include <Object3DCommon.h>
+#include <SkyBoxManager.h>
 
 
 /// -------------------------------------------------------------
@@ -102,11 +105,33 @@ void TitleScene::Update()
 /// -------------------------------------------------------------
 void TitleScene::Draw()
 {
+	/// ------------------------------------------ ///
+	/// ---------- スカイボックスの描画 ---------- ///
+	/// ------------------------------------------ ///
+	SkyBoxManager::GetInstance()->SetRenderSetting();
+
+
+
+
+	/// ---------------------------------------- ///
+	/// ----------  スプライトの描画  ---------- ///
+	/// ---------------------------------------- ///
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting();
+
 	/// ----- スプライトの描画設定と描画 ----- ///
 	for (auto& sprite : sprites_)
 	{
 		sprite->Draw();
 	}
+
+
+
+	/// ---------------------------------------- ///
+	/// ---------- オブジェクト3D描画 ---------- ///
+	/// ---------------------------------------- ///
+	// オブジェクト3D共通描画設定
+	Object3DCommon::GetInstance()->SetRenderSetting();
 }
 
 

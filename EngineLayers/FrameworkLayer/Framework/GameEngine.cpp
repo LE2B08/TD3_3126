@@ -4,6 +4,8 @@
 #include "ParticleManager.h"
 #include <DebugCamera.h>
 #include <Wireframe.h>
+#include "DirectXCommon.h"
+#include "Object3DCommon.h"
 
 
 /// -------------------------------------------------------------
@@ -26,13 +28,6 @@ void GameEngine::Initialize()
 
 	// 最初のシーンを設定
 	SceneManager::GetInstance()->SetNextScene(std::make_unique<TitleScene>());
-
-	/// ---------- シングルトンインスタンス ---------- ///
-	modelManager = ModelManager::GetInstance();
-
-	/// ---------- PipelineStateManagerの初期化 ---------- ///
-	pipelineStateManager_ = std::make_unique<PipelineStateManager>();
-	pipelineStateManager_->Initialize(dxCommon_);
 }
 
 
@@ -94,9 +89,6 @@ void GameEngine::Draw()
 
 	// SRVの処理
 	SRVManager::GetInstance()->PreDraw();
-
-	/*-----シーン（モデル）の描画設定と描画-----*/
-	pipelineStateManager_->SetGraphicsPipeline(dxCommon_->GetCommandList()); // ルートシグネチャとパイプラインステートの設定
 
 	// シーンマネージャーの描画処理
 	SceneManager::GetInstance()->Draw();
