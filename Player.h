@@ -166,6 +166,8 @@ private:
 	// 無敵状態かどうか
 	bool isInvincible_ = false;
 
+	// プレイヤーUI
+	std::unique_ptr<PlayerUI> playerUI_;
 
 
 

@@ -38,16 +38,18 @@ void PlayerUI::Initialize() {
 
 
 }
+
 void PlayerUI::Update() {
-	// hpに応じてテクスチャの切り出し範囲を変更
+	// hpに応じてスプライトのUV座標を変更
 	float hpRatio = static_cast<float>(hp_) / maxHp_;
-	Vector2 textureSize = hpSprite_->GetTextureSize();
-	Vector2 newTextureSize = {textureSize.x * hpRatio, textureSize.y};
-	hpSprite_->SetTextureSize(newTextureSize);
+	Vector2 uvTopLeft = {0.0f, 0.0f};
+	Vector2 uvBottomRight = {hpRatio, 1.0f};
+	hpSprite_->SetUV(uvTopLeft, uvBottomRight);
 
 	hpSprite_->SetPosition(hpPosition_);
 	hpSprite_->Update();
 }
+
 
 
 void PlayerUI::Draw() {

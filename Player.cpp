@@ -42,6 +42,10 @@ void Player::Initialize() {
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Initialize();
 
+	// UIの初期化
+	playerUI_ = std::make_unique<PlayerUI>();
+	playerUI_->Initialize();
+
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
@@ -133,11 +137,17 @@ void Player::Update() {
 	// フックの更新処理
 	hook_->Update();
 
+
+
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
 	weapon_->SetPlayerRotation(rotation_);
 	weapon_->SetPlayerScale(scale_);
 	weapon_->Update();
+
+	// プレイヤーUIの更新
+	playerUI_->Update();
+
 
 	// Transform更新処理
 	object3D_->SetTranslate(position_);
@@ -156,6 +166,9 @@ void Player::Draw() {
 
 	// 武器の描画
 	weapon_->Draw();
+
+	// プレイヤーUIの描画
+	playerUI_->Draw();
 
 	collisionManager_->Draw();
 
@@ -217,6 +230,8 @@ void Player::DrawImGui() {
 	ImGui::End();
 
 	hook_->ShowImGui();
+
+	playerUI_->DrawImGui();
 }
 void Player::Move() {
 
