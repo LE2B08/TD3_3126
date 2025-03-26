@@ -78,7 +78,7 @@
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Hook.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Easing.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\FadeManager.cpp" />
-    <ClCompile Include="SpriteManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\SpriteManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\LightManager\LightManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\SkyBoxManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Object\SkyBox.cpp" />
@@ -165,7 +165,7 @@
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Hook.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Easing.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\FadeManager.h" />
-    <ClInclude Include="SpriteManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\SpriteManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\LightManager\LightManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\SkyBoxManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\SkyBox.h" />
