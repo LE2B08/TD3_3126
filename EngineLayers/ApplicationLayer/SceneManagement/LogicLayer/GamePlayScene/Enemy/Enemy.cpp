@@ -25,7 +25,7 @@ void Enemy::Initialize()
 
 	// オブジェクトの生成・初期化
 	objectEnemy_ = std::make_unique<Object3D>();
-	objectEnemy_->Initialize("sphere.gltf");
+	objectEnemy_->Initialize("Voxel_Enemy.gltf");
 
 	particleManager_ = ParticleManager::GetInstance();
 	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");

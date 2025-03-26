@@ -14,7 +14,7 @@ void Weapon::Initialize() {
 	scale_ = playerScale_;
 
 	object3D_ = std::make_unique<Object3D>();
-	object3D_->Initialize("sphere.gltf");
+	object3D_->Initialize("Voxel_Weapon.gltf");
 	object3D_->SetTranslate(position_);
 	object3D_->SetRotate(rotation_);
 	object3D_->SetScale(scale_);
@@ -36,14 +36,13 @@ void Weapon::Update() {
 	scale_ = playerScale_;
 
 	// プレイヤーの向いている方向に武器を配置
-
-	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };
 	Vector3 weaponPosition = position_ - offset;
 
 	// Transform更新処理
 	object3D_->SetTranslate(weaponPosition);
-	object3D_->SetRotate(rotation_);
+	/*------武器が回転するようにy軸だけ変更------*/
+	object3D_->SetRotate({rotation_.x,attackRotationAngle_,rotation_.z});
 	object3D_->SetScale(scale_);
 	object3D_->Update();
 }
