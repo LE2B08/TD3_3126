@@ -43,9 +43,8 @@ void PlayerUI::Update() {
 	// hpに応じてスプライトのUV座標を変更
 	float hpRatio = static_cast<float>(hp_) / maxHp_;
 	Vector2 uvTopLeft = {0.0f, 0.0f};
-	Vector2 uvBottomRight = {hpRatio, 1.0f};
-	//hpSprite_->SetUV(uvTopLeft, uvBottomRight);
-
+	Vector4 uvBottomRight = {hpRatio, 1.0f,10.0f,10.0f};
+	hpSprite_->SetTextureRect(uvBottomRight);
 	hpSprite_->SetPosition(hpPosition_);
 	hpSprite_->Update();
 }
@@ -54,7 +53,7 @@ void PlayerUI::Update() {
 
 void PlayerUI::Draw() {
 	
-	//hpSprite_->Draw();
+	hpSprite_->Draw();
 
 }
 

@@ -28,29 +28,12 @@ void Player::Initialize() {
 	// Hpの初期化
 	hp_ = 100;
 
-	// フックの生成 初期化
-	hook_ = std::make_unique<Hook>();
-	hook_->SetPlayerPosition(position_);
-	hook_->SetPlayerRotation(rotation_);
-	hook_->SetPlayerVelocity(velocity_);
-	hook_->SetPlayerAcceleration(acceleration_);
-
-	hook_->SetMinMoveLimit(minMoveLimit_);
-	hook_->SetMaxMoveLimit(maxMoveLimit_);
-	hook_->Initialize();
-	// 武器の初期化
-	weapon_ = std::make_unique<Weapon>();
-	weapon_->Initialize();
-
-	// UIの初期化
-	playerUI_ = std::make_unique<PlayerUI>();
-	playerUI_->Initialize();
-
+	
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 
-	// フックのコライダーの設定
+	// プレイヤーのコライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kPlayer));
 
 	// パーティクルマネージャの生成
@@ -90,10 +73,7 @@ void Player::Update() {
 	// ゲームスタート時のみ更新処理を行う
 	if (isGameStart_) {
 
-		// フックから移動情報を取得
-		position_ = hook_->GetPlayerPosition();
-		velocity_ = hook_->GetPlayerVelocity();
-		acceleration_ = hook_->GetPlayerAcceleration();
+		
 
 		/*------ヒット時の処理------*/
 		if (isHit_) {
@@ -124,31 +104,6 @@ void Player::Update() {
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
-	// フックの更新処理
-	hook_->SetPlayerRotation(rotation_);
-	hook_->SetPlayerPosition(position_);
-	hook_->SetPlayerVelocity(velocity_);
-	hook_->SetPlayerAcceleration(acceleration_);
-	hook_->SetMinMoveLimit(minMoveLimit_);
-	hook_->SetMaxMoveLimit(maxMoveLimit_);
-	hook_->SetIsDebug(isDebug_);
-	hook_->SetIsHitPlayerToEnemy(isHitEnemy_);
-
-	// フックの更新処理
-	hook_->Update();
-
-
-
-	// 武器の更新処理
-	weapon_->SetPlayerPosition(position_);
-	weapon_->SetPlayerRotation(rotation_);
-	weapon_->SetPlayerScale(scale_);
-	weapon_->Update();
-
-	// プレイヤーUIの更新
-	playerUI_->Update();
-
-
 	// Transform更新処理
 	object3D_->SetTranslate(position_);
 	object3D_->SetRotate(rotation_);
@@ -161,14 +116,6 @@ void Player::Draw() {
 		// 描画処理
 		object3D_->Draw();
 	}
-	// フックの描画
-	hook_->Draw();
-
-	// 武器の描画
-	weapon_->Draw();
-
-	// プレイヤーUIの描画
-	playerUI_->Draw();
 
 	collisionManager_->Draw();
 
@@ -229,9 +176,9 @@ void Player::DrawImGui() {
 	ImGui::Text("DebugMode: StartButton");
 	ImGui::End();
 
-	hook_->ShowImGui();
+	
 
-	playerUI_->DrawImGui();
+
 }
 void Player::Move() {
 
@@ -284,7 +231,7 @@ void Player::Attack() {
 	// 攻撃ボタンを押した瞬間
 	if (Input::GetInstance()->TriggerButton(8)) {
 		// 武器の攻撃フラグを立てる
-		weapon_->SetIsAttack(true);
+		isAttack_ = true;
 	}
 }
 void Player::DecreaseHpOnHit() {
@@ -321,7 +268,7 @@ void Player::OnCollision(Collider* other) {
 		isHitEnemy_ = false;
 	}
 
-	if (weapon_->GetIsAttack()) {
+	if (isAttack_) {
 		isHit_ = true;
 	}
 }
@@ -332,25 +279,6 @@ Vector3 Player::GetCenterPosition() const {
 	return worldPosition;
 }
 
-void Player::CheckAllCollisions() {
-	// 衝突マネージャのリセット
-	collisionManager_->Reset();
-
-	// コライダーをリストに登録
-	collisionManager_->AddCollider(weapon_.get());
-	collisionManager_->AddCollider(enemy_);
-
-	// 複数について
-
-	// 攻撃中の場合
-	if (weapon_->GetIsAttack()) {
-		// 衝突判定と応答
-		collisionManager_->CheckAllCollisions();
-		if (enemy_->GetIsHit()) {
-			enemy_->SetIsHitFromAttack(true);
-		}
-	}
-}
 
 void Player::HitParticle() {
 	// エネミーの中心位置を取得

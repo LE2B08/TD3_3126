@@ -37,7 +37,7 @@ public:
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
-	void CheckAllCollisions();
+	
 
 
 	/*------ヒット時のパーティクル------*/
@@ -80,16 +80,19 @@ public:
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
 
-	void SetWeapon(std::unique_ptr<Weapon> weapon) { weapon_ = std::move(weapon); }
-	Weapon* GetWeapon() { return weapon_.get(); }
-
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
   
-	Hook* GetHook() { return hook_.get(); }
+	
 
 	bool GetIsHit() const { return isHit_; }	
 
 	void SetIsGameStart(bool isGameStart) { isGameStart_ = isGameStart; }
+
+	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }
+	bool GetIsAttack() const { return isAttack_; }
+
+	void SetIsHitEnemy(bool isHitEnemy) { isHitEnemy_ = isHitEnemy; }
+	bool GetIsHitEnemy() const { return isHitEnemy_; }
   
 private:
 	///============================
@@ -120,11 +123,8 @@ private:
 	//  移動制限の最小値
 	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
 
-	// フック
-	std::unique_ptr<Hook> hook_ = nullptr;
 	
-	// 武器
-	std::unique_ptr<Weapon> weapon_ = nullptr;
+	
 
 	/*-----DebugMode-----*/
 	//デバッグフラグ
@@ -165,9 +165,8 @@ private:
 	const int maxInvincibleTime_ = 60;
 	// 無敵状態かどうか
 	bool isInvincible_ = false;
-
-	// プレイヤーUI
-	std::unique_ptr<PlayerUI> playerUI_;
+	//攻撃しているかどうか
+	bool isAttack_ = false;
 
 
 

@@ -116,8 +116,7 @@ public:
 	bool GetEnemyHit() { return enemyHit_; }
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 
-	bool GetIsDebug() { return isDebug_; }
-	void SetIsDebug(bool isDebug) { isDebug_ = isDebug; }
+	
 
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
@@ -198,7 +197,7 @@ private:
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
 
-	bool isDebug_ = false;
+	
 
 	//================================================
 	// Behavior

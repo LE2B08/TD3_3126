@@ -130,7 +130,7 @@ void GamePlayScene::Update()
 	field_->SetScale(fieldScale_);
 	field_->Update();
 
-	weapon_ = player_->GetWeapon();
+
 
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
