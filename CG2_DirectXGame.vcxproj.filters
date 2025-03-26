@@ -81,6 +81,7 @@
     <ClCompile Include="Hook.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="FadeManager.cpp" />
+    <ClCompile Include="PlayerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\Enemy.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Hook.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="FadeManager.h" />
+    <ClInclude Include="PlayerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

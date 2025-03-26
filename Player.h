@@ -3,6 +3,7 @@
 #include"Collider.h"
 #include "Hook.h"
 #include "Weapon.h"
+#include"PlayerUI.h"
 #include "CollisionManager.h"
 #include "Enemy/Enemy.h"
 #include <ParticleManager.h>

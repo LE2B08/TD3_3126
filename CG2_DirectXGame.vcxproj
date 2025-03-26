@@ -184,6 +184,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Hook.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerUI.cpp" />
     <ClCompile Include="Weapon.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.cpp" />
     <ClCompile Include="WinMain.cpp">
@@ -307,6 +308,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Hook.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerUI.h" />
     <ClInclude Include="Weapon.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.h" />
   </ItemGroup>
