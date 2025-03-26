@@ -147,7 +147,7 @@ void GamePlayScene::Update()
 	if (isGameStart_) {
 		// 衝突判定と応答
 		CheckAllCollisions();
-		player_->CheckAllCollisions();
+		//player_->CheckAllCollisions();
 	}
 
 	// スカイボックスの更新処理

@@ -34,28 +34,21 @@ void PlayerUI::Initialize() {
 
 	speedSprite_ = std::make_unique<Sprite>();
 	speedSprite_->Initialize("Resources/uvChecker.png");
-
-
-
 }
 
 void PlayerUI::Update() {
-	// hpに応じてスプライトのUV座標を変更
+	// Hpに応じてテクスチャを変更
 	float hpRatio = static_cast<float>(hp_) / maxHp_;
-	Vector2 uvTopLeft = {0.0f, 0.0f};
-	Vector4 uvBottomRight = {hpRatio, 1.0f,10.0f,10.0f};
-	hpSprite_->SetTextureRect(uvBottomRight);
+	float textureHeight = 100.0f; // テクスチャの高さを設定
+	float newY = -textureHeight * (1.0f - hpRatio);
+
+	Vector4 uvRect(0.0f, 0.0f, 100.0f, (float)hp_);
+	hpSprite_->SetTextureRect(uvRect);
 	hpSprite_->SetPosition(hpPosition_);
 	hpSprite_->Update();
 }
 
-
-
-void PlayerUI::Draw() {
-	
-	hpSprite_->Draw();
-
-}
+void PlayerUI::Draw() { hpSprite_->Draw(); }
 
 void PlayerUI::Finalize() {}
 
@@ -84,5 +77,4 @@ void PlayerUI::DrawImGui() {
 	ImGui::DragFloat2("SpeedRotation", &speedRotation_.x, 0.1f, -100.0f, 100.0f);
 
 	ImGui::End();
-
 }
