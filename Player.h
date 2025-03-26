@@ -27,6 +27,9 @@ public:
 	// 攻撃処理
 	void Attack();
 
+	// ヒット時のHP減少処理
+	void DecreaseHpOnHit();
+
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
@@ -34,6 +37,7 @@ public:
 	Vector3 GetCenterPosition() const override;
 
 	void CheckAllCollisions();
+
 
 	/*------ヒット時のパーティクル------*/
 	void HitParticle();
@@ -136,6 +140,7 @@ private:
 	Enemy* enemy_;
 
 	/*------ヒット判定------*/
+	//
 	bool isHit_ = false;
 
 	/*------ヒットの時間------*/
@@ -150,6 +155,17 @@ private:
 
 	// プレイヤーが敵に当たったか
 	bool isHitEnemy_ = false;
+
+	// HP
+	int hp_ = 10;
+	// 無敵時間
+	int invincibleTime_ = 0;
+	// 無敵時間の最大値
+	const int maxInvincibleTime_ = 60;
+	// 無敵状態かどうか
+	bool isInvincible_ = false;
+
+
 
 
 };

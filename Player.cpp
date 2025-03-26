@@ -25,6 +25,9 @@ void Player::Initialize() {
 	// 角速度
 	angularVelocity_ = {0.0f, 0.0f, 0.0f};
 
+	// Hpの初期化
+	hp_ = 100;
+
 	// フックの生成 初期化
 	hook_ = std::make_unique<Hook>();
 	hook_->SetPlayerPosition(position_);
@@ -61,26 +64,42 @@ void Player::Initialize() {
 
 void Player::Update() {
 
+	/*--------DebugMode----------*/
 #ifdef _DEBUG
 
-	// コントローラーのStartボタンとBackボタンを同時に押すとデバックモードになる
+	// コントローラーのStartボタンを押すと
+	// デバックモードになる
 	if (!isDebug_) {
-		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
+		if (Input::GetInstance()->TriggerButton(12)) {
 			isDebug_ = true;
 		}
 	} else {
-		if (Input::GetInstance()->TriggerButton(12) && Input::GetInstance()->TriggerButton(13)) {
+		// デバッグモードの場合
+		// もう一度押すとデバックモードを解除
+		if (Input::GetInstance()->TriggerButton(12)) {
 			isDebug_ = false;
 		}
 	}
 
 #endif // DEBUG
 
+	// ゲームスタート時のみ更新処理を行う
 	if (isGameStart_) {
+
+		// フックから移動情報を取得
 		position_ = hook_->GetPlayerPosition();
 		velocity_ = hook_->GetPlayerVelocity();
 		acceleration_ = hook_->GetPlayerAcceleration();
 
+		/*------ヒット時の処理------*/
+		if (isHit_) {
+			HitParticle();
+			hitTime_++;
+			if (hitTime_ >= hitMaxTime_) {
+				isHit_ = false;
+				hitTime_ = 0;
+			}
+		}
 
 		// 移動処理
 		Move();
@@ -91,9 +110,13 @@ void Player::Update() {
 		// 攻撃処理
 		Attack();
 
+		// ヒット時のHP減少処理
+		DecreaseHpOnHit();
+
 		collisionManager_->Update();
 	}
 	// 移動制限
+	// Fieldの範囲内に収める
 	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
@@ -109,7 +132,6 @@ void Player::Update() {
 
 	// フックの更新処理
 	hook_->Update();
-	
 
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(position_);
@@ -148,24 +170,40 @@ void Player::Finalize() {}
 void Player::DrawImGui() {
 
 	ImGui::Begin("Player");
+	// デバッグモードの表示
 	ImGui::Text("DebugMode : %s", isDebug_ ? "true" : "false");
 	ImGui::Checkbox("DebugMode", &isDebug_);
+	// 武器が敵に当たったかどうか
+	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
+	// 無敵状態かどうか
+	ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
+	// HPの表示
+	ImGui::Text("HP : %d", hp_);
+	// 敵に当たったかどうか
+	ImGui::Text("isHitEnemy : %s", isHitEnemy_ ? "true" : "false");
+	// プレイヤーの位置
 	ImGui::Text("Position");
 	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
+	// プレイヤーの回転
 	ImGui::Text("Rotation");
 	ImGui::SliderFloat3("Rotate", &rotation_.x, -10.0f, 10.0f);
+	// プレイヤーのスケール
 	ImGui::Text("Scale");
 	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
+	// プレイヤーの速度
 	ImGui::Text("Velocity");
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -10.0f, 10.0f);
+	// プレイヤーの加速度
 	ImGui::Text("Acceleration");
 	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
+	// プレイヤーの角速度
 	ImGui::Text("AngularVelocity");
 	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
-	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
+
 	ImGui::End();
 
 	ImGui::Begin("Player_Controller");
+	// コントローラーの操作方法
 	ImGui::Text("Move");
 	ImGui::Text("Rotate: RightStick");
 	ImGui::Text("Attack: LeftShoulder");
@@ -174,25 +212,25 @@ void Player::DrawImGui() {
 	ImGui::Text("Back: RightShoulder");
 	ImGui::Text("Pulling: RightTrigger");
 	ImGui::Text("ArcMove: RightStick");
+	// debug
+	ImGui::Text("DebugMode: StartButton");
 	ImGui::End();
 
 	hook_->ShowImGui();
 }
 void Player::Move() {
 
-	/*------ヒット時の処理------*/
-	if (isHit_) {
-		HitParticle();
-		hitTime_++;
-		if (hitTime_ >= hitMaxTime_) {
-			isHit_ = false;
-			hitTime_ = 0;
-		}
-	}
-
 	///============================
 	/// プレイヤーの移動処理
 	///
+
+	if (isDebug_) {
+		// デバッグモードの場合
+		// プレイヤーの移動が左スティックで、できるようにする
+		Vector2 leftStick = Input::GetInstance()->GetLeftStick();
+		position_.x += leftStick.x * 0.1f;
+		position_.z += leftStick.y * 0.1f;
+	}
 
 	// 速度制限
 	const float maxSpeed = 10.0f; // 最大速度（調整可能）
@@ -234,20 +272,41 @@ void Player::Attack() {
 		weapon_->SetIsAttack(true);
 	}
 }
+void Player::DecreaseHpOnHit() {
+	// プレイヤーが敵に当たった場合の
+	// 無敵時間の処理
+	if (isInvincible_) {
+		// 無敵時間をカウント
+		invincibleTime_++;
+		// 無敵時間が最大値を超えた場合
+		if (invincibleTime_ >= maxInvincibleTime_) {
+			// 無敵状態を解除
+			isInvincible_ = false;
+			invincibleTime_ = 0;
+		}
+	}
+}
+
 
 void Player::OnCollision(Collider* other) {
-
-	// 種別IDを種別
+	// 種別IDを取得
 	uint32_t typeID = other->GetTypeID();
 	// フックがアクティブで、敵と衝突した場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
 		// Playerが敵に当たった時の処理
 		isHitEnemy_ = true;
+
+		// 無敵状態でない場合にHPを減らす
+		if (!isInvincible_) {
+			hp_ -= 1;
+			isInvincible_ = true;
+			invincibleTime_ = 0;
+		}
 	} else {
 		isHitEnemy_ = false;
 	}
 
-	if (!weapon_->GetIsAttack()) {
+	if (weapon_->GetIsAttack()) {
 		isHit_ = true;
 	}
 }
