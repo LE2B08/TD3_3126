@@ -11,7 +11,7 @@
 void Player::Initialize() {
 	// オブジェクト3D
 	object3D_ = std::make_unique<Object3D>();
-	object3D_->Initialize("sphere.gltf");
+	object3D_->Initialize("Voxel_Human.gltf");
 	// 位置
 	position_ = {8.0f, 0.0f, 8.0f};
 	// 回転
