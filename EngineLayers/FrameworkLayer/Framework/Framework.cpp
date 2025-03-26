@@ -4,11 +4,13 @@
 #include <DirectXCommon.h>
 #include <SRVManager.h>
 #include <TextureManager.h>
-#include <ParticleManager.h>
+#include <SpriteManager.h>
 #include <Object3DCommon.h>
 #include <DebugCamera.h>
+#include <ParticleManager.h>
 #include <Wireframe.h>
 #include <FadeManager.h>
+#include <SkyBoxManager.h>
 
 
 /// -------------------------------------------------------------
@@ -57,6 +59,9 @@ void Framework::Initialize()
 	// テクスチャマネージャーの生成
 	TextureManager::GetInstance()->Initialize(dxCommon_);
 	
+	// スプライトマネージャの初期化
+	SpriteManager::GetInstance()->Initialize(dxCommon_);
+
 	// Object3DCommonの生成
 	Object3DCommon::GetInstance()->Initialize(dxCommon_);
 
@@ -82,6 +87,9 @@ void Framework::Initialize()
 
 	// ParticleManagerの初期化処理
 	ParticleManager::GetInstance()->Initialize(dxCommon_, defaultCamera_.get());
+
+	// スカイボックスの初期化
+	SkyBoxManager::GetInstance()->Initialize(dxCommon_);
 
 	// フェードマネージャの初期化処理
 	FadeManager::GetInstance()->Initialize();

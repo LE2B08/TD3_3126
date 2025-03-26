@@ -11,7 +11,7 @@ class ShaderManager
 public: /// ---------- メンバ関数 ---------- ///
 	
 	// CompilerShader関数
-	Microsoft::WRL::ComPtr <IDxcBlob> CompileShader(
+	static Microsoft::WRL::ComPtr <IDxcBlob> CompileShader(
 		//CompilerするShaderファイルへのパス
 		const std::wstring& filePath,
 		//Compilerに使用するProfile
@@ -23,9 +23,6 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// 3Dシェーダーをコンパイルする
 	void ShaderCompileObject3D(DirectXCommon* dxCommon);
-
-	// パーティクルシェーダーをコンパイルする
-	void ShaderCompileParticle(DirectXCommon* dxCommon);
 
 public: /// ---------- ゲッター ---------- ///
 

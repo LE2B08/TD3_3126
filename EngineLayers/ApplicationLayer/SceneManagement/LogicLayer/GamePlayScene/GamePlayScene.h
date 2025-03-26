@@ -16,6 +16,7 @@
 
 #include "AABB.h"
 #include "OBB.h"
+#include <SkyBox.h>
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -86,6 +87,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 敵の弾
 	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;
+
+
+	std::unique_ptr<SkyBox> skyBox_;
 
 	/*------カメラの座標------*/
 	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };

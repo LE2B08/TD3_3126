@@ -15,6 +15,8 @@
 #ifdef _DEBUG
 #include <DebugCamera.h>
 #endif // _DEBUG
+#include <SpriteManager.h>
+#include <SkyBoxManager.h>
 
 using namespace Easing;
 
@@ -53,6 +55,11 @@ void GamePlayScene::Initialize()
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 	field_->SetScale(fieldScale_);
+
+	// スカイボックス
+	skyBox_ = std::make_unique<SkyBox>();
+	skyBox_->Initialize("rostock_laage_airport_4k.dds");
+
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
@@ -69,6 +76,7 @@ void GamePlayScene::Update()
 	{
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
 		Wireframe::GetInstance()->SetDebugCamera(!Wireframe::GetInstance()->GetDebugCamera());
+		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
 		isDebugCamera_ = !isDebugCamera_;
 	}
 #endif // _DEBUG
@@ -141,6 +149,9 @@ void GamePlayScene::Update()
 		CheckAllCollisions();
 		player_->CheckAllCollisions();
 	}
+
+	// スカイボックスの更新処理
+	skyBox_->Update();
 }
 
 
@@ -149,6 +160,17 @@ void GamePlayScene::Update()
 /// -------------------------------------------------------------
 void GamePlayScene::Draw()
 {
+	/// ------------------------------------------ ///
+	/// ---------- スカイボックスの描画 ---------- ///
+	/// ------------------------------------------ ///
+	SkyBoxManager::GetInstance()->SetRenderSetting();
+	skyBox_->Draw();
+
+	/// ---------------------------------------- ///
+	/// ----------  スプライトの描画  ---------- ///
+	/// ---------------------------------------- ///
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting();
 
 
 	/// ---------------------------------------- ///

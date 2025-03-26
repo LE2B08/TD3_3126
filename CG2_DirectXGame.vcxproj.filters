@@ -7,6 +7,8 @@
     <FxCompile Include="Resources\Shaders\Particle.VS.hlsl" />
     <FxCompile Include="Resources\Shaders\Wireframe.VS.hlsl" />
     <FxCompile Include="Resources\Shaders\Wireframe.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Sprite.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Sprite.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\Enemy.cpp" />
@@ -22,7 +24,6 @@
     <ClCompile Include="EngineLayers\EngineLayer\Audio\AudioManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\CameraManagement\Camera\Camera.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\WorldTransform\WorldTransform.cpp" />
-    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager\BlendStateManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil\DX12DepthStencil.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon\DirectXCommon.cpp" />
@@ -38,7 +39,6 @@
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager\ImGuiManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Input\Input.cpp" />
-    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager\InputLayoutManager.cpp" />
     <ClCompile Include="EngineLayers\FrameworkLayer\Log\LogString.cpp" />
     <ClCompile Include="EngineLayers\FrameworkLayer\Framework\GameEngine.cpp" />
     <ClCompile Include="EngineLayers\FrameworkLayer\Framework\Framework.cpp" />
@@ -48,10 +48,8 @@
     <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\ModelManager\ModelManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Object\3D\Object3D\Object3D.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager\PipelineStateManager.cpp" />
-    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager\RasterizerStateManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\ResourceManager\ResourceManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\ResourceChecker\ReleseCheck\ResourceObject.cpp" />
-    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\RootSignatureManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\ShaderManager\ShaderManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Object\2D\Sprite\Sprite.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\ResourceManagement\TextureManager\TextureManager.cpp" />
@@ -67,20 +65,23 @@
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\SceneManager\SceneManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene\TitleScene.cpp" />
     <ClCompile Include="EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager\ParameterManager.cpp" />
-    <ClCompile Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\LightManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene\GameClearScene.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene\GameOverScene.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TuboScene.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\SatouScene.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Player.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Weapon.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.cpp" />
     <ClCompile Include="WinMain.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Object\2D\Wireframe\Wireframe.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\EnemyBullet.cpp" />
-    <ClCompile Include="Hook.cpp" />
-    <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="FadeManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Hook.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Easing.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\FadeManager.cpp" />
+    <ClCompile Include="SpriteManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\LightManager\LightManager.cpp" />
+    <ClCompile Include="EngineLayers\EngineLayer\SkyBoxManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\Object\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\Enemy.h" />
@@ -101,7 +102,6 @@
     <ClInclude Include="EngineLayers\ApplicationLayer\CameraManagement\Camera\Camera.h" />
     <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\VertexData.h" />
     <ClInclude Include="EngineLayers\EngineLayer\WorldTransform\WorldTransform.h" />
-    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\BlendStateManager\BlendStateManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.h" />
     <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DX12DepthStencil\DX12DepthStencil.h" />
     <ClInclude Include="EngineLayers\EngineLayer\Rendering\DXLib\DirectXCommon\DirectXCommon.h" />
@@ -120,7 +120,6 @@
     <ClInclude Include="Externals\imgui\imstb_truetype.h" />
     <ClInclude Include="EngineLayers\FrameworkLayer\PresentationLayer\ImGuiManager\ImGuiManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Input\Input.h" />
-    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\InputLayoutManager\InputLayoutManager.h" />
     <ClInclude Include="EngineLayers\FrameworkLayer\Log\LogString.h" />
     <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\Material.h" />
     <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\MaterialData.h" />
@@ -130,10 +129,8 @@
     <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\ModelManager\ModelManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\3D\Object3D\Object3D.h" />
     <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\PipelineStateManager\PipelineStateManager.h" />
-    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RasterizerStateManager\RasterizerStateManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\ResourceManager\ResourceManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\ResourceChecker\ReleseCheck\ResourceObject.h" />
-    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\RootSignatureManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\ShaderManager\ShaderManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\2D\Sprite\Sprite.h" />
     <ClInclude Include="EngineLayers\EngineLayer\ResourceManagement\TextureManager\TextureManager.h" />
@@ -155,24 +152,28 @@
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\SceneManager\SceneManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TitleScene\TitleScene.h" />
     <ClInclude Include="EngineLayers\FrameworkLayer\PresentationLayer\ParameterManager\ParameterManager.h" />
-    <ClInclude Include="EngineLayers\EngineLayer\Rendering\PSO\RootSignatureManager\LightManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameClearScene\GameClearScene.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GameOverScene\GameOverScene.h" />
     <ClInclude Include="EngineLayers\EngineLayer\MultipleStructs\OBB.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\2D\Wireframe\Wireframe.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\TuboScene.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\SatouScene.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Weapon.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Player.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Weapon.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Field\Field.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\EnemyBullet.h" />
-    <ClInclude Include="Hook.h" />
-    <ClInclude Include="Easing.h" />
-    <ClInclude Include="FadeManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Hook.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Easing.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\FadeManager.h" />
+    <ClInclude Include="SpriteManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\LightManager\LightManager.h" />
+    <ClInclude Include="EngineLayers\EngineLayer\SkyBoxManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\Object\SkyBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
     <None Include="Resources\Shaders\Particle.hlsli" />
+    <None Include="Resources\Shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
