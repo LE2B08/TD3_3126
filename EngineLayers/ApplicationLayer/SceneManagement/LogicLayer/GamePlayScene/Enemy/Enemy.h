@@ -10,6 +10,7 @@
 /// ===== 前方宣言 ===== ///
 class Player;
 class EnemyBullet;
+class AttackCommand;
 class ParticleManager;
 
 /// === 敵 === ///
@@ -56,7 +57,11 @@ public:
 	// シリアルナンバーを設定
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
 
+	// 向きをランダムに設定
 	Vector3 RondomDirection(float min, float max);
+
+	// 攻撃コマンドをランダムに設定
+	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
 	///-------------------------------------------/// 
 	/// 行動別処理
@@ -170,11 +175,8 @@ private:
 	// 弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 
-	// 弾の発射間隔
-	uint32_t attackInterval_ = 120;
-
-	// 弾の発射回数
-	uint32_t attackCount_ = 0;
+	// アタックコマンド
+	std::unique_ptr<AttackCommand> attackCommand_;
 
 	// 発見までの距離
 	const float foundDistance_ = 4.0f;

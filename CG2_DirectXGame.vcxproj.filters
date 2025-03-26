@@ -82,6 +82,10 @@
     <ClCompile Include="EngineLayers\EngineLayer\LightManager\LightManager.cpp" />
     <ClCompile Include="EngineLayers\EngineLayer\SkyBoxManager.cpp" />
     <ClCompile Include="EngineLayers\ApplicationLayer\Object\SkyBox.cpp" />
+    <ClCompile Include="Hook.cpp" />
+    <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="FadeManager.cpp" />
+    <ClCompile Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\AttackCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\Enemy.h" />
@@ -169,6 +173,10 @@
     <ClInclude Include="EngineLayers\EngineLayer\LightManager\LightManager.h" />
     <ClInclude Include="EngineLayers\EngineLayer\SkyBoxManager.h" />
     <ClInclude Include="EngineLayers\ApplicationLayer\Object\SkyBox.h" />
+    <ClInclude Include="Hook.h" />
+    <ClInclude Include="Easing.h" />
+    <ClInclude Include="FadeManager.h" />
+    <ClInclude Include="EngineLayers\ApplicationLayer\SceneManagement\LogicLayer\GamePlayScene\Enemy\AttackCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

@@ -39,6 +39,12 @@ public:
 public:
 
 	/// <summary>
+	/// 位置のゲッター
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetPosition() const { return worldTransform_.translate_; }
+
+	/// <summary>
 	/// 位置のセッター
 	/// </summary>
 	/// <param name="position"></param>
@@ -55,6 +61,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsAlive() const { return isAlive_; }
+
+	void SetIsMove(bool isMove) { isMove_ = isMove; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -76,7 +84,18 @@ private:
 	// 生存フラグ
 	bool isAlive_ = true;
 
+	// 移動フラグ
+	bool isMove_ = false;
+
 	// 生存フレーム
-	uint32_t lifeFrame_ = 180;
+	uint32_t lifeFrame_ = 360;
+
+	// 速度
+	const float speed_ = 0.2f;
+
+	// シリアルナンバー
+	uint32_t serialNumber_ = 0;
+	// 次のシリアルナンバー
+	uint32_t nextSerialNumber_ = 0;
 };
 
