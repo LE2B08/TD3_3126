@@ -59,9 +59,19 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon, Camera* camera)
 /// -------------------------------------------------------------
 void ParticleManager::CreateParticleGroup(const std::string& name, const std::string& textureFilePath)
 {
-	// 登録済みの名前かチェックしてassert
-	assert(particleGroups.find(name) == particleGroups.end() && "Particle group alread exests!");
+	// 既存のグループがあるかどうかを検索
+	auto it = particleGroups.find(name);
 
+	// 既存のグループがある場合
+	if (it != particleGroups.end())
+	{
+		// 既存のグループを更新
+		it->second.materialData.textureFilePath = textureFilePath;
+		it->second.materialData.gpuHandle = TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath);
+		it->second.particles.clear(); // 既存のパーティクルをクリア
+		return;
+	}
+	
 	// 新たな空のパーティクルグループを作成し、コンテナに登録
 	ParticleGroup group{};
 	group.materialData.textureFilePath = textureFilePath;
