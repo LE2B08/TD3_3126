@@ -107,7 +107,7 @@ void Enemy::Update() {
 	}
 
 	// 移動
-	//Move();
+	Move();
 
 	// 弾の更新
 	for (auto& bullet : bullets_) {
@@ -240,7 +240,7 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 
 	// ランダムに攻撃コマンドを選択
-	std::uniform_int_distribution<int> dist(0, 2);
+	std::uniform_int_distribution<int> dist(0, 3);
 
 	// インデックスに結果を代入
 	int commandIndex = dist(randomEngine);
@@ -256,6 +256,9 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 
 	case 2:
 		return std::make_unique<RecallCommand>();
+	
+	case 3:
+		return std::make_unique<SpreadCenterShotCommand>();
 
 	default:
 		return std::make_unique<ShotCommand>();

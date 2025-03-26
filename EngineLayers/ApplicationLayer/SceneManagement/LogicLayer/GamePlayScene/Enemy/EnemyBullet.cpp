@@ -18,8 +18,10 @@ void EnemyBullet::Initialize() {
 	// IDの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet));
 
-	isAlive_ = true;	
+	isAlive_ = true;
 	lifeFrame_ = 180;
+
+	isMove_ = false;
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -34,14 +36,19 @@ void EnemyBullet::Initialize() {
 
 void EnemyBullet::Update() {
 
-	// 移動
-	Move();
+	// 移動できるときだけ
+	if (isMove_) {
 
-	if (lifeFrame_ > 0) {
-		lifeFrame_--;
-	}
-	else {
-		isAlive_ = false;
+		// 移動
+		Move();
+
+		// 生存フレームの更新
+		if (lifeFrame_ > 0) {
+			lifeFrame_--;
+		}
+		else {
+			isAlive_ = false;
+		}
 	}
 
 	// WorldTransformの更新

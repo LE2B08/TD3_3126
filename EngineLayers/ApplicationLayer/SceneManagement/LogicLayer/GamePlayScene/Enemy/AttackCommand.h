@@ -20,12 +20,12 @@ public:
 	// 初期化
 	virtual void Initialize() = 0;
 
-	// 攻撃
+	// 更新
 	virtual void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) = 0;
 
 	// 終了フラグのゲッター
 	bool GetIsEnd() const { return isEnd_; }
-	
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -58,7 +58,7 @@ public:
 	// 初期化
 	void Initialize() override;
 
-	// 攻撃
+	// 更新
 	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	///-------------------------------------------/// 
@@ -78,7 +78,7 @@ public:
 	// 初期化
 	void Initialize() override;
 
-	// 攻撃
+	// 更新
 	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	///-------------------------------------------/// 
@@ -98,7 +98,7 @@ public:
 	// 初期化
 	void Initialize() override;
 
-	// 攻撃
+	// 更新
 	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	///-------------------------------------------/// 
@@ -118,21 +118,46 @@ public:
 	// 初期化
 	void Initialize() override;
 
-	// 攻撃
+	// 更新
 	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	// ランダムに位置を決める
-	Vector3 RandomPosition(const Vector3& position, float min, float max);
+	Vector3 RandomPosition(const Vector3& position, float maxRadius);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 private:
-	
+
 	// 位置
 	Vector3 position_ = {};
+
+	// 弾が出る最大半径
+	float maxRadius_ = 0.0f;
 
 	// 乱数生成器
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
+};
+
+class SpreadCenterShotCommand : public AttackCommand {
+
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+public:
+
+	// 初期化
+	void Initialize() override;
+
+	// 更新
+	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
+
+	///-------------------------------------------///
+	/// メンバ変数
+	///-------------------------------------------///
+private:
+
+	// 1回の攻撃で発射する弾数
+	uint32_t bulletCount_ = 0;
 };

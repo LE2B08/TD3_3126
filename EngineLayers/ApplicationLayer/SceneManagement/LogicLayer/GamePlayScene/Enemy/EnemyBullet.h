@@ -62,6 +62,8 @@ public:
 	/// <returns></returns>
 	bool IsAlive() const { return isAlive_; }
 
+	void SetIsMove(bool isMove) { isMove_ = isMove; }
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
@@ -81,6 +83,9 @@ private:
 	
 	// 生存フラグ
 	bool isAlive_ = true;
+
+	// 移動フラグ
+	bool isMove_ = false;
 
 	// 生存フレーム
 	uint32_t lifeFrame_ = 360;
