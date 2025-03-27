@@ -150,6 +150,60 @@ void Sprite::SetTextureRect(const Vector2& position, const Vector4& rect)
 
 
 /// -------------------------------------------------------------
+///					HPの割合に応じてHPバーを描画
+/// -------------------------------------------------------------
+void Sprite::SetHPBar(float HPRatio, const Vector2& worldPos, const Vector4& textureRect, DecreaseHpDirection direction)
+{
+	// HPの割合を 0.0 ~ 1.0 の範囲にクランプ
+	HPRatio = std::clamp(HPRatio, 0.0f, 1.0f);
+
+	// 初期設定: 画像の切り抜き座標とサイズ
+	textureLeftTop_ = { textureRect.x, textureRect.y };
+	textureSize_ = { textureRect.z, textureRect.w };
+
+	// スプライトのワールド座標とサイズ
+	Vector2 newWorldPos = worldPos;
+	Vector2 newSize = { textureRect.z, textureRect.w };
+
+	// HPの減少方向によって処理を分岐
+	switch (direction)
+	{
+	case DecreaseHpDirection::BottomToTop:// 下から上に減少
+		
+		textureSize_.y *= HPRatio; // 高さを縮める
+		newSize.y *= HPRatio; // スプライトのサイズも縮める
+		break;
+
+	case DecreaseHpDirection::TopToBottom:// 上から下に減少
+
+		textureLeftTop_.y += textureRect.w * (1.0f - HPRatio); // テクスチャの上側をずらす
+		textureSize_.y *= HPRatio; // 高さを縮める
+		newWorldPos.y += newSize.y * (1.0f - HPRatio); // ワールド座標も調整
+		newSize.y *= HPRatio; // サイズも縮める
+		break;
+
+	case DecreaseHpDirection::LeftToRight:// 左から右に減少
+		
+		textureLeftTop_.x += textureRect.z * (1.0f - HPRatio); // テクスチャの左上座標をずらす
+		textureSize_.x *= HPRatio; // 幅を縮める
+		newWorldPos.x += newSize.x * (1.0f - HPRatio); // ワールド座標も調整
+		newSize.x *= HPRatio; // スプライトのサイズも縮める
+		break;
+
+	case DecreaseHpDirection::RightToLeft:// 右から左に減少
+
+		textureSize_.x *= HPRatio; // 幅を縮める
+		newSize.x *= HPRatio; // スプライトのサイズも縮める
+		break;
+	}
+
+	// 設定を反映
+	position_ = newWorldPos;
+	size_ = newSize;
+}
+
+
+/// -------------------------------------------------------------
 ///	 スプライト用のマテリアルリソースを作成し設定する処理を行う
 /// -------------------------------------------------------------
 void Sprite::CreateMaterialResource()

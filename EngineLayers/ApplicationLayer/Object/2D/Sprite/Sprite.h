@@ -13,6 +13,16 @@
 class DirectXCommon;
 
 
+/// ---------- HPの減少方向を示す列挙型 ---------- ///
+enum class DecreaseHpDirection
+{
+	BottomToTop,  // 下から上
+	TopToBottom,  // 上から下
+	LeftToRight,  // 左から右
+	RightToLeft   // 右から左
+};
+
+
 /// -------------------------------------------------------------
 ///						スプライトクラス
 /// -------------------------------------------------------------
@@ -122,6 +132,15 @@ public: /// ---------- セッター ---------- ///
 	/// </summary>
 	/// <param name="rect">左上の座標（ x, y ）大きさを設定する( z, w )</param>
 	void SetTextureRect(const Vector2& position, const Vector4& rect);
+
+	/// <summary>
+	/// HPバーを描画
+	/// </summary>
+	/// <param name="HPRatio"> HPの割合 (0.0 ~ 1.0)</param>
+	/// <param name="worldPos">画像を置く座標 (ワールド座標)</param>
+	/// <param name="textureRect">画像の切り抜き座標とサイズ (x, y, width, height</param>
+	/// <param name="direction">HPの減少方向</param>
+	void SetHPBar(float HPRatio, const Vector2& worldPos, const Vector4& textureRect, DecreaseHpDirection direction);
 
 private: /// ---------- メンバ関数 ---------- ///
 
