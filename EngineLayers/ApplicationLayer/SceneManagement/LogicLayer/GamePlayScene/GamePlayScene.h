@@ -69,12 +69,22 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
-	std::unique_ptr<Player> player_;
+	
 
 	std::string particleGroupName;
 
 	// デバッグカメラのON/OFF用
 	bool isDebugCamera_ = false;
+
+	// Playerクラスのインスタンス
+	std::unique_ptr<Player> player_ = nullptr;
+	// プレイヤーUI
+	std::unique_ptr<PlayerUI> playerUI_;
+	// プレイヤーの武器
+	std::unique_ptr<Weapon> weapon_ = nullptr;
+
+	// フック
+	std::unique_ptr<Hook> hook_ = nullptr;
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
@@ -82,8 +92,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	// フィールド
 	std::unique_ptr<Field> field_;
 
-	// 武器
-	Weapon* weapon_;
+	
 
 	// 敵の弾
 	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;

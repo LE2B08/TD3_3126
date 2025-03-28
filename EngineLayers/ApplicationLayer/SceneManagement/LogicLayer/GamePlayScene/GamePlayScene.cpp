@@ -18,6 +18,8 @@
 #include <SpriteManager.h>
 #include <SkyBoxManager.h>
 
+
+
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -43,8 +45,32 @@ void GamePlayScene::Initialize()
 	wavLoader_ = std::make_unique<WavLoader>();
 	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, false);
 
+	field_ = std::make_unique<Field>();
+	field_->Initialize();
+	field_->SetScale(fieldScale_);
+
+	// Playerクラスの初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
+
+	// PlayerUIの初期化
+	playerUI_ = std::make_unique<PlayerUI>();
+	playerUI_->Initialize();
+
+	// 武器の初期化
+	weapon_ = std::make_unique<Weapon>();
+	weapon_->Initialize();
+
+	// フックの生成 初期化
+	hook_ = std::make_unique<Hook>();
+	hook_->SetPlayerPosition(player_->GetPosition());
+	hook_->SetPlayerRotation(player_->GetRotation());
+	hook_->SetPlayerVelocity(player_->GetVelocity());
+	hook_->SetPlayerAcceleration(player_->GetAcceleration());
+
+	hook_->SetMinMoveLimit(field_->GetMinPosition());
+	hook_->SetMaxMoveLimit(field_->GetMaxPosition());
+	hook_->Initialize();
 
 	enemy_ = std::make_unique<Enemy>();
 	enemy_->Initialize();
@@ -52,9 +78,7 @@ void GamePlayScene::Initialize()
 	enemyBullets_ = &enemy_->GetBullets();
 
 	//fieldScale_ = { 0.0f,0.0f,0.0f };
-	field_ = std::make_unique<Field>();
-	field_->Initialize();
-	field_->SetScale(fieldScale_);
+	
 
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
@@ -131,12 +155,32 @@ void GamePlayScene::Update()
 	field_->Update();
 
 
-
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 	player_->SetEnemy(enemy_.get());
 	player_->SetIsGameStart(isGameStart_);
 	player_->Update();
+
+	playerUI_->Update();
+
+	// 武器の更新処理
+	weapon_->SetPlayerPosition(player_->GetPosition());
+	weapon_->SetPlayerRotation(player_->GetRotation());
+	weapon_->SetPlayerScale(player_->GetScale());
+	weapon_->SetIsAttack(player_->GetIsAttack());
+	weapon_->Update();
+
+	// フックの更新処理
+	hook_->SetPlayerPosition(player_->GetPosition());
+	hook_->SetPlayerRotation(player_->GetRotation());
+	hook_->SetPlayerVelocity(player_->GetVelocity());
+	hook_->SetPlayerAcceleration(player_->GetAcceleration());
+	hook_->SetMinMoveLimit(field_->GetMinPosition());
+	hook_->SetMaxMoveLimit(field_->GetMaxPosition());
+	hook_->SetIsHitPlayerToEnemy(player_->GetIsHitEnemy());
+
+	// フックの更新処理
+	hook_->Update();
 
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
@@ -148,6 +192,15 @@ void GamePlayScene::Update()
 		// 衝突判定と応答
 		CheckAllCollisions();
 		//player_->CheckAllCollisions();
+	}
+
+	// 攻撃中の場合
+	if (weapon_->GetIsAttack()) {
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+		if (enemy_->GetIsHit()) {
+			enemy_->SetIsHitFromAttack(true);
+		}
 	}
 
 	// スカイボックスの更新処理
@@ -171,7 +224,8 @@ void GamePlayScene::Draw()
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
 	SpriteManager::GetInstance()->SetRenderSetting();
-
+	// プレイヤーUI
+	playerUI_->Draw();
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -179,7 +233,14 @@ void GamePlayScene::Draw()
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
+	// プレイヤー
 	player_->Draw();
+
+	// 武器の描画
+	weapon_->Draw();
+
+	// フックの描画
+	hook_->Draw();
 
 	enemy_->Draw();
 
@@ -218,6 +279,9 @@ void GamePlayScene::DrawImGui()
 	ImGui::End();
 
 	player_->DrawImGui();
+	playerUI_->DrawImGui();
+	weapon_->DrawImGui();
+	hook_->ShowImGui();
 
 	enemy_->ShowImGui("Enemy");
 
@@ -236,6 +300,8 @@ void GamePlayScene::CheckAllCollisions()
 
 	// コライダーをリストに登録
 	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(weapon_.get());
+	collisionManager_->AddCollider(hook_.get());
 	collisionManager_->AddCollider(enemy_.get());
 
 
