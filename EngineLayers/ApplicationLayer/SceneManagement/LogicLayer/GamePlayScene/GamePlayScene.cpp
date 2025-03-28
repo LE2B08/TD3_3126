@@ -1,32 +1,29 @@
 #include "GamePlayScene.h"
+#include "Camera.h"
+#include "Easing.h"
+#include "Object3DCommon.h"
+#include "SceneManager.h"
+#include "Wireframe.h"
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
 #include <Input.h>
-#include "SceneManager.h"
-#include "Object3DCommon.h"
 #include <ParameterManager.h>
 #include <ParticleManager.h>
-#include "Wireframe.h"
-#include "Camera.h"
-#include "Easing.h"
 
 #include "FadeManager.h"
 
 #ifdef _DEBUG
 #include <DebugCamera.h>
 #endif // _DEBUG
-#include <SpriteManager.h>
 #include <SkyBoxManager.h>
-
-
+#include <SpriteManager.h>
 
 using namespace Easing;
 
 /// -------------------------------------------------------------
 ///				　			　初期化処理
 /// -------------------------------------------------------------
-void GamePlayScene::Initialize()
-{
+void GamePlayScene::Initialize() {
 	FadeManager::GetInstance()->StartFadeOut();
 
 #ifdef _DEBUG
@@ -52,6 +49,7 @@ void GamePlayScene::Initialize()
 	// Playerクラスの初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
+	player_->SetPosition({1000.0f, 1000.0f, 1000.0f});
 
 	// PlayerUIの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
@@ -77,8 +75,7 @@ void GamePlayScene::Initialize()
 
 	enemyBullets_ = &enemy_->GetBullets();
 
-	//fieldScale_ = { 0.0f,0.0f,0.0f };
-	
+	// fieldScale_ = { 0.0f,0.0f,0.0f };
 
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
@@ -89,15 +86,12 @@ void GamePlayScene::Initialize()
 	collisionManager_->Initialize();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void GamePlayScene::Update()
-{
+void GamePlayScene::Update() {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_F12))
-	{
+	if (input_->TriggerKey(DIK_F12)) {
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
 		Wireframe::GetInstance()->SetDebugCamera(!Wireframe::GetInstance()->GetDebugCamera());
 		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
@@ -105,64 +99,72 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-	if (FadeManager::GetInstance()->IsFadeComplete())
-	{
-		camera_->SetRotate({ 1.57f,0.0f,0.0f });
+	if (FadeManager::GetInstance()->IsFadeComplete()) {
+		camera_->SetRotate({1.57f, 0.0f, 0.0f});
 		camera_->SetTranslate(cameraPosition_);
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_F1))
-	{
-		if (sceneManager_)
-		{
+	if (input_->TriggerKey(DIK_F1)) {
+		if (sceneManager_) {
 			sceneManager_->ChangeScene("TuboScene");
 		}
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_F2))
-	{
-		if (sceneManager_)
-		{
+	if (input_->TriggerKey(DIK_F2)) {
+		if (sceneManager_) {
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_F3))
-	{
-		if (sceneManager_)
-		{
+	if (input_->TriggerKey(DIK_F3)) {
+		if (sceneManager_) {
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
-	if (player_->GetIsHit()) {
+
+	if (player_->GetIsHitEnemy()) {
 		// カメラの揺れを開始
 		isCameraShaking_ = true;
 		shakeElapsedTime_ = 0.0f;
 	}
+
+	// enemyにプレイヤーがあたったときにカメラをシェイクする
 	CameraShake();
 
 	camera_->Update();
 
 	// ゲーム開始演出
-	GameStart();
-	
-	
+	if (!isGameStart_) {
+		GameStart();
+	}
 
 	field_->SetScale(fieldScale_);
 	field_->Update();
 
+	// フックから移動情報を取得
+	if (isGameStart_) {
 
-	player_->SetMinMoveLimit(field_->GetMinPosition());
-	player_->SetMaxMoveLimit(field_->GetMaxPosition());
-	player_->SetEnemy(enemy_.get());
-	player_->SetIsGameStart(isGameStart_);
+		// プレイヤーの位置をフックにセット
+		player_->SetPosition(hook_->GetPlayerPosition());
+		player_->SetVelocity(hook_->GetPlayerVelocity());
+		player_->SetAcceleration(hook_->GetPlayerAcceleration());
+
+		player_->SetMinMoveLimit(field_->GetMinPosition());
+		player_->SetMaxMoveLimit(field_->GetMaxPosition());
+		player_->SetEnemy(enemy_.get());
+		player_->SetIsGameStart(isGameStart_);
+		player_->SetIsAttack(weapon_->GetIsAttack());
+
+	}
 	player_->Update();
 
-	playerUI_->Update();
 
+	playerUI_->SetHp(player_->GetHp());
+	playerUI_->Update();
+	
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(player_->GetPosition());
 	weapon_->SetPlayerRotation(player_->GetRotation());
@@ -191,7 +193,7 @@ void GamePlayScene::Update()
 	if (isGameStart_) {
 		// 衝突判定と応答
 		CheckAllCollisions();
-		//player_->CheckAllCollisions();
+		// player_->CheckAllCollisions();
 	}
 
 	// 攻撃中の場合
@@ -207,12 +209,10 @@ void GamePlayScene::Update()
 	skyBox_->Update();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void GamePlayScene::Draw()
-{
+void GamePlayScene::Draw() {
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
@@ -249,24 +249,18 @@ void GamePlayScene::Draw()
 	collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
-	//Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
+	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 }
-
 
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void GamePlayScene::Finalize()
-{
-
-}
-
+void GamePlayScene::Finalize() {}
 
 /// -------------------------------------------------------------
 ///				　			ImGui描画処理
 /// -------------------------------------------------------------
-void GamePlayScene::DrawImGui()
-{
+void GamePlayScene::DrawImGui() {
 	ImGui::Begin("Test Window");
 
 	ImGui::SliderFloat("CameraShakeDuration", &shakeDuration_, 0.0f, 10.0f);
@@ -288,12 +282,10 @@ void GamePlayScene::DrawImGui()
 	field_->ShowImGui("Field");
 }
 
-
 /// -------------------------------------------------------------
 ///				　			衝突判定と応答
 /// -------------------------------------------------------------
-void GamePlayScene::CheckAllCollisions()
-{
+void GamePlayScene::CheckAllCollisions() {
 	/*------プレイヤーと敵------*/
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
@@ -303,7 +295,6 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->AddCollider(weapon_.get());
 	collisionManager_->AddCollider(hook_.get());
 	collisionManager_->AddCollider(enemy_.get());
-
 
 	// 複数について
 
@@ -325,8 +316,7 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->CheckAllCollisions();
 }
 
-void GamePlayScene::CameraShake()
-{
+void GamePlayScene::CameraShake() {
 	// カメラの揺れを更新
 	if (isCameraShaking_) {
 		shakeElapsedTime_ += 1.0f / 60.0f;
@@ -335,13 +325,12 @@ void GamePlayScene::CameraShake()
 			input_->StopVibration();
 			isCameraShaking_ = false;
 			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
-		}
-		else {
+		} else {
 			// ランダムな揺れを生成
 			std::random_device rd;
 			std::mt19937 gen(rd());
 			std::uniform_real_distribution<float> dis(-shakeMagnitude_, shakeMagnitude_);
-			Vector3 shakeOffset = { dis(gen), dis(gen), dis(gen) };
+			Vector3 shakeOffset = {dis(gen), dis(gen), dis(gen)};
 			camera_->SetTranslate(cameraPosition_ + shakeOffset);
 			// コントローラーを振動させる
 			input_->SetVibration(1, 1);
@@ -349,8 +338,7 @@ void GamePlayScene::CameraShake()
 	}
 }
 
-void GamePlayScene::GameStart()
-{
+void GamePlayScene::GameStart() {
 	// エンターキーかAボタンが押されるたびに演出を開始
 	// デバッグ用なのであとで消すこと
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
@@ -362,12 +350,12 @@ void GamePlayScene::GameStart()
 	}
 	// イージングがスタートしているか
 	if (isStartEasing_) {
-		//easeTを40から0まで変動させる
+		// easeTを40から0まで変動させる
 		if (startTimer_ >= maxStartT_) {
 			startTimer_ = maxStartT_;
-			isGameStart_ = true;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
+			
 		} else {
 			startTimer_ += 0.5f;
 		}
@@ -378,15 +366,16 @@ void GamePlayScene::GameStart()
 	// プレイヤーの位置がセットされたか
 	if (isPlayerPositionSet_) {
 		// プレイヤーの位置をセット
-		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
-		if(playerStartTimer_ >= maxPlayerStartT_){
+		player_->SetPosition({8.0f, 20.0f, 8.0f});
+		if (playerStartTimer_ >= maxPlayerStartT_) {
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
+			isGameStart_ = true;
 		} else {
 			playerStartTimer_ += 0.5f;
+			// 上からプレイヤーが登場する
+			player_->SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
 		}
-		// 上からプレイヤーが登場する
-		player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+		
 	}
-	
 }

@@ -26,9 +26,8 @@ void Player::Initialize() {
 	angularVelocity_ = {0.0f, 0.0f, 0.0f};
 
 	// Hpの初期化
-	hp_ = 100;
+	hp_ = 10;
 
-	
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
@@ -73,8 +72,6 @@ void Player::Update() {
 	// ゲームスタート時のみ更新処理を行う
 	if (isGameStart_) {
 
-		
-
 		/*------ヒット時の処理------*/
 		if (isHit_) {
 			HitParticle();
@@ -112,10 +109,8 @@ void Player::Update() {
 }
 
 void Player::Draw() {
-	if (isGameStart_) {
-		// 描画処理
-		object3D_->Draw();
-	}
+	// 描画処理
+	object3D_->Draw();
 
 	collisionManager_->Draw();
 
@@ -175,10 +170,6 @@ void Player::DrawImGui() {
 	// debug
 	ImGui::Text("DebugMode: StartButton");
 	ImGui::End();
-
-	
-
-
 }
 void Player::Move() {
 
@@ -235,6 +226,9 @@ void Player::Attack() {
 	}
 }
 void Player::DecreaseHpOnHit() {
+
+	if ()
+
 	// プレイヤーが敵に当たった場合の
 	// 無敵時間の処理
 	if (isInvincible_) {
@@ -248,7 +242,6 @@ void Player::DecreaseHpOnHit() {
 		}
 	}
 }
-
 
 void Player::OnCollision(Collider* other) {
 	// 種別IDを取得
@@ -278,7 +271,6 @@ Vector3 Player::GetCenterPosition() const {
 	Vector3 worldPosition = position_ + offset;
 	return worldPosition;
 }
-
 
 void Player::HitParticle() {
 	// エネミーの中心位置を取得

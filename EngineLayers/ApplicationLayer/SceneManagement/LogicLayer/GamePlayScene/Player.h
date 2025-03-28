@@ -94,6 +94,11 @@ public:
 	void SetIsHitEnemy(bool isHitEnemy) { isHitEnemy_ = isHitEnemy; }
 	bool GetIsHitEnemy() const { return isHitEnemy_; }
   
+
+
+	void SetHp(const int& hp) { hp_ = hp; }
+	int GetHp() const { return hp_; }
+
 private:
 	///============================
 	/// メンバ変数
@@ -163,8 +168,10 @@ private:
 	int invincibleTime_ = 0;
 	// 無敵時間の最大値
 	const int maxInvincibleTime_ = 60;
+
 	// 無敵状態かどうか
 	bool isInvincible_ = false;
+
 	//攻撃しているかどうか
 	bool isAttack_ = false;
 

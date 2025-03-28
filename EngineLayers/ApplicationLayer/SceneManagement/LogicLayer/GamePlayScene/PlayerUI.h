@@ -110,10 +110,13 @@ private:
 	// UIのスケール
 	Vector2 hpScale_;
 	// UIの回転
-	Vector2 hpRotation_;
+	float hpRotation_;
 
-	// HpSprite
+	// Hpの枠のスプライト
 	std::unique_ptr<Sprite> hpSprite_;
+
+	// Hpのゲージのスプライト
+	std::unique_ptr<Sprite> hpGaugeSprite_;
 
 	//-------Speed-------//
 
@@ -126,7 +129,7 @@ private:
 
 	Vector2 speedPosition_;
 	Vector2 speedScale_;
-	Vector2 speedRotation_;
+	float speedRotation_;
 
 	// SpeedSprite
 	std::unique_ptr<Sprite> speedSprite_;
