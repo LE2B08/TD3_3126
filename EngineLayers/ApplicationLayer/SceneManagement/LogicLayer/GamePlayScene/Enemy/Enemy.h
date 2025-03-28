@@ -127,6 +127,9 @@ public:
 	/// <param name="minMoveLimit"></param>
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
+	// 位置の取得
+	const Vector3& GetPosition() const { return worldTransform_.translate_; }
+
 	///-------------------------------------------/// 
 	/// 列挙
 	///-------------------------------------------///

@@ -8,11 +8,12 @@
 #include "GamePlayScene/Enemy/Enemy.h"
 #include "GamePlayScene/Field/Field.h"
 #include "Player.h"
+#include "Camera.h"
+#include "GamePlayScene/DynamicCamera/DynamicCamera.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-
 
 /// -------------------------------------------------------------
 ///				　		アキモト専用シーン
@@ -54,5 +55,11 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// フィールド
 	std::unique_ptr<Field> field_;
+
+	// カメラ
+	Camera* camera_ = nullptr;
+
+	// 計算用のダイナミックカメラ
+	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;
 };
 
