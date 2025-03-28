@@ -56,6 +56,14 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// Playerクラスのインスタンス
 	std::unique_ptr<Player> player_ = nullptr;
+	// プレイヤーUI
+	std::unique_ptr<PlayerUI> playerUI_;
+	// プレイヤーの武器
+	std::unique_ptr<Weapon> weapon_ = nullptr;
+
+	// フック
+	std::unique_ptr<Hook> hook_ = nullptr;
+	
 
 	// カメラ
 	Camera* camera_ = nullptr;

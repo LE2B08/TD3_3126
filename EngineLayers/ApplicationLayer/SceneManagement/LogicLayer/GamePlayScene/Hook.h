@@ -116,8 +116,7 @@ public:
 	bool GetEnemyHit() { return enemyHit_; }
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 
-	bool GetIsDebug() { return isDebug_; }
-	void SetIsDebug(bool isDebug) { isDebug_ = isDebug; }
+	
 
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
@@ -198,7 +197,7 @@ private:
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
 
-	bool isDebug_ = false;
+	
 
 	//================================================
 	// Behavior
@@ -223,5 +222,6 @@ private:
 	float angularSpeed = 3.0f;      // 角速度（調整可能）
 	float initialAngularSpeed = 0.0f;   // 角速度の初期値
 	float maxAngularSpeed = 5.0f;       // 角速度の最大値
-	float angularSpeedIncrement = 1.0f; // 角速度の増加率
+	float angularSpeedIncrement = 2.0f; // 角速度の増加率
+
 };
