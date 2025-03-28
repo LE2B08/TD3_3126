@@ -227,7 +227,7 @@ void Player::Attack() {
 }
 void Player::DecreaseHpOnHit() {
 
-	if ()
+	
 
 	// プレイヤーが敵に当たった場合の
 	// 無敵時間の処理
