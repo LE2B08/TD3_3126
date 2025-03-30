@@ -116,7 +116,8 @@ public:
 	bool GetEnemyHit() { return enemyHit_; }
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 
-	
+	// 状態を取得
+	Behavior GetBehavior() { return behavior_; }
 
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
