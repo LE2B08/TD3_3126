@@ -13,6 +13,9 @@
 /// -------------------------------------------------------------
 void TitleScene::Initialize()
 {
+	// フェードアウト開始
+	FadeManager::GetInstance()->StartFadeOut();
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
@@ -47,11 +50,6 @@ void TitleScene::Initialize()
 
 		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
 	}
-
-	/// ---------- サウンドの初期化 ---------- ///
-	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, false);
-
-	FadeManager::GetInstance()->StartFadeOut();
 }
 
 
@@ -61,7 +59,7 @@ void TitleScene::Initialize()
 void TitleScene::Update()
 {
 	// 入力によるシーン切り替え
-	if (input->TriggerKey(DIK_RETURN)) // Enterキーが押されたら
+	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
 		if (sceneManager_)
 		{

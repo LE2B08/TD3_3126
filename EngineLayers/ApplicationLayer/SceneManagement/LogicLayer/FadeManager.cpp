@@ -1,6 +1,8 @@
 #include "FadeManager.h"
 #include <LogString.h>
 #include "Wireframe.h"
+#include "Camera.h"
+#include "Object3DCommon.h"
 #include <WinApp.h>
 
 
@@ -19,6 +21,8 @@ FadeManager* FadeManager::GetInstance()
 /// -------------------------------------------------------------
 void FadeManager::Initialize()
 {
+	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	object3DCommon_ = Object3DCommon::GetInstance();
 	fadeState_ = FadeState::None;
 	alpha_ = 0.0f;
 }
@@ -58,7 +62,12 @@ void FadeManager::Draw()
 	if (fadeState_ == FadeState::None) return; // 状態がNoneなら描画しない
 
 	// ワイヤーフレームでフェードの可視化
-	Wireframe::GetInstance()->DrawBox({ -200.0f, -200.0f, 0.0f }, { WinApp::kClientWidth,WinApp::kClientHeight,0.0f }, { fadeColor_.x,fadeColor_.y,fadeColor_.z,alpha_ });
+	Vector3 pos(0.0f, 0.0f, 0.0f);
+	Vector3 size(50.0f, 30.0f, 0.0f);
+	float angle = 70.0f * (3.14159f / 180.0f); // 度からラジアンに変換
+
+	// ワイヤーフレームの描画
+	Wireframe::GetInstance()->DrawBox(pos, size, { fadeColor_.x,fadeColor_.y,fadeColor_.z,alpha_ }, angle, camera_->GetRotate());
 }
 
 void FadeManager::StartFadeIn(float speed, const Vector4& color)
