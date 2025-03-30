@@ -2,6 +2,11 @@
 #include "Vector4.h"
 
 
+/// ---------- 前方宣言 ---------- ///
+class Camera;
+class Object3DCommon;
+
+
 /// -------------------------------------------------------------
 ///			　フェード・イン・アウトを管理するクラス
 /// -------------------------------------------------------------
@@ -44,6 +49,10 @@ public: /// ---------- メンバ関数 ---------- ///
 private: /// ---------- メンバ変数 ---------- ///
 
 	FadeState fadeState_ = FadeState::None;
+
+	Camera* camera_ = nullptr;
+
+	Object3DCommon* object3DCommon_ = nullptr;
 
 	float alpha_ = 0.0f;
 	float fadeSpeed_ = 1.0f;

@@ -24,6 +24,7 @@ using namespace Easing;
 ///				　			　初期化処理
 /// -------------------------------------------------------------
 void GamePlayScene::Initialize() {
+	// フェードアウト開始
 	FadeManager::GetInstance()->StartFadeOut();
 
 #ifdef _DEBUG
@@ -38,10 +39,6 @@ void GamePlayScene::Initialize() {
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 
-	/// ---------- サウンドの初期化 ---------- ///
-	wavLoader_ = std::make_unique<WavLoader>();
-	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, false);
-
 	field_ = std::make_unique<Field>();
 	field_->Initialize();
 	field_->SetScale(fieldScale_);
@@ -49,7 +46,7 @@ void GamePlayScene::Initialize() {
 	// Playerクラスの初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->SetPosition({1000.0f, 1000.0f, 1000.0f});
+	player_->SetPosition({ 1000.0f, 1000.0f, 1000.0f });
 
 	// PlayerUIの初期化
 	playerUI_ = std::make_unique<PlayerUI>();
@@ -99,10 +96,7 @@ void GamePlayScene::Update() {
 	}
 #endif // _DEBUG
 
-	if (FadeManager::GetInstance()->IsFadeComplete()) {
-		camera_->SetRotate({1.57f, 0.0f, 0.0f});
-		camera_->SetTranslate(cameraPosition_);
-	}
+	camera_->SetTranslate(cameraPosition_);
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
@@ -164,7 +158,7 @@ void GamePlayScene::Update() {
 
 	playerUI_->SetHp(player_->GetHp());
 	playerUI_->Update();
-	
+
 	// 武器の更新処理
 	weapon_->SetPlayerPosition(player_->GetPosition());
 	weapon_->SetPlayerRotation(player_->GetRotation());
@@ -325,12 +319,13 @@ void GamePlayScene::CameraShake() {
 			input_->StopVibration();
 			isCameraShaking_ = false;
 			camera_->SetTranslate(cameraPosition_); // 元の位置に戻す
-		} else {
+		}
+		else {
 			// ランダムな揺れを生成
 			std::random_device rd;
 			std::mt19937 gen(rd());
 			std::uniform_real_distribution<float> dis(-shakeMagnitude_, shakeMagnitude_);
-			Vector3 shakeOffset = {dis(gen), dis(gen), dis(gen)};
+			Vector3 shakeOffset = { dis(gen), dis(gen), dis(gen) };
 			camera_->SetTranslate(cameraPosition_ + shakeOffset);
 			// コントローラーを振動させる
 			input_->SetVibration(1, 1);
@@ -355,8 +350,9 @@ void GamePlayScene::GameStart() {
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-			
-		} else {
+
+		}
+		else {
 			startTimer_ += 0.5f;
 		}
 		// ポヨンポヨンしてフィールドが広がる演出
@@ -366,16 +362,17 @@ void GamePlayScene::GameStart() {
 	// プレイヤーの位置がセットされたか
 	if (isPlayerPositionSet_) {
 		// プレイヤーの位置をセット
-		player_->SetPosition({8.0f, 20.0f, 8.0f});
+		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
 		if (playerStartTimer_ >= maxPlayerStartT_) {
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		} else {
+		}
+		else {
 			playerStartTimer_ += 0.5f;
 			// 上からプレイヤーが登場する
-			player_->SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
 		}
-		
+
 	}
 }

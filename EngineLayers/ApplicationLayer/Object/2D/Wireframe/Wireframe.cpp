@@ -226,6 +226,50 @@ void Wireframe::DrawBox(const Vector3& position, const Vector3& size, const Vect
 	boxVertexIndex_ += kBoxVertexCount;
 }
 
+void Wireframe::DrawBox(const Vector3& position, const Vector3& size, const Vector4& color, float rotationAngle, const Vector3& rotationAxis)
+{
+	// 回転行列を作成
+	Matrix4x4 rotationMatrix = Matrix4x4::MakeRotateMatrix(Vector3::Multiply(rotationAngle, rotationAxis));
+
+	// 四角形の頂点座標（中心を原点として）
+	Vector3 vertices[4] = {
+		Vector3(-size.x * 0.5f, -size.y * 0.5f, 0.0f),  // 左下
+		Vector3(size.x * 0.5f, -size.y * 0.5f, 0.0f),   // 右下
+		Vector3(size.x * 0.5f, size.y * 0.5f, 0.0f),    // 右上
+		Vector3(-size.x * 0.5f, size.y * 0.5f, 0.0f)    // 左上
+	};
+
+	// 回転を適用して位置にオフセット
+	for (int i = 0; i < 4; i++) {
+		vertices[i] = Vector3::Transform(vertices[i], rotationMatrix);
+		vertices[i] = vertices[i] + position;
+	}
+
+	// 頂点データの設定
+	boxData_->vertexData[boxVertexIndex_ + 0].position = vertices[0];
+	boxData_->vertexData[boxVertexIndex_ + 1].position = vertices[1];
+	boxData_->vertexData[boxVertexIndex_ + 2].position = vertices[2];
+	boxData_->vertexData[boxVertexIndex_ + 3].position = vertices[3];
+
+	// カラーデータの設定
+	boxData_->vertexData[boxVertexIndex_ + 0].color = color;
+	boxData_->vertexData[boxVertexIndex_ + 1].color = color;
+	boxData_->vertexData[boxVertexIndex_ + 2].color = color;
+	boxData_->vertexData[boxVertexIndex_ + 3].color = color;
+
+	// インデックスデータの設定
+	boxData_->indexData[boxIndex_] = boxVertexIndex_ + 0;
+	boxData_->indexData[boxIndex_ + 1] = boxVertexIndex_ + 1;
+	boxData_->indexData[boxIndex_ + 2] = boxVertexIndex_ + 2;
+	boxData_->indexData[boxIndex_ + 3] = boxVertexIndex_ + 0;
+	boxData_->indexData[boxIndex_ + 4] = boxVertexIndex_ + 2;
+	boxData_->indexData[boxIndex_ + 5] = boxVertexIndex_ + 3;
+
+	// インデックスと頂点インデックスの更新
+	boxIndex_ += kBoxIndexCount;
+	boxVertexIndex_ += kBoxVertexCount;
+}
+
 
 /// -------------------------------------------------------------
 ///				　	      AABBを描画する処理
@@ -1307,7 +1351,7 @@ void Wireframe::CreateBoxVertexData(BoxData* boxData)
 {
 	UINT vertexBufferSize = sizeof(VertexData) * kBoxVertexCount * kBoxMaxCount;
 	UINT indexBufferSize = sizeof(uint32_t) * kBoxIndexCount * kBoxMaxCount;
-	
+
 	// 頂点リソースを生成
 	boxData->vertexBuffer = ResourceManager::CreateBufferResource(dxCommon_->GetDevice(), vertexBufferSize);
 
