@@ -63,7 +63,7 @@ void FadeManager::Draw()
 
 	// ワイヤーフレームでフェードの可視化
 	Vector3 pos(0.0f, 0.0f, 0.0f);
-	Vector3 size(50.0f, 30.0f, 0.0f);
+	Vector3 size(300.0f, 100.0f, 0.0f);
 	float angle = 70.0f * (3.14159f / 180.0f); // 度からラジアンに変換
 
 	// ワイヤーフレームの描画
