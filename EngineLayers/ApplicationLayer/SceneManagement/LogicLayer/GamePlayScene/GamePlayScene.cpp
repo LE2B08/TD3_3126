@@ -74,6 +74,10 @@ void GamePlayScene::Initialize() {
 
 	// fieldScale_ = { 0.0f,0.0f,0.0f };
 
+	// コントローラー用UIの生成&初期化
+	controllerUI_ = std::make_unique<ControllerUI>();
+	controllerUI_->Initialize();
+
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("rostock_laage_airport_4k.dds");
@@ -199,6 +203,9 @@ void GamePlayScene::Update() {
 		}
 	}
 
+	// コントローラー用UIの更新
+	controllerUI_->Update();
+
 	// スカイボックスの更新処理
 	skyBox_->Update();
 }
@@ -220,6 +227,9 @@ void GamePlayScene::Draw() {
 	SpriteManager::GetInstance()->SetRenderSetting();
 	// プレイヤーUI
 	playerUI_->Draw();
+
+	// コントローラー用UIの描画
+	controllerUI_->Draw();
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -274,6 +284,8 @@ void GamePlayScene::DrawImGui() {
 	enemy_->ShowImGui("Enemy");
 
 	field_->ShowImGui("Field");
+
+	controllerUI_->DrawImGui();
 }
 
 /// -------------------------------------------------------------

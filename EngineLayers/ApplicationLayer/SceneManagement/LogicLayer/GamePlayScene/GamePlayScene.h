@@ -13,6 +13,7 @@
 #include "Field/Field.h"
 #include "Weapon.h"
 #include "Enemy/EnemyBullet.h"
+#include "UI/ControllerUI.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -92,7 +93,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	// フィールド
 	std::unique_ptr<Field> field_;
 
-	
+	// コントローラー用UI
+	std::unique_ptr<ControllerUI> controllerUI_ = nullptr;
 
 	// 敵の弾
 	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;
