@@ -14,6 +14,7 @@
 #include "Weapon.h"
 #include "Enemy/EnemyBullet.h"
 #include "UI/ControllerUI.h"
+#include "DynamicCamera/DynamicCamera.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -142,4 +143,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 拡大するフィールド
 	Vector3 fieldScale_ = startFieldScale_;
 	Vector3 fieldPosition_ = startFieldPosition_;
+
+	// 計算用のダイナミックカメラ
+	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;
 };

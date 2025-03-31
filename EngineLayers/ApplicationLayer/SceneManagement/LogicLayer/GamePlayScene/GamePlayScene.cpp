@@ -85,6 +85,11 @@ void GamePlayScene::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	dynamicCamera_ = std::make_unique<DynamicCamera>();
+	dynamicCamera_->Initialize();
+	dynamicCamera_->SetPlayer(player_.get());
+	dynamicCamera_->SetEnemy(enemy_.get());
 }
 
 /// -------------------------------------------------------------
@@ -132,6 +137,15 @@ void GamePlayScene::Update() {
 	// enemyにプレイヤーがあたったときにカメラをシェイクする
 	CameraShake();
 
+	// ダイナミックカメラの更新
+	dynamicCamera_->Update();
+
+	// 計算したあとのカメラの値をセット
+	camera_->SetScale(dynamicCamera_->GetScale());
+	camera_->SetRotate(dynamicCamera_->GetRotate());
+	camera_->SetTranslate(dynamicCamera_->GetTranslate());
+
+	// カメラの更新
 	camera_->Update();
 
 	// ゲーム開始演出
@@ -286,6 +300,8 @@ void GamePlayScene::DrawImGui() {
 	field_->ShowImGui("Field");
 
 	controllerUI_->DrawImGui();
+
+	dynamicCamera_->ShowImGui("DynamicCamera");
 }
 
 /// -------------------------------------------------------------
