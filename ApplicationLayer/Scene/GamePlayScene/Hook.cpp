@@ -1,45 +1,74 @@
+#define NOMINMAX
 #include "Hook.h"
-#include "CollisionTypeIdDef.h"
 #include "Input.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "Field.h"
+
 #include "Wireframe.h"
+#include "CollisionTypeIdDef.h"
+#include "ImGuiManager.h"
 
-#include <imgui.h>
 
-#undef max
-#undef min
-void Hook::Initialize() {
+/// -------------------------------------------------------------
+///							初期化処理
+/// -------------------------------------------------------------
+void Hook::Initialize()
+{
+	// フックのコライダーの設定
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
+
 	// フックの初期化
 	isExtending_ = false;
 	isThrowing_ = false;
 	// フックの位置を初期化
 	endPos_ = playerPosition_;
-
-	// フックのコライダーの設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 }
-void Hook::Update() {
+
+
+/// -------------------------------------------------------------
+///							更新処理
+/// -------------------------------------------------------------
+void Hook::Update()
+{
+	if (player_)
+	{
+		playerPosition_ = player_->GetPosition();
+		playerRotation_ = player_->GetRotation();
+		playerVelocity_ = player_->GetVelocity();
+		playerAcceleration_ = player_->GetAcceleration();
+		isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
+	}
+
+	// フックの状態ごとの更新を行う
+	if (field_)
+	{
+		minMoveLimit_ = field_->GetMinPosition();
+		maxMoveLimit_ = field_->GetMaxPosition();
+	}
 
 	// 状態の変更がリクエストされている場合
-	if (requestBehavior_) {
+	if (behaviorRequest_)
+	{
 
 		// 状態を変更する
-		behavior_ = requestBehavior_.value();
+		behavior_ = behaviorRequest_.value();
 
 		// 状態ごとの初期化を行う
 		switch (behavior_) {
-		case Hook::Behavior::None:
+		case Behavior::None:
 			BehaviorNoneInitialize();
 			break;
-		case Hook::Behavior::Throw:
+		case Behavior::Throw:
 			BehaviorThrowInitialize();
 			break;
-		case Hook::Behavior::Extend:
+		case Behavior::Extend:
 			BehaviorExtendInitialize();
 			break;
-		case Hook::Behavior::Move:
+		case Behavior::Move:
 			BehaviorMoveInitialize();
 			break;
-		case Hook::Behavior::Back:
+		case Behavior::Back:
 			BehaviorBackInitialize();
 			break;
 		default:
@@ -47,24 +76,24 @@ void Hook::Update() {
 		}
 
 		// リクエストをクリア
-		requestBehavior_ = std::nullopt;
+		behaviorRequest_ = std::nullopt;
 	}
 
 	// 状態ごとの更新を行う
 	switch (behavior_) {
-	case Hook::Behavior::None:
+	case Behavior::None:
 		BehaviorNoneUpdate();
 		break;
-	case Hook::Behavior::Throw:
+	case Behavior::Throw:
 		BehaviorThrowUpdate();
 		break;
-	case Hook::Behavior::Extend:
+	case Behavior::Extend:
 		BehaviorExtendUpdate();
 		break;
-	case Hook::Behavior::Move:
+	case Behavior::Move:
 		BehaviorMoveUpdate();
 		break;
-	case Hook::Behavior::Back:
+	case Behavior::Back:
 		BehaviorBackUpdate();
 		break;
 	default:
@@ -72,49 +101,60 @@ void Hook::Update() {
 	}
 }
 
-void Hook::Draw() {
+
+/// -------------------------------------------------------------
+///							描画処理
+/// -------------------------------------------------------------
+void Hook::Draw()
+{
 	// フックの線
-	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
-void Hook::BehaviorNoneInitialize() {
-	// フックの初期化
-	isExtending_ = false;
-	isThrowing_ = false;
-	isActive_ = false;
 
+/// -------------------------------------------------------------
+///						フックの初期化処理
+/// -------------------------------------------------------------
+void Hook::BehaviorNoneInitialize()
+{
 	// フックの位置を初期化
 	startPos_ = playerPosition_;
 	endPos_ = playerPosition_;
 }
 
-void Hook::BehaviorNoneUpdate() {
-	///===========================================
-	/// 状態を変更
-	///
+
+/// -------------------------------------------------------------
+///						フックの更新処理
+/// -------------------------------------------------------------
+void Hook::BehaviorNoneUpdate()
+{
 	startPos_ = playerPosition_;
 	endPos_ = playerPosition_;
 	if (Input::GetInstance()->TriggerButton(9)) {
-		requestBehavior_ = Behavior::Throw;
+		behaviorRequest_ = Behavior::Throw;
 	}
 }
 
-void Hook::BehaviorThrowInitialize() {
 
+/// -------------------------------------------------------------
+///						フックを投げる初期化処理
+/// -------------------------------------------------------------
+void Hook::BehaviorThrowInitialize()
+{
 	isActive_ = false;
 	isThrowing_ = false;
 	isExtending_ = false;
 	angularSpeed = 0.0f;
-	playerVelocity_ = {0.0f, 0.0f, 0.0f};
-	playerAcceleration_ = {0.0f, 0.0f, 0.0f};
+	playerVelocity_ = { 0.0f, 0.0f, 0.0f };
+	playerAcceleration_ = { 0.0f, 0.0f, 0.0f };
 }
 
-void Hook::BehaviorThrowUpdate() {
 
-	///===========================================
-	/// 事前確認
-	///
-
+/// -------------------------------------------------------------
+///						フックを投げる更新処理
+/// -------------------------------------------------------------
+void Hook::BehaviorThrowUpdate()
+{
 	// フックがアクティブなら何もしない
 	if (isActive_) {
 		return;
@@ -123,7 +163,8 @@ void Hook::BehaviorThrowUpdate() {
 	if (enemyHit_) {
 		// フックが敵に当たる前に投げられたフラグを立てる
 		hookToEnemyHitBeforeThrow_ = true;
-	} else {
+	}
+	else {
 		// あたってなければフラグを解除
 		hookToEnemyHitBeforeThrow_ = false;
 	}
@@ -137,7 +178,7 @@ void Hook::BehaviorThrowUpdate() {
 	// プレイヤーとフックの長さ
 	maxDistance_ = 100.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
-	direction_ = Vector3{cos(playerRotation_.y), 0.0f, sin(playerRotation_.y)};
+	direction_ = Vector3{ cos(playerRotation_.y), 0.0f, sin(playerRotation_.y) };
 
 	// フックの終了位置を計算
 	potentialEndPos = playerPosition_ - direction_ * maxDistance_;
@@ -146,12 +187,14 @@ void Hook::BehaviorThrowUpdate() {
 	// 壁に当たる距離を計算
 	if (potentialEndPos.x < minMoveLimit_.x) {
 		maxDistance_ = std::min(maxDistance_, (playerPosition_.x - minMoveLimit_.x) / direction_.x);
-	} else if (potentialEndPos.x > maxMoveLimit_.x) {
+	}
+	else if (potentialEndPos.x > maxMoveLimit_.x) {
 		maxDistance_ = std::min(maxDistance_, (playerPosition_.x - maxMoveLimit_.x) / direction_.x);
 	}
 	if (potentialEndPos.z < minMoveLimit_.z) {
 		maxDistance_ = std::min(maxDistance_, (playerPosition_.z - minMoveLimit_.z) / direction_.z);
-	} else if (potentialEndPos.z > maxMoveLimit_.z) {
+	}
+	else if (potentialEndPos.z > maxMoveLimit_.z) {
 		maxDistance_ = std::min(maxDistance_, (playerPosition_.z - maxMoveLimit_.z) / direction_.z);
 	}
 
@@ -171,17 +214,21 @@ void Hook::BehaviorThrowUpdate() {
 	///
 
 	// 伸ばす状態に変更
-	requestBehavior_ = Behavior::Extend;
+	behaviorRequest_ = Behavior::Extend;
 }
 
+
+/// -------------------------------------------------------------
+///						フックを伸ばす初期化処理
+/// -------------------------------------------------------------
 void Hook::BehaviorExtendInitialize() {}
 
-void Hook::BehaviorExtendUpdate() {
 
-	///===========================================
-	/// フックを投げる処理
-	/// 
-
+/// -------------------------------------------------------------
+///						フックを伸ばす更新処理
+/// -------------------------------------------------------------
+void Hook::BehaviorExtendUpdate()
+{
 	// 開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
@@ -198,22 +245,33 @@ void Hook::BehaviorExtendUpdate() {
 			isActive_ = true;
 
 			// フックの状態を移動に変更
-			requestBehavior_ = Behavior::Move;
+			behaviorRequest_ = Behavior::Move;
 
-		} else {
+		}
+		else
+		{
 			direction = Vector3::Normalize(direction);
 			endPos_ += direction * moveStep;
 		}
 	}
 }
 
-void Hook::BehaviorMoveInitialize() {
+
+/// -------------------------------------------------------------
+///						フックを移動する初期化処理
+/// -------------------------------------------------------------
+void Hook::BehaviorMoveInitialize()
+{
 	// フックの初期化
 	isPulling_ = false;
 }
 
-void Hook::BehaviorMoveUpdate() {
 
+/// -------------------------------------------------------------
+///						フックを移動する更新処理
+/// -------------------------------------------------------------
+void Hook::BehaviorMoveUpdate()
+{
 	// フックの開始位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
@@ -226,7 +284,8 @@ void Hook::BehaviorMoveUpdate() {
 			// フックを非アクティブにする
 			isPulling_ = false;
 		}
-	} else {
+	}
+	else {
 		// フックが非アクティブのときにボタンを押すとフックをアクティブにする
 		if (Input::GetInstance()->TriggerButton(15)) {
 			// フックを非アクティブにする
@@ -236,7 +295,7 @@ void Hook::BehaviorMoveUpdate() {
 
 	if (Input::GetInstance()->TriggerButton(9)) {
 		// フックを戻す状態に変更
-		requestBehavior_ = Behavior::Back;
+		behaviorRequest_ = Behavior::Back;
 	}
 
 	///============================================================================================================
@@ -278,7 +337,8 @@ void Hook::BehaviorMoveUpdate() {
 
 					isRightStickLeft = true;
 					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+				}
+				else if (rightStick_.x > 0.1f) {
 					angle += angularSpeed * 0.016f;
 					isRightStickRight = true;
 					isRightStickLeft = false;
@@ -294,7 +354,8 @@ void Hook::BehaviorMoveUpdate() {
 					angle += angularSpeed * 0.016f;
 					isRightStickRight = true;
 					isRightStickLeft = false;
-				} else if (rightStick_.x > 0.1f) {
+				}
+				else if (rightStick_.x > 0.1f) {
 					angle -= angularSpeed * 0.016f;
 					isRightStickLeft = true;
 					isRightStickRight = false;
@@ -310,7 +371,8 @@ void Hook::BehaviorMoveUpdate() {
 					angle += angularSpeed * 0.016f;
 					isRightStickRight = true;
 					isRightStickLeft = false;
-				} else if (rightStick_.x > 0.1f) {
+				}
+				else if (rightStick_.x > 0.1f) {
 					angle -= angularSpeed * 0.016f;
 					isRightStickLeft = true;
 					isRightStickRight = false;
@@ -326,7 +388,8 @@ void Hook::BehaviorMoveUpdate() {
 					angle -= angularSpeed * 0.016f;
 					isRightStickLeft = true;
 					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+				}
+				else if (rightStick_.x > 0.1f) {
 					angle += angularSpeed * 0.016f;
 					isRightStickRight = true;
 					isRightStickLeft = false;
@@ -350,7 +413,8 @@ void Hook::BehaviorMoveUpdate() {
 				playerVelocity_.x = newPosition.x - playerPosition_.x;
 				playerVelocity_.z = newPosition.z - playerPosition_.z;
 
-			} else {
+			}
+			else {
 
 				// 右スティックの入力がない場合は
 				// フックの長さは固定
@@ -366,7 +430,8 @@ void Hook::BehaviorMoveUpdate() {
 				// 角度を更新
 				if (isRightStickRight) {
 					angle += angularSpeed * 0.016f;
-				} else if (isRightStickLeft) {
+				}
+				else if (isRightStickLeft) {
 					angle -= angularSpeed * 0.016f;
 				}
 
@@ -387,7 +452,8 @@ void Hook::BehaviorMoveUpdate() {
 				}
 			}
 
-		} else {
+		}
+		else {
 			///===================================
 			/// Enemy
 			///
@@ -411,7 +477,8 @@ void Hook::BehaviorMoveUpdate() {
 					angle -= angularSpeed * 0.016f;
 					isRightStickLeft = true;
 					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+				}
+				else if (rightStick_.x > 0.1f) {
 					angle += angularSpeed * 0.016f;
 					isRightStickRight = true;
 					isRightStickLeft = false;
@@ -433,7 +500,8 @@ void Hook::BehaviorMoveUpdate() {
 					playerVelocity_.x = newPosition.x - playerPosition_.x;
 					playerVelocity_.z = newPosition.z - playerPosition_.z;
 
-				} else {
+				}
+				else {
 
 					// 右スティックの入力がない場合は
 					// フックの長さは固定
@@ -449,7 +517,8 @@ void Hook::BehaviorMoveUpdate() {
 					// 角度を更新
 					if (isRightStickRight) {
 						angle += angularSpeed * 0.016f;
-					} else if (isRightStickLeft) {
+					}
+					else if (isRightStickLeft) {
 						angle -= angularSpeed * 0.016f;
 					}
 
@@ -495,8 +564,9 @@ void Hook::BehaviorMoveUpdate() {
 					playerPosition_ = endPos_;
 					isActive_ = false;
 					// フックの状態をなしに変更
-					requestBehavior_ = Behavior::None;
-				} else {
+					behaviorRequest_ = Behavior::None;
+				}
+				else {
 					// フックの方向に向かって移動
 					direction.Normalize(direction);
 					Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
@@ -504,12 +574,14 @@ void Hook::BehaviorMoveUpdate() {
 					// 壁に触れたらそれ以上ポジションを追加しない
 					if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
 						isActive_ = false;
-					} else {
+					}
+					else {
 						playerPosition_ = newPosition;
 					}
 				}
 
-			} else {
+			}
+			else {
 
 				///===============
 				/// Enemy
@@ -523,7 +595,7 @@ void Hook::BehaviorMoveUpdate() {
 				direction = Vector3::Normalize(direction);
 
 				// フックの方向に対して垂直なベクトルを計算（外積を使用）
-				Vector3 up = {0.0f, 1.0f, 0.0f}; // 上方向のベクトル
+				Vector3 up = { 0.0f, 1.0f, 0.0f }; // 上方向のベクトル
 				Vector3 perpendicularDirection = Vector3::Cross(up, direction);
 
 				float pullSpeed_ = 30.0f; // 速度（調整可能）
@@ -535,16 +607,28 @@ void Hook::BehaviorMoveUpdate() {
 
 					isActive_ = false;
 					// フックの状態をなしに変更
-					requestBehavior_ = Behavior::None;
+					behaviorRequest_ = Behavior::None;
 				}
 			}
 		}
 	}
 }
 
-void Hook::BehaviorBackInitialize() {}
 
-void Hook::BehaviorBackUpdate() {
+/// -------------------------------------------------------------
+///						フックを戻す初期化処理
+/// -------------------------------------------------------------
+void Hook::BehaviorBackInitialize()
+{
+
+}
+
+
+/// -------------------------------------------------------------
+///						フックを戻す更新処理
+/// -------------------------------------------------------------
+void Hook::BehaviorBackUpdate()
+{
 	// フックの終了位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 
@@ -558,13 +642,18 @@ void Hook::BehaviorBackUpdate() {
 	if (distance < backSpeed * 0.016f) {
 		endPos_ = startPos_;
 		isActive_ = true;
-		requestBehavior_ = Behavior::None;
-	} else {
+		behaviorRequest_  = Behavior::None;
+	}
+	else {
 		Vector3::Normalize(moveDirection);
 		endPos_ += moveDirection * backSpeed * 0.016f;
 	}
 }
 
+
+/// -------------------------------------------------------------
+///				　		　衝突判定処理
+/// -------------------------------------------------------------
 void Hook::OnCollision(Collider* other) {
 	// 種別IDを種別
 	uint32_t typeID = other->GetTypeID();
@@ -598,73 +687,20 @@ void Hook::OnCollision(Collider* other) {
 			startTime_ = std::chrono::steady_clock::now();
 		}
 
-	} else {
+	}
+	else {
 		// 敵以外に当たってない場合はフラグを解除
 		enemyHit_ = false;
 	}
 }
 
-void Hook::ShowImGui() {
-	// フックの情報を表示
-	ImGui::Begin("Hook");
 
-	// 状態の表示
-	switch (behavior_) {
-	case Hook::Behavior::None:
-		ImGui::Text("Behavior: None");
-		break;
-	case Hook::Behavior::Throw:
-		ImGui::Text("Behavior: Throw");
-		break;
-	case Hook::Behavior::Extend:
-		ImGui::Text("Behavior: Extend");
-		break;
-	case Hook::Behavior::Move:
-		ImGui::Text("Behavior: Move");
-		break;
-	case Hook::Behavior::Back:
-		ImGui::Text("Behavior: Back");
-		break;
-	default:
-		break;
-	}
-
-	ImGui::Text("rightStick.x: %f", rightStick_.x);
-	ImGui::Text("rightStick.y: %f", rightStick_.y);
-	// フックが起動してプレイヤーの移動ができるかどうか
-	ImGui::Checkbox("IsActive", &isActive_);
-	// フックが投げられているかどうか
-	ImGui::Checkbox("IsThrowing", &isThrowing_);
-	// フックが敵に当たったかどうか
-	ImGui::Checkbox("EnemyHit", &enemyHit_);
-	// フックを投げる前に敵に当たっていたかどうか
-	ImGui::Checkbox("EnemyHitBeforeThrow", &hookToEnemyHitBeforeThrow_);
-	// フックの開始位置(基本的プレイヤーの位置)
-	ImGui::DragFloat3("StartPos", &startPos_.x, 0.1f);
-	// フックの終了位置
-	ImGui::DragFloat3("EndPos", &endPos_.x, 0.1f);
-	// フックの速度
-	ImGui::DragFloat3("Velocity", &velocity_.x, 0.1f);
-	// フックの加速度
-	ImGui::DragFloat3("Acceleration", &acceleration_.x, 0.1f);
-	// フックの角速度
-	ImGui::DragFloat3("AngularVelocity", &angularVelocity_.x, 0.1f);
-	// フックの方向
-	ImGui::DragFloat3("Direction", &direction_.x, 0.1f);
-	// フックとプレイヤーの距離
-	ImGui::DragFloat("MaxDistance", &maxDistance_, 0.1f);
-
-	ImGui::DragFloat("Speed", &speed_, 0.1f);
-
-	ImGui::DragFloat("AngleSpeed", &angularSpeed, 0.1f);
-
-	ImGui::DragFloat("angle", &angle, 0.1f);
-
-	ImGui::End();
-}
-
-Vector3 Hook::GetCenterPosition() const {
-	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
+/// -------------------------------------------------------------
+///				　中心座標を取得する純粋仮想関数
+/// -------------------------------------------------------------
+Vector3 Hook::GetCenterPosition() const
+{
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // プレイヤーの中心を考慮
 	// フックの中心を計算
 	Vector3 worldPosition = endPos_ + offset;
 	// フックの中心を返す

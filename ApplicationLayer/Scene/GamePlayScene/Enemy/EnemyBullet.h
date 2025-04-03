@@ -1,19 +1,17 @@
 #pragma once
-#include "Colliders/Collider.h"
-#include "Object3D/Object3D.h"
+#include "Collider.h"
+#include "Object3D.h"
 
-class EnemyBullet : public Collider {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+/// -------------------------------------------------------------
+///					　エネミーバレットクラス
+/// -------------------------------------------------------------
+class EnemyBullet : public Collider
+{
+public: /// ---------- メンバ関数 ---------- ///
 
 	/// コンストラクタ
 	EnemyBullet();
-
-	/// デストラクタ
-	~EnemyBullet();
 
 	/// 初期化
 	void Initialize();
@@ -33,16 +31,15 @@ public:
 	/// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
-	///-------------------------------------------/// 
-	/// getter&setter
-	///-------------------------------------------///
-public:
+public: /// ---------- ゲッター ---------- ///
 
 	/// <summary>
 	/// 位置のゲッター
 	/// </summary>
 	/// <returns></returns>
 	Vector3 GetPosition() const { return worldTransform_.translate_; }
+
+public: /// ---------- セッター ---------- ///
 
 	/// <summary>
 	/// 位置のセッター
@@ -64,10 +61,7 @@ public:
 
 	void SetIsMove(bool isMove) { isMove_ = isMove; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+private: /// ---------- メンバ変数 ---------- ///
 
 	// ワールド変換
 	WorldTransform worldTransform_;
@@ -80,7 +74,7 @@ private:
 
 	// 向き
 	Vector3 direction_ = {};
-	
+
 	// 生存フラグ
 	bool isAlive_ = true;
 

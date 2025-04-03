@@ -9,12 +9,14 @@
 
 #include "CollisionManager.h"
 #include "Player.h"
-#include "Enemy/Enemy.h"
-#include "Field/Field.h"
+#include "Enemy.h"
+#include "Field.h"
 #include "Weapon.h"
-#include "Enemy/EnemyBullet.h"
-#include "UI/ControllerUI.h"
-#include "DynamicCamera/DynamicCamera.h"
+#include "EnemyBullet.h"
+#include "ControllerUI.h"
+#include "DynamicCamera.h"
+
+#include "EffectManager.h"
 
 #include "AABB.h"
 #include "OBB.h"
@@ -68,10 +70,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	Camera* camera_ = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;
-	std::unique_ptr<AnimationManager> animationManager_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
-	
+
+	std::unique_ptr<EffectManager> effectManager_;
 
 	std::string particleGroupName;
 
@@ -139,6 +141,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 初期のフィールド
 	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
 	const Vector3 startFieldPosition_ = { 0.0f,0.0f,0.0f };
+
+	bool isGameStartEffectEnabled_ = true;
 
 	// 拡大するフィールド
 	Vector3 fieldScale_ = startFieldScale_;

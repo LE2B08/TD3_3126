@@ -8,23 +8,36 @@
 #include "CollisionTypeIdDef.h"
 #include "AttackCommand.h"
 
-Enemy::Enemy() {
+
+/// -------------------------------------------------------------
+///						　コンストラクタ
+/// -------------------------------------------------------------
+Enemy::Enemy()
+{
 	serialNumber_ = nextSerialNumber_;
 	nextSerialNumber_++;
 
 	randomEngine.seed(seedGenerator());
 }
 
-Enemy::~Enemy() {
-}
 
-void Enemy::Initialize() {
+/// -------------------------------------------------------------
+///						　初期化処理
+/// -------------------------------------------------------------
+void Enemy::Initialize()
+{
+	// 基底クラスの初期化
+	BaseCharacter::Initialize();
+
+	// コライダーの設定
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
+
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 
 	// オブジェクトの生成・初期化
-	objectEnemy_ = std::make_unique<Object3D>();
-	objectEnemy_->Initialize("Voxel_Enemy.gltf");
+	object3D_ = std::make_unique<Object3D>();
+	object3D_->Initialize("Voxel_Enemy.gltf");
 
 	particleManager_ = ParticleManager::GetInstance();
 	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
@@ -35,11 +48,18 @@ void Enemy::Initialize() {
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
 	hitTime_ = 0;
 
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
-
+	
 }
 
-void Enemy::Update() {
+
+/// -------------------------------------------------------------
+///						　	更新処理
+/// -------------------------------------------------------------
+void Enemy::Update()
+{
+	// 基底クラスの更新
+	BaseCharacter::Update();
+
 	if (!isHit_) {
 		if (!isHitFromAttack_) {
 			// 状態の変更がリクエストされている場合
@@ -132,30 +152,36 @@ void Enemy::Update() {
 		}
 	}
 
-	// ワールド変換の更新
-	worldTransform_.Update();
-
-	// ワイヤーフレームの処理
-	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f,1.0f });
-
 	// Object3Dの更新
-	objectEnemy_->SetRotate(worldTransform_.rotate_);
-	objectEnemy_->SetTranslate(worldTransform_.translate_);
-	objectEnemy_->Update();
+	object3D_->SetRotate(worldTransform_.rotate_);
+	object3D_->SetTranslate(worldTransform_.translate_);
+	object3D_->Update();
 }
 
-void Enemy::Draw() {
+
+/// -------------------------------------------------------------
+///						　描画処理
+/// -------------------------------------------------------------
+void Enemy::Draw()
+{
 	if (!isHitFromAttack_) {
-		// 描画
-		objectEnemy_->Draw();
+		// 基底クラスの描画
+		BaseCharacter::Draw();
 	}
 
 	// 弾の描画
 	for (auto& bullet : bullets_) {
 		bullet->Draw();
 	}
+
+	// ワイヤーフレームの処理
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f,1.0f });
 }
 
+
+/// -------------------------------------------------------------
+///						　移動処理
+/// -------------------------------------------------------------
 void Enemy::Move() {
 
 	// 速度を位置に加算
@@ -169,6 +195,10 @@ void Enemy::Move() {
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
 }
 
+
+/// -------------------------------------------------------------
+///						　ImGuiの描画
+/// -------------------------------------------------------------
 void Enemy::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
@@ -205,18 +235,32 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-void Enemy::OnCollision(Collider* other) {
+
+/// -------------------------------------------------------------
+///						　衝突判定
+/// -------------------------------------------------------------
+void Enemy::OnCollision(Collider* other)
+{
 	isHit_ = true;
 
 }
 
+
+/// -------------------------------------------------------------
+///						　中心座標を取得
+/// -------------------------------------------------------------
 Vector3 Enemy::GetCenterPosition() const {
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Enemy::HitParticle() {
+
+/// -------------------------------------------------------------
+///				　衝突時にパーティクルが発生する
+/// -------------------------------------------------------------
+void Enemy::HitParticle()
+{
 	// エネミーの中心位置を取得
 	Vector3 enemyCenter = GetCenterPosition();
 
@@ -227,7 +271,12 @@ void Enemy::HitParticle() {
 	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
 }
 
-Vector3 Enemy::RondomDirection(float min, float max) {
+
+/// -------------------------------------------------------------
+///						ランダム方向処理
+/// -------------------------------------------------------------
+Vector3 Enemy::RondomDirection(float min, float max)
+{
 
 	// XZ平面上のランダムな方向を生成
 	std::uniform_real_distribution<float> dist(min, max);
@@ -237,7 +286,12 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 	return direction;
 }
 
-std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
+
+/// -------------------------------------------------------------
+///					攻撃パターンのコマンド処理
+/// -------------------------------------------------------------
+std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() 
+{
 
 	// ランダムに攻撃コマンドを選択
 	std::uniform_int_distribution<int> dist(0, 3);
@@ -265,13 +319,23 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 	}
 }
 
-void Enemy::BehaviorNormalInitialize() {
+
+/// -------------------------------------------------------------
+///						通常状態の初期化処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorNormalInitialize()
+{
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
 }
 
-void Enemy::BehaviorNormalUpdate() {
+
+/// -------------------------------------------------------------
+///						　通常状態の更新処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorNormalUpdate()
+{
 
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
@@ -286,7 +350,12 @@ void Enemy::BehaviorNormalUpdate() {
 	}
 }
 
-void Enemy::BehaviorSarchInitialize() {
+
+/// -------------------------------------------------------------
+///						詮索状態の初期化処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorSarchInitialize()
+{
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
@@ -295,7 +364,12 @@ void Enemy::BehaviorSarchInitialize() {
 	direction_ = RondomDirection(-1.0f, 1.0f);
 }
 
-void Enemy::BehaviorSarchUpdate() {
+
+/// -------------------------------------------------------------
+///					　　詮索状態の更新処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorSarchUpdate()
+{
 
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
@@ -325,7 +399,12 @@ void Enemy::BehaviorSarchUpdate() {
 	}
 }
 
-void Enemy::BehaviorAttackInitialize() {
+
+/// -------------------------------------------------------------
+///						攻撃状態の初期化処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorAttackInitialize()
+{
 
 	// 攻撃方法を選択
 	attackCommand_ = RandomAttackCommand();
@@ -337,7 +416,12 @@ void Enemy::BehaviorAttackInitialize() {
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 }
 
-void Enemy::BehaviorAttackUpdate() {
+
+/// -------------------------------------------------------------
+///						攻撃状態の更新処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorAttackUpdate()
+{
 
 	// プレイヤーの方向を向く
 	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);

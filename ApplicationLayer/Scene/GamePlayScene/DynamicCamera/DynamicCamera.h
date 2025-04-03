@@ -1,20 +1,16 @@
 #pragma once
 #include "WorldTransform.h"
 
-/// === 前方宣言 === ///
+/// ---------- 前方宣言 ---------- ///
 class Player;
 class Enemy;
 
-/// === ダイナミックカメラ === ///
-class DynamicCamera{
-
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
-
-	// コンストラクタ
-	DynamicCamera();
+/// -------------------------------------------------------------
+///					ダイナミックカメラクラス
+/// -------------------------------------------------------------
+class DynamicCamera
+{
+public: /// ---------- メンバ関数 ---------- ///
 
 	// 初期化
 	void Initialize();
@@ -25,16 +21,15 @@ public:
 	// ImGui表示
 	void ShowImGui(const char* name);
 
-	///-------------------------------------------/// 
-	/// ゲッター&セッター
-	///-------------------------------------------///
-public:
+public: /// ---------- ゲッター ---------- ///
 
 	// スケールの取得
 	const Vector3& GetScale() const { return worldTransform_.scale_; }
 
 	// 回転の取得
 	const Vector3& GetRotate() const { return worldTransform_.rotate_; }
+
+public: /// ---------- セッター ---------- ///
 
 	// 移動の取得
 	const Vector3& GetTranslate() const { return worldTransform_.translate_; }
@@ -45,10 +40,7 @@ public:
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
+private: /// ---------- メンバ変数 ---------- ///
 
 	// ワールド変換
 	WorldTransform worldTransform_;

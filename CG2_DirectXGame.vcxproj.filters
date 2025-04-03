@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\AkimotoScene.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.cpp" />
     <ClCompile Include="EngineLayer\Math\Quaternion\Quaternion.cpp" />
     <ClCompile Include="EngineLayer\Managers\AnimationManager\AnimationManager.cpp" />
     <ClCompile Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.cpp" />
@@ -64,8 +64,8 @@
     <ClCompile Include="EngineLayer\Managers\ParameterManager\ParameterManager.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearScene.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TuboScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\SatouScene.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\TuboScene.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\SatouScene.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Weapon.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.cpp" />
@@ -74,7 +74,7 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Hook.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Easing.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\FadeManager.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\FadeManager.cpp" />
     <ClCompile Include="EngineLayer\Managers\SpriteManager\SpriteManager.cpp" />
     <ClCompile Include="EngineLayer\Managers\LightManager\LightManager.cpp" />
     <ClCompile Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.cpp" />
@@ -84,10 +84,12 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.cpp" />
     <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
+    <ClCompile Include="EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
-    <ClInclude Include="ApplicationLayer\Scene\AkimotoScene.h" />
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.h" />
     <ClInclude Include="EngineLayer\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="EngineLayer\Managers\AnimationManager\AnimationManager.h" />
     <ClInclude Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.h" />
@@ -154,15 +156,15 @@
     <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.h" />
     <ClInclude Include="EngineLayer\Math\OBB.h" />
     <ClInclude Include="EngineLayer\2D\Wireframe\Wireframe.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TuboScene.h" />
-    <ClInclude Include="ApplicationLayer\Scene\SatouScene.h" />
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\TuboScene.h" />
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\SatouScene.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Weapon.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Easing.h" />
-    <ClInclude Include="ApplicationLayer\Scene\FadeManager.h" />
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\FadeManager.h" />
     <ClInclude Include="EngineLayer\Managers\SpriteManager\SpriteManager.h" />
     <ClInclude Include="EngineLayer\Managers\LightManager\LightManager.h" />
     <ClInclude Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.h" />
@@ -173,6 +175,8 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.h" />
     <ClInclude Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.h" />
     <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
+    <ClInclude Include="EffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

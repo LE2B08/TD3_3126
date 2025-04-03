@@ -2,8 +2,12 @@
 #include "TextureManager.h"
 #include <imgui.h>
 
-ControllerUI::ControllerUI() {
 
+/// -------------------------------------------------------------
+///						　	初期化処理
+/// -------------------------------------------------------------
+ControllerUI::ControllerUI()
+{
 	// テクスチャ読み込み
 	TextureManager::GetInstance()->LoadTexture("Resources/xbox_rb.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/xbox_lb.png");
@@ -33,8 +37,12 @@ ControllerUI::ControllerUI() {
 	gameStartPosition_ = { 1064.0f, 240.0f };
 }
 
-void ControllerUI::Initialize() {
 
+/// -------------------------------------------------------------
+///						　	初期化処理
+/// -------------------------------------------------------------
+void ControllerUI::Initialize()
+{
 	// Rボタンの生成&初期化
 	RButton_ = std::make_unique<Sprite>();
 	RButton_->Initialize("Resources/xbox_rb.png");
@@ -80,7 +88,12 @@ void ControllerUI::Initialize() {
 	gameStart_->Initialize("Resources/game_start_ui.png");
 }
 
-void ControllerUI::Update() {
+
+/// -------------------------------------------------------------
+///						　	更新処理
+/// -------------------------------------------------------------
+void ControllerUI::Update()
+{
 
 	// Rボタンの更新
 	RButton_->SetPosition(RButtonPosition_);
@@ -127,7 +140,12 @@ void ControllerUI::Update() {
 	gameStart_->Update();
 }
 
-void ControllerUI::Draw() {
+
+/// -------------------------------------------------------------
+///						　	描画処理
+/// -------------------------------------------------------------
+void ControllerUI::Draw()
+{
 
 	// Rボタンの描画
 	RButton_->Draw();
@@ -163,7 +181,12 @@ void ControllerUI::Draw() {
 	gameStart_->Draw();
 }
 
-void ControllerUI::DrawImGui() {
+
+/// -------------------------------------------------------------
+///						　	ImGui描画処理
+/// -------------------------------------------------------------
+void ControllerUI::DrawImGui()
+{
 
 	ImGui::Begin("ControllerUI");
 	

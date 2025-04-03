@@ -2,7 +2,12 @@
 #include <imgui.h>
 #include "Wireframe.h"
 
-void Field::Initialize() {
+
+/// -------------------------------------------------------------
+///						　初期化処理
+/// -------------------------------------------------------------
+void Field::Initialize()
+{
 
 	// 仮リソース
 	objectField_ = std::make_unique<Object3D>();
@@ -13,7 +18,12 @@ void Field::Initialize() {
 	position_ = { 0.0f,0.0f,0.0f };
 }
 
-void Field::Update() {
+
+/// -------------------------------------------------------------
+///						　更新処理
+///	-------------------------------------------------------------
+void Field::Update()
+{
 
 	minPosition_ = position_ - scale_;
 	maxPosition_ = position_ + scale_;
@@ -24,7 +34,12 @@ void Field::Update() {
 	objectField_->Update();
 }
 
-void Field::Draw() {
+
+/// -------------------------------------------------------------
+///						　描画処理
+/// -------------------------------------------------------------
+void Field::Draw()
+{
 
 	// ワイヤーフレームの描画
 	// Fieldの描画
@@ -36,6 +51,10 @@ void Field::Draw() {
 	// objectField_->Draw();
 }
 
+
+/// -------------------------------------------------------------
+///						　ImGui描画処理
+/// -------------------------------------------------------------
 void Field::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);

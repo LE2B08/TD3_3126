@@ -1,36 +1,34 @@
+#define NOMINMAX
 #include "Player.h"
+#include "Enemy.h"
+#include "Weapon.h"
 #include "CollisionTypeIdDef.h"
 #include "Input.h"
 #include "ParticleManager.h"
 #include "Wireframe.h"
-#include "imgui.h"
+#include "ImGuiManager.h"
+#include <Easing.h>
 
-#undef max
-#undef min
 
-void Player::Initialize() {
-	// オブジェクト3D
-	object3D_ = std::make_unique<Object3D>();
-	object3D_->Initialize("Voxel_Human.gltf");
-	// 位置
-	position_ = {8.0f, 0.0f, 8.0f};
-	// 回転
-	rotation_ = {0.0f, 0.0f, 0.0f};
-	// スケール
-	scale_ = {1.0f, 1.0f, 1.0f};
-	// 速度
-	velocity_ = {0.0f, 0.0f, 0.0f};
-	// 加速度
-	acceleration_ = {0.0f, 0.0f, 0.0f};
-	// 角速度
-	angularVelocity_ = {0.0f, 0.0f, 0.0f};
+/// -------------------------------------------------------------
+///						　コンストラクタ
+/// -------------------------------------------------------------
+Player::Player()
+{
+	// シリアルナンバーを振る
+	serialNumber_ = nextSerialNumber_;
+	// 次のシリアルナンバーに1を足す
+	++nextSerialNumber_;
+}
 
-	// Hpの初期化
-	hp_ = 10;
 
-	// 衝突マネージャの生成
-	collisionManager_ = std::make_unique<CollisionManager>();
-	collisionManager_->Initialize();
+/// -------------------------------------------------------------
+///						　初期化処理
+/// -------------------------------------------------------------
+void Player::Initialize()
+{
+	// 基底クラスの初期化
+	BaseCharacter::Initialize();
 
 	// プレイヤーのコライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kPlayer));
@@ -45,234 +43,217 @@ void Player::Initialize() {
 	particleManager_->CreateParticleGroup("PlayerHitParticles", "Resources/uvChecker.png");
 
 	// パーティクルエミッターの初期化
-	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "PlayerHitParticles");
+	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "PlayerHitParticles");
+
+	// オブジェクトの生成・初期化
+	object3D_ = std::make_unique<Object3D>();
+	object3D_->Initialize("Voxel_Human.gltf");
+	worldTransform_.translate_ = { 8.0f, 0.0f, 8.0f };
 }
 
-void Player::Update() {
 
-	/*--------DebugMode----------*/
-#ifdef _DEBUG
-
-	// コントローラーのStartボタンを押すと
-	// デバックモードになる
-	if (!isDebug_) {
-		if (Input::GetInstance()->TriggerButton(12)) {
-			isDebug_ = true;
-		}
-	} else {
-		// デバッグモードの場合
-		// もう一度押すとデバックモードを解除
-		if (Input::GetInstance()->TriggerButton(12)) {
-			isDebug_ = false;
+/// -------------------------------------------------------------
+///						　	　更新処理
+/// -------------------------------------------------------------
+void Player::Update()
+{
+	// 無敵時間のカウントダウン
+	if (isInvincible_)
+	{
+		isEnemyHit_ = true; // 敵に当たったフラグを立てる
+		
+		invincibleTime_ += 1; // 1フレームごとにカウントアップ
+		
+		if (invincibleTime_ > invincibleDuration_)
+		{
+			isInvincible_ = false; // 無敵状態を解除
+			invincibleTime_ = 0; // 無敵時間の初期化
+			isEnemyHit_ = false; // 敵に当たったフラグを解除
 		}
 	}
 
-#endif // DEBUG
+	// 武器の更新
+	if (weapon_) { weapon_->Update(); }
 
-	// ゲームスタート時のみ更新処理を行う
-	if (isGameStart_) {
+	// 攻撃を入力したら攻撃開始
+	if (input_->TriggerButton(XButtons.X) && behavior_ == Behavior::kRoot)
+	{
+		behaviorRequest_ = Behavior::kAttack;
+	}
 
-		/*------ヒット時の処理------*/
-		if (isHit_) {
-			HitParticle();
-			hitTime_++;
-			if (hitTime_ >= hitMaxTime_) {
-				isHit_ = false;
-				hitTime_ = 0;
-			}
+	// ビヘイビア遷移
+	if (behaviorRequest_)
+	{
+		// ビヘイビアを変更
+		behavior_ = behaviorRequest_.value();
+
+		// 各ビヘイビアごとの初期化を実行
+		switch (behavior_)
+		{
+			/// ----- ルートビヘイビア ----- ///
+		case Behavior::kRoot:
+		default:
+
+			// 通常行動の初期化
+			BehaviorRootInitialize();
+			break;
+
+			/// ----- アタックビヘイビア ----- ///
+		case Behavior::kAttack:
+
+			// 攻撃行動の初期化
+			BehaviorAttackInitialize();
+			break;
 		}
 
-		// 移動処理
-		Move();
-
-		// 回転処理
-		Rotate();
-
-		// 攻撃処理
-		Attack();
-
-		// ヒット時のHP減少処理
-		DecreaseHpOnHit();
-
-		collisionManager_->Update();
+		// ビヘイビアリクエストをリセット
+		behaviorRequest_ = std::nullopt;
 	}
-	// 移動制限
-	// Fieldの範囲内に収める
-	position_.x = std::clamp(position_.x, minMoveLimit_.x, maxMoveLimit_.x);
-	position_.z = std::clamp(position_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
-	// Transform更新処理
-	object3D_->SetTranslate(position_);
-	object3D_->SetRotate(rotation_);
-	object3D_->SetScale(scale_);
-	object3D_->Update();
+	// ビヘイビアの実行
+	switch (behavior_)
+	{
+		/// ----- ルートビヘイビア ----- ///
+	case Behavior::kRoot:
+	default:
+
+		// 通常行動の更新
+		BehaviorRootUpdate();
+		break;
+
+		/// ----- アタックビヘイビア ----- ///
+	case Behavior::kAttack:
+
+		// 攻撃行動の更新
+		BehaviorAttackUpdate();
+		break;
+	}
 }
 
-void Player::Draw() {
-	// 描画処理
-	object3D_->Draw();
 
-	collisionManager_->Draw();
+/// -------------------------------------------------------------
+///						　	描画処理
+/// -------------------------------------------------------------
+void Player::Draw()
+{
+	if (!isInvincible_ || static_cast<int>(invincibleTime_) % 2 == 0)
+	{
+		// 基底クラスの描画処理
+		BaseCharacter::Draw();
+	}
+
+	// 武器の描画
+	if (isAttack_ && weapon_) { weapon_->Draw(); }
+
 
 	// プレイヤーの向きを示す線を描画
-	Vector3 direction = {cos(rotation_.y), 0.0f, sin(rotation_.y)};
-	Vector3 endPos = position_ + -direction * 5.0f;                                  // 5.0fは線の長さ
-	Wireframe::GetInstance()->DrawLine(position_, endPos, {0.0f, 1.0f, 0.0f, 1.0f}); // 緑色の線
+	Vector3 direction = { cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y) };
+	Vector3 endPos = worldTransform_.translate_ + -direction * 5.0f;                                  // 5.0fは線の長さ
+	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, endPos, { 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色の線
 }
 
-void Player::Finalize() {}
 
-void Player::DrawImGui() {
-
-	ImGui::Begin("Player");
-	// デバッグモードの表示
-	ImGui::Text("DebugMode : %s", isDebug_ ? "true" : "false");
-	ImGui::Checkbox("DebugMode", &isDebug_);
-	// 武器が敵に当たったかどうか
-	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
-	// 無敵状態かどうか
-	ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
-	// HPの表示
-	ImGui::Text("HP : %d", hp_);
-	// 敵に当たったかどうか
-	ImGui::Text("isHitEnemy : %s", isHitEnemy_ ? "true" : "false");
-	// プレイヤーの位置
-	ImGui::Text("Position");
-	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
-	// プレイヤーの回転
-	ImGui::Text("Rotation");
-	ImGui::SliderFloat3("Rotate", &rotation_.x, -10.0f, 10.0f);
-	// プレイヤーのスケール
-	ImGui::Text("Scale");
-	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
-	// プレイヤーの速度
-	ImGui::Text("Velocity");
-	ImGui::SliderFloat3("Velocity", &velocity_.x, -10.0f, 10.0f);
-	// プレイヤーの加速度
-	ImGui::Text("Acceleration");
-	ImGui::SliderFloat3("Accel", &acceleration_.x, -10.0f, 10.0f);
-	// プレイヤーの角速度
-	ImGui::Text("AngularVelocity");
-	ImGui::SliderFloat3("AngleVelo", &angularVelocity_.x, -10.0f, 10.0f);
-
-	ImGui::End();
-
-	ImGui::Begin("Player_Controller");
-	// コントローラーの操作方法
-	ImGui::Text("Move");
-	ImGui::Text("Rotate: RightStick");
-	ImGui::Text("Attack: LeftShoulder");
-	ImGui::Text("Hook");
-	ImGui::Text("Throw: RightShoulder");
-	ImGui::Text("Back: RightShoulder");
-	ImGui::Text("Pulling: RightTrigger");
-	ImGui::Text("ArcMove: RightStick");
-	// debug
-	ImGui::Text("DebugMode: StartButton");
-	ImGui::End();
-}
-void Player::Move() {
-
-	///============================
-	/// プレイヤーの移動処理
-	///
-
-	if (isDebug_) {
-		// デバッグモードの場合
-		// プレイヤーの移動が左スティックで、できるようにする
-		Vector2 leftStick = Input::GetInstance()->GetLeftStick();
-		position_.x += leftStick.x * 0.1f;
-		position_.z += leftStick.y * 0.1f;
-	}
-
-	// 速度制限
-	const float maxSpeed = 10.0f; // 最大速度（調整可能）
-	// 速度の大きさを計算
-	float speed = Vector3::Length(velocity_);
-	// 速度が最大速度を超えた場合、速度を制限
-	if (speed > maxSpeed) {
-		velocity_ = (velocity_ / speed) * maxSpeed;
-	}
-
-	// 減速処理
-	const float friction = 0.98f; // 摩擦係数
-	velocity_ *= friction;
-
-	// プレイヤーの位置を更新
-	velocity_ += acceleration_;
-	position_ += velocity_;
-}
-
-void Player::Rotate() {
-	///================
-	/// プレイヤーの回転処理
-	///
-
-	// プレイヤーの向きを左スティックの向きにする
-
-	// 右スティックの入力があるとき
-	if (!Input::GetInstance()->RStickInDeadZone()) {
-		// プレイヤーの向きを変える
-		rotation_.y = -atan2(Input::GetInstance()->GetRightStick().x, Input::GetInstance()->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
-	}
-}
-
-void Player::Attack() {
-	// 攻撃処理
-	// 攻撃ボタンを押した瞬間
-	if (Input::GetInstance()->TriggerButton(8)) {
-		// 武器の攻撃フラグを立てる
-		isAttack_ = true;
-	}
-}
-void Player::DecreaseHpOnHit() {
-
-	
-
-	// プレイヤーが敵に当たった場合の
-	// 無敵時間の処理
-	if (isInvincible_) {
-		// 無敵時間をカウント
-		invincibleTime_++;
-		// 無敵時間が最大値を超えた場合
-		if (invincibleTime_ >= maxInvincibleTime_) {
-			// 無敵状態を解除
-			isInvincible_ = false;
-			invincibleTime_ = 0;
-		}
-	}
-}
-
-void Player::OnCollision(Collider* other) {
+/// -------------------------------------------------------------
+///							衝突判定処理
+/// -------------------------------------------------------------
+void Player::OnCollision(Collider* other)
+{
 	// 種別IDを取得
 	uint32_t typeID = other->GetTypeID();
-	// フックがアクティブで、敵と衝突した場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
-		// Playerが敵に当たった時の処理
-		isHitEnemy_ = true;
 
-		// 無敵状態でない場合にHPを減らす
-		if (!isInvincible_) {
-			hp_ -= 1;
-			isInvincible_ = true;
-			invincibleTime_ = 0;
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) // 敵と衝突した場合
+	{
+		if (!isInvincible_)
+		{
+			hp_ -= 2;
+
+			if (hp_ <= 0)
+			{
+				isDead_ = true; // 死亡フラグを立てる
+				isEnemyHit_ = false; // 敵に当たったフラグを解除
+			}
+			isInvincible_ = true; // 無敵状態にする
+			invincibleTime_ = 0; // 無敵時間の初期化
 		}
-	} else {
-		isHitEnemy_ = false;
 	}
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
+	{
+		if (!isInvincible_)
+		{
+			hp_ -= 1;
 
-	if (isAttack_) {
-		isHit_ = true;
+			if (hp_ <= 0)
+			{
+				isDead_ = true; // 死亡フラグを立てる
+			}
+			isInvincible_ = true; // 無敵状態にする
+			invincibleTime_ = 0; // 無敵時間の初期化
+		}
 	}
 }
 
-Vector3 Player::GetCenterPosition() const {
-	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
-	Vector3 worldPosition = position_ + offset;
+
+/// -------------------------------------------------------------
+///				　中心座標を取得する純粋仮想関数
+/// -------------------------------------------------------------
+Vector3 Player::GetCenterPosition() const
+{
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // プレイヤーの中心を考慮
+	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Player::HitParticle() {
+void Player::AppearFromAbove(float t)
+{
+	SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, Easing::easeOutBounce(t)));
+}
+
+
+/// -------------------------------------------------------------
+///						　　移動処理
+/// -------------------------------------------------------------
+void Player::Move()
+{
+	// 速度の加算
+	velocity_ += acceleration_;
+
+	// 速度制限
+	const float maxSpeed = 10.0f;
+	float speed = Vector3::Length(velocity_);
+	if (speed > maxSpeed) { velocity_ = (velocity_ / speed) * maxSpeed; }
+
+	// 減速処理
+	velocity_ *= 0.98f; // 摩擦を適用
+
+	// 最終的な移動適用
+	worldTransform_.translate_ += velocity_;
+
+	// 加速度をリセット（加速度は一時的なものが多いので）
+	acceleration_ = { 0.0f, 0.0f, 0.0f };
+
+
+	/// ---------- 回転処理 ---------- ///
+	// 右スティックの入力があるとき
+	if (!input_->RStickInDeadZone())
+		worldTransform_.rotate_.y = -atan2(input_->GetRightStick().x, input_->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
+
+	// 移動制限
+	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
+	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
+
+	// オブジェクトの更新
+	object3D_->SetScale(worldTransform_.scale_);
+	object3D_->SetRotate(worldTransform_.rotate_);
+	object3D_->SetTranslate(worldTransform_.translate_);
+	object3D_->Update();
+}
+
+
+/// -------------------------------------------------------------
+///					ヒット時のパーティクル処理
+/// -------------------------------------------------------------
+void Player::HitParticle()
+{
 	// エネミーの中心位置を取得
 	Vector3 playerCenter = GetCenterPosition();
 
@@ -281,4 +262,61 @@ void Player::HitParticle() {
 	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+}
+
+
+/// -------------------------------------------------------------
+///					通常行動の初期化処理
+/// -------------------------------------------------------------
+void Player::BehaviorRootInitialize()
+{
+	isAttack_ = false; // 攻撃フラグをリセット
+	attackTime_ = 0.0f; // 攻撃時間をリセット
+}
+
+
+/// -------------------------------------------------------------
+///					通常行動の更新処理
+/// -------------------------------------------------------------
+void Player::BehaviorRootUpdate()
+{
+	// 移動処理
+	Move();
+}
+
+
+/// -------------------------------------------------------------
+///					攻撃行動の初期化処理
+/// -------------------------------------------------------------
+void Player::BehaviorAttackInitialize()
+{
+	attackTime_ = 0.0f; // 攻撃時間をリセット
+	isAttack_ = true; // 攻撃フラグを立てる
+}
+
+
+/// -------------------------------------------------------------
+///					攻撃行動の更新処理
+/// -------------------------------------------------------------
+void Player::BehaviorAttackUpdate()
+{
+	
+		// 攻撃中も移動できるようにする
+		velocity_ *= 0.5f; // 移動速度を半分にする
+		Move();
+
+		// 攻撃時間をカウント
+		attackTime_++;
+
+		// 攻撃時間が最大値に達したら攻撃フラグをリセット
+		if (attackTime_ >= attackMaxTime_)
+		{
+			isAttack_ = false;
+			behaviorRequest_ = Behavior::kRoot;
+		}
+		else
+		{
+			weapon_->Attack();
+		}
+	
 }
