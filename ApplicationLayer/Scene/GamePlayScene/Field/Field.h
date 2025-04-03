@@ -1,13 +1,12 @@
 #pragma once
-#include "Object3D/Object3D.h"
+#include "Object3D.h"
 
-/// === 地面 === ///
-class Field {
-
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+/// -------------------------------------------------------------
+///						フィールドクラス
+/// -------------------------------------------------------------
+class Field 
+{
+public: /// ---------- メンバ関数 ---------- ///
 
 	/// 初期化
 	void Initialize();
@@ -21,14 +20,13 @@ public:
 	/// ImGui描画
 	void ShowImGui(const char* name);
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetMinPosition() { return minPosition_; }
 
 	Vector3 GetMaxPosition() { return maxPosition_; }
+
+public: /// ---------- セッター ---------- ///
 
 	void SetMinPosition(const Vector3& minPosition) { minPosition_ = minPosition; }
 
@@ -39,10 +37,8 @@ public:
 	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 
 	void SetPosition(const Vector3& position) { position_ = position; }
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+
+private: /// ---------- メンバ変数 ---------- ///
 
 	// オブジェクト
 	std::unique_ptr<Object3D> objectField_ = nullptr;

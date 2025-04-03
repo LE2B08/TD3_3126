@@ -6,111 +6,73 @@
 #include <TextureManager.h>
 #include <Wireframe.h>
 
-class PlayerUI {
+/// ---------- 前方宣言 ---------- ///
+class Player;
 
-public:
-	///-------------------------------------------///
-	/// メンバ関数
-	/// 
+/// -------------------------------------------------------------
+///						　プレイヤークラス
+/// -------------------------------------------------------------
+class PlayerUI
+{
+public: /// ---------- メンバ関数 ---------- ///
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
+	// 初期化処理
 	void Initialize();
 
-	/// <summary>
-	/// 更新
-	/// </summary>
+	// 更新処理
 	void Update();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
+	// 描画処理
 	void Draw();
 
-	/// <summary>
-	/// 終了処理
-	/// </summary>
-	void Finalize();
-
-	/// <summary>
-	/// ImGui描画
-	/// </summary>
+	// ImGuiの描画処理
 	void DrawImGui();
 
-public:
-	///-------------------------------------------///
-	/// Getter & Setter
-	///
+public: /// ---------- ゲッター ---------- ///
 
-	// 位置
-	void SetPosition(const Vector2& position) { position_ = position; }
+	Vector2 GetScale() const { return scale_; }
+	Vector2 GetRotation() const { return rotation_; }
 	Vector2 GetPosition() const { return position_; }
 
-	// 回転
-	void SetScale(const Vector2& scale) { scale_ = scale; }
-	Vector2 GetScale() const { return scale_; }
-
-	// スケール
-	void SetRotation(const Vector2& rotation) { rotation_ = rotation; }
-	Vector2 GetRotation() const { return rotation_; }
-
-	//-----------------Hp-----------------//
-
-	// Hp
-	void SetHp(const int& hp) { hp_ = hp; }
-	int GetHp() const { return hp_; }
-
-	// 最大HP
-	void SetMaxHp(const int& maxHp) { maxHp_ = maxHp; }
-	int GetMaxHp() const { return maxHp_; }
-
-	// 最小HP
-	void SetMinHp(const int& minHp) { minHp_ = minHp; }
-	int GetMinHp() const { return minHp_; }
-
-	//-----------------Speed-----------------//
-
-	// 速度
-	void SetSpeed(const float& speed) { speed_ = speed; }
 	float GetSpeed() const { return speed_; }
-
-	// 最大速度
-	void SetMaxSpeed(const float& maxSpeed) { maxSpeed_ = maxSpeed; }
 	float GetMaxSpeed() const { return maxSpeed_; }
-
-	// 最小速度
-	void SetMinSpeed(const float& minSpeed) { minSpeed_ = minSpeed; }
 	float GetMinSpeed() const { return minSpeed_; }
 
+public:	/// ---------- セッター ---------- ///
 
-private:
-	///-------------------------------------------///
-	/// メンバ変数
-	/// 
+	void SetScale(const Vector2& scale) { scale_ = scale; }
+	void SetRotation(const Vector2& rotation) { rotation_ = rotation; }
+	void SetPosition(const Vector2& position) { position_ = position; }
+
+	void SetSpeed(const float& speed) { speed_ = speed; }
+	void SetMaxSpeed(const float& maxSpeed) { maxSpeed_ = maxSpeed; }
+	void SetMinSpeed(const float& minSpeed) { minSpeed_ = minSpeed; }
+
+	// プレイヤーをセット
+	void SetPlayer(Player* player) { player_ = player; }
+
+private: /// ---------- メンバ変数 ---------- ///
+
+	// プレイヤー
+	Player* player_ = nullptr;
+
 
 	// 全体の位置
-	Vector2 position_;
+	Vector2 position_ = { 0.0f,0.0f };
 	// 全体のスケール
-	Vector2 scale_;
+	Vector2 scale_ = { 1.0f,1.0f };
 	// 全体の回転
-	Vector2 rotation_;
-
-	//-------Hp-------//
-
-	// プレイヤーのHP
-	int hp_;
-	// HPの最大値
-	int maxHp_;
-	// HPの最小値
-	int minHp_;
+	Vector2 rotation_ = { 0.0f,0.0f };
 
 	// UIの位置
-	Vector2 hpPosition_;
+	Vector2 hpPosition_ = { 100.0f, 320.0f };
 	// UIのスケール
-	Vector2 hpScale_;
+	Vector2 hpScale_ = { 1.0f,1.0f };
 	// UIの回転
-	float hpRotation_;
+	float hpRotation_ = 0.0f;
+
+	// HPの色
+	Vector4 hpGaugeColor = {};
 
 	// Hpの枠のスプライト
 	std::unique_ptr<Sprite> hpSprite_;
@@ -118,19 +80,10 @@ private:
 	// Hpのゲージのスプライト
 	std::unique_ptr<Sprite> hpGaugeSprite_;
 
-	//-------Speed-------//
-
 	// 速度
-	float speed_;
+	float speed_ = 1.0f;
 	// 速度の最大値
-	float maxSpeed_;
+	float maxSpeed_ = 10.0f;
 	// 速度の最小値
-	float minSpeed_;
-
-	Vector2 speedPosition_;
-	Vector2 speedScale_;
-	float speedRotation_;
-
-	// SpeedSprite
-	std::unique_ptr<Sprite> speedSprite_;
+	float minSpeed_ = 0.0f;
 };

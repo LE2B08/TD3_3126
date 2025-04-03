@@ -1,22 +1,36 @@
 #pragma once
 #include "Object3D.h"
-#include"Collider.h"
-class Weapon :public Collider {
-public:
-	///============================
-	/// メンバ関数
-	///
+#include "Collider.h"
+#include "ContactRecord.h"
+
+
+/// ---------- 前方宣言 ---------- ///
+class Player;
+class Enemy;
+
+
+/// -------------------------------------------------------------
+///						　プレイヤークラス
+/// -------------------------------------------------------------
+class Weapon : public Collider
+{
+public: /// ---------- メンバ関数 ---------- ///
+
+	// コンストラクト
+	Weapon();
 
 	// 初期化処理
 	void Initialize();
+
 	// 更新処理
 	void Update();
+	
 	// 描画処理
 	void Draw();
-	// 終了処理
-	void Finalize();
+	
 	// ImGui描画処理
 	void DrawImGui();
+	
 	// 攻撃処理
 	void Attack();
 
@@ -30,42 +44,41 @@ public:
 	/// Getter & Setter
 	///
 public:
-	// 位置
-	void SetPlayerPosition(const Vector3& position) { playerPosition_ = position; }
-	Vector3 GetPlayerPosition() const { return playerPosition_; }
-	// 回転
-	void SetPlayerRotation(const Vector3& rotation) { playerRotation_ = rotation; }
-	Vector3 GetPlayerRotation() const { return playerRotation_; }
-	// スケール
-	void SetPlayerScale(const Vector3& scale) { playerScale_ = scale; }
-	Vector3 GetPlayerScale() const { return playerScale_; }
+	
 	// 攻撃のフラグ
 	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }
 	bool GetIsAttack() const { return isAttack_; }
 	// カメラの設定
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
-private:
-	///============================
-	/// メンバ変数
-	/// 
+	// プレイヤーの設定
+	void SetPlayer(Player* player) { player_ = player; }
+
+	// エネミーの設定
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+
+private: /// ---------- メンバ変数 ---------- ///
 
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
 	
+	// プレイヤー
+	Player* player_ = nullptr;
+
+	// エネミー
+	Enemy* enemy_ = nullptr;
+
+	// 接触記録
+	ContactRecord contactRecord_;
+
 	// 位置
 	Vector3 position_;
 	// 回転
 	Vector3 rotation_;
 	// スケール
 	Vector3 scale_;
-	// プレイヤーの位置
-	Vector3 playerPosition_;
-	// プレイヤーの回転
-	Vector3 playerRotation_;
-	// プレイヤーのスケール
-	Vector3 playerScale_;
+	
 	//半径
 	float radius_ = 0.5f;
 	// プレイヤーと武器の距離
@@ -83,4 +96,9 @@ private:
 
 	/*------回転速度------*/
 	float rotationSpeed_ = 5.0f; // デフォルトの回転速度
+
+	// シリアルナンバー
+	uint32_t serialNumber_ = 0;
+	// 次のシリアルナンバー
+	static inline uint32_t nextSerialNumber_ = 0;
 };

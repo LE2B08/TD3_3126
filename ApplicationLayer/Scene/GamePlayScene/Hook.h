@@ -1,20 +1,27 @@
 #pragma once
-#include "Collider.h"
-#include "GamePlayScene/Enemy/Enemy.h"
 #include "Object3D.h"
+#include "Collider.h"
+
 #include <chrono>
 #include <deque>
 #include <optional>
 
-/// === フック === ///
-class Hook : public Collider {
+/// ---------- 前方宣言 ---------- ///
+class Player;
+class Enemy;
+class Field;
 
-	///-------------------------------------------///
-	/// 列挙
-	///-------------------------------------------///
-public:
-	enum class Behavior {
 
+/// -------------------------------------------------------------
+///						　フッククラス
+/// -------------------------------------------------------------
+class Hook : public Collider
+{
+private: /// ---------- 列挙型 ---------- ///
+
+	// 振る舞い
+	enum class Behavior
+	{
 		None,   // なし
 		Throw,  // 投げる
 		Extend, // 伸ばす
@@ -22,10 +29,8 @@ public:
 		Back    // 戻す
 	};
 
-	///-------------------------------------------///
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+public: /// ---------- メンバ関数 ---------- ///
+
 	// 初期化処理
 	void Initialize();
 
@@ -34,6 +39,54 @@ public:
 
 	// 描画処理
 	void Draw();
+
+	// 衝突判定
+	void OnCollision(Collider* other) override;
+
+	// 中心座標を取得する純粋仮想関数
+	Vector3 GetCenterPosition() const override;
+
+public: /// ---------- ゲッター ---------- ///
+
+	Vector3 GetPlayerRotation() { return playerRotation_; }
+	Vector3 GetPlayerPosition() { return playerPosition_; }
+	Vector3 GetPlayerVelocity() { return playerVelocity_; }
+
+	Vector3 GetPlayerAcceleration() { return playerAcceleration_; }
+	Vector3 GetMaxMoveLimit() { return maxMoveLimit_; }
+	Vector3 GetMinMoveLimit() { return minMoveLimit_; }
+	Vector3 GetEndPos() { return endPos_; }
+
+	float GetSpeed() { return speed_; }
+
+	bool GetIsActive() { return isActive_; }
+	bool GetEnemyHit() { return enemyHit_; }
+	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
+
+public: /// ---------- セッター ---------- ///
+
+	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
+	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
+	void SetPlayerVelocity(const Vector3& playerVelocity) { playerVelocity_ = playerVelocity; }
+	void SetPlayerAcceleration(const Vector3& playerAcceleration) { playerAcceleration_ = playerAcceleration; }
+	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
+	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+	void SetEndPos(const Vector3& endPos) { endPos_ = endPos; }
+	void SetSpeed(float speed) { speed_ = speed; }
+	void SetIsActive(bool isActive) { isActive_ = isActive; }
+	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
+	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
+
+	// プレイヤーの設定
+	void SetPlayer(Player* player) { player_ = player; }
+
+	// 敵の設定
+	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+
+	// フィールドの設定
+	void SetField(Field* field) { field_ = field; }
+
+private:  /// ---------- ルートビヘイビア用メンバ関数 ---------- ///
 
 	// 何もしてない状態の初期化
 	void BehaviorNoneInitialize();
@@ -64,68 +117,33 @@ public:
 	// フックを戻す状態の更新
 	void BehaviorBackUpdate();
 
-	// 衝突判定
-	void OnCollision(Collider* other) override;
+private: /// ---------- メンバ変数 ---------- ///
 
-	// 中心座標を取得する純粋仮想関数
-	Vector3 GetCenterPosition() const override;
+	// プレイヤー
+	Player* player_ = nullptr;
 
-	void ShowImGui();
+	// エネミー
+	Enemy* enemy_ = nullptr;
 
-	///-------------------------------------------///
-	/// ゲッター & セッター
-	///-------------------------------------------///
-public:
+	// フィールド
+	Field* field_ = nullptr;
+
+	//  移動制限の最大値
+	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
+	//  移動制限の最小値
+	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
+
 	// プレイヤーの回転
-	Vector3 GetPlayerRotation() { return playerRotation_; }
-	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
+	Vector3 playerRotation_ = { 0.0f, 0.0f, 0.0f };
 
 	// プレイヤーの位置
-	Vector3 GetPlayerPosition() { return playerPosition_; }
-	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
+	Vector3 playerPosition_ = { 0.0f, 0.0f, 0.0f };
 
 	// プレイヤーの速度
-	Vector3 GetPlayerVelocity() { return playerVelocity_; }
-	void SetPlayerVelocity(const Vector3& playerVelocity) { playerVelocity_ = playerVelocity; }
-
+	Vector3 playerVelocity_ = {};
 	// プレイヤーの加速度
-	Vector3 GetPlayerAcceleration() { return playerAcceleration_; }
-	void SetPlayerAcceleration(const Vector3& playerAcceleration) { playerAcceleration_ = playerAcceleration; }
+	Vector3 playerAcceleration_ = {};
 
-	// フックの最大移動制限
-	Vector3 GetMaxMoveLimit() { return maxMoveLimit_; }
-	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
-
-	// フックの最小移動制限
-	Vector3 GetMinMoveLimit() { return minMoveLimit_; }
-	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
-
-	// フックの終点
-	Vector3 GetEndPos() { return endPos_; }
-	void SetEndPos(const Vector3& endPos) { endPos_ = endPos; }
-
-	// フックの速度
-	float GetSpeed() { return speed_; }
-	void SetSpeed(float speed) { speed_ = speed; }
-
-	// フックのアクティブかどうか
-	bool GetIsActive() { return isActive_; }
-	void SetIsActive(bool isActive) { isActive_ = isActive; }
-
-	// フックの伸びているかどうかを取得
-	bool GetEnemyHit() { return enemyHit_; }
-	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
-
-	// 状態を取得
-	Behavior GetBehavior() { return behavior_; }
-
-	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
-	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
-
-	///-------------------------------------------///
-	/// メンバ変数
-	///-------------------------------------------///
-private:
 	// 開始位置
 	Vector3 startPos_;
 
@@ -161,22 +179,6 @@ private:
 	// 伸びているかどうか
 	bool isExtending_ = false;
 
-	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = {8.0f, 0.0f, 8.0f};
-	//  移動制限の最小値
-	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
-
-	// プレイヤーの回転
-	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};
-
-	// プレイヤーの位置
-	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f};
-
-	// プレイヤーの速度
-	Vector3 playerVelocity_ = {};
-	// プレイヤーの加速度
-	Vector3 playerAcceleration_ = {};
-
 	bool isMoving_ = false;
 
 	Vector3 potentialEndPos;
@@ -198,7 +200,7 @@ private:
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
 
-	
+
 
 	//================================================
 	// Behavior
@@ -207,7 +209,7 @@ private:
 	Behavior behavior_ = Behavior::None;
 
 	// 状態リクエスト
-	std::optional<Behavior> requestBehavior_ = std::nullopt;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	//
 	Vector2 rightStick_ = {};
@@ -217,7 +219,7 @@ private:
 	///===================================
 	/// 弧
 	/// 
-	
+
 	float decelerationRate = 0.95f; // 減速率（調整可能）
 	float angle;                    // 角度
 	float angularSpeed = 3.0f;      // 角速度（調整可能）

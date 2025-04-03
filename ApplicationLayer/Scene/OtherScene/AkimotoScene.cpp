@@ -141,8 +141,6 @@ void AkimotoScene::Finalize()
 
 void AkimotoScene::DrawImGui()
 {
-	player_->DrawImGui();
-
 	enemy_->ShowImGui("Enemy");
 
 	field_->ShowImGui("Field");

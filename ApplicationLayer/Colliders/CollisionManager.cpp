@@ -50,7 +50,7 @@ void CollisionManager::Draw()
 	{
 		if (isCollider_)
 		{
-			//collider->Draw();
+			collider->Draw();
 		}
 	}
 }

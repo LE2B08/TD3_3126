@@ -1,40 +1,47 @@
 #pragma once
-#include "Object3D/Object3D.h"
-#include "Collider.h"
+#include "BaseCharacter.h"
 #include <memory>
 #include <optional>
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
 
-/// ===== 前方宣言 ===== ///
+
+/// ---------- 前方宣言 ---------- ///
 class Player;
 class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
 
-/// === 敵 === ///
-class Enemy :public Collider {
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+/// -------------------------------------------------------------
+///						　エネミークラス
+/// -------------------------------------------------------------
+class Enemy : public BaseCharacter
+{
+private: /// ---------- 列挙型 ---------- ///
+
+	// 振る舞い
+	enum class Behavior {
+
+		Normal, // 通常
+		Sarch, 	// 探索
+		Attack, // 攻撃
+	};
+
+public: /// ---------- メンバ関数 ---------- ///
 
 	/// コンストラクタ
 	Enemy();
 
-	/// デストラクタ
-	~Enemy();
-
 	/// 初期化
-	void Initialize();
+	void Initialize() override;
 
 	/// 更新
-	void Update();
+	void Update() override;
 
 	/// 描画
-	void Draw();
+	void Draw() override;
 
 	/// 移動
 	void Move();
@@ -63,10 +70,7 @@ public:
 	// 攻撃コマンドをランダムに設定
 	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
-	///-------------------------------------------/// 
-	/// 行動別処理
-	///-------------------------------------------///
-public:
+public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 
 	/// <summary>
 	/// 通常時初期化
@@ -98,22 +102,24 @@ public:
 	/// </summary>
 	void BehaviorAttackUpdate();
 
-	///-------------------------------------------/// 
-	/// ゲッター&セッター
-	///-------------------------------------------///
-public:
+public: /// ---------- ゲッター ---------- ///
+
+	bool GetIsHit() const { return isHit_; }
+
+	/*------弾の取得------*/
+	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
+	// 位置の取得
+	const Vector3& GetPosition() const { return worldTransform_.translate_; }
+
+public: /// ---------- セッター ---------- ///
 
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/*------ヒットの取得、セット------*/
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
 
-	bool GetIsHit() const { return isHit_; }
-
 	void SetIsHitFromAttack(bool isHitFromAttack) { isHitFromAttack_ = isHitFromAttack; }
-
-	/*------弾の取得------*/
-	std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
 	/// <summary>
 	/// 移動制限の最大値のセッター
@@ -127,31 +133,7 @@ public:
 	/// <param name="minMoveLimit"></param>
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
-	// 位置の取得
-	const Vector3& GetPosition() const { return worldTransform_.translate_; }
-
-	///-------------------------------------------/// 
-	/// 列挙
-	///-------------------------------------------///
-public:
-
-	enum class Behavior {
-
-		Normal, // 通常
-		Sarch, 	// 探索
-		Attack, // 攻撃
-	};
-
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
-private:
-
-	// ワールド変換
-	WorldTransform worldTransform_;
-
-	// 敵のオブジェクト
-	std::unique_ptr<Object3D> objectEnemy_;
+private: /// ---------- メンバ変数 ---------- ///
 
 	// 速度
 	Vector3 velocity_;

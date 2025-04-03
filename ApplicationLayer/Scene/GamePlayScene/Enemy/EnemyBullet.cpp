@@ -1,8 +1,12 @@
 #include "EnemyBullet.h"
 #include "CollisionTypeIdDef.h"
 
-EnemyBullet::EnemyBullet() {
 
+/// -------------------------------------------------------------
+///						コンストラクト
+/// -------------------------------------------------------------
+EnemyBullet::EnemyBullet()
+{
 	// シリアルナンバーを設定
 	serialNumber_ = nextSerialNumber_;
 
@@ -10,10 +14,12 @@ EnemyBullet::EnemyBullet() {
 	nextSerialNumber_++;
 }
 
-EnemyBullet::~EnemyBullet() {
-}
 
-void EnemyBullet::Initialize() {
+/// -------------------------------------------------------------
+///						　初期化処理
+/// -------------------------------------------------------------
+void EnemyBullet::Initialize()
+{
 
 	// IDの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet));
@@ -34,7 +40,12 @@ void EnemyBullet::Initialize() {
 	SetRadius(0.4f);
 }
 
-void EnemyBullet::Update() {
+
+/// -------------------------------------------------------------
+///							更新処理
+/// -------------------------------------------------------------
+void EnemyBullet::Update()
+{
 
 	// 移動できるときだけ
 	if (isMove_) {
@@ -59,13 +70,22 @@ void EnemyBullet::Update() {
 	objectBullet_->Update();
 }
 
+
+/// -------------------------------------------------------------
+///						　描画処理
+/// -------------------------------------------------------------
 void EnemyBullet::Draw() {
 
 	// 描画
 	objectBullet_->Draw();
 }
 
-void EnemyBullet::Move() {
+
+/// -------------------------------------------------------------
+///						　移動処理
+/// -------------------------------------------------------------
+void EnemyBullet::Move()
+{
 
 	// 速度に向きを設定
 	velocity_ = direction_ * speed_;
@@ -74,23 +94,26 @@ void EnemyBullet::Move() {
 	worldTransform_.translate_ += velocity_;
 }
 
-void EnemyBullet::OnCollision(Collider* other) {
+
+/// -------------------------------------------------------------
+///						　衝突判定
+/// -------------------------------------------------------------
+void EnemyBullet::OnCollision(Collider* other)
+{
 
 	// Idを取得
 	uint32_t typeID = other->GetTypeID();
 
-	// 弾同時の衝突だった場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) {
-
-		// 何も処理せずに終了
-		return;
-	}
-
-	// それ以外は死亡
-	isAlive_ = false;
+	// 弾同時の衝突だった場合何も処理せずに終了
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) return;
 }
 
-Vector3 EnemyBullet::GetCenterPosition() const {
+
+/// -------------------------------------------------------------
+///						　中心座標を取得
+/// -------------------------------------------------------------
+Vector3 EnemyBullet::GetCenterPosition() const
+{
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;

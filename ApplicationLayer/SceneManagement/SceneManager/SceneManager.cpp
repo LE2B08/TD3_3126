@@ -29,23 +29,20 @@ void SceneManager::Update()
 	// 次のシーンが設定されている場合
 	if (nextScene_)
 	{
-		if (FadeManager::GetInstance()->IsFadeComplete())
+		// 現在のシーンを終了する
+		if (scene_)
 		{
-			// 現在のシーンを終了する
-			if (scene_)
-			{
-				scene_->Finalize();
-			}
-
-			// 次のシーンを現在のシーンとしてセット
-			scene_ = std::move(nextScene_);
-
-			// シーンマネージャーをセット
-			scene_->SetSceneManager(this);
-
-			// 新しいシーンを初期化
-			scene_->Initialize();
+			scene_->Finalize();
 		}
+
+		// 次のシーンを現在のシーンとしてセット
+		scene_ = std::move(nextScene_);
+
+		// シーンマネージャーをセット
+		scene_->SetSceneManager(this);
+
+		// 新しいシーンを初期化
+		scene_->Initialize();
 	}
 
 	// 現在のシーンを更新
@@ -53,8 +50,6 @@ void SceneManager::Update()
 	{
 		scene_->Update();
 	}
-
-	FadeManager::GetInstance()->Update();
 }
 
 
@@ -69,8 +64,6 @@ void SceneManager::Draw()
 	{
 		scene_->Draw();
 	}
-
-	FadeManager::GetInstance()->Draw();
 }
 
 
@@ -108,6 +101,5 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 	assert(nextScene_ == nullptr);
 
 	// 次のシーン生成
-	FadeManager::GetInstance()->StartFadeIn();
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }

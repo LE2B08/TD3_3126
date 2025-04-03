@@ -1,13 +1,15 @@
 #include "DynamicCamera.h"
-#include "GamePlayScene/Player.h"
-#include "GamePlayScene/Enemy/Enemy.h"
+#include "Player.h"
+#include "Enemy.h"
 
 #include <imgui.h>
 
-DynamicCamera::DynamicCamera() {
-}
 
-void DynamicCamera::Initialize() {
+/// -------------------------------------------------------------
+///						　初期化処理
+/// -------------------------------------------------------------
+void DynamicCamera::Initialize()
+{
 
 	// ワールド変換初期化
 	worldTransform_.Initialize();
@@ -16,7 +18,12 @@ void DynamicCamera::Initialize() {
 	worldTransform_.rotate_ = { 1.57f, 0.0f, 0.0f };
 }
 
-void DynamicCamera::Update() {
+
+/// -------------------------------------------------------------
+///						　	更新処理
+/// -------------------------------------------------------------
+void DynamicCamera::Update()
+{
 
 	// プレイヤーの位置を取得
 	Vector3 playerPos = player_->GetPosition();
@@ -43,7 +50,12 @@ void DynamicCamera::Update() {
 	worldTransform_.Update();
 }
 
-void DynamicCamera::ShowImGui(const char* name) {
+
+/// -------------------------------------------------------------
+///						　ImGuiの描画
+/// -------------------------------------------------------------
+void DynamicCamera::ShowImGui(const char* name)
+{
 
 	ImGui::Begin(name);
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
