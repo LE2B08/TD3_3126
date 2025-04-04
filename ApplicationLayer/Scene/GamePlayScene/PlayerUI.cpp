@@ -1,15 +1,13 @@
 #include "PlayerUI.h"
+#include <Player.h>
 #include <cmath>
 #include <corecrt_math_defines.h>
 #include <imgui.h>
-#include <Player.h>
-
 
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
-void PlayerUI::Initialize()
-{
+void PlayerUI::Initialize() {
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("Resources/playerHpUI.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/hpGauge.png");
@@ -26,12 +24,15 @@ void PlayerUI::Initialize()
 	hpGaugeSprite_->Initialize("Resources/hpGauge.png");
 }
 
-
 /// -------------------------------------------------------------
 ///						　	　更新処理
 /// -------------------------------------------------------------
-void PlayerUI::Update()
-{
+void PlayerUI::Update() {
+
+	//-------------------------------------------
+	//				HPゲージの更新処理
+	//-------------------------------------------
+
 	// 緑から赤への線形補間
 	float t = static_cast<float>(player_->GetHp()) / 10.0f;
 	hpGaugeColor.x = (1.0f - t) * 1.0f + t * 0.0f; // 赤の成分
@@ -41,38 +42,44 @@ void PlayerUI::Update()
 
 	// HPゲージのスプライトの更新
 	float HP = static_cast<float>(player_->GetHp());
-	float hpRatio = HP / 10.0f;  // HPの割合 (0.0f ～ 1.0f)
-	float newHeight = 320.0f * hpRatio;  // HPバーの高さを割合で変える
-	float yOffset = 320.0f - newHeight;  // 上から下に減るように調整
+	float hpRatio = HP / 10.0f;         // HPの割合 (0.0f ～ 1.0f)
+	float newHeight = 320.0f * hpRatio; // HPバーの高さを割合で変える
+	float yOffset = 320.0f - newHeight; // 上から下に減るように調整
+
+	//------------------------------------------
+	//				Speedの更新処理
+	//------------------------------------------
+
+	// プレイヤーの速度を取得
+	Vector3 playerVelocity = player_->GetVelocity();
+	// プレイヤーの速度をfloatに変換
+	speed_ = static_cast<float>(sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.z * playerVelocity.z));
 
 	// HPバーの位置とサイズを設定
-	hpGaugeSprite_->SetHPBar(HP, { hpPosition_.x,hpPosition_.y + yOffset }, { 0.0f,yOffset,32.0f,newHeight }, DecreaseHpDirection::TopToBottom);
+	hpGaugeSprite_->SetHPBar(HP, {hpPosition_.x, hpPosition_.y + yOffset}, {0.0f, yOffset, 32.0f, newHeight}, DecreaseHpDirection::TopToBottom);
 	hpGaugeSprite_->SetColor(hpGaugeColor); // HPバーの色を設定
-	hpGaugeSprite_->Update(); // 更新
+	hpGaugeSprite_->Update();               // 更新
 
 	// HPのスプライトの更新
-	hpSprite_->SetTextureRect({ hpPosition_.x,hpPosition_.y }, { 0.0f,0.0f,32.0f,320.0f });
+	hpSprite_->SetTextureRect({hpPosition_.x, hpPosition_.y}, {0.0f, 0.0f, 32.0f, 320.0f});
 	hpSprite_->Update();
 }
-
 
 /// -------------------------------------------------------------
 ///						　	　描画処理
 /// -------------------------------------------------------------
-void PlayerUI::Draw()
-{
+void PlayerUI::Draw() {
 	hpGaugeSprite_->Draw();
 	hpSprite_->Draw();
 }
 
-
 /// -------------------------------------------------------------
 ///						　ImGuiの描画処理
 /// -------------------------------------------------------------
-void PlayerUI::DrawImGui()
-{
+void PlayerUI::DrawImGui() {
 	int HP = player_->GetHp();
 	ImGui::Begin("PlayerUI");
 	ImGui::DragInt("HP", &HP, 1, 0, 10);
+	ImGui::DragFloat("Speed", &speed_, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 }
