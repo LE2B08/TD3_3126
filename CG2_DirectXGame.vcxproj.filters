@@ -85,7 +85,7 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.cpp" />
     <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
-    <ClCompile Include="EffectManager.cpp" />
+    <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -176,7 +176,7 @@
     <ClInclude Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.h" />
     <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
-    <ClInclude Include="EffectManager.h" />
+    <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

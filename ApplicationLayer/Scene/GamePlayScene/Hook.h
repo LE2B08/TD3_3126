@@ -48,33 +48,72 @@ public: /// ---------- メンバ関数 ---------- ///
 
 public: /// ---------- ゲッター ---------- ///
 
+	// プレイヤーの回転を取得
 	Vector3 GetPlayerRotation() { return playerRotation_; }
+
+	// プレイヤーの位置を取得
 	Vector3 GetPlayerPosition() { return playerPosition_; }
+
+	// プレイヤーの速度を取得
 	Vector3 GetPlayerVelocity() { return playerVelocity_; }
 
+	// プレイヤーの加速度を取得
 	Vector3 GetPlayerAcceleration() { return playerAcceleration_; }
+
+	// 最大移動範囲を取得
 	Vector3 GetMaxMoveLimit() { return maxMoveLimit_; }
+	
+	// 最小移動範囲を取得
 	Vector3 GetMinMoveLimit() { return minMoveLimit_; }
+	
+	// 終点を取得
 	Vector3 GetEndPos() { return endPos_; }
 
+	// フックの速さを取得
 	float GetSpeed() { return speed_; }
 
+	// フックの状態を取得
 	bool GetIsActive() { return isActive_; }
+	
+	// エネミーの状態を取得
 	bool GetEnemyHit() { return enemyHit_; }
+	
+	// フックを投げる前に敵に当たったかどうかを取得
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 
 public: /// ---------- セッター ---------- ///
 
+	// プレイヤーの位置を設定
 	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
+
+	// プレイヤーの回転を設定
 	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
+	
+	// プレイヤーの速度を設定
 	void SetPlayerVelocity(const Vector3& playerVelocity) { playerVelocity_ = playerVelocity; }
+	
+	// プレイヤーの加速度を設定
 	void SetPlayerAcceleration(const Vector3& playerAcceleration) { playerAcceleration_ = playerAcceleration; }
+	
+	// 最大移動範囲を設定
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
+
+	// 最小移動範囲を設定
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
+	
+	// フックの終点を設定
 	void SetEndPos(const Vector3& endPos) { endPos_ = endPos; }
+	
+	// フックの速さを設定
 	void SetSpeed(float speed) { speed_ = speed; }
+	
+	// フックの状態を設定
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
+	
+	// フックを投げる前に敵に当たったかどうかを設定
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
+	
+	// フックを投げる前に敵に当たったかどうかを設定
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
 
 	// プレイヤーの設定

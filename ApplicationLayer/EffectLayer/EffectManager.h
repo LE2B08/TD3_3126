@@ -41,10 +41,10 @@ public: /// ---------- セッター ---------- ///
 	void SetIsCameraShaking(bool isCameraShaking) { isCameraShaking_ = isCameraShaking; }
 
 private: /// ---------- メンバ関数 ---------- ///
-	
+
 	// カメラの揺れ
 	void CameraShake();
-	
+
 	// ゲーム開始演出
 	void GameStart();
 
@@ -56,24 +56,24 @@ private: /// ---------- メンバ変数 ---------- ///
 	Field* field_ = nullptr;   // フィールド
 
 	// カメラ揺れ用の変数
-	bool isCameraShaking_ = false;
-	float shakeElapsedTime_ = 0.0f;
-	float shakeDuration_ = 0.5f;
-	float shakeMagnitude_ = 1.0f;
+	bool isCameraShaking_ = false; // カメラが揺れているかどうか
+	float shakeElapsedTime_ = 0.0f;	// 揺れの経過時間
+	float shakeDuration_ = 0.5f; // 揺れの持続時間
+	float shakeMagnitude_ = 1.0f; // 揺れの大きさ
 	Vector3 cameraPosition_;
 
 	// ゲーム開始演出用の変数
-	bool isGameStart_ = false;
-	bool isStartEasing_ = false;
-	bool isPlayerPositionSet_ = false;
-	float startTimer_ = 0.0f;
-	float maxStartT_ = 40.0f;
-	float playerStartTimer_ = 0.0f;
-	float maxPlayerStartT_ = 30.0f;
+	bool isGameStart_ = false; // ゲーム開始フラグ
+	bool isStartEasing_ = false; // イージングを開始したかどうか
+	bool isPlayerPositionSet_ = false; // プレイヤーの位置を設定したかどうか
+	float startTimer_ = 0.0f; // 開始時間
+	float maxStartT_ = 40.0f; // 最大開始時間
+	float playerStartTimer_ = 0.0f; // プレイヤーの開始時間
+	float maxPlayerStartT_ = 30.0f; // 最大プレイヤー開始時間
 
-	Vector3 defaultFieldScale_ = { 5.0f, 5.0f, 5.0f };
+	Vector3 defaultFieldScale_ = { 5.0f, 5.0f, 5.0f }; // デフォルトのフィールドスケール
 
-	bool isGameStartEffectEnabled_ = true;
+	bool isGameStartEffectEnabled_ = true; // ゲーム開始演出を有効にするかどうか
 
 	// 初期のフィールド
 	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
