@@ -168,10 +168,10 @@ PixelShaderOutput main(VertexShaderOutput input)
     }
     else
     {
-        output.color = gMaterial.color * textureColor;
-
+        output.color = textureColor * gMaterial.color;
+      
         // ガンマ補正は不要（出力次第で適用）
-        output.color.rgb = pow(output.color.rgb, 1.0f / 2.2f);
+        //output.color.rgb = pow(output.color.rgb, 1.0f / 2.2f);
     }
 
     // α値がほぼ0の場合にピクセルを破棄
