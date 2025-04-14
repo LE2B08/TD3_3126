@@ -50,6 +50,8 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 
 	void AppearFromAbove(float t);
 
+	void DrawImGui();
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetVelocity() const { return velocity_; }// 速度の取得
