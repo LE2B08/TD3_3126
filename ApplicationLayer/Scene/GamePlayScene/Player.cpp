@@ -172,7 +172,7 @@ void Player::OnCollision(Collider* other)
 
 			if (hp_ <= 0)
 			{
-				isDead_ = true; // 死亡フラグを立てる
+				//isDead_ = true; // 死亡フラグを立てる
 				isEnemyHit_ = false; // 敵に当たったフラグを解除
 			}
 			isInvincible_ = true; // 無敵状態にする
@@ -262,15 +262,15 @@ void Player::DeathCameraMove()
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
 
-void Player::DrawImGui()
-{
-	ImGui::Begin("Player");
-	ImGui::SliderFloat3("playerPosition", &worldTransform_.translate_.x, -10.0f, 10.0f);
-	ImGui::SliderFloat3("playerRotation", &worldTransform_.rotate_.x, -20.0f, 10.0f);
-	ImGui::SliderFloat3("playerScale", &worldTransform_.scale_.x, 0.0f, 10.0f);
-	ImGui::SliderInt("hp", &hp_, 0, 10);
-	ImGui::End();
-}
+//void Player::DrawImGui()
+//{
+//	ImGui::Begin("Player");
+//	ImGui::SliderFloat3("playerPosition", &worldTransform_.translate_.x, -10.0f, 10.0f);
+//	ImGui::SliderFloat3("playerRotation", &worldTransform_.rotate_.x, -20.0f, 10.0f);
+//	ImGui::SliderFloat3("playerScale", &worldTransform_.scale_.x, 0.0f, 10.0f);
+//	ImGui::SliderInt("hp", &hp_, 0, 10);
+//	ImGui::End();
+//}
 
 
 /// -------------------------------------------------------------
