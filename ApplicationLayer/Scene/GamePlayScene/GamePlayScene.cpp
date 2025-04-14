@@ -287,7 +287,7 @@ void GamePlayScene::Finalize()
 /// -------------------------------------------------------------
 void GamePlayScene::DrawImGui()
 {
-	player_->DrawImGui();
+	playerUI_->DrawImGui();
 }
 
 
