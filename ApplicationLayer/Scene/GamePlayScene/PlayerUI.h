@@ -28,6 +28,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// ImGuiの描画処理
 	void DrawImGui();
 
+	// イージング関数
+	float EaseInOut(float t);
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector2 GetScale() const { return scale_; }
@@ -79,6 +82,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// Hpのゲージのスプライト
 	std::unique_ptr<Sprite> hpGaugeSprite_;
+
+	//Hp
+	int hp_ = 10;
 
 	// 速度
 	float speed_ = 1.0f;

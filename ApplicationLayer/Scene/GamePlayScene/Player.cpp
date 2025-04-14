@@ -145,6 +145,8 @@ void Player::Draw()
 	// 武器の描画
 	if (isAttack_ && weapon_) { weapon_->Draw(); }
 
+	
+
 
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = { cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y) };
@@ -205,7 +207,15 @@ Vector3 Player::GetCenterPosition() const
 
 void Player::AppearFromAbove(float t)
 {
-	SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, Easing::easeOutBounce(t)));
+	SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, Easing::easeOutBounce(t))); }
+
+void Player::DrawImGui() {
+
+	ImGui::Begin("Player");
+	ImGui::Text("HP: %d", hp_);
+	ImGui::DragInt("HP", &hp_, 1, 0, 10);
+	ImGui::End();
+
 }
 
 

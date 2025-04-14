@@ -4,6 +4,7 @@
 #include <corecrt_math_defines.h>
 #include <imgui.h>
 
+
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
@@ -41,8 +42,8 @@ void PlayerUI::Update() {
 	hpGaugeColor.w = 1.0f;                         // アルファ値
 
 	// HPゲージのスプライトの更新
-	float HP = static_cast<float>(player_->GetHp());
-	float hpRatio = HP / 10.0f;         // HPの割合 (0.0f ～ 1.0f)
+	hp_ = player_->GetHp();
+	float hpRatio = hp_ / 10.0f;         // HPの割合 (0.0f ～ 1.0f)
 	float newHeight = 320.0f * hpRatio; // HPバーの高さを割合で変える
 	float yOffset = 320.0f - newHeight; // 上から下に減るように調整
 
@@ -56,7 +57,7 @@ void PlayerUI::Update() {
 	speed_ = static_cast<float>(sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.z * playerVelocity.z));
 
 	// HPバーの位置とサイズを設定
-	hpGaugeSprite_->SetHPBar(HP, {hpPosition_.x, hpPosition_.y + yOffset}, {0.0f, yOffset, 32.0f, newHeight}, DecreaseHpDirection::TopToBottom);
+	hpGaugeSprite_->SetHPBar(static_cast<float>(hp_), {hpPosition_.x, hpPosition_.y + yOffset}, {0.0f, yOffset, 32.0f, newHeight}, DecreaseHpDirection::TopToBottom);
 	hpGaugeSprite_->SetColor(hpGaugeColor); // HPバーの色を設定
 	hpGaugeSprite_->Update();               // 更新
 
@@ -77,9 +78,9 @@ void PlayerUI::Draw() {
 ///						　ImGuiの描画処理
 /// -------------------------------------------------------------
 void PlayerUI::DrawImGui() {
-	int HP = player_->GetHp();
+	hp_ = player_->GetHp();
 	ImGui::Begin("PlayerUI");
-	ImGui::DragInt("HP", &HP, 1, 0, 10);
+	ImGui::DragInt("HP", &hp_, 1, 0, 10);
 	ImGui::DragFloat("Speed", &speed_, 0.1f, 0.0f, 10.0f);
 	ImGui::End();
 }
