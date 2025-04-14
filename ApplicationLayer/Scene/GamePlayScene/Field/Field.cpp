@@ -48,7 +48,7 @@ void Field::Draw()
 	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {maxPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
 	Wireframe::GetInstance()->DrawLine({minPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
 
-	// objectField_->Draw();
+	objectField_->Draw();
 }
 
 
