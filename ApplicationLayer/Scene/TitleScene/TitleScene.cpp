@@ -1,9 +1,8 @@
 #include "TitleScene.h"
+#include "FadeManager.h"
+#include "SceneManager.h"
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
-#include "SceneManager.h"
-#include "FadeManager.h"
-#include <SpriteManager.h>
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
 #include <WinApp.h>
@@ -27,28 +26,23 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/uvChecker.png",
-		//"Resources/monsterBall.png",
+	    "Resources/titleSceneUI.png ",
+	    //"Resources/uvChecker.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
-	for (auto& texture : texturePaths_)
-	{
+	for (auto& texture : texturePaths_) {
 		textureManager->LoadTexture(texture);
 	}
 
 	/// ---------- Spriteの初期化 ---------- ///
-	for (uint32_t i = 0; i < 1; i++)
-	{
+	for (uint32_t i = 0; i < 1; i++) {
 		sprites_.push_back(std::make_unique<Sprite>());
 
 		// テクスチャの範囲をチェック
-		if (!texturePaths_.empty())
-		{
+		if (!texturePaths_.empty()) {
 			sprites_[i]->Initialize(texturePaths_[i % texturePaths_.size()]);
-		}
-		else
-		{
+		} else {
 			throw std::runtime_error("Texture paths list is empty!");
 		}
 
@@ -56,12 +50,10 @@ void TitleScene::Initialize()
 	}
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void TitleScene::Update()
-{
+void TitleScene::Update() {
 	// 入力によるシーン切り替え
 	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
@@ -76,30 +68,23 @@ void TitleScene::Update()
 		wavLoader_->StopBGM();
 	}
 
-	if (input->TriggerKey(DIK_F1))
-	{
-		if (sceneManager_)
-		{
+	if (input->TriggerKey(DIK_F1)) {
+		if (sceneManager_) {
 			sceneManager_->ChangeScene("TuboScene");
 		}
 	}
 
-	if (input->TriggerKey(DIK_F2))
-	{
-		if (sceneManager_)
-		{
+	if (input->TriggerKey(DIK_F2)) {
+		if (sceneManager_) {
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
 	}
 
-	if (input->TriggerKey(DIK_F3))
-	{
-
+	if (input->TriggerKey(DIK_F3)) {
 	}
 
 	// スプライトの更新処理
-	for (auto& sprite : sprites_)
-	{
+	for (auto& sprite : sprites_) {
 		sprite->Update();
 	}
 
@@ -107,19 +92,14 @@ void TitleScene::Update()
 	fadeManager_->Update();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void TitleScene::Draw()
-{
+void TitleScene::Draw() {
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
 	SkyBoxManager::GetInstance()->SetRenderSetting();
-
-
-
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
@@ -130,12 +110,12 @@ void TitleScene::Draw()
 	/// ----- スプライトの描画設定と描画 ----- ///
 	for (auto& sprite : sprites_)
 	{
-		//sprite->Draw();
+		sprite->Draw();
 	}
 
 	// フェードの描画（最後尾に置く）
 	fadeManager_->Draw();
-
+  
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
 	/// ---------------------------------------- ///
@@ -143,36 +123,28 @@ void TitleScene::Draw()
 	Object3DCommon::GetInstance()->SetRenderSetting();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void TitleScene::Finalize()
-{
-	if (!sprites_.empty())
-	{
+void TitleScene::Finalize() {
+	if (!sprites_.empty()) {
 		sprites_.clear();
 	}
 
-	if (wavLoader_)
-	{
+	if (wavLoader_) {
 		wavLoader_.reset();
 	}
 }
 
-
 /// -------------------------------------------------------------
 ///				　		　ImGui描画処理
 /// -------------------------------------------------------------
-void TitleScene::DrawImGui()
-{
+void TitleScene::DrawImGui() {
 	ImGui::Begin("Test Window");
 
-	for (uint32_t i = 0; i < sprites_.size(); i++)
-	{
+	for (uint32_t i = 0; i < sprites_.size(); i++) {
 		ImGui::PushID(i); // スプライトごとに異なるIDを設定
-		if (ImGui::TreeNode(("Sprite" + std::to_string(i)).c_str()))
-		{
+		if (ImGui::TreeNode(("Sprite" + std::to_string(i)).c_str())) {
 			Vector2 position = sprites_[i]->GetPosition();
 			ImGui::DragFloat2("Position", &position.x, 1.0f);
 			sprites_[i]->SetPosition(position);
