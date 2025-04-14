@@ -8,6 +8,7 @@
 #include "Wireframe.h"
 #include "ImGuiManager.h"
 #include <Easing.h>
+using namespace Easing;
 
 
 /// -------------------------------------------------------------
@@ -182,10 +183,12 @@ void Player::OnCollision(Collider* other)
 		{
 			hp_ -= 1;
 
-			if (hp_ <= 0)
-			{
-				isDead_ = true; // 死亡フラグを立てる
-			}
+			//if (hp_ <= 0)
+			//{
+			//	// 死亡の判定はDeadEffectの方に移動させました
+			//	// 演出入れてから画面遷移させたかったのでね byサトウ
+			//	//isDead_ = true; // 死亡フラグを立てる
+			//}
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0; // 無敵時間の初期化
 		}
@@ -206,6 +209,57 @@ Vector3 Player::GetCenterPosition() const
 void Player::AppearFromAbove(float t)
 {
 	SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, Easing::easeOutBounce(t)));
+}
+
+void Player::DeathCameraMove()
+{
+	//cameraMoveStart_ = true; // カメラ移動開始フラグを立てる
+	// プレイヤーの位置を取得
+	Vector3 playerPosition = GetPosition();
+
+	// カメラの現在の位置を取得
+	Vector3 cameraPosition = camera_->GetTranslate();
+
+	// 移動させるカメラの座標
+	Vector3 moveCameraPosition = cameraPosition;
+
+	// カメラの移動後の位置を計算
+	Vector3 cameraOffset = playerPosition + Vector3(0.0f, 0.56f, -10.0f);
+
+	// カメラの回転を取得
+	Vector3 cameraRotation = camera_->GetRotate();
+
+	// 移動させるカメラの回転
+	Vector3 moveCameraRotation = cameraRotation;
+
+	if (cameraMoveT_ >= cameraMoveMaxT_)
+	{
+		cameraMoveT_ = cameraMoveMaxT_; // カメラの移動時間を最大値に設定
+		DeadEffect(); // 死亡エフェクトを実行
+	}
+	else
+	{
+		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
+		worldTransform_.rotate_.y = 1.5f;
+	}
+
+	moveCameraPosition = Vector3::Lerp(cameraPosition, cameraOffset,easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの位置を補間
+
+	moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
+	// カメラの位置をプレイヤーの位置に設定
+	camera_->SetTranslate(moveCameraPosition);
+
+	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+}
+
+void Player::DrawImGui()
+{
+	ImGui::Begin("Player");
+	ImGui::SliderFloat3("playerPosition", &worldTransform_.translate_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("playerRotation", &worldTransform_.rotate_.x, -20.0f, 10.0f);
+	ImGui::SliderFloat3("playerScale", &worldTransform_.scale_.x, 0.0f, 10.0f);
+	ImGui::SliderInt("hp", &hp_, 0, 10);
+	ImGui::End();
 }
 
 
@@ -234,7 +288,7 @@ void Player::Move()
 
 	/// ---------- 回転処理 ---------- ///
 	// 右スティックの入力があるとき
-	if (!input_->RStickInDeadZone())
+	if (!input_->RStickInDeadZone() && hp_ > 0)
 		worldTransform_.rotate_.y = -atan2(input_->GetRightStick().x, input_->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 
 	// 移動制限
@@ -262,6 +316,26 @@ void Player::HitParticle()
 	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+}
+
+void Player::DeadEffect()
+{
+	// プレイヤーを回転させながら小さくなって消滅する
+	Vector3 scale = worldTransform_.scale_;
+	Vector3 rotation = worldTransform_.rotate_;
+
+	Vector3 rotationEnd = { 0.0f, -17.2f, 0.0f }; // 回転の最終値
+	if (rotationStartT_ >= rotationMaxT_)
+	{
+		rotationStartT_ = rotationMaxT_; // 回転時間を最大値に設定
+		isDead_ = true; // 死亡フラグを立てる
+	}
+	else
+	{
+		rotationStartT_ += 1.0f; // 回転時間をカウントアップ
+	}
+	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
+	worldTransform_.scale_ = Vector3::Lerp(scale, Vector3(0.0f, 0.0f, 0.0f), Easing::easeInOutElastic(rotationStartT_ / rotationMaxT_));
 }
 
 
