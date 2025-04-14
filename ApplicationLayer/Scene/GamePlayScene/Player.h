@@ -5,6 +5,7 @@
 #include <ParticleEmitter.h>
 
 #include <optional>
+#include <Easing.h>
 
 /// ---------- 前方宣言 ---------- ///
 class Camera;
@@ -50,6 +51,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 
 	void AppearFromAbove(float t);
 
+	void DeathCameraMove();
+
+	// ImGUi描画処理
 	void DrawImGui();
 
 public: /// ---------- ゲッター ---------- ///
@@ -89,6 +93,9 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	// ヒット時のパーティクル
 	void HitParticle();
+
+	// 死亡時の演出
+	void DeadEffect();
 
 private: /// ---------- ルートビヘイビア用メンバ関数 ---------- ///
 
@@ -162,4 +169,16 @@ private: /// ---------- 定数 ---------- ///
 
 	// プレイヤーが敵に当たったか
 	bool isEnemyHit_ = false;
+
+	// 回転の始まり
+	float rotationStartT_ = 0.0f;
+
+	// 回転の最大値
+	float rotationMaxT_ = 160.0f;
+
+	/*------カメラの移動タイマー------*/
+	float cameraMoveT_ = 0.0f; // カメラの移動時間
+	float cameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
+
+	bool cameraMoveStart_ = false; // カメラの移動が開始したか
 };

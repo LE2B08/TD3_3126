@@ -148,11 +148,16 @@ void GamePlayScene::Update()
 	GameStart();
 
 	// 計算したあとのカメラの値をセット
-	camera_->SetTranslate(cameraPosition_);
-	camera_->SetScale(dynamicCamera_->GetScale());
-	camera_->SetRotate(dynamicCamera_->GetRotate());
-	camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	
+	if (player_->GetHp() > 0){
+		camera_->SetTranslate(cameraPosition_);
+		camera_->SetScale(dynamicCamera_->GetScale());
+		camera_->SetRotate(dynamicCamera_->GetRotate());
+		camera_->SetTranslate(dynamicCamera_->GetTranslate());
+	} else{
+		player_->DeathCameraMove();
+	}
+
+
 	// カメラの更新
 	camera_->Update();
 	dynamicCamera_->Update();
@@ -192,9 +197,9 @@ void GamePlayScene::Update()
 	enemy_->Update();
 
 	// 攻撃判定
-    if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
-        enemy_->SetIsHitFromAttack(true);
-    }
+	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
+		enemy_->SetIsHitFromAttack(true);
+	}
 
 	// コントローラー用UIの更新
 	controllerUI_->Update();
@@ -342,8 +347,7 @@ void GamePlayScene::GameStart()
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-		}
-		else
+		} else
 		{
 			startTimer_ += 0.5f;
 		}
@@ -360,8 +364,7 @@ void GamePlayScene::GameStart()
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		}
-		else
+		} else
 		{
 			playerStartTimer_ += 0.5f;
 			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
