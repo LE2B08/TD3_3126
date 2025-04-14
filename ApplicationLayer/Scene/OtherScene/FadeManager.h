@@ -1,10 +1,7 @@
 #pragma once
+#include "Sprite.h"
 #include "Vector4.h"
-
-
-/// ---------- 前方宣言 ---------- ///
-class Camera;
-class Object3DCommon;
+#include <functional>
 
 
 /// -------------------------------------------------------------
@@ -17,16 +14,13 @@ public: /// ---------- 列挙型 ---------- ///
 	// フェードの種類
 	enum class FadeState
 	{
-		None,
-		FadeIn,
-		FadeOut,
-		Complete
+		None,     // フェードなし
+		FadeIn,   // フェードイン
+		FadeOut,  // フェードアウト
+		Complete, // フェード完了
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
-
-	// シングルトンインスタンス
-	static FadeManager* GetInstance();
 
 	// 初期化処理
 	void Initialize();
@@ -37,34 +31,24 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 描画処理
 	void Draw();
 
-	// フェード開始
-	void StartFadeIn(float speed = 1.0f, const Vector4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
-	void StartFadeOut(float speed = 1.0f, const Vector4& color = { 1.0f, 1.0, 1.0f, 1.0f });
+	// フェードイン開始
+	void StartFadeToWhite(float fadeSpeed = 0.02f, std::function<void()> onFinished = nullptr);
 
-	bool IsFadeComplete() const;
+	// フェードアウト開始
+	void StartFadeFromWhite(float fadeSpeed = 0.02f, std::function<void()> onFinished = nullptr);
 
 	// 現在のフェード状態を取得
 	FadeState GetFadeState() const { return fadeState_; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
+	std::unique_ptr<Sprite> fadeSprite_ = nullptr; // フェード用スプライト
+
+	// フェード状態
 	FadeState fadeState_ = FadeState::None;
 
-	Camera* camera_ = nullptr;
-
-	Object3DCommon* object3DCommon_ = nullptr;
-
-	float alpha_ = 0.0f;
-	float fadeSpeed_ = 1.0f;
-	Vector4 fadeColor_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	float kDeltaTime = 1.0f / 60.0f;
-
-private: /// ---------- コピー禁止 ---------- ///
-
-	FadeManager() = default;
-	~FadeManager() = default;
-	FadeManager(const FadeManager&) = delete;
-	FadeManager& operator=(const FadeManager&) = delete;
+	float alpha_ = 0.0f; // アルファ値
+	float fadeSpeed_ = 0.02f; // フェード速度
+	std::function<void()> onFinished_ = nullptr; // フェード完了時のコールバック関数
 };
 

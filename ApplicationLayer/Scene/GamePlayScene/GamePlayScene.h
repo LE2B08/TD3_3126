@@ -120,6 +120,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	// スタートしたか
 	bool isGameStart_ = false;
 
+	// ゲームオーバーのフラグ
+	bool isGameOver_ = false;
+
 	// イージングがスタートしたか
 	bool isStartEasing_ = false;
 

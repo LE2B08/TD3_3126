@@ -5,19 +5,24 @@
 #include <ImGuiManager.h>
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
-#include <SpriteManager.h>
+#include <WinApp.h>
+
 
 /// -------------------------------------------------------------
 ///				　			　初期化処理
 /// -------------------------------------------------------------
-void TitleScene::Initialize() {
-	// フェードアウト開始
-	FadeManager::GetInstance()->StartFadeOut();
-
+void TitleScene::Initialize()
+{
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
+
+	// フェードマネージャーの初期化
+	fadeManager_ = std::make_unique<FadeManager>();
+	fadeManager_->Initialize();
+
+	fadeManager_->StartFadeFromWhite(0.02f); // シーン開始時に白からフェードアウトする（白 → 透明）
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
@@ -52,8 +57,12 @@ void TitleScene::Update() {
 	// 入力によるシーン切り替え
 	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
+		if (sceneManager_)
+		{
+			fadeManager_->StartFadeToWhite(0.02f, [this]() {
+				// フェード完了後の処理
+				sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
+				});
 		}
 
 		wavLoader_->StopBGM();
@@ -78,6 +87,9 @@ void TitleScene::Update() {
 	for (auto& sprite : sprites_) {
 		sprite->Update();
 	}
+
+	// フェードマネージャーの更新処理
+	fadeManager_->Update();
 }
 
 /// -------------------------------------------------------------
@@ -96,10 +108,14 @@ void TitleScene::Draw() {
 	SpriteManager::GetInstance()->SetRenderSetting();
 
 	/// ----- スプライトの描画設定と描画 ----- ///
-	for (auto& sprite : sprites_) {
+	for (auto& sprite : sprites_)
+	{
 		sprite->Draw();
 	}
 
+	// フェードの描画（最後尾に置く）
+	fadeManager_->Draw();
+  
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
 	/// ---------------------------------------- ///
