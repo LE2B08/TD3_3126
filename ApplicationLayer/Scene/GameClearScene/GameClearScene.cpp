@@ -7,6 +7,7 @@
 #include <SpriteManager.h>
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
+#include "SceneManager.h"
 
 void GameClearScene::Initialize()
 {
@@ -18,6 +19,15 @@ void GameClearScene::Initialize()
 
 void GameClearScene::Update()
 {
+	// 入力によるシーン切り替え
+	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
+	{
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("TitleScene"); // シーン名を指定して変更
+		}
+
+		wavLoader_->StopBGM();
+	}
 }
 
 void GameClearScene::Draw()

@@ -51,6 +51,8 @@ public: /// ---------- ゲッター ---------- ///
 	// シリアルナンバーを取得
 	uint32_t GetSerialNumber() const { return serialNumber_; }
 
+	
+
 public: /// ---------- セッター ---------- ///
 
 	// ヒットポイントを設定

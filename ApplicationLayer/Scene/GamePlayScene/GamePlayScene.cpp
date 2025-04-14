@@ -196,6 +196,13 @@ void GamePlayScene::Update()
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
 	enemy_->Update();
 
+	// 敵の体力が無くなったら
+	if (enemy_->GetHp() <= 0) {
+
+		// ゲームクリアシーンに移動
+		sceneManager_->ChangeScene("GameClearScene");
+	}
+
 	// 攻撃判定
 	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
 		enemy_->SetIsHitFromAttack(true);
@@ -288,6 +295,7 @@ void GamePlayScene::Finalize()
 void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
+	enemy_->ShowImGui("Enemy");
 }
 
 

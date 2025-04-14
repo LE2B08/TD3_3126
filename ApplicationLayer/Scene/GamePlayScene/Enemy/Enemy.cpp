@@ -48,7 +48,8 @@ void Enemy::Initialize()
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
 	hitTime_ = 0;
 
-	
+	// 体力を20設定
+	hp_ = 20;
 }
 
 
@@ -231,6 +232,7 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
 	ImGui::Text("HitTime : %f", hitTime_);
 	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
+	ImGui::Text("HP : %d", hp_);
 
 	ImGui::End();
 }
@@ -243,6 +245,14 @@ void Enemy::OnCollision(Collider* other)
 {
 	isHit_ = true;
 
+	// Idを取得
+	uint32_t typeID = other->GetTypeID();
+
+	// プレイヤーの攻撃だった場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kWeapon)) {
+
+		hp_ -= 1;
+	}
 }
 
 
