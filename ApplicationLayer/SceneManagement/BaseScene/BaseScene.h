@@ -1,7 +1,4 @@
 #pragma once
-#include "FadeManager.h"
-
-#include <memory>
 
 /// ---------- 前方宣言 ---------- ///
 class SceneManager;
@@ -37,9 +34,6 @@ protected: /// ---------- メンバ変数 ---------- ///
 
 	// シーンマネージャーを借りてくる
 	SceneManager* sceneManager_ = nullptr;
-
-	// フェードマネージャー
-	std::unique_ptr<FadeManager> fadeManager_ = nullptr;
 
 };
 

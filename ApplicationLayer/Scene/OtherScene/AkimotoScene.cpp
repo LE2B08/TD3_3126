@@ -13,6 +13,7 @@
 
 void AkimotoScene::Initialize()
 {
+	FadeManager::GetInstance()->StartFadeOut();
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();

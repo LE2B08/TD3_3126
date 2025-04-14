@@ -36,12 +36,6 @@ void GamePlayScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
 
-	fadeManager_ = std::make_unique<FadeManager>();
-	fadeManager_->Initialize();
-
-	// シーン開始時に白からフェードアウトする（白 → 透明）
-	fadeManager_->StartFadeFromWhite(0.02f);
-
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 
@@ -121,8 +115,6 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-
-
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
 		if (sceneManager_) {
@@ -184,33 +176,10 @@ void GamePlayScene::Update()
 	// プレイヤーの更新
 	player_->Update();
 
-	if (player_->IsDead() && !isGameOver_)
+	if (player_->IsDead())
 	{
-		isGameOver_ = true;
-		//sceneManager_->ChangeScene("GameOverScene");
-
-		if (sceneManager_)
-		{
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
-				});
-		}
+		sceneManager_->ChangeScene("GameOverScene");
 	}
-
-	// エネミーが死亡したとき（仮置き）
-	//if (enemy_->IsDead() && !isGameOver_)
-	//{
-	//	isGameOver_ = true;
-	//	//sceneManager_->ChangeScene("GameOverScene");
-	//	if (sceneManager_)
-	//	{
-	//		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-	//			// フェード完了後の処理
-	//			sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
-	//			});
-	//	}
-	//}
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
@@ -236,9 +205,6 @@ void GamePlayScene::Update()
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 	CheckAllCollisions();// 衝突判定と応答
-
-	// フェードマネージャの更新（ここから下は書かない）
-	fadeManager_->Update();
 }
 
 
@@ -269,9 +235,6 @@ void GamePlayScene::Draw()
 
 	// コントローラー用UIの描画
 	controllerUI_->Draw();
-
-	// フェードマネージャーの描画（ここから下は書かない）
-	fadeManager_->Draw();
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///

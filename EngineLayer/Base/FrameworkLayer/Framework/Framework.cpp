@@ -91,6 +91,10 @@ void Framework::Initialize()
 	// スカイボックスの初期化
 	SkyBoxManager::GetInstance()->Initialize(dxCommon_);
 
+	// フェードマネージャの初期化処理
+	FadeManager::GetInstance()->Initialize();
+	FadeManager::GetInstance()->StartFadeIn();
+
 #pragma endregion -------------------------------------------
 
 	// シーンマネージャーの生成

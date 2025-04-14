@@ -18,16 +18,8 @@ void GameOverScene::Initialize()
 {
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
-	input_ = Input::GetInstance();
+	input = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
-
-	input_->StopVibration();
-
-	// フェードマネージャーの初期化
-	fadeManager_ = std::make_unique<FadeManager>();
-	fadeManager_->Initialize();
-	// シーン開始時に白からフェードアウトする（白 → 透明）
-	fadeManager_->StartFadeFromWhite(0.02f);
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
@@ -67,20 +59,17 @@ void GameOverScene::Initialize()
 void GameOverScene::Update()
 {
 	// 入力によるシーン切り替え
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XButtons.A)) // Enterキーが押されたら
+	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
 		if (sceneManager_)
 		{
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				sceneManager_->ChangeScene("TitleScene"); // シーン名を指定して変更
-				});
+			sceneManager_->ChangeScene("TitleScene"); // シーン名を指定して変更
 		}
 
 		wavLoader_->StopBGM();
 	}
 
-	if (input_->TriggerKey(DIK_F1))
+	if (input->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
 		{
@@ -88,7 +77,7 @@ void GameOverScene::Update()
 		}
 	}
 
-	if (input_->TriggerKey(DIK_F2))
+	if (input->TriggerKey(DIK_F2))
 	{
 		if (sceneManager_)
 		{
@@ -96,7 +85,7 @@ void GameOverScene::Update()
 		}
 	}
 
-	if (input_->TriggerKey(DIK_F3))
+	if (input->TriggerKey(DIK_F3))
 	{
 
 	}
@@ -106,9 +95,6 @@ void GameOverScene::Update()
 	{
 		sprite->Update();
 	}
-
-	// フェードの更新
-	fadeManager_->Update();
 }
 
 
@@ -133,9 +119,6 @@ void GameOverScene::Draw()
 	{
 		sprite->Draw();
 	}
-
-	// フェードの描画（最後尾に置く）
-	fadeManager_->Draw();
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///

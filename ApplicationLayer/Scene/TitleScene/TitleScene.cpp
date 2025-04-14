@@ -6,7 +6,6 @@
 #include <SpriteManager.h>
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
-#include <WinApp.h>
 
 
 /// -------------------------------------------------------------
@@ -14,21 +13,18 @@
 /// -------------------------------------------------------------
 void TitleScene::Initialize()
 {
+	// フェードアウト開始
+	FadeManager::GetInstance()->StartFadeOut();
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
-	// フェードマネージャーの初期化
-	fadeManager_ = std::make_unique<FadeManager>();
-	fadeManager_->Initialize();
-
-	fadeManager_->StartFadeFromWhite(0.02f); // シーン開始時に白からフェードアウトする（白 → 透明）
-
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/uvChecker.png",
-		//"Resources/monsterBall.png",
+		"Resources/monsterBall.png",
+		//"Resources/uvChecker.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -67,10 +63,7 @@ void TitleScene::Update()
 	{
 		if (sceneManager_)
 		{
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
-				});
+			sceneManager_->ChangeScene("GamePlayScene"); // シーン名を指定して変更
 		}
 
 		wavLoader_->StopBGM();
@@ -102,9 +95,6 @@ void TitleScene::Update()
 	{
 		sprite->Update();
 	}
-
-	// フェードマネージャーの更新処理
-	fadeManager_->Update();
 }
 
 
@@ -130,11 +120,10 @@ void TitleScene::Draw()
 	/// ----- スプライトの描画設定と描画 ----- ///
 	for (auto& sprite : sprites_)
 	{
-		//sprite->Draw();
+		sprite->Draw();
 	}
 
-	// フェードの描画（最後尾に置く）
-	fadeManager_->Draw();
+
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
