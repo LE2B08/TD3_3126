@@ -60,6 +60,12 @@ public: /// ---------- 設定処理 ---------- ///
 	// 位置を設定
 	void SetTranslate(const Vector3& translate) { worldTransform.translate_ = translate; }
 
+	// 色の設定
+	void SetColor(const Vector4& color) { color_ = color; }
+
+	// ライティングを有効にするかどうかを設定
+	void SetEnableLighting(bool enableLighting) { enableLighting_ = enableLighting; }
+
 	// カメラの設定
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
@@ -98,6 +104,12 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// ワールドトランスフォーム
 	WorldTransform worldTransform;
+
+	// 色
+	Vector4 color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// ライティングを有効にするかどうか
+	bool enableLighting_ = false;
 
 	// バッファリソースの作成
 	ComPtr <ID3D12Resource> vertexResource;
