@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 #include "FadeManager.h"
 #include "SceneManager.h"
+#include <SpriteManager.h>
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
 #include <Object3DCommon.h>
