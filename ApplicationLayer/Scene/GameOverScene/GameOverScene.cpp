@@ -21,8 +21,6 @@ void GameOverScene::Initialize()
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
-	input_->StopVibration();
-
 	// フェードマネージャーの初期化
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
