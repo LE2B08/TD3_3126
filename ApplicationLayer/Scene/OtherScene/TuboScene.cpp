@@ -229,12 +229,8 @@ void TuboScene::Draw()
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
-	// プレイヤーUI
-	playerUI_->Draw();
-
-	// コントローラー用UIの描画
-	controllerUI_->Draw();
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
+	
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
@@ -260,6 +256,17 @@ void TuboScene::Draw()
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
 	/// ---------------------------------------- ///
+
+
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+	// プレイヤーUI
+	playerUI_->Draw();
+
+	// コントローラー用UIの描画
+	controllerUI_->Draw();
+
 
 	collisionManager_->Draw();
 

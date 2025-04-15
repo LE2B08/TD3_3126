@@ -27,8 +27,8 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-	    "Resources/titleSceneUI.png ",
-	    //"Resources/uvChecker.png",
+		"Resources/titleSceneUI.png ",
+		//"Resources/uvChecker.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -43,7 +43,8 @@ void TitleScene::Initialize()
 		// テクスチャの範囲をチェック
 		if (!texturePaths_.empty()) {
 			sprites_[i]->Initialize(texturePaths_[i % texturePaths_.size()]);
-		} else {
+		}
+		else {
 			throw std::runtime_error("Texture paths list is empty!");
 		}
 
@@ -54,7 +55,8 @@ void TitleScene::Initialize()
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void TitleScene::Update() {
+void TitleScene::Update()
+{
 	// 入力によるシーン切り替え
 	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
@@ -96,17 +98,19 @@ void TitleScene::Update() {
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void TitleScene::Draw() {
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+void TitleScene::Draw()
+{
+#pragma region スカイボックスの描画
+
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
-	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
+#pragma endregion
+
+
+#pragma region スプライトの描画（後面描画・背景用）
+
+	// スプライトの描画設定（後面）
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
 	/// ----- スプライトの描画設定と描画 ----- ///
 	for (auto& sprite : sprites_)
@@ -114,20 +118,34 @@ void TitleScene::Draw() {
 		sprite->Draw();
 	}
 
-	// フェードの描画（最後尾に置く）
-	fadeManager_->Draw();
-  
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
+
+
+#pragma region オブジェクト3Dの描画
+
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
+
+#pragma endregion
+
+
+#pragma region スプライトの描画（前面描画・UI用）
+
+	// UIスプライトの描画設定（前面）
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+
+	// フェードの描画（最後尾に置く）
+	fadeManager_->Draw();
+
+#pragma endregion
 }
 
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void TitleScene::Finalize() {
+void TitleScene::Finalize()
+{
 	if (!sprites_.empty()) {
 		sprites_.clear();
 	}
@@ -140,7 +158,8 @@ void TitleScene::Finalize() {
 /// -------------------------------------------------------------
 ///				　		　ImGui描画処理
 /// -------------------------------------------------------------
-void TitleScene::DrawImGui() {
+void TitleScene::DrawImGui()
+{
 	ImGui::Begin("Test Window");
 
 	for (uint32_t i = 0; i < sprites_.size(); i++) {
