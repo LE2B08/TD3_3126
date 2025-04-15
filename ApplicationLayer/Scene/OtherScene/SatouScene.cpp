@@ -64,7 +64,7 @@ void SatouScene::Draw()
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
 
 
@@ -75,7 +75,8 @@ void SatouScene::Draw()
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
 
-
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
 }
 
