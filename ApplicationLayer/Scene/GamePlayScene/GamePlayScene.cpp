@@ -251,6 +251,52 @@ void GamePlayScene::Update()
 
 	// フェードマネージャの更新（ここから下は書かない）
 	fadeManager_->Update();
+
+	// 次の状態がリクエストされたら
+	if (nextGameState_) {
+
+		// 次の状態に遷移
+		gameState_ = nextGameState_.value();
+
+		// 状態ごとの初期化を一回行う
+		switch (gameState_) {
+		case GameSceneState::Start:
+			break;
+
+		case GameSceneState::Play:
+			break;
+
+		case GameSceneState::GameClear:
+			break;
+
+		case GameSceneState::GameOver:
+			break;
+
+		default:
+			break;
+		}
+
+		// 次の状態をリセット
+		nextGameState_ = std::nullopt;
+	}
+
+	// 状態ごとの更新を行う
+	switch (gameState_) {
+	case GameSceneState::Start:
+		break;
+
+	case GameSceneState::Play:
+		break;
+
+	case GameSceneState::GameClear:
+		break;
+
+	case GameSceneState::GameOver:
+		break;
+
+	default:
+		break;
+	}
 }
 
 

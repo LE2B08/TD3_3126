@@ -22,6 +22,13 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
+enum class GameSceneState {
+	Start,
+	Play,
+	GameClear,
+	GameOver
+};
+
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
@@ -153,4 +160,10 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 計算用のダイナミックカメラ
 	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;
+
+	// ゲームの状態
+	GameSceneState gameState_ = GameSceneState::Start;
+
+	// 次の状態をリクエスト
+	std::optional<GameSceneState> nextGameState_ = std::nullopt;
 };
