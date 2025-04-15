@@ -156,12 +156,13 @@ void GamePlayScene::Update()
 	GameStart();
 
 	// 計算したあとのカメラの値をセット
-	if (player_->GetHp() > 0){
+	if (player_->GetHp() > 0) {
 		camera_->SetTranslate(cameraPosition_);
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	} else{
+	}
+	else {
 		player_->DeathCameraMove();
 	}
 
@@ -360,6 +361,21 @@ void GamePlayScene::CheckAllCollisions()
 		collisionManager_->AddCollider(bullet.get());
 	}
 
+	// プレイヤーが死亡したらコライダーを削除または敵が死亡したらコライダーを削除
+	if (player_->GetHp() <= 0 || enemy_->GetHp() <= 0)
+	{
+		collisionManager_->RemoveCollider(player_.get());
+		collisionManager_->RemoveCollider(weapon_.get());
+		collisionManager_->RemoveCollider(hook_.get());
+		collisionManager_->RemoveCollider(enemy_.get());
+
+		// 複数についてコライダーを削除
+		for (const auto& bullet : *enemyBullets_)
+		{
+			collisionManager_->RemoveCollider(bullet.get());
+		}
+	}
+
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();
 }
@@ -391,7 +407,8 @@ void GamePlayScene::GameStart()
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-		} else
+		}
+		else
 		{
 			startTimer_ += 0.5f;
 		}
@@ -408,7 +425,8 @@ void GamePlayScene::GameStart()
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		} else
+		}
+		else
 		{
 			playerStartTimer_ += 0.5f;
 			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
