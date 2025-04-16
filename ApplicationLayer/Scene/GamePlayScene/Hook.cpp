@@ -314,7 +314,7 @@ void Hook::BehaviorExtendUpdate()
 			direction = Vector3::Normalize(direction);
 			endPos_ += direction * moveStep;
 			
-			ExtendEffect(endPos_);
+			
 		}
 	}
 
@@ -329,6 +329,7 @@ void Hook::BehaviorMoveInitialize()
 {
 	// フックの初期化
 	isPulling_ = false;
+	TargetHitEffect();
 	
 }
 
@@ -716,11 +717,11 @@ void Hook::BehaviorBackUpdate()
 	}
 }
 
-void Hook::ExtendEffect(Vector3 endPos) {
+void Hook::TargetHitEffect() {
 
 	// パーティクルエミッターの位置をエネミーの中心に設定
-	particleEmitter_->SetPosition(endPos);
-	particleEmitter_->SetEmissionRate(1); // パーティクルの発生率を設定
+	particleEmitter_->SetPosition(endPos_);
+	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f); // deltaTime は 0 で呼び出し
 

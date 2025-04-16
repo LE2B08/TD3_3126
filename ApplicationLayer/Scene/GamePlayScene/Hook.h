@@ -120,7 +120,7 @@ private: /// ---------- ルートビヘイビア用メンバ関数 ---------- //
 
 private: /// ---------- 演出用メンバ関数 ---------- ///
 
-	void ExtendEffect(Vector3 endPos);
+	void TargetHitEffect();
 	void MoveEffect();
 	void BackEffect();
 
