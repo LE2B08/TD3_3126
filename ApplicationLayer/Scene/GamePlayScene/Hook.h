@@ -1,27 +1,27 @@
 #pragma once
-#include "Object3D.h"
 #include "Collider.h"
+#include "Object3D.h"
 
 #include <chrono>
 #include <deque>
 #include <optional>
+
+
+#include <ParticleManager.h>
+#include <ParticleEmitter.h>
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
 class Enemy;
 class Field;
 
-
 /// -------------------------------------------------------------
 ///						　フッククラス
 /// -------------------------------------------------------------
-class Hook : public Collider
-{
+class Hook : public Collider {
 private: /// ---------- 列挙型 ---------- ///
-
 	// 振る舞い
-	enum class Behavior
-	{
+	enum class Behavior {
 		None,   // なし
 		Throw,  // 投げる
 		Extend, // 伸ばす
@@ -30,7 +30,6 @@ private: /// ---------- 列挙型 ---------- ///
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
-
 	// 初期化処理
 	void Initialize();
 
@@ -40,6 +39,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 描画処理
 	void Draw();
 
+	// imGui描画処理
+	void ShowImGui();
+
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
@@ -47,7 +49,6 @@ public: /// ---------- メンバ関数 ---------- ///
 	Vector3 GetCenterPosition() const override;
 
 public: /// ---------- ゲッター ---------- ///
-
 	Vector3 GetPlayerRotation() { return playerRotation_; }
 	Vector3 GetPlayerPosition() { return playerPosition_; }
 	Vector3 GetPlayerVelocity() { return playerVelocity_; }
@@ -64,7 +65,6 @@ public: /// ---------- ゲッター ---------- ///
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 
 public: /// ---------- セッター ---------- ///
-
 	void SetPlayerPosition(const Vector3& playerPosition) { playerPosition_ = playerPosition; }
 	void SetPlayerRotation(const Vector3& playerRotation) { playerRotation_ = playerRotation; }
 	void SetPlayerVelocity(const Vector3& playerVelocity) { playerVelocity_ = playerVelocity; }
@@ -77,6 +77,8 @@ public: /// ---------- セッター ---------- ///
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
 
+	void SetCamera(Camera* camera) { hookObject_->SetCamera(camera); }
+
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -86,8 +88,7 @@ public: /// ---------- セッター ---------- ///
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
 
-private:  /// ---------- ルートビヘイビア用メンバ関数 ---------- ///
-
+private: /// ---------- ルートビヘイビア用メンバ関数 ---------- ///
 	// 何もしてない状態の初期化
 	void BehaviorNoneInitialize();
 
@@ -117,7 +118,18 @@ private:  /// ---------- ルートビヘイビア用メンバ関数 ---------- /
 	// フックを戻す状態の更新
 	void BehaviorBackUpdate();
 
+private: /// ---------- 演出用メンバ関数 ---------- ///
+
+	void ExtendEffect(Vector3 endPos);
+	void MoveEffect();
+	void BackEffect();
+
 private: /// ---------- メンバ変数 ---------- ///
+
+	/*------パーティクル------*/
+	ParticleManager* particleManager_ = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitter_;
+
 
 	// プレイヤー
 	Player* player_ = nullptr;
@@ -129,15 +141,15 @@ private: /// ---------- メンバ変数 ---------- ///
 	Field* field_ = nullptr;
 
 	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
+	Vector3 maxMoveLimit_ = {8.0f, 0.0f, 8.0f};
 	//  移動制限の最小値
-	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
+	Vector3 minMoveLimit_ = {-8.0f, 0.0f, -8.0f};
 
 	// プレイヤーの回転
-	Vector3 playerRotation_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f};
 
 	// プレイヤーの位置
-	Vector3 playerPosition_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f};
 
 	// プレイヤーの速度
 	Vector3 playerVelocity_ = {};
@@ -200,8 +212,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
 
-
-
 	//================================================
 	// Behavior
 
@@ -218,13 +228,15 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	///===================================
 	/// 弧
-	/// 
+	///
 
-	float decelerationRate = 0.95f; // 減速率（調整可能）
-	float angle;                    // 角度
-	float angularSpeed = 3.0f;      // 角速度（調整可能）
+	float decelerationRate = 0.95f;     // 減速率（調整可能）
+	float angle;                        // 角度
+	float angularSpeed = 3.0f;          // 角速度（調整可能）
 	float initialAngularSpeed = 0.0f;   // 角速度の初期値
 	float maxAngularSpeed = 5.0f;       // 角速度の最大値
 	float angularSpeedIncrement = 2.0f; // 角速度の増加率
 
+
+	std::unique_ptr<Object3D> hookObject_ = nullptr; // フックのオブジェクト
 };

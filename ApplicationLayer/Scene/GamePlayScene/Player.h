@@ -66,6 +66,7 @@ public: /// ---------- ゲッター ---------- ///
 
 	bool GetIsAttack() const { return isAttack_; } // 攻撃の取得
 	bool GetIsHitEnemy() const { return isEnemyHit_; }// 敵に当たったかの取得
+	
 
 public: /// ---------- セッター ---------- ///
 

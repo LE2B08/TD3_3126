@@ -20,12 +20,10 @@
 
 using namespace Easing;
 
-
 /// -------------------------------------------------------------
 ///				　			　初期化処理
 /// -------------------------------------------------------------
-void GamePlayScene::Initialize()
-{
+void GamePlayScene::Initialize() {
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -62,11 +60,11 @@ void GamePlayScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-	player_->SetPosition({ 1000.0f, 1000.0f, 1000.0f });
+	player_->SetPosition({1000.0f, 1000.0f, 1000.0f});
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get()); // 敵の情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
@@ -104,14 +102,15 @@ void GamePlayScene::Initialize()
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
-}
 
+	// ゲームスタートの初期化
+	isGameStart_ = false;
+}
 
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void GamePlayScene::Update()
-{
+void GamePlayScene::Update() {
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F12)) {
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
@@ -120,8 +119,6 @@ void GamePlayScene::Update()
 		isDebugCamera_ = !isDebugCamera_;
 	}
 #endif // _DEBUG
-
-
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
@@ -152,16 +149,18 @@ void GamePlayScene::Update()
 	effectManager_->Update();
 
 	// ダイナミックカメラの更新
+	if (!isGameStart_) {
 
-	GameStart();
+		GameStart();
+	}
 
 	// 計算したあとのカメラの値をセット
-	if (player_->GetHp() > 0){
+	if (player_->GetHp() > 0) {
 		camera_->SetTranslate(cameraPosition_);
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	} else{
+	} else {
 		player_->DeathCameraMove();
 	}
 
@@ -174,8 +173,7 @@ void GamePlayScene::Update()
 	field_->Update();
 
 	// フックから移動情報を取得
-	if (isGameStart_)
-	{
+	if (isGameStart_) {
 		// プレイヤーの位置をフックにセット
 		player_->SetPosition(hook_->GetPlayerPosition());
 		player_->SetVelocity(hook_->GetPlayerVelocity());
@@ -188,22 +186,20 @@ void GamePlayScene::Update()
 	// プレイヤーの更新
 	player_->Update();
 
-	if (player_->IsDead() && !isGameOver_)
-	{
+	if (player_->IsDead() && !isGameOver_) {
 		isGameOver_ = true;
-		//sceneManager_->ChangeScene("GameOverScene");
+		// sceneManager_->ChangeScene("GameOverScene");
 
-		if (sceneManager_)
-		{
+		if (sceneManager_) {
 			fadeManager_->StartFadeToWhite(0.02f, [this]() {
 				// フェード完了後の処理
 				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
-				});
+			});
 		}
 	}
 
 	// エネミーが死亡したとき（仮置き）
-	//if (enemy_->IsDead() && !isGameOver_)
+	// if (enemy_->IsDead() && !isGameOver_)
 	//{
 	//	isGameOver_ = true;
 	//	//sceneManager_->ChangeScene("GameOverScene");
@@ -218,9 +214,11 @@ void GamePlayScene::Update()
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
-
-	// フックの更新処理
-	hook_->Update();
+	
+	if (isGameStart_) {
+		// フックの更新処理
+		hook_->Update();
+	}
 
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
@@ -246,29 +244,25 @@ void GamePlayScene::Update()
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
-	CheckAllCollisions();// 衝突判定と応答
+	CheckAllCollisions(); // 衝突判定と応答
 
 	// フェードマネージャの更新（ここから下は書かない）
 	fadeManager_->Update();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void GamePlayScene::Draw()
-{
+void GamePlayScene::Draw() {
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 	skyBox_->Draw();
 
-
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
-
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
@@ -287,7 +281,6 @@ void GamePlayScene::Draw()
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
-
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -315,31 +308,30 @@ void GamePlayScene::Draw()
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void GamePlayScene::Finalize()
-{
-
-}
-
+void GamePlayScene::Finalize() {}
 
 /// -------------------------------------------------------------
 ///				　			ImGui描画処理
 /// -------------------------------------------------------------
-void GamePlayScene::DrawImGui()
-{
+void GamePlayScene::DrawImGui() {
 	playerUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
-}
 
+	ImGui::Begin("GamePlayScene");
+	ImGui::Text("GamePlayScene");
+	ImGui::Text("GameStart : %s", isGameStart_ ? "true" : "false");
+	ImGui::End();
+
+	hook_->ShowImGui();
+}
 
 /// -------------------------------------------------------------
 ///				　			衝突判定と応答
 /// -------------------------------------------------------------
-void GamePlayScene::CheckAllCollisions()
-{
+void GamePlayScene::CheckAllCollisions() {
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
@@ -347,16 +339,14 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->AddCollider(player_.get());
 
 	// 攻撃フラグを取得したらコライダーを追加
-	if (player_->GetIsAttack())
-	{
+	if (player_->GetIsAttack()) {
 		collisionManager_->AddCollider(weapon_.get());
 	}
 	collisionManager_->AddCollider(hook_.get());
 	collisionManager_->AddCollider(enemy_.get());
 
 	// 複数についてコライダーをリストに登録
-	for (const auto& bullet : *enemyBullets_)
-	{
+	for (const auto& bullet : *enemyBullets_) {
 		collisionManager_->AddCollider(bullet.get());
 	}
 
@@ -364,54 +354,43 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->CheckAllCollisions();
 }
 
-
-void GamePlayScene::GameStart()
-{
-	if (!isGameStartEffectEnabled_)
-	{
+void GamePlayScene::GameStart() {
+	if (!isGameStartEffectEnabled_) {
 		isGameStart_ = true;
 		return;
 	}
 
 	// エンターキーかAボタンが押されるたびに演出を開始
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))
-	{
-		if (!isStartEasing_)
-		{
+	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+		if (!isStartEasing_) {
 			startTimer_ = 0.0f;
 			playerStartTimer_ = 0.0f;
 			isStartEasing_ = true;
 		}
 	}
 
-	if (isStartEasing_)
-	{
-		if (startTimer_ >= maxStartT_)
-		{
+	if (isStartEasing_) {
+		if (startTimer_ >= maxStartT_) {
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-		} else
-		{
+		} else {
 			startTimer_ += 0.5f;
 		}
 
 		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
 	}
 
-	if (isPlayerPositionSet_)
-	{
-		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
+	if (isPlayerPositionSet_) {
+		player_->SetPosition({8.0f, 20.0f, 8.0f});
 
-		if (playerStartTimer_ >= maxPlayerStartT_)
-		{
+		if (playerStartTimer_ >= maxPlayerStartT_) {
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		} else
-		{
+		} else {
 			playerStartTimer_ += 0.5f;
-			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+			player_->SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
 		}
 	}
 }

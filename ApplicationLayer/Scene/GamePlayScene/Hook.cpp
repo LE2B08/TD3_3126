@@ -23,6 +23,21 @@ void Hook::Initialize()
 	isThrowing_ = false;
 	// フックの位置を初期化
 	endPos_ = playerPosition_;
+
+	// パーティクルマネージャの生成
+	particleManager_ = ParticleManager::GetInstance();
+
+	// テクスチャの読み込み
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("HookExtendParticles", "Resources/uvChecker.png");
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "HookExtendParticles");
+
+	hookObject_ = std::make_unique<Object3D>();
+	hookObject_->Initialize("Hook.obj");
+
 }
 
 
@@ -31,6 +46,10 @@ void Hook::Initialize()
 /// -------------------------------------------------------------
 void Hook::Update()
 {
+
+	
+
+
 	if (player_)
 	{
 		playerPosition_ = player_->GetPosition();
@@ -99,6 +118,13 @@ void Hook::Update()
 	default:
 		break;
 	}
+
+
+	hookObject_->SetTranslate(endPos_);
+	
+	hookObject_->SetRotate({0.0f, playerRotation_.y, 0.0f});
+	
+	hookObject_->Update();
 }
 
 
@@ -109,6 +135,29 @@ void Hook::Draw()
 {
 	// フックの線
 	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	hookObject_->Draw();
+
+}
+
+void Hook::ShowImGui() {
+
+	ImGui::Begin("Hook");
+	ImGui::Text("Hook");
+	ImGui::Text("Behavior: %d", static_cast<int>(behavior_));
+	ImGui::Text("endPos_: (%f, %f, %f)", endPos_.x, endPos_.y, endPos_.z);
+	ImGui::Text("isActive: %d", isActive_);
+	ImGui::Text("isThrowing: %d", isThrowing_);
+	ImGui::Text("isExtending: %d", isExtending_);
+	ImGui::Text("isPulling: %d", isPulling_);
+	ImGui::Text("isHitPlayerToEnemy_: %d", isHitPlayerToEnemy_);
+	ImGui::Text("enemyHit_: %d", enemyHit_);
+	ImGui::Text("hookToEnemyHitBeforeThrow_: %d", hookToEnemyHitBeforeThrow_);
+	ImGui::Text("playerPosition_: (%f, %f, %f)", playerPosition_.x, playerPosition_.y, playerPosition_.z);
+
+	
+	ImGui::End();
+
 }
 
 
@@ -133,6 +182,15 @@ void Hook::BehaviorNoneUpdate()
 	if (Input::GetInstance()->TriggerButton(9)) {
 		behaviorRequest_ = Behavior::Throw;
 	}
+
+	#ifdef _DEBUG
+
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+		// フックの状態を移動に変更
+		behaviorRequest_ = Behavior::Throw;
+	}
+
+#endif // _DEBUG
 }
 
 
@@ -238,6 +296,8 @@ void Hook::BehaviorExtendUpdate()
 		float distance = Vector3::Length(direction);
 		float moveStep = 1.0f; // 移動ステップ
 
+		
+
 		// 終了位置に到達したらフラグを更新
 		if (distance < moveStep) {
 			endPos_ = potentialEndPos;
@@ -246,14 +306,19 @@ void Hook::BehaviorExtendUpdate()
 
 			// フックの状態を移動に変更
 			behaviorRequest_ = Behavior::Move;
-
+			
 		}
 		else
 		{
+			//フックが対象物まで伸びる処理
 			direction = Vector3::Normalize(direction);
 			endPos_ += direction * moveStep;
+			
+			ExtendEffect(endPos_);
 		}
 	}
+
+
 }
 
 
@@ -264,6 +329,7 @@ void Hook::BehaviorMoveInitialize()
 {
 	// フックの初期化
 	isPulling_ = false;
+	
 }
 
 
@@ -648,6 +714,17 @@ void Hook::BehaviorBackUpdate()
 		Vector3::Normalize(moveDirection);
 		endPos_ += moveDirection * backSpeed * 0.016f;
 	}
+}
+
+void Hook::ExtendEffect(Vector3 endPos) {
+
+	// パーティクルエミッターの位置をエネミーの中心に設定
+	particleEmitter_->SetPosition(endPos);
+	particleEmitter_->SetEmissionRate(1); // パーティクルの発生率を設定
+	// パーティクルを生成
+	particleEmitter_->Update(1.0f); // deltaTime は 0 で呼び出し
+
+
 }
 
 

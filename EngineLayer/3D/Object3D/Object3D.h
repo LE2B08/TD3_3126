@@ -59,6 +59,9 @@ public: /// ---------- 設定処理 ---------- ///
 
 	// 位置を設定
 	void SetTranslate(const Vector3& translate) { worldTransform.translate_ = translate; }
+	
+
+	
 
 	// カメラの設定
 	void SetCamera(Camera* camera) { camera_ = camera; }
