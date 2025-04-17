@@ -121,8 +121,6 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-
-
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
 		if (sceneManager_) {
@@ -148,12 +146,12 @@ void GamePlayScene::Update()
 		effectManager_->SetIsCameraShaking(true);
 	}
 
-	//// 演出の更新
+	// 演出の更新
 	effectManager_->Update();
 
 	// ダイナミックカメラの更新
 
-	GameStart();
+	GameStartUpdate();
 
 	// 計算したあとのカメラの値をセット
 	if (player_->GetHp() > 0) {
@@ -260,16 +258,21 @@ void GamePlayScene::Update()
 
 		// 状態ごとの初期化を一回行う
 		switch (gameState_) {
+
 		case GameSceneState::Start:
+			GameStartInitialize();
 			break;
 
 		case GameSceneState::Play:
+			GamePlayInitialize();
 			break;
 
 		case GameSceneState::GameClear:
+			GameClearInitialize();
 			break;
 
 		case GameSceneState::GameOver:
+			GameOverInitialize();
 			break;
 
 		default:
@@ -283,15 +286,19 @@ void GamePlayScene::Update()
 	// 状態ごとの更新を行う
 	switch (gameState_) {
 	case GameSceneState::Start:
+		GameStartUpdate();
 		break;
 
 	case GameSceneState::Play:
+		GamePlayUpdate();
 		break;
 
 	case GameSceneState::GameClear:
+		GameClearUpdate();
 		break;
 
 	case GameSceneState::GameOver:
+		GameOverUpdate();
 		break;
 
 	default:
@@ -427,8 +434,16 @@ void GamePlayScene::CheckAllCollisions()
 	collisionManager_->CheckAllCollisions();
 }
 
+/// -------------------------------------------------------------
+///				　		ゲームスタート初期化
+/// -------------------------------------------------------------
+void GamePlayScene::GameStartInitialize() {
+}
 
-void GamePlayScene::GameStart()
+/// -------------------------------------------------------------
+///				　		ゲームスタート更新
+/// -------------------------------------------------------------
+void GamePlayScene::GameStartUpdate()
 {
 	if (!isGameStartEffectEnabled_)
 	{
@@ -479,4 +494,40 @@ void GamePlayScene::GameStart()
 			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
 		}
 	}
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームプレイ初期化
+/// -------------------------------------------------------------
+void GamePlayScene::GamePlayInitialize() {
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームプレイ更新
+/// -------------------------------------------------------------
+void GamePlayScene::GamePlayUpdate() {
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームクリア初期化
+/// -------------------------------------------------------------
+void GamePlayScene::GameClearInitialize() {
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームクリア更新
+/// -------------------------------------------------------------
+void GamePlayScene::GameClearUpdate() {
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームオーバー初期化
+/// -------------------------------------------------------------
+void GamePlayScene::GameOverInitialize() {
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームオーバー更新
+/// -------------------------------------------------------------
+void GamePlayScene::GameOverUpdate() {
 }
