@@ -49,7 +49,7 @@ void Player::Initialize()
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	worldTransform_.translate_ = { 8.0f, 0.0f, 8.0f };
+	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f };
 }
 
 
@@ -217,8 +217,38 @@ void Player::DrawImGui() {
 	ImGui::Begin("Player");
 	ImGui::Text("HP: %d", hp_);
 	ImGui::DragInt("HP", &hp_, 1, 0, 10);
+	ImGui::DragFloat3("Translate", &worldTransform_.translate_.x, 0.1f);
+	ImGui::DragFloat3("Rotation", &worldTransform_.rotate_.x, 0.1f);
+	ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.1f);
 	ImGui::End();
 
+}
+
+///-------------------------------------------/// 
+/// 				落下エフェクト
+///-------------------------------------------///
+void Player::FallingAnimation() {
+
+	// タイマー処理
+	if (fallingTimer_ >= maxFallingTime) {
+
+		// タイマーが最大値を超えないようにする
+		fallingTimer_ = maxFallingTime;
+	}
+	else {
+		// タイマーを加算
+		fallingTimer_ += 0.5f;
+	}
+	
+	// イージング結果を位置に代入
+	worldTransform_.translate_ = Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+
+	// タイマーと最大値が等しい場合
+	if (fallingTimer_ == maxFallingTime) {
+
+		// 落下アニメーションフラグを立てる
+		isFallEnd_ = true;
+	}
 }
 
 void Player::DeathCameraMove()

@@ -56,6 +56,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// ImGUi描画処理
 	void DrawImGui();
 
+	// スタート時の落下してくる挙動
+	void FallingAnimation();
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetVelocity() const { return velocity_; }// 速度の取得
@@ -66,6 +69,8 @@ public: /// ---------- ゲッター ---------- ///
 
 	bool GetIsAttack() const { return isAttack_; } // 攻撃の取得
 	bool GetIsHitEnemy() const { return isEnemyHit_; }// 敵に当たったかの取得
+
+	bool GetIsFallEnd() const { return isFallEnd_; } // 落下が終わったかの取得
 
 public: /// ---------- セッター ---------- ///
 
@@ -181,4 +186,17 @@ private: /// ---------- 定数 ---------- ///
 	float cameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
 
 	bool cameraMoveStart_ = false; // カメラの移動が開始したか
+
+///-------------------------------------------/// 
+/// 演出用の変数
+///-------------------------------------------///
+
+	// タイマー
+	float fallingTimer_ = 0;
+
+	// 落下の最大時間(フレーム)
+	const float maxFallingTime = 40;
+
+	// 落下アニメーションが終わったかどうか
+	bool isFallEnd_ = false;
 };

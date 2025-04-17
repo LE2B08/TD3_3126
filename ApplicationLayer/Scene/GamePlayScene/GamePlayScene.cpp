@@ -62,7 +62,6 @@ void GamePlayScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-	player_->SetPosition({ 1000.0f, 1000.0f, 1000.0f });
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
@@ -149,107 +148,6 @@ void GamePlayScene::Update()
 	// 演出の更新
 	effectManager_->Update();
 
-	// ダイナミックカメラの更新
-
-	GameStartUpdate();
-
-	// 計算したあとのカメラの値をセット
-	if (player_->GetHp() > 0) {
-		camera_->SetTranslate(cameraPosition_);
-		camera_->SetScale(dynamicCamera_->GetScale());
-		camera_->SetRotate(dynamicCamera_->GetRotate());
-		camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	}
-	else {
-		player_->DeathCameraMove();
-	}
-
-	// カメラの更新
-	camera_->Update();
-	dynamicCamera_->Update();
-
-	// フィールドの更新
-	field_->SetScale(fieldScale_);
-	field_->Update();
-
-	// フックから移動情報を取得
-	if (isGameStart_)
-	{
-		// プレイヤーの位置をフックにセット
-		player_->SetPosition(hook_->GetPlayerPosition());
-		player_->SetVelocity(hook_->GetPlayerVelocity());
-		player_->SetAcceleration(hook_->GetPlayerAcceleration());
-
-		player_->SetMinMoveLimit(field_->GetMinPosition());
-		player_->SetMaxMoveLimit(field_->GetMaxPosition());
-	}
-
-	// プレイヤーの更新
-	player_->Update();
-
-	if (player_->IsDead() && !isGameOver_)
-	{
-		isGameOver_ = true;
-		//sceneManager_->ChangeScene("GameOverScene");
-
-		if (sceneManager_)
-		{
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
-				});
-		}
-	}
-
-	// エネミーが死亡したとき（仮置き）
-	//if (enemy_->IsDead() && !isGameOver_)
-	//{
-	//	isGameOver_ = true;
-	//	//sceneManager_->ChangeScene("GameOverScene");
-	//	if (sceneManager_)
-	//	{
-	//		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-	//			// フェード完了後の処理
-	//			sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
-	//			});
-	//	}
-	//}
-
-	// プレイヤーUIの更新
-	playerUI_->Update();
-
-	// フックの更新処理
-	hook_->Update();
-
-	enemy_->SetMinMoveLimit(field_->GetMinPosition());
-	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
-	enemy_->Update();
-
-	// 敵の体力が無くなったら
-	if (enemy_->GetHp() <= 0) {
-
-		// ゲームクリアシーンに移動
-		sceneManager_->ChangeScene("GameClearScene");
-	}
-
-	// 攻撃判定
-	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
-		enemy_->SetIsHitFromAttack(true);
-	}
-
-	// コントローラー用UIの更新
-	controllerUI_->Update();
-
-	// スカイボックスの更新処理
-	skyBox_->Update();
-
-	// 衝突マネージャの更新
-	collisionManager_->Update();
-	CheckAllCollisions();// 衝突判定と応答
-
-	// フェードマネージャの更新（ここから下は書かない）
-	fadeManager_->Update();
-
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {
 
@@ -285,6 +183,7 @@ void GamePlayScene::Update()
 
 	// 状態ごとの更新を行う
 	switch (gameState_) {
+
 	case GameSceneState::Start:
 		GameStartUpdate();
 		break;
@@ -304,6 +203,46 @@ void GamePlayScene::Update()
 	default:
 		break;
 	}
+
+	// カメラの更新
+	camera_->Update();
+
+	// フィールドの更新
+	field_->SetScale(fieldScale_);
+	field_->Update();
+
+	// プレイヤー更新
+	player_->Update();
+
+	// エネミーが死亡したとき（仮置き）
+	//if (enemy_->IsDead() && !isGameOver_)
+	//{
+	//	isGameOver_ = true;
+	//	//sceneManager_->ChangeScene("GameOverScene");
+	//	if (sceneManager_)
+	//	{
+	//		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+	//			// フェード完了後の処理
+	//			sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
+	//			});
+	//	}
+	//}
+
+	// プレイヤーUIの更新
+	playerUI_->Update();
+
+	// コントローラー用UIの更新
+	controllerUI_->Update();
+
+	// スカイボックスの更新処理
+	skyBox_->Update();
+
+	// 衝突マネージャの更新
+	collisionManager_->Update();
+	CheckAllCollisions();// 衝突判定と応答
+
+	// フェードマネージャの更新（ここから下は書かない）
+	fadeManager_->Update();
 }
 
 
@@ -334,14 +273,41 @@ void GamePlayScene::Draw()
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
-	// プレイヤー
-	player_->Draw();
+	switch (gameState_) {
 
-	// フックの描画
-	hook_->Draw();
+	case GameSceneState::Start:
 
-	enemy_->Draw();
+		// プレイヤー
+		player_->Draw();
 
+		break;
+
+	case GameSceneState::Play:
+
+		// プレイヤー
+		player_->Draw();
+
+		// フックの描画
+		hook_->Draw();
+
+		// 敵の描画
+		enemy_->Draw();
+
+		break;
+
+	case GameSceneState::GameClear:
+
+		break;
+
+	case GameSceneState::GameOver:
+
+		break;
+
+	default:
+		break;
+	}
+
+	// フィールドの描画
 	field_->Draw();
 
 #pragma endregion
@@ -445,10 +411,11 @@ void GamePlayScene::GameStartInitialize() {
 /// -------------------------------------------------------------
 void GamePlayScene::GameStartUpdate()
 {
-	if (!isGameStartEffectEnabled_)
-	{
-		isGameStart_ = true;
-		return;
+	// プレイヤーの落下が終わったら
+	if (player_->GetIsFallEnd()) {
+
+		// 状態をゲームプレイに変更
+		nextGameState_ = GameSceneState::Play;
 	}
 
 	// エンターキーかAボタンが押されるたびに演出を開始
@@ -457,42 +424,33 @@ void GamePlayScene::GameStartUpdate()
 		if (!isStartEasing_)
 		{
 			startTimer_ = 0.0f;
-			playerStartTimer_ = 0.0f;
 			isStartEasing_ = true;
 		}
 	}
 
-	if (isStartEasing_)
-	{
-		if (startTimer_ >= maxStartT_)
-		{
+	// フィールド用のスケールをイージング(移植予定)
+	if (isStartEasing_) {
+
+		// タイマーが最大値を超えたら
+		if (startTimer_ >= maxStartT_) {
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
-			isPlayerPositionSet_ = true;
+
+			// フィールドの拡縮が終わった
+			isFieldEasingEnd_ = true;
 		}
-		else
-		{
+		else {
 			startTimer_ += 0.5f;
 		}
 
 		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
 	}
 
-	if (isPlayerPositionSet_)
-	{
-		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
-
-		if (playerStartTimer_ >= maxPlayerStartT_)
-		{
-			playerStartTimer_ = maxPlayerStartT_;
-			isPlayerPositionSet_ = false;
-			isGameStart_ = true;
-		}
-		else
-		{
-			playerStartTimer_ += 0.5f;
-			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
-		}
+	// フィールドの拡縮が終わったら
+	if (isFieldEasingEnd_) {
+		
+		// プレイヤーを落とす
+		player_->FallingAnimation();
 	}
 }
 
@@ -506,6 +464,50 @@ void GamePlayScene::GamePlayInitialize() {
 ///				　		ゲームプレイ更新
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayUpdate() {
+
+	// プレイヤーが死んだら
+	if (player_->IsDead()) {
+		
+		// 状態をゲームオーバーに変更
+		nextGameState_ = GameSceneState::GameOver;
+	}
+
+	// 敵の体力が無くなったら
+	if (enemy_->GetHp() <= 0) {
+
+		// 状態をゲームクリアに変更
+		nextGameState_ = GameSceneState::GameClear;
+	}
+
+	// プレイヤーの位置をフックにセット
+	player_->SetPosition(hook_->GetPlayerPosition());
+	player_->SetVelocity(hook_->GetPlayerVelocity());
+	player_->SetAcceleration(hook_->GetPlayerAcceleration());
+
+	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+
+	// 計算したあとのカメラの値をセット
+	if (player_->GetHp() > 0) {
+		camera_->SetTranslate(cameraPosition_);
+		camera_->SetScale(dynamicCamera_->GetScale());
+		camera_->SetRotate(dynamicCamera_->GetRotate());
+		camera_->SetTranslate(dynamicCamera_->GetTranslate());
+	}
+
+	// フックの更新処理
+	hook_->Update();
+
+	enemy_->SetMinMoveLimit(field_->GetMinPosition());
+	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
+	enemy_->Update();
+
+	// 攻撃判定
+	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
+		enemy_->SetIsHitFromAttack(true);
+	}
+
+	dynamicCamera_->Update();
 }
 
 /// -------------------------------------------------------------
@@ -518,6 +520,15 @@ void GamePlayScene::GameClearInitialize() {
 ///				　		ゲームクリア更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearUpdate() {
+
+	// エンターキーかAボタンが押されたら
+	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+
+		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			// ゲームクリアシーンに移動
+			sceneManager_->ChangeScene("GameClearScene");
+		});
+	}
 }
 
 /// -------------------------------------------------------------
@@ -530,4 +541,17 @@ void GamePlayScene::GameOverInitialize() {
 ///				　		ゲームオーバー更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverUpdate() {
+
+	player_->DeathCameraMove();
+
+	// エンターキーかAボタンが押されたら
+	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+
+		if (sceneManager_) {
+			fadeManager_->StartFadeToWhite(0.02f, [this]() {
+				// フェード完了後の処理
+				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
+				});
+		}
+	}
 }
