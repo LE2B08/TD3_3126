@@ -6,10 +6,12 @@
 #include "Input.h"
 #include <BaseScene.h>
 
+#include "TitleObject.h"
+
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
-class ImGuiManager;
+class Camera;
 
 
 /// -------------------------------------------------------------
@@ -17,6 +19,17 @@ class ImGuiManager;
 /// -------------------------------------------------------------
 class TitleScene : public BaseScene
 {
+private: /// ---------- 列挙型 ---------- ///
+	
+	// シーンの状態
+	enum class TitleState
+	{
+		Appear,     // 登場演出中
+		Idle,       // A待ち状態
+		Exit,       // ロゴ退場演出中
+		Transition  // シーン遷移フェード中
+	};
+
 public: /// ---------- メンバ関数 ---------- ///
 
 	// 初期化処理
@@ -38,8 +51,15 @@ private: /// ---------- メンバ変数 ---------- ///
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
 	Input* input = nullptr;
+	Camera* camera_ = nullptr;
+
+
+	TitleState titleState_ = TitleState::Appear;
+	float exitTimer_ = 0.0f;
 
 	std::unique_ptr<WavLoader> wavLoader_;
+
+	std::unique_ptr<TitleObject> titleObject_;
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 

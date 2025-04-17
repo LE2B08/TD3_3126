@@ -118,7 +118,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
-    <ClCompile Include="EffectManager.cpp" />
+    <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
     <ClCompile Include="EngineLayer\3D\SkyBox\SkyBox.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
@@ -190,6 +190,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.cpp" />
     <ClCompile Include="EngineLayer\Managers\SpriteManager\SpriteManager.cpp" />
     <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp" />
+    <ClCompile Include="TitleObject.cpp" />
     <ClCompile Include="WinMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -238,7 +239,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
-    <ClInclude Include="EffectManager.h" />
+    <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
     <ClInclude Include="EngineLayer\3D\SkyBox\SkyBox.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
@@ -324,6 +325,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayer\Managers\SpriteManager\SpriteManager.h" />
     <ClInclude Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.h" />
     <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h" />
+    <ClInclude Include="TitleObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

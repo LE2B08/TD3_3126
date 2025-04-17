@@ -63,6 +63,9 @@ public: /// ---------- 設定処理 ---------- ///
 	// 色の設定
 	void SetColor(const Vector4& color) { color_ = color; }
 
+	// アルファ値の設定
+	void SetAlpha(float alpha) { alpha_ = alpha; }
+
 	// ライティングを有効にするかどうかを設定
 	void SetEnableLighting(bool enableLighting) { enableLighting_ = enableLighting; }
 
@@ -70,6 +73,9 @@ public: /// ---------- 設定処理 ---------- ///
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 public: /// ---------- ゲッタ ---------- ///
+
+	// α値の取得
+	float GetAlpha() const { return alpha_; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -107,6 +113,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 色
 	Vector4 color_ = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	float alpha_ = 1.0f; // アルファ値
 
 	// ライティングを有効にするかどうか
 	bool enableLighting_ = false;
