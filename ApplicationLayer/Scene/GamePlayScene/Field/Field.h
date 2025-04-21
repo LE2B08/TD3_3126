@@ -20,11 +20,17 @@ public: /// ---------- メンバ関数 ---------- ///
 	/// ImGui描画
 	void ShowImGui(const char* name);
 
+	// スタート時の拡縮の挙動
+	void ScalingAnimation();
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetMinPosition() { return minPosition_; }
 
 	Vector3 GetMaxPosition() { return maxPosition_; }
+
+	// 拡縮が終わったかどうかの取得
+	bool IsScaleEnd() { return isScaleEnd_; }
 
 public: /// ---------- セッター ---------- ///
 
@@ -54,5 +60,22 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	Vector3 minPosition_;
 	Vector3 maxPosition_;
+
+///-------------------------------------------/// 
+/// 演出用の変数
+///-------------------------------------------///
+
+	// タイマー
+	float scalingTimer_ = 0.0f;
+
+	// 拡縮の最大時間(フレーム)
+	const float maxScalingTime_ = 60.0f;
+
+	// 拡縮アニメーションが終わったかどうか
+	bool isScaleEnd_ = false;
+
+	const Vector3 startScale_ = { 0.0f,0.0f,0.0f };
+
+	const Vector3 defaultScale_ = { 10.0f,1.0f,10.0f };
 };
 
