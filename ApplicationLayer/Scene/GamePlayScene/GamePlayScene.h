@@ -147,26 +147,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	/*------ゲーム開始演出------*/
 
 	// イージングがスタートしたか
-	bool isStartEasing_ = false;
-
-	// フィールドの拡縮が終わったか
-	bool isFieldEasingEnd_ = false;
-
-	// タイマー用のメンバ変数
-	float startTimer_ = 0;
-	const float maxStartT_ = 40;
-
-	// デフォルトのフィールド
-	const Vector3 defaultFieldScale_ = { 10.0f,1.0f,10.0f };
-	const Vector3 defaultFieldPosition_ = { 0.0f,0.0f,0.0f };
-
-	// 初期のフィールド
-	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
-	const Vector3 startFieldPosition_ = { 0.0f,0.0f,0.0f };
-
-	// 拡大するフィールド
-	Vector3 fieldScale_ = startFieldScale_;
-	Vector3 fieldPosition_ = startFieldPosition_;
+	bool isStartAnimation_ = false;
 
 	// 計算用のダイナミックカメラ
 	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;

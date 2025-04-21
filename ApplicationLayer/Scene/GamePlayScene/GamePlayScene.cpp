@@ -83,7 +83,6 @@ void GamePlayScene::Initialize()
 
 	// フィールドの初期化
 	field_->Initialize();
-	field_->SetScale(fieldScale_);
 
 	// PlayerUIの初期化
 	playerUI_->Initialize();
@@ -208,7 +207,6 @@ void GamePlayScene::Update()
 	camera_->Update();
 
 	// フィールドの更新
-	field_->SetScale(fieldScale_);
 	field_->Update();
 
 	// プレイヤー更新
@@ -353,6 +351,28 @@ void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
+
+	//ImGui::Begin("GamePlayScene");
+	//
+	//// シーンの状態を表示
+	//switch (gameState_) {
+	//case GameSceneState::Start:
+	//	ImGui::Text("Game Start");
+	//	break;
+	//case GameSceneState::Play:
+	//	ImGui::Text("Game Play");
+	//	break;
+	//case GameSceneState::GameClear:
+	//	ImGui::Text("Game Clear");
+	//	break;
+	//case GameSceneState::GameOver:
+	//	ImGui::Text("Game Over");
+	//	break;
+	//default:
+	//	break;
+	//}
+	//
+	//ImGui::End();
 }
 
 
@@ -404,6 +424,9 @@ void GamePlayScene::CheckAllCollisions()
 ///				　		ゲームスタート初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameStartInitialize() {
+
+	// アニメーションフラグを下げておく
+	isStartAnimation_ = false;
 }
 
 /// -------------------------------------------------------------
@@ -411,46 +434,32 @@ void GamePlayScene::GameStartInitialize() {
 /// -------------------------------------------------------------
 void GamePlayScene::GameStartUpdate()
 {
+	// まだアニメーションフラグが立っていなくて対応するキーが押されたら
+	if (!isStartAnimation_ && (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))) {
+
+		// アニメーションを開始
+		isStartAnimation_ = true;
+	}
+
+	// アニメーションフラグが立っていたら
+	if (isStartAnimation_) {
+
+		// フィールドの拡縮を開始
+		field_->ScalingAnimation();
+	}
+
+	// フィールドの拡縮が終わったら
+	if (field_->IsScaleEnd()) {
+
+		// プレイヤーを落とす
+		player_->FallingAnimation();
+	}
+
 	// プレイヤーの落下が終わったら
 	if (player_->GetIsFallEnd()) {
 
 		// 状態をゲームプレイに変更
 		nextGameState_ = GameSceneState::Play;
-	}
-
-	// エンターキーかAボタンが押されるたびに演出を開始
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))
-	{
-		if (!isStartEasing_)
-		{
-			startTimer_ = 0.0f;
-			isStartEasing_ = true;
-		}
-	}
-
-	// フィールド用のスケールをイージング(移植予定)
-	if (isStartEasing_) {
-
-		// タイマーが最大値を超えたら
-		if (startTimer_ >= maxStartT_) {
-			startTimer_ = maxStartT_;
-			isStartEasing_ = false;
-
-			// フィールドの拡縮が終わった
-			isFieldEasingEnd_ = true;
-		}
-		else {
-			startTimer_ += 0.5f;
-		}
-
-		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
-	}
-
-	// フィールドの拡縮が終わったら
-	if (isFieldEasingEnd_) {
-		
-		// プレイヤーを落とす
-		player_->FallingAnimation();
 	}
 }
 
