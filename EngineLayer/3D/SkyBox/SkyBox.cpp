@@ -5,6 +5,8 @@
 #include "Object3DCommon.h"
 #include "DebugCamera.h"
 
+#include <imgui.h>
+
 
 /// -------------------------------------------------------------
 ///				　			初期化処理
@@ -49,7 +51,6 @@ void SkyBox::Initialize(const std::string& filePath)
 /// -------------------------------------------------------------
 void SkyBox::Update()
 {
-
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotate_, worldTransform_.translate_);
 	if (isDebugCamera_)
 	{
@@ -68,6 +69,9 @@ void SkyBox::Update()
 
 	wvpData->WVP = worldViewProjectionMatrix;
 	wvpData->World = worldMatrix;
+
+	// スカイボックスのマテリアルデータを更新
+	materialData_->color = color_;
 }
 
 
@@ -87,6 +91,15 @@ void SkyBox::Draw()
 	commandList->SetGraphicsRootDescriptorTable(2, gpuHandle_);
 
 	commandList->DrawIndexedInstanced(kNumVertex, 1, 0, 0, 0);
+}
+
+void SkyBox::DrawImGui()
+{
+#ifdef _DEBUG
+	ImGui::Begin("SkyBox");
+	ImGui::ColorEdit4("Color", &color_.x);
+	ImGui::End();
+#endif // _DEBUG
 }
 
 

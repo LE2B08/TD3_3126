@@ -119,7 +119,7 @@ void Object3D::InitializeMaterial()
 	// 書き込むためのアドレスを取得
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// 今回は赤を書き込んでみる
-	materialData->color = color_;
+	materialData->color = { 1.0f,1.0f,1.0f,alpha_ };
 	materialData->enableLighting = enableLighting_; // 平行光源を有効にする
 	materialData->shininess = 1.0f;
 	materialData->uvTransform = Matrix4x4::MakeIdentity();

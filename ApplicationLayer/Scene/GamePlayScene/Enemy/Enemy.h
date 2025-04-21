@@ -1,11 +1,11 @@
 #pragma once
 #include "BaseCharacter.h"
-#include <memory>
-#include <optional>
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
-
+#include <DynamicCamera.h>
+#include <memory>
+#include <optional>
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
@@ -13,24 +13,20 @@ class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
 
-
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
-class Enemy : public BaseCharacter
-{
+class Enemy : public BaseCharacter {
 private: /// ---------- 列挙型 ---------- ///
-
 	// 振る舞い
 	enum class Behavior {
 
 		Normal, // 通常
-		Sarch, 	// 探索
+		Sarch,  // 探索
 		Attack, // 攻撃
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
-
 	/// コンストラクタ
 	Enemy();
 
@@ -70,8 +66,13 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 攻撃コマンドをランダムに設定
 	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
-public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
+	// 敵の出現演出
+	void SpawnEffect(DynamicCamera* dynamicCamera);
 
+	// カメラの動き
+	void CameraMove();
+
+public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
 	/// 通常時初期化
 	/// </summary>
@@ -103,7 +104,6 @@ public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	void BehaviorAttackUpdate();
 
 public: /// ---------- ゲッター ---------- ///
-
 	bool GetIsHit() const { return isHit_; }
 
 	/*------弾の取得------*/
@@ -112,8 +112,12 @@ public: /// ---------- ゲッター ---------- ///
 	// 位置の取得
 	const Vector3& GetPosition() const { return worldTransform_.translate_; }
 
-public: /// ---------- セッター ---------- ///
+	// エネミーのカメラ演出用のゲッター
+	const bool& GetIsEnemyCameraEffect() const { return isEnemyCameraEffect_; }
 
+	const bool& GetIsCameraEffectEnd() const { return isCameraEffectEnd_; }
+
+public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/*------ヒットの取得、セット------*/
@@ -133,8 +137,12 @@ public: /// ---------- セッター ---------- ///
 	/// <param name="minMoveLimit"></param>
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 
-private: /// ---------- メンバ変数 ---------- ///
+	/// <summary>
+	///	エネミーのカメラ演出用のセッター
+	/// </summary>
+	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
 
+private: /// ---------- メンバ変数 ---------- ///
 	// 速度
 	Vector3 velocity_;
 
@@ -178,6 +186,11 @@ private: /// ---------- メンバ変数 ---------- ///
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
 
+	/*------無敵時間の設定------*/
+	bool isInvincible_ = false;              // 無敵状態かどうか
+	const float invincibleDuration_ = 60.0f; // 無敵時間（秒）
+	float invincibleTime_ = 0;               // 無敵時間の経過時間
+
 	/*------プレイヤーの攻撃によるヒット------*/
 	bool isHitFromAttack_ = false;
 
@@ -195,5 +208,24 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 乱数生成器
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
-};
 
+	// カメラのタイマー
+	float cameraMoveT_ = 0.0f;
+	float cameraMoveMaxT_ = 160.0f;
+
+	// エネミーのカメラ演出用フラグ
+	bool isEnemyCameraEffect_ = true;
+
+	// エネミーのカメラ演出用のタイマー
+	float enemyCameraEffectT_ = 0.0f;
+
+	// カメラ演出の終わり
+	bool isCameraEffectEnd_ = false;
+
+	// カメラが戻る演出のフラグ
+	bool isCameraBackEffect_ = false;
+
+	// カメラの戻る演出のタイマー
+	float cameraBackEffectT_ = 0.0f;
+	float cameraBackEffectMaxT_ = 160.0f;
+};

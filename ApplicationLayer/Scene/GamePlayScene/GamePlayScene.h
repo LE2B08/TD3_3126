@@ -146,6 +146,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/*------ゲーム開始演出------*/
 
+	// ゲームクリアのフラグ
+	bool isGameClear_ = false;
+
 	// イージングがスタートしたか
 	bool isStartAnimation_ = false;
 

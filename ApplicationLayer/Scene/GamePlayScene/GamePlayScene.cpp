@@ -212,6 +212,9 @@ void GamePlayScene::Update()
 	// プレイヤー更新
 	player_->Update();
 
+	// 敵の更新
+	enemy_->Update();
+
 	// プレイヤーUIの更新
 	playerUI_->Update();
 
@@ -261,23 +264,38 @@ void GamePlayScene::Draw()
 
 	case GameSceneState::Start:
 
-		break;
-
-	case GameSceneState::Play:
-
-		// フックの描画
-		hook_->Draw();
+		// プレイヤー
+		player_->Draw();
 
 		// 敵の描画
 		enemy_->Draw();
 
 		break;
 
+	case GameSceneState::Play:
+
+		// プレイヤー
+		player_->Draw();
+
+		// 敵の描画
+		enemy_->Draw();
+
+		// フックの描画
+		hook_->Draw();
+
+		break;
+
 	case GameSceneState::GameClear:
+
+		// 敵の描画
+		enemy_->Draw();
 
 		break;
 
 	case GameSceneState::GameOver:
+
+		// プレイヤー
+		player_->Draw();
 
 		break;
 
@@ -287,9 +305,6 @@ void GamePlayScene::Draw()
 
 	// フィールドの描画
 	field_->Draw();
-
-	// プレイヤー
-	player_->Draw();
 
 #pragma endregion
 
@@ -335,27 +350,27 @@ void GamePlayScene::DrawImGui()
 	playerUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 
-	//ImGui::Begin("GamePlayScene");
-	//
-	//// シーンの状態を表示
-	//switch (gameState_) {
-	//case GameSceneState::Start:
-	//	ImGui::Text("Game Start");
-	//	break;
-	//case GameSceneState::Play:
-	//	ImGui::Text("Game Play");
-	//	break;
-	//case GameSceneState::GameClear:
-	//	ImGui::Text("Game Clear");
-	//	break;
-	//case GameSceneState::GameOver:
-	//	ImGui::Text("Game Over");
-	//	break;
-	//default:
-	//	break;
-	//}
-	//
-	//ImGui::End();
+	ImGui::Begin("GamePlayScene");
+	
+	// シーンの状態を表示
+	switch (gameState_) {
+	case GameSceneState::Start:
+		ImGui::Text("Game Start");
+		break;
+	case GameSceneState::Play:
+		ImGui::Text("Game Play");
+		break;
+	case GameSceneState::GameClear:
+		ImGui::Text("Game Clear");
+		break;
+	case GameSceneState::GameOver:
+		ImGui::Text("Game Over");
+		break;
+	default:
+		break;
+	}
+	
+	ImGui::End();
 }
 
 
@@ -415,8 +430,7 @@ void GamePlayScene::GameStartInitialize() {
 /// -------------------------------------------------------------
 ///				　		ゲームスタート更新
 /// -------------------------------------------------------------
-void GamePlayScene::GameStartUpdate()
-{
+void GamePlayScene::GameStartUpdate() {
 	// まだアニメーションフラグが立っていなくて対応するキーが押されたら
 	if (!isStartAnimation_ && (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))) {
 
@@ -438,8 +452,27 @@ void GamePlayScene::GameStartUpdate()
 		player_->FallingAnimation();
 	}
 
+
 	// プレイヤーの落下が終わったら
 	if (player_->GetIsFallEnd()) {
+
+		// 降ってくるアニメーションフラグが立っていなかったら(まだ行っていなかったら)
+		if (enemy_->GetIsEnemyCameraEffect()) {
+
+			// カメラ目線にして
+			enemy_->SetRotation(Vector3(0.0f, 1.5f, 0.0f));
+
+			// アニメーションが終わったことを確認して
+			if (!enemy_->GetIsCameraEffectEnd()) {
+
+				// アニメーションを行う
+				enemy_->SpawnEffect(dynamicCamera_.get());
+			}
+		}
+	}
+	
+	// 敵の降ってくるアニメーションが終了してたら
+	if (enemy_->GetIsCameraEffectEnd()) {
 
 		// 状態をゲームプレイに変更
 		nextGameState_ = GameSceneState::Play;
@@ -492,7 +525,6 @@ void GamePlayScene::GamePlayUpdate() {
 
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
-	enemy_->Update();
 
 	// 攻撃判定
 	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {

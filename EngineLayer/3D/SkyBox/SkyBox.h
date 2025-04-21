@@ -57,11 +57,33 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 描画処理
 	void Draw();
 
-	// デバッグカメラの有無
-	void SetDebugCamera(bool isDebugCamera) { isDebugCamera_ = isDebugCamera; }
+	// ImGui描画処理
+	void DrawImGui();
 
+public: /// ---------- ゲッター ---------- ///
+	
 	// デバッグカメラの有無を取得
 	bool GetDebugCamera() { return isDebugCamera_; }
+
+public: /// ---------- セッター ---------- ///
+
+	// デバッグカメラの有無
+	void SetDebugCamera(bool isDebugCamera) { isDebugCamera_ = isDebugCamera; }
+	
+	// スケールの設定
+	void SetScale(const Vector3& scale) { worldTransform_.scale_ = scale; }
+	
+	// 回転の設定
+	void SetRotate(const Vector3& rotate) { worldTransform_.rotate_ = rotate; }
+	
+	// 移動の設定
+	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
+	
+	// カラーの設定
+	void SetColor(const Vector4& color) { color_ = color; }
+	
+	// UV変換行列の設定
+	void SetUVTransform(const Matrix4x4& uvTransform) { uvTransform_ = uvTransform; }
 
 private: /// ---------- メンバ関数 ---------- ///
 
@@ -105,5 +127,11 @@ private: /// ---------- メンバ変数 ---------- ///
 	Matrix4x4 viewProjectionMatrix_;
 	Matrix4x4 debugViewProjectionMatrix_;
 	bool isDebugCamera_ = false;
+
+	// カラー
+	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	// UV変換行列
+	Matrix4x4 uvTransform_ = Matrix4x4::MakeIdentity();
 };
 
