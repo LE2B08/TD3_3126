@@ -350,27 +350,27 @@ void GamePlayScene::DrawImGui()
 	playerUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 
-	ImGui::Begin("GamePlayScene");
-	
-	// シーンの状態を表示
-	switch (gameState_) {
-	case GameSceneState::Start:
-		ImGui::Text("Game Start");
-		break;
-	case GameSceneState::Play:
-		ImGui::Text("Game Play");
-		break;
-	case GameSceneState::GameClear:
-		ImGui::Text("Game Clear");
-		break;
-	case GameSceneState::GameOver:
-		ImGui::Text("Game Over");
-		break;
-	default:
-		break;
-	}
-	
-	ImGui::End();
+	//ImGui::Begin("GamePlayScene");
+	//
+	//// シーンの状態を表示
+	//switch (gameState_) {
+	//case GameSceneState::Start:
+	//	ImGui::Text("Game Start");
+	//	break;
+	//case GameSceneState::Play:
+	//	ImGui::Text("Game Play");
+	//	break;
+	//case GameSceneState::GameClear:
+	//	ImGui::Text("Game Clear");
+	//	break;
+	//case GameSceneState::GameOver:
+	//	ImGui::Text("Game Over");
+	//	break;
+	//default:
+	//	break;
+	//}
+	//
+	//ImGui::End();
 }
 
 
