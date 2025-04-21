@@ -1,33 +1,29 @@
 #include "Enemy.h"
-#include "Player.h"
+#include "AttackCommand.h"
+#include "CollisionTypeIdDef.h"
 #include "EnemyBullet.h"
+#include "Player.h"
 #include "Vector3.h"
+#include <Easing.h>
+#include <Wireframe.h>
 #include <algorithm>
 #include <imgui.h>
-#include <Wireframe.h>
-#include "CollisionTypeIdDef.h"
-#include "AttackCommand.h"
-#include <Easing.h>
 using namespace Easing;
-
 
 /// -------------------------------------------------------------
 ///						　コンストラクタ
 /// -------------------------------------------------------------
-Enemy::Enemy()
-{
+Enemy::Enemy() {
 	serialNumber_ = nextSerialNumber_;
 	nextSerialNumber_++;
 
 	randomEngine.seed(seedGenerator());
 }
 
-
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
-void Enemy::Initialize()
-{
+void Enemy::Initialize() {
 	// 基底クラスの初期化
 	BaseCharacter::Initialize();
 
@@ -54,12 +50,10 @@ void Enemy::Initialize()
 	hp_ = 20;
 }
 
-
 /// -------------------------------------------------------------
 ///						　	更新処理
 /// -------------------------------------------------------------
-void Enemy::Update()
-{
+void Enemy::Update() {
 	// 基底クラスの更新
 	BaseCharacter::Update();
 
@@ -67,7 +61,6 @@ void Enemy::Update()
 		if (!isHitFromAttack_) {
 			// 状態の変更がリクエストされている場合
 			if (requestBehavior_) {
-				
 
 				// 状態を変更する
 				behavior_ = requestBehavior_.value();
@@ -116,7 +109,6 @@ void Enemy::Update()
 
 			// 弾の削除
 			bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-
 				// 弾が死んでいる場合
 				if (!bullet->IsAlive()) {
 
@@ -126,7 +118,7 @@ void Enemy::Update()
 				}
 
 				return false;
-				});
+			});
 		}
 	}
 	// カメラの演出が終わるまで動かない
@@ -134,7 +126,6 @@ void Enemy::Update()
 		// 移動
 		Move();
 	}
-	
 
 	// 弾の更新
 	for (auto& bullet : bullets_) {
@@ -153,9 +144,31 @@ void Enemy::Update()
 				isHitFromAttack_ = false;
 				hitTime_ = 0;
 			}
-		}
-		else {
+		} else {
 			isHit_ = false;
+		}
+	}
+
+	// 無敵時間のカウントダウン
+	if (isInvincible_) {
+		isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
+
+		invincibleTime_ += 1; // 1フレームごとにカウントアップ
+
+		if (invincibleTime_ > invincibleDuration_) {
+			isInvincible_ = false;    // 無敵状態を解除
+			invincibleTime_ = 0;      // 無敵時間の初期化
+			isHitFromAttack_ = false; // 敵に当たったフラグを解除
+		}
+	}
+
+	if (isHitFromAttack_) {
+		// ヒット時のパーティクルを生成
+		HitParticle();
+		hitTime_++;
+		// タイマーが最大値に達したらヒットフラグをオフにする
+		if (hitTime_ >= hitMaxTime_) {
+			hitTime_ = 0;
 		}
 	}
 
@@ -165,13 +178,12 @@ void Enemy::Update()
 	object3D_->Update();
 }
 
-
 /// -------------------------------------------------------------
 ///						　描画処理
 /// -------------------------------------------------------------
-void Enemy::Draw()
-{
-	if (!isHitFromAttack_) {
+void Enemy::Draw() {
+	//無敵時間中は描画しない
+	if (!isInvincible_ || static_cast<int>(invincibleTime_) % 2 == 0) {
 		// 基底クラスの描画
 		BaseCharacter::Draw();
 	}
@@ -182,9 +194,8 @@ void Enemy::Draw()
 	}
 
 	// ワイヤーフレームの処理
-	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f,1.0f });
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, {1.0f, 1.0f, 1.0f, 1.0f});
 }
-
 
 /// -------------------------------------------------------------
 ///						　移動処理
@@ -201,7 +212,6 @@ void Enemy::Move() {
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
 }
-
 
 /// -------------------------------------------------------------
 ///						　ImGuiの描画
@@ -229,6 +239,7 @@ void Enemy::ShowImGui(const char* name) {
 		break;
 	}
 
+	ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
@@ -245,12 +256,10 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-
 /// -------------------------------------------------------------
 ///						　衝突判定
 /// -------------------------------------------------------------
-void Enemy::OnCollision(Collider* other)
-{
+void Enemy::OnCollision(Collider* other) {
 	isHit_ = true;
 
 	// Idを取得
@@ -259,26 +268,28 @@ void Enemy::OnCollision(Collider* other)
 	// プレイヤーの攻撃だった場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kWeapon)) {
 
-		hp_ -= 1;
+		if (!isInvincible_) {
+			hp_ -= 1;
+			isInvincible_ = true; // 無敵状態にする
+			invincibleTime_ = 0;  // 無敵時間の初期化
+		}
+	
 	}
 }
-
 
 /// -------------------------------------------------------------
 ///						　中心座標を取得
 /// -------------------------------------------------------------
 Vector3 Enemy::GetCenterPosition() const {
-	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
+	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-
 /// -------------------------------------------------------------
 ///				　衝突時にパーティクルが発生する
 /// -------------------------------------------------------------
-void Enemy::HitParticle()
-{
+void Enemy::HitParticle() {
 	// エネミーの中心位置を取得
 	Vector3 enemyCenter = GetCenterPosition();
 
@@ -289,27 +300,23 @@ void Enemy::HitParticle()
 	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
 }
 
-
 /// -------------------------------------------------------------
 ///						ランダム方向処理
 /// -------------------------------------------------------------
-Vector3 Enemy::RondomDirection(float min, float max)
-{
+Vector3 Enemy::RondomDirection(float min, float max) {
 
 	// XZ平面上のランダムな方向を生成
 	std::uniform_real_distribution<float> dist(min, max);
-	Vector3 direction = { dist(randomEngine), 0.0f, dist(randomEngine) };
+	Vector3 direction = {dist(randomEngine), 0.0f, dist(randomEngine)};
 	direction = Vector3::Normalize(direction);
 
 	return direction;
 }
 
-
 /// -------------------------------------------------------------
 ///					攻撃パターンのコマンド処理
 /// -------------------------------------------------------------
-std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() 
-{
+std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 
 	// ランダムに攻撃コマンドを選択
 	std::uniform_int_distribution<int> dist(0, 3);
@@ -328,7 +335,7 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand()
 
 	case 2:
 		return std::make_unique<RecallCommand>();
-	
+
 	case 3:
 		return std::make_unique<SpreadCenterShotCommand>();
 
@@ -337,9 +344,8 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand()
 	}
 }
 
-void Enemy::SpawnEffect(DynamicCamera* dynamicCamera)
-{
-	worldTransform_.translate_ = { 0.0f, 20.0f, 0.0f }; // エネミーの位置を初期化
+void Enemy::SpawnEffect(DynamicCamera* dynamicCamera) {
+	worldTransform_.translate_ = {0.0f, 20.0f, 0.0f}; // エネミーの位置を初期化
 
 	// カメラの現在の位置を取得
 	Vector3 cameraPosition = camera_->GetTranslate();
@@ -348,7 +354,7 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera)
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = { worldTransform_.translate_.x ,0.56f,worldTransform_.translate_.z - 12.0f };
+	Vector3 cameraOffset = {worldTransform_.translate_.x, 0.56f, worldTransform_.translate_.z - 12.0f};
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -356,17 +362,15 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera)
 	// 移動させるカメラの回転
 	Vector3 moveCameraRotation = cameraRotation;
 
-	if (cameraMoveT_ >= cameraMoveMaxT_)
-	{
-		cameraMoveT_ = cameraMoveMaxT_; // カメラの移動時間を最大値に設定
+	if (cameraMoveT_ >= cameraMoveMaxT_) {
+		cameraMoveT_ = cameraMoveMaxT_;    // カメラの移動時間を最大値に設定
 		enemyCameraEffectT_ += kDeltaTime; // カメラの演出時間をカウントアップ
 		// 2秒数えてフラグをオフにする
 		if (enemyCameraEffectT_ >= 2.0f) {
 			enemyCameraEffectT_ = 0.0f;
 			isCameraBackEffect_ = true; // カメラの演出フラグをオンにする
 		}
-	} else
-	{
+	} else {
 		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
 		worldTransform_.rotate_.y = 1.5f;
 	}
@@ -376,35 +380,32 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera)
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f,0.0f,0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
-	//moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
-	// カメラの位置をプレイヤーの位置に設定
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 0.0f, 0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
+	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);
 
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 
 	/*------カメラが上に戻る演出------*/
 	if (isCameraBackEffect_) {
-		if (cameraBackEffectT_ >= cameraBackEffectMaxT_)
-		{
+		if (cameraBackEffectT_ >= cameraBackEffectMaxT_) {
 			cameraBackEffectT_ = cameraBackEffectMaxT_; // カメラの移動時間を最大値に設定
-			isCameraEffectEnd_ = true; // カメラの演出フラグをオンにする
-		} else
-		{
+			isCameraEffectEnd_ = true;                  // カメラの演出フラグをオンにする
+		} else {
 			cameraBackEffectT_ += 1.0f; // カメラの移動時間をカウントアップ
 		}
 		// 新しく移動させるカメラの座標
 		cameraPosition = moveCameraPosition;
 		cameraRotation = moveCameraRotation;
-		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(4.0f,150.0f,4.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
-		moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f,0.0f,0.0f), easeOut(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの回転を補間
-		camera_->SetTranslate(moveCameraPosition); // カメラの位置をリセット
-		camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(4.0f, 150.0f, 4.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
+		moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f, 0.0f, 0.0f), easeOut(cameraBackEffectT_ / cameraBackEffectMaxT_));     // カメラの回転を補間
+		camera_->SetTranslate(moveCameraPosition);                                                                                               // カメラの位置をリセット
+		camera_->SetRotate(moveCameraRotation);                                                                                                  // カメラの回転をリセット
 	}
 }
 
-void Enemy::CameraMove()
-{
+void Enemy::CameraMove() {
 	// カメラの現在の位置を取得
 	Vector3 cameraPosition = camera_->GetTranslate();
 
@@ -412,7 +413,7 @@ void Enemy::CameraMove()
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = { 0.0f,0.0f,0.0f };
+	Vector3 cameraOffset = {0.0f, 0.0f, 0.0f};
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -424,12 +425,10 @@ void Enemy::CameraMove()
 
 	float cameraMoveMaxT = 160.0f;
 
-	if (cameraMoveT >= cameraMoveMaxT)
-	{
+	if (cameraMoveT >= cameraMoveMaxT) {
 		cameraMoveT = cameraMoveMaxT; // カメラの移動時間を最大値に設定
 		isEnemyCameraEffect_ = false;
-	} else
-	{
+	} else {
 		cameraMoveT += 1.0f; // カメラの移動時間をカウントアップ
 	}
 
@@ -442,43 +441,36 @@ void Enemy::CameraMove()
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
 
-
 /// -------------------------------------------------------------
 ///						通常状態の初期化処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorNormalInitialize()
-{
+void Enemy::BehaviorNormalInitialize() {
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
 }
 
-
 /// -------------------------------------------------------------
 ///						　通常状態の更新処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorNormalUpdate()
-{
+void Enemy::BehaviorNormalUpdate() {
 
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
 
 		// 探索状態にする
 		requestBehavior_ = Behavior::Sarch;
-	}
-	else {
+	} else {
 
 		// タイマーを減らす
 		stateTimer_ -= kDeltaTime;
 	}
 }
 
-
 /// -------------------------------------------------------------
 ///						詮索状態の初期化処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorSarchInitialize()
-{
+void Enemy::BehaviorSarchInitialize() {
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
@@ -487,12 +479,10 @@ void Enemy::BehaviorSarchInitialize()
 	direction_ = RondomDirection(-1.0f, 1.0f);
 }
 
-
 /// -------------------------------------------------------------
 ///					　　詮索状態の更新処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorSarchUpdate()
-{
+void Enemy::BehaviorSarchUpdate() {
 
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
@@ -502,8 +492,7 @@ void Enemy::BehaviorSarchUpdate()
 
 		// タイマーをリセット
 		stateTimer_ = 2.0f;
-	}
-	else {
+	} else {
 
 		// タイマーを減らす
 		stateTimer_ -= kDeltaTime;
@@ -522,12 +511,10 @@ void Enemy::BehaviorSarchUpdate()
 	}
 }
 
-
 /// -------------------------------------------------------------
 ///						攻撃状態の初期化処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorAttackInitialize()
-{
+void Enemy::BehaviorAttackInitialize() {
 
 	// 攻撃方法を選択
 	attackCommand_ = RandomAttackCommand();
@@ -536,15 +523,13 @@ void Enemy::BehaviorAttackInitialize()
 	attackCommand_->Initialize();
 
 	// 移動をストップ
-	velocity_ = { 0.0f, 0.0f, 0.0f };
+	velocity_ = {0.0f, 0.0f, 0.0f};
 }
-
 
 /// -------------------------------------------------------------
 ///						攻撃状態の更新処理
 /// -------------------------------------------------------------
-void Enemy::BehaviorAttackUpdate()
-{
+void Enemy::BehaviorAttackUpdate() {
 
 	// プレイヤーの方向を向く
 	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);

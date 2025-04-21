@@ -1,12 +1,11 @@
 #pragma once
 #include "BaseCharacter.h"
-#include <memory>
-#include <optional>
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
 #include <DynamicCamera.h>
-
+#include <memory>
+#include <optional>
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
@@ -14,24 +13,20 @@ class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
 
-
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
-class Enemy : public BaseCharacter
-{
+class Enemy : public BaseCharacter {
 private: /// ---------- 列挙型 ---------- ///
-
 	// 振る舞い
 	enum class Behavior {
 
 		Normal, // 通常
-		Sarch, 	// 探索
+		Sarch,  // 探索
 		Attack, // 攻撃
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
-
 	/// コンストラクタ
 	Enemy();
 
@@ -78,7 +73,6 @@ public: /// ---------- メンバ関数 ---------- ///
 	void CameraMove();
 
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
-
 	/// <summary>
 	/// 通常時初期化
 	/// </summary>
@@ -110,7 +104,6 @@ public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	void BehaviorAttackUpdate();
 
 public: /// ---------- ゲッター ---------- ///
-
 	bool GetIsHit() const { return isHit_; }
 
 	/*------弾の取得------*/
@@ -121,11 +114,10 @@ public: /// ---------- ゲッター ---------- ///
 
 	// エネミーのカメラ演出用のゲッター
 	const bool& GetIsEnemyCameraEffect() const { return isEnemyCameraEffect_; }
-	
+
 	const bool& GetIsCameraEffectEnd() const { return isCameraEffectEnd_; }
 
 public: /// ---------- セッター ---------- ///
-
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/*------ヒットの取得、セット------*/
@@ -149,8 +141,8 @@ public: /// ---------- セッター ---------- ///
 	///	エネミーのカメラ演出用のセッター
 	/// </summary>
 	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
-private: /// ---------- メンバ変数 ---------- ///
 
+private: /// ---------- メンバ変数 ---------- ///
 	// 速度
 	Vector3 velocity_;
 
@@ -194,6 +186,11 @@ private: /// ---------- メンバ変数 ---------- ///
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
 
+	/*------無敵時間の設定------*/
+	bool isInvincible_ = false;              // 無敵状態かどうか
+	const float invincibleDuration_ = 60.0f; // 無敵時間（秒）
+	float invincibleTime_ = 0;               // 無敵時間の経過時間
+
 	/*------プレイヤーの攻撃によるヒット------*/
 	bool isHitFromAttack_ = false;
 
@@ -232,4 +229,3 @@ private: /// ---------- メンバ変数 ---------- ///
 	float cameraBackEffectT_ = 0.0f;
 	float cameraBackEffectMaxT_ = 160.0f;
 };
-
