@@ -7,6 +7,8 @@
 #include <Wireframe.h>
 #include "CollisionTypeIdDef.h"
 #include "AttackCommand.h"
+#include <Easing.h>
+using namespace Easing;
 
 
 /// -------------------------------------------------------------
@@ -65,6 +67,7 @@ void Enemy::Update()
 		if (!isHitFromAttack_) {
 			// 状態の変更がリクエストされている場合
 			if (requestBehavior_) {
+				
 
 				// 状態を変更する
 				behavior_ = requestBehavior_.value();
@@ -126,9 +129,12 @@ void Enemy::Update()
 				});
 		}
 	}
-
-	// 移動
-	Move();
+	// カメラの演出が終わるまで動かない
+	if (isCameraEffectEnd_) {
+		// 移動
+		Move();
+	}
+	
 
 	// 弾の更新
 	for (auto& bullet : bullets_) {
@@ -233,7 +239,9 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::Text("HitTime : %f", hitTime_);
 	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
 	ImGui::Text("HP : %d", hp_);
-
+	ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
+	ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
+	ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
 	ImGui::End();
 }
 
@@ -327,6 +335,111 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand()
 	default:
 		return std::make_unique<ShotCommand>();
 	}
+}
+
+void Enemy::SpawnEffect(DynamicCamera* dynamicCamera)
+{
+	worldTransform_.translate_ = { 0.0f, 20.0f, 0.0f }; // エネミーの位置を初期化
+
+	// カメラの現在の位置を取得
+	Vector3 cameraPosition = camera_->GetTranslate();
+
+	// 移動させるカメラの座標
+	Vector3 moveCameraPosition = cameraPosition;
+
+	// カメラの移動後の位置を計算
+	Vector3 cameraOffset = { worldTransform_.translate_.x ,0.56f,worldTransform_.translate_.z - 12.0f };
+
+	// カメラの回転を取得
+	Vector3 cameraRotation = camera_->GetRotate();
+
+	// 移動させるカメラの回転
+	Vector3 moveCameraRotation = cameraRotation;
+
+	if (cameraMoveT_ >= cameraMoveMaxT_)
+	{
+		cameraMoveT_ = cameraMoveMaxT_; // カメラの移動時間を最大値に設定
+		enemyCameraEffectT_ += kDeltaTime; // カメラの演出時間をカウントアップ
+		// 2秒数えてフラグをオフにする
+		if (enemyCameraEffectT_ >= 2.0f) {
+			enemyCameraEffectT_ = 0.0f;
+			isCameraBackEffect_ = true; // カメラの演出フラグをオンにする
+		}
+	} else
+	{
+		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
+		worldTransform_.rotate_.y = 1.5f;
+	}
+
+	moveCameraPosition = Vector3::Lerp(cameraPosition, cameraOffset, easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの位置を補間
+
+	float t = cameraMoveT_ / cameraMoveMaxT_;
+	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
+
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f,0.0f,0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	//moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
+	// カメラの位置をプレイヤーの位置に設定
+	camera_->SetTranslate(cameraOffset);
+
+	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+
+	/*------カメラが上に戻る演出------*/
+	if (isCameraBackEffect_) {
+		if (cameraBackEffectT_ >= cameraBackEffectMaxT_)
+		{
+			cameraBackEffectT_ = cameraBackEffectMaxT_; // カメラの移動時間を最大値に設定
+			isCameraEffectEnd_ = true; // カメラの演出フラグをオンにする
+		} else
+		{
+			cameraBackEffectT_ += 1.0f; // カメラの移動時間をカウントアップ
+		}
+		// 新しく移動させるカメラの座標
+		cameraPosition = moveCameraPosition;
+		cameraRotation = moveCameraRotation;
+		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(4.0f,150.0f,4.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
+		moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f,0.0f,0.0f), easeOut(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの回転を補間
+		camera_->SetTranslate(moveCameraPosition); // カメラの位置をリセット
+		camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+	}
+}
+
+void Enemy::CameraMove()
+{
+	// カメラの現在の位置を取得
+	Vector3 cameraPosition = camera_->GetTranslate();
+
+	// 移動させるカメラの座標
+	Vector3 moveCameraPosition = cameraPosition;
+
+	// カメラの移動後の位置を計算
+	Vector3 cameraOffset = { 0.0f,0.0f,0.0f };
+
+	// カメラの回転を取得
+	Vector3 cameraRotation = camera_->GetRotate();
+
+	// 移動させるカメラの回転
+	Vector3 moveCameraRotation = cameraRotation;
+
+	float cameraMoveT = 0.0f;
+
+	float cameraMoveMaxT = 160.0f;
+
+	if (cameraMoveT >= cameraMoveMaxT)
+	{
+		cameraMoveT = cameraMoveMaxT; // カメラの移動時間を最大値に設定
+		isEnemyCameraEffect_ = false;
+	} else
+	{
+		cameraMoveT += 1.0f; // カメラの移動時間をカウントアップ
+	}
+
+	moveCameraPosition = Vector3::Lerp(cameraPosition, cameraOffset, easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの位置を補間
+
+	moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f, 0.0f, 0.0f), easeInSine(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
+
+	camera_->SetTranslate(moveCameraPosition); // カメラの位置をリセット
+
+	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
 
 

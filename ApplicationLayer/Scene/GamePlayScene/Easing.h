@@ -18,5 +18,10 @@ namespace Easing
 
 	// easeOutBounce 関数の宣言を追加
 	float easeOutBounce(float x);
+
+	// ベジエ曲線の追加
+	float bezierCurve(float t, float p0, float p1, float p2, float p3);
+
+	float easeInSine(float t);
 };
 

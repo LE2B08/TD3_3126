@@ -161,8 +161,14 @@ void GamePlayScene::Update()
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	}
-	else {
+		// ゲーム開始時のカメラ演出
+		if (enemy_->GetIsEnemyCameraEffect()) {
+			enemy_->SetRotation(Vector3(0.0f,1.5f,0.0f));
+			if (!enemy_->GetIsCameraEffectEnd()) {
+				enemy_->SpawnEffect(dynamicCamera_.get());
+			}
+		}
+	} else {
 		player_->DeathCameraMove();
 	}
 

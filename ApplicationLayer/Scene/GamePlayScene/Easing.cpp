@@ -90,3 +90,24 @@ float Easing::easeOutBounce(float x)
 		return n1 * x * x + 0.984375f;
 	}
 }
+
+float Easing::bezierCurve(float t, float p0, float p1, float p2, float p3)
+{
+	float u = 1.0f - t;
+	float tt = t * t;
+	float uu = u * u;
+	float uuu = uu * u;
+	float ttt = tt * t;
+
+	float p = uuu * p0; // (1-t)^3 * p0
+	p += 3 * uu * t * p1; // 3 * (1-t)^2 * t * p1
+	p += 3 * u * tt * p2; // 3 * (1-t) * t^2 * p2
+	p += ttt * p3; // t^3 * p3
+
+	return p;
+}
+
+float Easing::easeInSine(float t)
+{
+	return 1.0f - cosf((t * (float)M_PI) / 2.0f);
+}
