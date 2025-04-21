@@ -186,9 +186,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
 
-	/*------無敵フラグ------*/
+	/*------無敵時間の設定------*/
 	bool isInvincible_ = false;              // 無敵状態かどうか
-
+	const float invincibleDuration_ = 60.0f; // 無敵時間（秒）
+	float invincibleTime_ = 0;               // 無敵時間の経過時間
 
 	/*------プレイヤーの攻撃によるヒット------*/
 	bool isHitFromAttack_ = false;

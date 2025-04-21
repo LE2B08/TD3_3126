@@ -150,6 +150,21 @@ void Enemy::Update() {
 		}
 	}
 
+	// 無敵時間のカウントダウン
+	if (isInvincible_) {
+		
+
+		invincibleTime_ += 1; // 1フレームごとにカウントアップ
+
+		if (invincibleTime_ > invincibleDuration_) {
+			
+			invincibleTime_ = 0;      // 無敵時間の初期化
+			
+		}
+	}
+
+
+
 	// Object3Dの更新
 	object3D_->SetRotate(worldTransform_.rotate_);
 	object3D_->SetTranslate(worldTransform_.translate_);
@@ -160,7 +175,7 @@ void Enemy::Update() {
 ///						　描画処理
 /// -------------------------------------------------------------
 void Enemy::Draw() {
-	// 無敵時間中は描画しない
+	//無敵時間中は描画しない
 	if (!isInvincible_ || static_cast<int>(invincibleTime_) % 2 == 0) {
 		// 基底クラスの描画
 		BaseCharacter::Draw();
@@ -249,9 +264,10 @@ void Enemy::OnCollision(Collider* other) {
 		if (!isInvincible_) {
 			hp_ -= 1;
 			isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
-			isInvincible_ = true;    // 無敵状態にする
-			invincibleTime_ = 0;     // 無敵時間の初期化
+			isInvincible_ = true; // 無敵状態にする
+			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
+	
 	}
 }
 
