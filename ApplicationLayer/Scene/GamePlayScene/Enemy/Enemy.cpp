@@ -140,35 +140,13 @@ void Enemy::Update() {
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
 			if (hitTime_ >= hitMaxTime_) {
+				isInvincible_ = false; // 無敵状態を解除
 				isHit_ = false;
 				isHitFromAttack_ = false;
 				hitTime_ = 0;
 			}
 		} else {
 			isHit_ = false;
-		}
-	}
-
-	// 無敵時間のカウントダウン
-	if (isInvincible_) {
-		isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
-
-		invincibleTime_ += 1; // 1フレームごとにカウントアップ
-
-		if (invincibleTime_ > invincibleDuration_) {
-			isInvincible_ = false;    // 無敵状態を解除
-			invincibleTime_ = 0;      // 無敵時間の初期化
-			isHitFromAttack_ = false; // 敵に当たったフラグを解除
-		}
-	}
-
-	if (isHitFromAttack_) {
-		// ヒット時のパーティクルを生成
-		HitParticle();
-		hitTime_++;
-		// タイマーが最大値に達したらヒットフラグをオフにする
-		if (hitTime_ >= hitMaxTime_) {
-			hitTime_ = 0;
 		}
 	}
 
@@ -182,7 +160,7 @@ void Enemy::Update() {
 ///						　描画処理
 /// -------------------------------------------------------------
 void Enemy::Draw() {
-	//無敵時間中は描画しない
+	// 無敵時間中は描画しない
 	if (!isInvincible_ || static_cast<int>(invincibleTime_) % 2 == 0) {
 		// 基底クラスの描画
 		BaseCharacter::Draw();
@@ -270,10 +248,10 @@ void Enemy::OnCollision(Collider* other) {
 
 		if (!isInvincible_) {
 			hp_ -= 1;
-			isInvincible_ = true; // 無敵状態にする
-			invincibleTime_ = 0;  // 無敵時間の初期化
+			isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
+			isInvincible_ = true;    // 無敵状態にする
+			invincibleTime_ = 0;     // 無敵時間の初期化
 		}
-	
 	}
 }
 
