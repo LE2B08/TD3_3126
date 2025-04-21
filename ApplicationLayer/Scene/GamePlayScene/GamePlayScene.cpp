@@ -156,7 +156,7 @@ void GamePlayScene::Update()
 	GameStart();
 
 	// 計算したあとのカメラの値をセット
-	if (player_->GetHp() > 0){
+	if (player_->GetHp() > 0) {
 		camera_->SetTranslate(cameraPosition_);
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
@@ -265,40 +265,25 @@ void GamePlayScene::Update()
 /// -------------------------------------------------------------
 void GamePlayScene::Draw()
 {
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+#pragma region スカイボックスの描画
+
+	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 	skyBox_->Draw();
 
-
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+#pragma endregion
 
 
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
-	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
-	// プレイヤーUI
-	playerUI_->Draw();
+#pragma region スプライトの描画（後面描画・背景用）
 
-	// コントローラー用UIの描画
-	controllerUI_->Draw();
+	// スプライトの描画設定（後面）
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
-	// フェードマネージャーの描画（ここから下は書かない）
-	fadeManager_->Draw();
-
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
 
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+#pragma region オブジェクト3Dの描画
+
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
@@ -312,10 +297,26 @@ void GamePlayScene::Draw()
 
 	field_->Draw();
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
 
+
+#pragma region スプライトの描画（前面描画・UI用）
+
+	// スプライトの描画設定（前面）
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+	// プレイヤーUI
+	playerUI_->Draw();
+
+	// コントローラー用UIの描画
+	controllerUI_->Draw();
+
+	// フェードマネージャーの描画（ここから下は書かない）
+	fadeManager_->Draw();
+
+#pragma endregion
+
+	// コリジョンマネージャーの描画
 	collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
@@ -367,6 +368,21 @@ void GamePlayScene::CheckAllCollisions()
 		collisionManager_->AddCollider(bullet.get());
 	}
 
+	// プレイヤーが死亡したらコライダーを削除または敵が死亡したらコライダーを削除
+	if (player_->GetHp() <= 0 || enemy_->GetHp() <= 0)
+	{
+		collisionManager_->RemoveCollider(player_.get());
+		collisionManager_->RemoveCollider(weapon_.get());
+		collisionManager_->RemoveCollider(hook_.get());
+		collisionManager_->RemoveCollider(enemy_.get());
+
+		// 複数についてコライダーを削除
+		for (const auto& bullet : *enemyBullets_)
+		{
+			collisionManager_->RemoveCollider(bullet.get());
+		}
+	}
+
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();
 }
@@ -398,7 +414,8 @@ void GamePlayScene::GameStart()
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-		} else
+		}
+		else
 		{
 			startTimer_ += 0.5f;
 		}
@@ -415,7 +432,8 @@ void GamePlayScene::GameStart()
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		} else
+		}
+		else
 		{
 			playerStartTimer_ += 0.5f;
 			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));

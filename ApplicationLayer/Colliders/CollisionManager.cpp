@@ -99,6 +99,14 @@ void CollisionManager::AddCollider(Collider* other)
 	colliders_.push_back(other);
 }
 
+void CollisionManager::RemoveCollider(Collider* other)
+{
+	colliders_.remove(other);
+	//other->SetTypeID(0u); // コライダーの識別IDをリセット
+	//other->SetRadius(0.0f); // コライダーの半径をリセット
+	//other->SetColor({ 1.0f,1.0f,1.0f,1.0f }); // コライダーの色をリセット
+}
+
 
 /// -------------------------------------------------------------
 ///				コライダー２つの衝突判定と応答処理

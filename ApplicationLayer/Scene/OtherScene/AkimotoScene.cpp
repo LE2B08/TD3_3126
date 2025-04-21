@@ -108,7 +108,7 @@ void AkimotoScene::Draw() {
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
 
 
@@ -126,6 +126,12 @@ void AkimotoScene::Draw() {
 
 	// フィールドの描画
 	field_->Draw();
+
+
+	// スプライトの共通描画設定
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+
 
 	// ラインの描画
 	Wireframe::GetInstance()->DrawLine(player_->GetPosition(), enemy_->GetPosition(), { 1.0f, 0.0f, 0.0f, 1.0f });

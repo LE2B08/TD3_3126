@@ -55,32 +55,39 @@ void GameClearScene::Update()
 /// -------------------------------------------------------------
 void GameClearScene::Draw()
 {
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+#pragma region スカイボックスの描画
+
+	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 
+#pragma endregion
 
+#pragma region スプライトの描画（後面描画・背景用）
 
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
-	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
+	// スプライトの描画設定（後面）
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
 
 	// フェードマネージャーの描画
 	fadeManager_->Draw();
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
+	
+
+#pragma region オブジェクト3Dの描画
+
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
+#pragma endregion
 
 
+#pragma region スプライトの描画（前面描画・UI用）
 
+	// スプライトの描画設定（前面）
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+#pragma endregion
 }
 
 

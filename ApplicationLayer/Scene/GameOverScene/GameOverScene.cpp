@@ -21,8 +21,6 @@ void GameOverScene::Initialize()
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
-	input_->StopVibration();
-
 	// フェードマネージャーの初期化
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -117,33 +115,45 @@ void GameOverScene::Update()
 /// -------------------------------------------------------------
 void GameOverScene::Draw()
 {
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+#pragma region スカイボックスの描画
+
+	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 
+#pragma endregion
 
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
-	// スプライトの共通描画設定
-	SpriteManager::GetInstance()->SetRenderSetting();
+
+#pragma region スプライトの描画（後面描画・背景用）
+
+	// スプライトの描画設定（後面）
+	SpriteManager::GetInstance()->SetRenderSetting_Background();
 	// スプライトの更新処理
 	for (auto& sprite : sprites_)
 	{
 		sprite->Draw();
 	}
 
-	// フェードの描画（最後尾に置く）
-	fadeManager_->Draw();
+#pragma endregion
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+
+#pragma region オブジェクト3Dの描画
+
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
 
+#pragma endregion
+
+
+#pragma region スプライトの描画（前面描画・UI用）
+
+	// スプライトの描画設定（前面）
+	SpriteManager::GetInstance()->SetRenderSetting_UI();
+
+	// フェードの描画（最後尾に置く）
+	fadeManager_->Draw();
+
+#pragma endregion
 }
 
 
