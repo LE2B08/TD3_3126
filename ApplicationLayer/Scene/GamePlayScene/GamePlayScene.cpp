@@ -163,12 +163,13 @@ void GamePlayScene::Update()
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
 		// ゲーム開始時のカメラ演出
 		if (enemy_->GetIsEnemyCameraEffect()) {
-			enemy_->SetRotation(Vector3(0.0f,1.5f,0.0f));
+			enemy_->SetRotation(Vector3(0.0f, 1.5f, 0.0f));
 			if (!enemy_->GetIsCameraEffectEnd()) {
 				enemy_->SpawnEffect(dynamicCamera_.get());
 			}
 		}
-	} else {
+	}
+	else {
 		player_->DeathCameraMove();
 	}
 
@@ -209,20 +210,6 @@ void GamePlayScene::Update()
 		}
 	}
 
-	// エネミーが死亡したとき（仮置き）
-	//if (enemy_->IsDead() && !isGameOver_)
-	//{
-	//	isGameOver_ = true;
-	//	//sceneManager_->ChangeScene("GameOverScene");
-	//	if (sceneManager_)
-	//	{
-	//		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-	//			// フェード完了後の処理
-	//			sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
-	//			});
-	//	}
-	//}
-
 	// プレイヤーUIの更新
 	playerUI_->Update();
 
@@ -234,10 +221,18 @@ void GamePlayScene::Update()
 	enemy_->Update();
 
 	// 敵の体力が無くなったら
-	if (enemy_->GetHp() <= 0) {
+	if (enemy_->GetHp() <= 0 && !isGameClear_) {
+
+		isGameClear_ = true;
 
 		// ゲームクリアシーンに移動
-		sceneManager_->ChangeScene("GameClearScene");
+		if (sceneManager_)
+		{
+			fadeManager_->StartFadeToWhite(0.02f, [this]() {
+				// フェード完了後の処理
+				sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
+				});
+		}
 	}
 
 	// 攻撃判定
