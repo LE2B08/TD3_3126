@@ -22,6 +22,13 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
+enum class GameSceneState {
+	Start,
+	Play,
+	GameClear,
+	GameOver
+};
+
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
@@ -58,8 +65,29 @@ private: /// ---------- メンバ関数 ---------- ///
 	/*------カメラのシェイク------*/
 	void CameraShake();
 
-	/*------ゲーム開始演出------*/
-	void GameStart();
+	// ゲームスタート初期化
+	void GameStartInitialize();
+
+	// ゲームスタート更新
+	void GameStartUpdate();
+
+	// ゲームプレイ初期化
+	void GamePlayInitialize();
+
+	// ゲームプレイ更新
+	void GamePlayUpdate();
+
+	// ゲームクリア初期化
+	void GameClearInitialize();
+
+	// ゲームクリア更新
+	void GameClearUpdate();
+
+	// ゲームオーバー初期化
+	void GameOverInitialize();
+
+	// ゲームオーバー更新
+	void GameOverUpdate();
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -117,43 +145,19 @@ private: /// ---------- メンバ変数 ---------- ///
 	float shakeElapsedTime_ = 0.0f;
 
 	/*------ゲーム開始演出------*/
-	// スタートしたか
-	bool isGameStart_ = false;
-
-	// ゲームオーバーのフラグ
-	bool isGameOver_ = false;
 
 	// ゲームクリアのフラグ
 	bool isGameClear_ = false;
 
 	// イージングがスタートしたか
-	bool isStartEasing_ = false;
-
-	// プレイヤーの位置がセットされたか
-	bool isPlayerPositionSet_ = false;
-
-	// タイマー用のメンバ変数
-	float startTimer_ = 0;
-	const float maxStartT_ = 40;
-
-	// プレイヤー用のタイマー
-	float playerStartTimer_ = 0;
-	const float maxPlayerStartT_ = 40;
-
-	// デフォルトのフィールド
-	const Vector3 defaultFieldScale_ = { 10.0f,1.0f,10.0f };
-	const Vector3 defaultFieldPosition_ = { 0.0f,0.0f,0.0f };
-
-	// 初期のフィールド
-	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
-	const Vector3 startFieldPosition_ = { 0.0f,0.0f,0.0f };
-
-	bool isGameStartEffectEnabled_ = true;
-
-	// 拡大するフィールド
-	Vector3 fieldScale_ = startFieldScale_;
-	Vector3 fieldPosition_ = startFieldPosition_;
+	bool isStartAnimation_ = false;
 
 	// 計算用のダイナミックカメラ
 	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;
+
+	// ゲームの状態
+	GameSceneState gameState_ = GameSceneState::Start;
+
+	// 次の状態をリクエスト
+	std::optional<GameSceneState> nextGameState_ = std::nullopt;
 };
