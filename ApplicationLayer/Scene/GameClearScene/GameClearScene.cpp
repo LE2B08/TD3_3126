@@ -20,11 +20,19 @@ void GameClearScene::Initialize()
 	input = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
+	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	// カメラの初期化
+	camera_->SetRotate({ 1.57f,0.0f,0.0f });
+	camera_->SetTranslate({ 0.0f,50.0f, 0.0f });
+
 	// フェードマネージャーの初期化
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
 	// シーン開始時に白からフェードアウトする（白 → 透明）
 	fadeManager_->StartFadeFromWhite(0.02f);
+
+	gameClearLogo_ = std::make_unique<GameClearLogo>();
+	gameClearLogo_->Initialize();
 }
 
 
@@ -45,8 +53,14 @@ void GameClearScene::Update()
 		}
 	}
 
+	// カメラの更新処理
+	camera_->Update();
+
 	// フェードマネージャーの更新処理
 	fadeManager_->Update();
+
+	// ゲームクリアロゴの更新
+	gameClearLogo_->Update();
 }
 
 
@@ -78,6 +92,9 @@ void GameClearScene::Draw()
 
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
+
+	// ゲームクリアロゴの描画
+	gameClearLogo_->Draw();
 
 #pragma endregion
 

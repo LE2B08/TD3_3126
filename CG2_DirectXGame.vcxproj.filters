@@ -86,7 +86,9 @@
     <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
     <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
-    <ClCompile Include="TitleObject.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleObject.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -178,7 +180,9 @@
     <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
     <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
-    <ClInclude Include="TitleObject.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleObject.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

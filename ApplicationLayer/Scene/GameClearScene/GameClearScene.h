@@ -6,10 +6,12 @@
 #include "ParticleManager.h"
 #include <BaseScene.h>
 
+#include "GameClearLogo.h"
+
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class ImGuiManager;
+class Camera;
 
 
 /// -------------------------------------------------------------
@@ -38,8 +40,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
 	Input* input = nullptr;
+	Camera* camera_ = nullptr;
 
 	std::unique_ptr<WavLoader> wavLoader_;
+	std::unique_ptr<GameClearLogo> gameClearLogo_; // ゲームクリアロゴ
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 

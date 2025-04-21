@@ -277,7 +277,7 @@ ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const st
 	}
 	else
 	{
-		throw std::runtime_error("Unsupported file format: " + extension);
+		throw std::runtime_error("Unsupported file format: " + extension); // 対応していない拡張子
 	}
 
 	// ファイル読み込み結果をチェック
