@@ -21,6 +21,11 @@ void GameOverScene::Initialize()
 	input_ = Input::GetInstance();
 	wavLoader_ = std::make_unique<WavLoader>();
 
+	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	// カメラの初期化
+	camera_->SetRotate({ 1.57f,0.0f,0.0f });
+	camera_->SetTranslate({ 0.0f,50.0f, 0.0f });
+
 	// フェードマネージャーの初期化
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -56,6 +61,10 @@ void GameOverScene::Initialize()
 
 		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
 	}
+
+	// タイトルオブジェクトの初期化
+	gameOverLogo_ = std::make_unique<GameOverLogo>();
+	gameOverLogo_->Initialize();
 }
 
 
@@ -105,8 +114,14 @@ void GameOverScene::Update()
 		sprite->Update();
 	}
 
+	// カメラの更新処理
+	camera_->Update();
+
 	// フェードの更新
 	fadeManager_->Update();
+
+	// ゲームオーバーロゴの更新
+	gameOverLogo_->Update();
 }
 
 
@@ -130,7 +145,7 @@ void GameOverScene::Draw()
 	// スプライトの更新処理
 	for (auto& sprite : sprites_)
 	{
-		sprite->Draw();
+	//	sprite->Draw();
 	}
 
 #pragma endregion
@@ -141,6 +156,8 @@ void GameOverScene::Draw()
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
+	// ゲームオーバーロゴの描画
+	gameOverLogo_->Draw();
 
 #pragma endregion
 
