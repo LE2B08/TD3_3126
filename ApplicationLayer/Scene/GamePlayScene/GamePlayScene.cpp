@@ -261,15 +261,9 @@ void GamePlayScene::Draw()
 
 	case GameSceneState::Start:
 
-		// プレイヤー
-		player_->Draw();
-
 		break;
 
 	case GameSceneState::Play:
-
-		// プレイヤー
-		player_->Draw();
 
 		// フックの描画
 		hook_->Draw();
@@ -293,6 +287,9 @@ void GamePlayScene::Draw()
 
 	// フィールドの描画
 	field_->Draw();
+
+	// プレイヤー
+	player_->Draw();
 
 #pragma endregion
 
@@ -460,8 +457,8 @@ void GamePlayScene::GamePlayInitialize() {
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayUpdate() {
 
-	// プレイヤーが死んだら
-	if (player_->IsDead()) {
+	// プレイヤーの体力がなくなったら
+	if (player_->GetHp() <= 0) {
 		
 		// 状態をゲームオーバーに変更
 		nextGameState_ = GameSceneState::GameOver;
@@ -473,6 +470,9 @@ void GamePlayScene::GamePlayUpdate() {
 		// 状態をゲームクリアに変更
 		nextGameState_ = GameSceneState::GameClear;
 	}
+
+	// フックの更新処理
+	hook_->Update();
 
 	// プレイヤーの位置をフックにセット
 	player_->SetPosition(hook_->GetPlayerPosition());
@@ -489,9 +489,6 @@ void GamePlayScene::GamePlayUpdate() {
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
 	}
-
-	// フックの更新処理
-	hook_->Update();
 
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
