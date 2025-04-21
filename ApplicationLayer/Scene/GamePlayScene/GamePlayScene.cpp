@@ -212,20 +212,6 @@ void GamePlayScene::Update()
 	// プレイヤー更新
 	player_->Update();
 
-	// エネミーが死亡したとき（仮置き）
-	//if (enemy_->IsDead() && !isGameOver_)
-	//{
-	//	isGameOver_ = true;
-	//	//sceneManager_->ChangeScene("GameOverScene");
-	//	if (sceneManager_)
-	//	{
-	//		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-	//			// フェード完了後の処理
-	//			sceneManager_->ChangeScene("GameClearScene"); // シーン名を指定して変更
-	//			});
-	//	}
-	//}
-
 	// プレイヤーUIの更新
 	playerUI_->Update();
 
