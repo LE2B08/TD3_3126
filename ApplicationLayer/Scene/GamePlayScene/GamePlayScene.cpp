@@ -466,7 +466,7 @@ void GamePlayScene::GameStartUpdate() {
 			if (!enemy_->GetIsCameraEffectEnd()) {
 
 				// アニメーションを行う
-				enemy_->SpawnEffect(dynamicCamera_.get());
+				enemy_->SpawnEffect();
 			}
 		}
 	}
@@ -538,13 +538,15 @@ void GamePlayScene::GamePlayUpdate() {
 ///				　		ゲームクリア初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearInitialize() {
+	
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームクリア更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearUpdate() {
-
+	// 敵の死亡アニメーションが終わったときenemyのisDeadがtrueになる
+	enemy_->FaildCameraMove();
 	// エンターキーかAボタンが押されたら
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
 
@@ -559,13 +561,14 @@ void GamePlayScene::GameClearUpdate() {
 ///				　		ゲームオーバー初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverInitialize() {
+	
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームオーバー更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverUpdate() {
-
+	// 内部でアニメーションが終わったときplayerのisDeadがtrueになる
 	player_->DeathCameraMove();
 
 	// エンターキーかAボタンが押されたら

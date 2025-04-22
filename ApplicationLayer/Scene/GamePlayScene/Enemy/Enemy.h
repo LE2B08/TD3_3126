@@ -67,10 +67,16 @@ public: /// ---------- メンバ関数 ---------- ///
 	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
 	// 敵の出現演出
-	void SpawnEffect(DynamicCamera* dynamicCamera);
+	void SpawnEffect();
 
 	// カメラの動き
 	void CameraMove();
+
+	// エネミーが死ぬアニメーション
+	void FaildAnimation();
+
+	// エネミーが死んだときのカメラワーク
+	void FaildCameraMove();
 
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
@@ -116,6 +122,8 @@ public: /// ---------- ゲッター ---------- ///
 	const bool& GetIsEnemyCameraEffect() const { return isEnemyCameraEffect_; }
 
 	const bool& GetIsCameraEffectEnd() const { return isCameraEffectEnd_; }
+
+	const bool& IsDead() const { return isDead_; }
 
 public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }
@@ -228,4 +236,17 @@ private: /// ---------- メンバ変数 ---------- ///
 	// カメラの戻る演出のタイマー
 	float cameraBackEffectT_ = 0.0f;
 	float cameraBackEffectMaxT_ = 160.0f;
+
+	// 回転の始まり
+	float rotationStartT_ = 0.0f;
+
+	// 回転の最大値
+	float rotationMaxT_ = 160.0f;
+
+	/*------カメラの移動タイマー------*/
+	float DeathCameraMoveT_ = 0.0f; // カメラの移動時間
+	float DeathCameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
+
+	// 死亡フラグ
+	bool isDead_ = false;
 };
