@@ -2,6 +2,9 @@
 #include "Object3D.h"
 #include "Collider.h"
 #include "ContactRecord.h"
+#include "ParticleEmitter.h"
+#include "ParticleManager.h"
+#include "Sprite.h" 
 
 
 /// ---------- 前方宣言 ---------- ///
@@ -27,6 +30,8 @@ public: /// ---------- メンバ関数 ---------- ///
 	
 	// 描画処理
 	void Draw();
+
+	void DrawEffect();
 	
 	// ImGui描画処理
 	void DrawImGui();
@@ -62,7 +67,14 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
-	
+
+	//Sprite
+	std::vector<std::unique_ptr<Sprite>> effectSprites_;
+	// スプライトの数
+	const int spriteCount_ = 3;
+	// effectSprites_のワールドトランスフォーム
+	std::vector<WorldTransform> effectSpritesWorldTransform_;
+
 	// プレイヤー
 	Player* player_ = nullptr;
 
