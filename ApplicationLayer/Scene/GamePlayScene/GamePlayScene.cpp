@@ -407,11 +407,16 @@ void GamePlayScene::DrawImGui()
 	case GameSceneState::GameOver:
 		ImGui::Text("Game Over");
 		break;
+	case GameSceneState::Pause:
+		ImGui::Text("Game Pause");
+		break;
 	default:
 		break;
 	}
 	
 	ImGui::End();
+
+	pauseMenu_->ShowImGui();
 }
 
 
@@ -659,9 +664,36 @@ void GamePlayScene::PauseUpdate() {
 	// ポーズメニューの更新
 	pauseMenu_->Update();
 
-	// エスケープキーを押したら
+	// エスケープキーかSTARTボタンを押したら
 	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerButton(12)) {
 		// ゲームプレイ状態に変更
 		nextGameState_ = GameSceneState::Play;
+	}
+
+	// メニューの状態が「ゲームに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToGame) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// ゲームプレイ状態に変更
+			nextGameState_ = GameSceneState::Play;
+		}
+	}
+
+	// メニューの状態が「遊び方」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::HowToPlay) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// 遊び方の説明を表示する処理を追加
+			// 例: ShowHowToPlay();
+		}
+	}
+
+	// メニューの状態が「タイトルに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToTitle) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			if (sceneManager_) {
+				fadeManager_->StartFadeToWhite(0.02f, [this]() {
+					sceneManager_->ChangeScene("TitleScene");
+				});
+			}
+		}
 	}
 }
