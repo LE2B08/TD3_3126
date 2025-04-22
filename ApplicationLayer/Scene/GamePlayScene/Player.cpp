@@ -228,7 +228,6 @@ void Player::FallingAnimation() {
 }
 
 void Player::DeathCameraMove() {
-	// cameraMoveStart_ = true; // カメラ移動開始フラグを立てる
 	//  プレイヤーの位置を取得
 	Vector3 playerPosition = GetPosition();
 
