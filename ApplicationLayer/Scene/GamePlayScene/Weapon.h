@@ -2,6 +2,8 @@
 #include "Object3D.h"
 #include "Collider.h"
 #include "ContactRecord.h"
+#include"ParticleEmitter.h"
+#include"ParticleManager.h"
 
 
 /// ---------- 前方宣言 ---------- ///
@@ -62,12 +64,19 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
+
+	//パーティクル
+	std::unique_ptr<ParticleEmitter> particleEmitter_ = nullptr;
+	ParticleManager* particleManager_ = nullptr;
+
 	
 	// プレイヤー
 	Player* player_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
+
+	bool isEnemyHit_ = false; // 敵に当たったかのフラグ
 
 	// 接触記録
 	ContactRecord contactRecord_;

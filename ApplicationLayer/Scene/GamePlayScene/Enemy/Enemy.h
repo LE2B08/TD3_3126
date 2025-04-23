@@ -125,6 +125,9 @@ public: /// ---------- ゲッター ---------- ///
 
 	const bool& IsDead() const { return isDead_; }
 
+	//無敵時間
+	const bool& GetIsInvincible() const { return isInvincible_; }
+
 public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }
 
