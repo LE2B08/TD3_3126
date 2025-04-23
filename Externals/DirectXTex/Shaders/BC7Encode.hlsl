@@ -182,7 +182,9 @@ cbuffer cbCS : register(b0)
     uint g_mode_id;
     uint g_start_block_id;
     uint g_num_total_blocks;
-    float g_alpha_weight;
+    float g_
+    
+    weight;
 };
 
 //Forward declaration

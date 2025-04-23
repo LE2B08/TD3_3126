@@ -101,6 +101,9 @@ void GamePlayScene::Initialize()
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("rostock_laage_airport_4k.dds");
 
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
+
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
 	dynamicCamera_->SetPlayer(player_.get());
@@ -233,6 +236,9 @@ void GamePlayScene::Update()
 	// スカイボックスの更新処理
 	skyBox_->Update();
 
+	// スカイドームの更新処理
+	skydome_->Update();
+
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 	CheckAllCollisions();// 衝突判定と応答
@@ -251,7 +257,7 @@ void GamePlayScene::Draw()
 
 	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
-	skyBox_->Draw();
+	//skyBox_->Draw();
 
 #pragma endregion
 
@@ -314,6 +320,8 @@ void GamePlayScene::Draw()
 
 	// フィールドの描画
 	field_->Draw();
+	// スカイドームの描画
+	skydome_->Draw();
 
 #pragma endregion
 

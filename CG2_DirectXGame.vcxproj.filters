@@ -90,6 +90,7 @@
     <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
