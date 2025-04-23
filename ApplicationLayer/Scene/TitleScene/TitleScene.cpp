@@ -57,6 +57,9 @@ void TitleScene::Initialize()
 		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
 	}
 
+	// wavLoaderの初期化
+	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f,1.0f,true);
+
 	// タイトルオブジェクトの初期化
 	titleObject_ = std::make_unique<TitleObject>();
 	titleObject_->Initialize();

@@ -35,6 +35,8 @@ void GamePlayScene::Initialize()
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
+	wavLoader_ = std::make_unique<WavLoader>();
+	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -552,6 +554,8 @@ void GamePlayScene::GameClearUpdate() {
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			// BGMを止めて
+			wavLoader_->StopBGM();
 			// ゲームクリアシーンに移動
 			sceneManager_->ChangeScene("GameClearScene");
 		});
@@ -578,6 +582,8 @@ void GamePlayScene::GameOverUpdate() {
 		if (sceneManager_) {
 			fadeManager_->StartFadeToWhite(0.02f, [this]() {
 				// フェード完了後の処理
+				// BGMを止めて
+				wavLoader_->StopBGM();
 				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
 				});
 		}
