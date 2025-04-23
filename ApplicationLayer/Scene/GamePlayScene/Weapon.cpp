@@ -35,6 +35,15 @@ void Weapon::Initialize()
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
+
+	//パーティクル
+	particleManager_ = ParticleManager::GetInstance();
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	// パーティクルグループの追加
+	particleManager_->CreateParticleGroup("WeaponHitParticles", "Resources/uvChecker.png");
+
+	// パーティクルエミッターの初期化
+	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "WeaponHitParticles");
 }
 
 
@@ -59,6 +68,15 @@ void Weapon::Update()
 	object3D_->SetRotate({ rotation_.x,attackRotationAngle_,rotation_.z });
 	object3D_->SetScale(scale_);
 	object3D_->Update();
+
+	//// 攻撃中の処理
+	if (isEnemyHit_) {
+		// パーティクルエミッターの位置を武器の位置に設定
+		particleEmitter_->SetPosition(weaponPosition);
+		// 斬撃のパーティクルを生成
+		particleEmitter_->Update(1.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
+	}
+
 }
 
 
@@ -68,6 +86,8 @@ void Weapon::Update()
 void Weapon::Draw()
 {
 	object3D_->Draw();
+	
+	
 }
 
 
@@ -119,6 +139,11 @@ void Weapon::OnCollision(Collider* other)
 		Enemy* enemy = static_cast<Enemy*>(other);
 		uint32_t serialNumber = enemy->GetSerialNumber();
 
+		// 敵が無敵状態でない場合
+		if (!enemy->GetIsInvincible()) {
+			isEnemyHit_ = true; // 敵に当たったフラグを立てる
+		}
+
 		// 接触記録があれば何もせずに抜ける
 		if (contactRecord_.Check(serialNumber)) return;
 
@@ -129,8 +154,12 @@ void Weapon::OnCollision(Collider* other)
 		enemy->SetHp(enemy->GetHp() - 1);
 
 		// 敵の位置にパーティクルを生成
+	} else {
+		isEnemyHit_ = false; // 敵に当たったフラグを解除
 	}
-	else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet))
+
+
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet))
 	{
 
 	}
