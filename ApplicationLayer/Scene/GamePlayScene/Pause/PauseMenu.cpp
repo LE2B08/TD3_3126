@@ -12,6 +12,7 @@ PauseMenu::PauseMenu() {
 	TextureManager::GetInstance()->LoadTexture("Resources/HowToPlayText.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/ReturnToTitleText.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/SelectionArrow.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/ControllerImage.png");
 
 	// テキストの位置
 	pauseTextPos_ = { 488.0f, 60.0f };
@@ -19,7 +20,11 @@ PauseMenu::PauseMenu() {
 	howToPlayTextPos_ = { 516.0f, 488.0f };
 	returnToTitleTextPos_ = { 468.0f, 616.0f };
 
+	// 選択している矢印の位置
 	selectionArrowPos_ = { 400.0f, 380.0f };
+
+	// コントローラーの画像の位置
+	controllerImagePos_ = { 384.0f, 104.0f };
 }
 
 void PauseMenu::Initialize() {
@@ -53,6 +58,11 @@ void PauseMenu::Initialize() {
 	selectionArrow_ = std::make_unique<Sprite>();
 	selectionArrow_->Initialize("Resources/SelectionArrow.png");
 	selectionArrow_->SetPosition(selectionArrowPos_);
+
+	// コントローラーの画像の生成&初期化
+	controllerImage_ = std::make_unique<Sprite>();
+	controllerImage_->Initialize("Resources/ControllerImage.png");
+	controllerImage_->SetPosition(controllerImagePos_);
 }
 
 void PauseMenu::Update() {
@@ -68,25 +78,44 @@ void PauseMenu::Update() {
 			menuState_ = MenuState::HowToPlay;
 			selectionArrowPos_.y += 128.0f; // 矢印の位置を下に移動
 		}
-		
+
 		break;
 
 	case MenuState::HowToPlay:
 
-		// 上矢印キーが押されたら
-		if (input_->TriggerKey(DIK_UP) || input_->TriggerButton(4)) {
-			// 選択しているメニューを変更
-			menuState_ = MenuState::ReturnToGame;
-			selectionArrowPos_.y -= 128.0f; // 矢印の位置を上に移動
+		// 操作方法の説明を表示していたら
+		if (isHowToPlay_) {
+
+			// エンターキーかAボタンが押されたら
+			if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+				// 遊び方の説明を非表示にする
+				isHowToPlay_ = false;
+			}
+		}
+		// 操作方法の説明を表示していなかったら
+		else {
+
+			// 上矢印キーが押されたら
+			if (input_->TriggerKey(DIK_UP) || input_->TriggerButton(4)) {
+				// 選択しているメニューを変更
+				menuState_ = MenuState::ReturnToGame;
+				selectionArrowPos_.y -= 128.0f; // 矢印の位置を上に移動
+			}
+
+			// 下矢印キーが押されたら
+			if (input_->TriggerKey(DIK_DOWN) || input_->TriggerButton(5)) {
+				// 選択しているメニューを変更
+				menuState_ = MenuState::ReturnToTitle;
+				selectionArrowPos_.y += 128.0f; // 矢印の位置を下に移動
+			}
+
+			// エンターキーかAボタンが押されたら
+			if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+				// 遊び方の説明を表示する
+				isHowToPlay_ = true;
+			}
 		}
 
-		// 下矢印キーが押されたら
-		if (input_->TriggerKey(DIK_DOWN) || input_->TriggerButton(5)) {
-			// 選択しているメニューを変更
-			menuState_ = MenuState::ReturnToTitle;
-			selectionArrowPos_.y += 128.0f; // 矢印の位置を下に移動
-		}
-	
 		break;
 
 	case MenuState::ReturnToTitle:
@@ -97,7 +126,7 @@ void PauseMenu::Update() {
 			menuState_ = MenuState::HowToPlay;
 			selectionArrowPos_.y -= 128.0f; // 矢印の位置を上に移動
 		}
-		
+
 		break;
 
 	default:
@@ -119,6 +148,9 @@ void PauseMenu::Update() {
 	// 選択している矢印の更新
 	selectionArrow_->SetPosition(selectionArrowPos_);
 	selectionArrow_->Update();
+
+	// コントローラーの画像の更新
+	controllerImage_->Update();
 }
 
 void PauseMenu::Draw() {
@@ -126,17 +158,25 @@ void PauseMenu::Draw() {
 	// フィルターの描画
 	blackFilter_->Draw();
 
-	// テキストの描画
-	pauseText_->Draw();
+	// 操作方法の説明を表示していたら
+	if (isHowToPlay_) {
+		// コントローラーの画像の描画
+		controllerImage_->Draw();
+	}
+	else {
 
-	returnToGameText_->Draw();
+		// テキストの描画
+		pauseText_->Draw();
 
-	howToPlayText_->Draw();
+		returnToGameText_->Draw();
 
-	returnToTitleText_->Draw();
+		howToPlayText_->Draw();
 
-	// 選択している矢印の描画
-	selectionArrow_->Draw();
+		returnToTitleText_->Draw();
+
+		// 選択している矢印の描画
+		selectionArrow_->Draw();
+	}
 }
 
 void PauseMenu::ShowImGui() {

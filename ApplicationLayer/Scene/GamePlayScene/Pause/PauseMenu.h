@@ -82,7 +82,16 @@ private:
 	// 選択している矢印の位置
 	Vector2 selectionArrowPos_ = { 0.0f, 0.0f };
 
+	// コントローラーの画像
+	std::unique_ptr<Sprite> controllerImage_ = nullptr;
+
+	// コントローラーの画像の位置
+	Vector2 controllerImagePos_ = { 0.0f, 0.0f };
+
 	// 選択しているメニューの状態
 	MenuState menuState_ = MenuState::ReturnToGame;
+
+	// 操作方法の表示フラグ
+	bool isHowToPlay_ = false;
 };
 
