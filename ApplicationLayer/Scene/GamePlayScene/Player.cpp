@@ -217,8 +217,8 @@ void Player::FallingAnimation() {
 	}
 	
 	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
-
+	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f }, { 0.0f, 0.0f, -8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+	worldTransform_.rotate_.y = -1.55f;
 	// タイマーと最大値が等しい場合
 	if (fallingTimer_ == maxFallingTime) {
 
@@ -228,7 +228,6 @@ void Player::FallingAnimation() {
 }
 
 void Player::DeathCameraMove() {
-	// cameraMoveStart_ = true; // カメラ移動開始フラグを立てる
 	//  プレイヤーの位置を取得
 	Vector3 playerPosition = GetPosition();
 
@@ -324,7 +323,7 @@ void Player::HitParticle() {
 	particleEmitter_->SetPosition(playerCenter);
 	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
-	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Default); // deltaTime は 0 で呼び出し
 }
 
 void Player::DeadEffect() {

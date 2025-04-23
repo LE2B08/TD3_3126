@@ -32,7 +32,8 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-
+	// 画面外に移動させる
+	worldTransform_.translate_ = { 0.0f, 100.0f, 8.0f };
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
@@ -100,7 +101,9 @@ void Enemy::Update() {
 				break;
 
 			case Enemy::Behavior::Attack:
-				BehaviorAttackUpdate();
+				if (hp_ >= 1) {
+					BehaviorAttackUpdate();
+				}
 				break;
 
 			default:
@@ -118,11 +121,11 @@ void Enemy::Update() {
 				}
 
 				return false;
-			});
+				});
 		}
 	}
-	// カメラの演出が終わるまで動かない
-	if (isCameraEffectEnd_) {
+	// カメラの演出が終わるまでかhpが無くなったときは移動しない
+	if (isCameraEffectEnd_ && hp_ >= 1) {
 		// 移動
 		Move();
 	}
@@ -152,20 +155,21 @@ void Enemy::Update() {
 
 	// 無敵時間のカウントダウン
 	if (isInvincible_) {
-		
+
 
 		invincibleTime_ += 1; // 1フレームごとにカウントアップ
 
 		if (invincibleTime_ > invincibleDuration_) {
-			
+
 			invincibleTime_ = 0;      // 無敵時間の初期化
-			
+
 		}
 	}
 
 
 
 	// Object3Dの更新
+	object3D_->SetScale(worldTransform_.scale_); // スケールを設定
 	object3D_->SetRotate(worldTransform_.rotate_);
 	object3D_->SetTranslate(worldTransform_.translate_);
 	object3D_->Update();
@@ -187,7 +191,7 @@ void Enemy::Draw() {
 	}
 
 	// ワイヤーフレームの処理
-	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 /// -------------------------------------------------------------
@@ -200,6 +204,7 @@ void Enemy::Move() {
 
 	// 向きを合わせる
 	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
+
 
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
@@ -246,6 +251,7 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
 	ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
 	ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
+	ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
 	ImGui::End();
 }
 
@@ -267,7 +273,7 @@ void Enemy::OnCollision(Collider* other) {
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
-	
+
 	}
 }
 
@@ -275,7 +281,7 @@ void Enemy::OnCollision(Collider* other) {
 ///						　中心座標を取得
 /// -------------------------------------------------------------
 Vector3 Enemy::GetCenterPosition() const {
-	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // エネミーの中心を考慮
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // エネミーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
@@ -289,9 +295,9 @@ void Enemy::HitParticle() {
 
 	// パーティクルエミッターの位置をエネミーの中心に設定
 	particleEmitter_->SetPosition(enemyCenter);
-	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	particleEmitter_->SetEmissionRate(3); // パーティクルの発生率を設定
 	// パーティクルを生成
-	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
 }
 
 /// -------------------------------------------------------------
@@ -301,7 +307,7 @@ Vector3 Enemy::RondomDirection(float min, float max) {
 
 	// XZ平面上のランダムな方向を生成
 	std::uniform_real_distribution<float> dist(min, max);
-	Vector3 direction = {dist(randomEngine), 0.0f, dist(randomEngine)};
+	Vector3 direction = { dist(randomEngine), 0.0f, dist(randomEngine) };
 	direction = Vector3::Normalize(direction);
 
 	return direction;
@@ -338,8 +344,8 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 	}
 }
 
-void Enemy::SpawnEffect(DynamicCamera* dynamicCamera) {
-	worldTransform_.translate_ = {0.0f, 20.0f, 0.0f}; // エネミーの位置を初期化
+void Enemy::SpawnEffect() {
+	worldTransform_.translate_ = { 0.0f, 20.0f, 8.0f }; // エネミーの位置を初期化
 
 	// カメラの現在の位置を取得
 	Vector3 cameraPosition = camera_->GetTranslate();
@@ -348,7 +354,7 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera) {
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = {worldTransform_.translate_.x, 0.56f, worldTransform_.translate_.z - 12.0f};
+	Vector3 cameraOffset = { worldTransform_.translate_.x, 0.56f, worldTransform_.translate_.z - 12.0f };
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -374,7 +380,7 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera) {
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 0.0f, 0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 0.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
 	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);
@@ -392,7 +398,7 @@ void Enemy::SpawnEffect(DynamicCamera* dynamicCamera) {
 		// 新しく移動させるカメラの座標
 		cameraPosition = moveCameraPosition;
 		cameraRotation = moveCameraRotation;
-		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(4.0f, 150.0f, 4.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
+		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(0.0f, 50.0f, 0.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
 		moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f, 0.0f, 0.0f), easeOut(cameraBackEffectT_ / cameraBackEffectMaxT_));     // カメラの回転を補間
 		camera_->SetTranslate(moveCameraPosition);                                                                                               // カメラの位置をリセット
 		camera_->SetRotate(moveCameraRotation);                                                                                                  // カメラの回転をリセット
@@ -407,7 +413,7 @@ void Enemy::CameraMove() {
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = {0.0f, 0.0f, 0.0f};
+	Vector3 cameraOffset = { 0.0f, 0.0f, 0.0f };
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -431,6 +437,60 @@ void Enemy::CameraMove() {
 	moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f, 0.0f, 0.0f), easeInSine(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 
 	camera_->SetTranslate(moveCameraPosition); // カメラの位置をリセット
+
+	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+}
+
+void Enemy::FaildAnimation()
+{
+	// プレイヤーを回転させながら小さくなって消滅する
+	Vector3 scale = worldTransform_.scale_;
+	Vector3 rotation = worldTransform_.rotate_;
+
+	Vector3 rotationEnd = { 0.0f, -17.2f, 0.0f }; // 回転の最終値
+	if (rotationStartT_ >= rotationMaxT_) {
+		rotationStartT_ = rotationMaxT_; // 回転時間を最大値に設定
+		isDead_ = true;                  // 死亡フラグを立てる
+	} else {
+		rotationStartT_ += 1.0f; // 回転時間をカウントアップ
+	}
+	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
+	worldTransform_.scale_ = Vector3::Lerp(scale, Vector3(0.0f, 0.0f, 0.0f), Easing::easeInOutElastic(rotationStartT_ / rotationMaxT_));
+}
+
+void Enemy::FaildCameraMove()
+{
+	//  プレイヤーの位置を取得
+	Vector3 playerPosition = GetPosition();
+
+	// カメラの現在の位置を取得
+	Vector3 cameraPosition = camera_->GetTranslate();
+
+	// 移動させるカメラの座標
+	Vector3 moveCameraPosition = cameraPosition;
+
+	// カメラの移動後の位置を計算
+	Vector3 cameraOffset = playerPosition + Vector3(0.0f, 0.56f, -10.0f);
+
+	// カメラの回転を取得
+	Vector3 cameraRotation = camera_->GetRotate();
+
+	// 移動させるカメラの回転
+	Vector3 moveCameraRotation = cameraRotation;
+
+	if (DeathCameraMoveT_ >= DeathCameraMoveMaxT_) {
+		DeathCameraMoveT_ = DeathCameraMoveMaxT_; // カメラの移動時間を最大値に設定
+		FaildAnimation();                   // 死亡エフェクトを実行
+	} else {
+		DeathCameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
+		worldTransform_.rotate_.y = 1.5f;
+	}
+
+	moveCameraPosition = Vector3::Lerp(cameraPosition, cameraOffset, easeIn(DeathCameraMoveT_ / DeathCameraMoveMaxT_)); // カメラの位置を補間
+
+	moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), easeIn(DeathCameraMoveT_ / DeathCameraMoveMaxT_)); // カメラの回転を補間
+	// カメラの位置をプレイヤーの位置に設定
+	camera_->SetTranslate(moveCameraPosition);
 
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
@@ -517,7 +577,7 @@ void Enemy::BehaviorAttackInitialize() {
 	attackCommand_->Initialize();
 
 	// 移動をストップ
-	velocity_ = {0.0f, 0.0f, 0.0f};
+	velocity_ = { 0.0f, 0.0f, 0.0f };
 }
 
 /// -------------------------------------------------------------

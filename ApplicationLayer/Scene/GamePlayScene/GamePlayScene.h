@@ -13,6 +13,8 @@
 #include "Field.h"
 #include "Weapon.h"
 #include "EnemyBullet.h"
+#include"Skydome.h"
+
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
 
@@ -120,6 +122,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
+	//敵のUI
+	std::unique_ptr<EnemyUI> enemyUI_ = nullptr;
 
 	// フィールド
 	std::unique_ptr<Field> field_;
@@ -132,6 +136,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 
 	std::unique_ptr<SkyBox> skyBox_;
+
+	// スカイドーム
+	std::unique_ptr<Skydome> skydome_ = nullptr;
 
 	/*------カメラの座標------*/
 	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };

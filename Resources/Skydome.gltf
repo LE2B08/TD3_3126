@@ -1,8 +1,11 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.1.63",
+		"generator":"Khronos glTF Blender I/O v4.1.62",
 		"version":"2.0"
 	},
+	"extensionsUsed":[
+		"KHR_materials_specular"
+	],
 	"scene":0,
 	"scenes":[
 		{
@@ -15,25 +18,35 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Body.204"
+			"name":"\u7403",
+			"rotation":[
+				0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.002",
+			"extensions":{
+				"KHR_materials_specular":{
+					"specularFactor":0
+				}
+			},
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
-				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"metallicFactor":0
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"\u7acb\u65b9\u4f53.204",
+			"name":"\u7403",
 			"primitives":[
 				{
 					"attributes":{
@@ -56,69 +69,69 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"Voxel_Human_Head",
-			"uri":"Voxel_Human_Head.png"
+			"name":"Skydome",
+			"uri":"Skydome.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":8256,
+			"count":2072,
 			"max":[
-				0.6000000238418579,
-				1.399999976158142,
-				1.0757347345352173
+				0.9999989867210388,
+				0.9999989867210388,
+				1
 			],
 			"min":[
-				-0.8000001311302185,
 				-1,
-				-1.0589879751205444
+				-1,
+				-1
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":8256,
+			"count":2072,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":8256,
+			"count":2072,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":12384,
+			"count":2880,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":99072,
+			"byteLength":24864,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":99072,
-			"byteOffset":99072,
+			"byteLength":24864,
+			"byteOffset":24864,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":66048,
-			"byteOffset":198144,
+			"byteLength":16576,
+			"byteOffset":49728,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":24768,
-			"byteOffset":264192,
+			"byteLength":5760,
+			"byteOffset":66304,
 			"target":34963
 		}
 	],
@@ -130,8 +143,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":288960,
-			"uri":"Voxel_Human.bin"
+			"byteLength":72064,
+			"uri":"Skydome.bin"
 		}
 	]
 }

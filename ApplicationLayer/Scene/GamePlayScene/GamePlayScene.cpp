@@ -35,6 +35,8 @@ void GamePlayScene::Initialize()
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
+	wavLoader_ = std::make_unique<WavLoader>();
+	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -52,6 +54,7 @@ void GamePlayScene::Initialize()
 	enemy_ = std::make_unique<Enemy>();
 	field_ = std::make_unique<Field>();
 	playerUI_ = std::make_unique<PlayerUI>();
+	enemyUI_ = std::make_unique<EnemyUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
 	effectManager_ = std::make_unique<EffectManager>();
@@ -76,7 +79,11 @@ void GamePlayScene::Initialize()
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPlayer(player_.get());
+	enemy_->SetPlayer(player_.get()); // プレイヤーの情報を敵にセット
+	enemyUI_->Initialize();
+	enemyUI_->SetEnemy(enemy_.get()); // 敵の情報をUIにセット
+
+
 
 	// 敵の弾の情報をセット
 	enemyBullets_ = &enemy_->GetBullets();
@@ -93,6 +100,9 @@ void GamePlayScene::Initialize()
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("rostock_laage_airport_4k.dds");
+
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
 
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
@@ -217,12 +227,17 @@ void GamePlayScene::Update()
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
+	// 敵のUIの更新
+	enemyUI_->Update();
 
 	// コントローラー用UIの更新
 	controllerUI_->Update();
 
 	// スカイボックスの更新処理
 	skyBox_->Update();
+
+	// スカイドームの更新処理
+	skydome_->Update();
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
@@ -242,7 +257,7 @@ void GamePlayScene::Draw()
 
 	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
-	skyBox_->Draw();
+	//skyBox_->Draw();
 
 #pragma endregion
 
@@ -305,6 +320,8 @@ void GamePlayScene::Draw()
 
 	// フィールドの描画
 	field_->Draw();
+	// スカイドームの描画
+	skydome_->Draw();
 
 #pragma endregion
 
@@ -316,6 +333,9 @@ void GamePlayScene::Draw()
 
 	// プレイヤーUI
 	playerUI_->Draw();
+
+	// 敵のUI
+	enemyUI_->Draw();
 
 	// コントローラー用UIの描画
 	controllerUI_->Draw();
@@ -348,6 +368,8 @@ void GamePlayScene::Finalize()
 void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
+	enemyUI_->DrawImGui();
+
 	enemy_->ShowImGui("Enemy");
 
 	//ImGui::Begin("GamePlayScene");
@@ -466,7 +488,7 @@ void GamePlayScene::GameStartUpdate() {
 			if (!enemy_->GetIsCameraEffectEnd()) {
 
 				// アニメーションを行う
-				enemy_->SpawnEffect(dynamicCamera_.get());
+				enemy_->SpawnEffect();
 			}
 		}
 	}
@@ -483,6 +505,7 @@ void GamePlayScene::GameStartUpdate() {
 ///				　		ゲームプレイ初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
+	enemy_->SetPosition(Vector3(0.0f, 0.0f, 8.0f));
 }
 
 /// -------------------------------------------------------------
@@ -538,17 +561,21 @@ void GamePlayScene::GamePlayUpdate() {
 ///				　		ゲームクリア初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearInitialize() {
+	
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームクリア更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearUpdate() {
-
+	// 敵の死亡アニメーションが終わったときenemyのisDeadがtrueになる
+	enemy_->FaildCameraMove();
 	// エンターキーかAボタンが押されたら
 	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			// BGMを止めて
+			wavLoader_->StopBGM();
 			// ゲームクリアシーンに移動
 			sceneManager_->ChangeScene("GameClearScene");
 		});
@@ -559,13 +586,14 @@ void GamePlayScene::GameClearUpdate() {
 ///				　		ゲームオーバー初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverInitialize() {
+	
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームオーバー更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverUpdate() {
-
+	// 内部でアニメーションが終わったときplayerのisDeadがtrueになる
 	player_->DeathCameraMove();
 
 	// エンターキーかAボタンが押されたら
@@ -574,6 +602,8 @@ void GamePlayScene::GameOverUpdate() {
 		if (sceneManager_) {
 			fadeManager_->StartFadeToWhite(0.02f, [this]() {
 				// フェード完了後の処理
+				// BGMを止めて
+				wavLoader_->StopBGM();
 				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
 				});
 		}
