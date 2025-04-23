@@ -254,4 +254,10 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 死亡フラグ
 	bool isDead_ = false;
+
+	// ビックリマークのオブジェクト
+	std::unique_ptr<Object3D> exclamationMark_ = nullptr;
+
+	// ビックリマークの位置
+	Vector3 exclamationMarkPosition_ = { 0.0f, 0.0f, 0.0f };
 };

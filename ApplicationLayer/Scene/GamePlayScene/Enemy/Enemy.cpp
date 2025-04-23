@@ -38,6 +38,9 @@ void Enemy::Initialize() {
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
+	exclamationMark_ = std::make_unique<Object3D>();
+	exclamationMark_->Initialize("ExclamationMark.gltf");
+
 	particleManager_ = ParticleManager::GetInstance();
 	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
 	// パーティクルグループの追加
@@ -173,6 +176,11 @@ void Enemy::Update() {
 	object3D_->SetRotate(worldTransform_.rotate_);
 	object3D_->SetTranslate(worldTransform_.translate_);
 	object3D_->Update();
+
+	// ビックリマークの更新
+	exclamationMark_->SetScale({ 0.1f, 0.1f, 0.1f }); // スケールを設定
+	exclamationMarkPosition_ = worldTransform_.translate_ + Vector3(0.0f, 2.0f, 0.0f); // ビックリマークの位置をエネミーの上に設定
+	exclamationMark_->SetTranslate(exclamationMarkPosition_);
 }
 
 /// -------------------------------------------------------------
@@ -189,6 +197,9 @@ void Enemy::Draw() {
 	for (auto& bullet : bullets_) {
 		bullet->Draw();
 	}
+	
+	// ビックリマークの描画
+	//exclamationMark_->Draw();
 
 	// ワイヤーフレームの処理
 	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
