@@ -13,9 +13,8 @@ void ParticleEmitter::Update(float deltaTime, ParticleEffectType type)
     accumulatedTime_ += deltaTime;
     
     // 発生させるパーティクルの数を計算
-    int particleCount = static_cast<int>(emissionRate_ * accumulatedTime_);
-    if (particleCount > 0) {
-        particleManager_->Emit(groupName_, position_, particleCount, type);
-        accumulatedTime_ -= static_cast<float>(particleCount) / emissionRate_;
+    if (static_cast<int>(emissionRate_) > 0) {
+        particleManager_->Emit(groupName_, position_, static_cast<int>(emissionRate_), type);
+        accumulatedTime_ -= static_cast<float>(static_cast<float>(emissionRate_)) / emissionRate_;
     }
 }
