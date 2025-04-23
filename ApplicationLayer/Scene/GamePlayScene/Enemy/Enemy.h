@@ -7,6 +7,8 @@
 #include <memory>
 #include <optional>
 
+#include"EnemyUI.h"
+
 /// ---------- 前方宣言 ---------- ///
 class Player;
 class EnemyBullet;

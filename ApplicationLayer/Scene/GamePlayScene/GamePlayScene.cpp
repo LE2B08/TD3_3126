@@ -52,6 +52,7 @@ void GamePlayScene::Initialize()
 	enemy_ = std::make_unique<Enemy>();
 	field_ = std::make_unique<Field>();
 	playerUI_ = std::make_unique<PlayerUI>();
+	enemyUI_ = std::make_unique<EnemyUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
 	effectManager_ = std::make_unique<EffectManager>();
@@ -76,7 +77,11 @@ void GamePlayScene::Initialize()
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPlayer(player_.get());
+	enemy_->SetPlayer(player_.get()); // プレイヤーの情報を敵にセット
+	enemyUI_->Initialize();
+	enemyUI_->SetEnemy(enemy_.get()); // 敵の情報をUIにセット
+
+
 
 	// 敵の弾の情報をセット
 	enemyBullets_ = &enemy_->GetBullets();
@@ -217,6 +222,8 @@ void GamePlayScene::Update()
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
+	// 敵のUIの更新
+	enemyUI_->Update();
 
 	// コントローラー用UIの更新
 	controllerUI_->Update();
@@ -317,6 +324,9 @@ void GamePlayScene::Draw()
 	// プレイヤーUI
 	playerUI_->Draw();
 
+	// 敵のUI
+	enemyUI_->Draw();
+
 	// コントローラー用UIの描画
 	controllerUI_->Draw();
 
@@ -348,6 +358,8 @@ void GamePlayScene::Finalize()
 void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
+	enemyUI_->DrawImGui();
+
 	enemy_->ShowImGui("Enemy");
 
 	//ImGui::Begin("GamePlayScene");

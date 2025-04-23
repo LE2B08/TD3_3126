@@ -120,6 +120,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
+	//敵のUI
+	std::unique_ptr<EnemyUI> enemyUI_ = nullptr;
 
 	// フィールド
 	std::unique_ptr<Field> field_;

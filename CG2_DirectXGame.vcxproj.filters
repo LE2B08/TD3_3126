@@ -89,6 +89,7 @@
     <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleObject.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleObject.h" />
     <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
