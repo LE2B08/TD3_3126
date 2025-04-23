@@ -119,6 +119,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
     <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
     <ClCompile Include="EngineLayer\3D\SkyBox\SkyBox.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
@@ -242,6 +243,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
     <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
     <ClInclude Include="EngineLayer\3D\SkyBox\SkyBox.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
