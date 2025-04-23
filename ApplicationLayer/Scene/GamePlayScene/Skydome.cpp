@@ -5,13 +5,13 @@
 void Skydome::Initialize() {
 
 
-	position_ = {0.0f, 0.0f, 0.0f};
-	scale_ = {1.0f, 1.0f, 1.0f};
-	rotation_ = {0.0f, 0.0f, 0.0f};
+	position_ = { 0.0f, 0.0f, 0.0f };
+	scale_ = { 500.0f, 500.0f, 500.0f };
+	rotation_ = { 0.0f, 0.0f, 0.0f };
 
 
 	object3D_ = std::make_unique<Object3D>();
-	object3D_->Initialize("Skydome.obj");
+	object3D_->Initialize("Skydome.gltf");
 
 	object3D_->SetTranslate(position_);
 	object3D_->SetRotate(rotation_);
@@ -22,8 +22,8 @@ void Skydome::Initialize() {
 
 void Skydome::Update() {
 
-	rotation_.x+=0.001f;
-	rotation_.z+=0.001f;
+	rotation_.x += 0.001f;
+	rotation_.z += 0.001f;
 	// 位置
 	object3D_->SetTranslate(position_);
 	// 回転
@@ -37,7 +37,7 @@ void Skydome::Update() {
 	// スカイドームの色を設定
 	float alpha = 0.5f;
 	object3D_->SetAlpha(alpha);
-	
+
 
 	object3D_->Update();
 }
