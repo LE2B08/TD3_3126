@@ -1,7 +1,6 @@
 #include "ParticleEmitter.h"
 #include <LogString.h>
 #include <DirectXCommon.h>
-#include <ParticleManager.h>
 
 ParticleEmitter::ParticleEmitter(ParticleManager* manager, const std::string& groupName)
 	: particleManager_(manager), groupName_(groupName), position_({ 0.0f,0.0f,0.0f }),
@@ -9,14 +8,14 @@ ParticleEmitter::ParticleEmitter(ParticleManager* manager, const std::string& gr
 {
 }
 
-void ParticleEmitter::Update(float deltaTime)
+void ParticleEmitter::Update(float deltaTime, ParticleEffectType type)
 {
     accumulatedTime_ += deltaTime;
     
     // 発生させるパーティクルの数を計算
     int particleCount = static_cast<int>(emissionRate_ * accumulatedTime_);
     if (particleCount > 0) {
-        particleManager_->Emit(groupName_, position_, particleCount);
+        particleManager_->Emit(groupName_, position_, particleCount, type);
         accumulatedTime_ -= static_cast<float>(particleCount) / emissionRate_;
     }
 }

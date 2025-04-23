@@ -1,9 +1,7 @@
 #pragma once
 #include "DX12Include.h"
 #include "AABB.h"
-
-/// ---------- 前方宣言 ---------- ///
-class ParticleManager;
+#include "ParticleManager.h"
 
 
 /// -------------------------------------------------------------
@@ -17,7 +15,7 @@ public: /// ---------- メンバ関数 ---------- ///
 	ParticleEmitter(ParticleManager* manager, const std::string& groupName);
 
 	// 更新処理
-	void Update(float deltaTime);
+	void Update(float deltaTime, ParticleEffectType type);
 
 	// 座標を設定する関数
 	void SetPosition(const Vector3& position) { position_ = position; }
