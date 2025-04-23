@@ -194,6 +194,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleObject.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp" />
     <ClCompile Include="WinMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -332,6 +333,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleObject.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
