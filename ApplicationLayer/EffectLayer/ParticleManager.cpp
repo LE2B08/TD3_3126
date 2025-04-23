@@ -148,12 +148,12 @@ void ParticleManager::Update()
 				(*particleIterator).currentTime += kDeltaTime; // 経過時間を加算
 
 				// スケール、回転、平行移動を利用してワールド行列を作成
-				Matrix4x4 worldMatrix = Matrix4x4::MakeAffineMatrix((*particleIterator).worldTransform.scale_, (*particleIterator).worldTransform.rotate_, (*particleIterator).worldTransform.translate_);
+				worldMatrix = Matrix4x4::MakeAffineMatrix((*particleIterator).worldTransform.scale_, (*particleIterator).worldTransform.rotate_, (*particleIterator).worldTransform.translate_);
 				scaleMatrix = Matrix4x4::MakeScaleMatrix((*particleIterator).worldTransform.scale_);
 				translateMatrix = Matrix4x4::MakeTranslateMatrix((*particleIterator).worldTransform.translate_);
 
 				// ビルボードを使うかどうか
-				if (useBillboard)
+				if ((*particleIterator).useBillboard)
 				{
 					worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
 				}
@@ -329,10 +329,10 @@ void ParticleManager::DrawImGui()
 {
 	// ImGuiでuseBillboardの切り替えボタンを追加
 	ImGui::Begin("Particle Manager"); // ウィンドウの開始
-	if (ImGui::Button(useBillboard ? "Disable Billboard" : "Enable Billboard"))
+	if (ImGui::Button(Particle::useBillboard ? "Disable Billboard" : "Enable Billboard"))
 	{
 		// ボタンが押されたらuseBillboardの値を切り替える
-		useBillboard = !useBillboard;
+		Particle::useBillboard = !Particle::useBillboard;
 	}
 
 	if (ImGui::Button(isWind ? "Disable Wind" : "Enable Wind"))
@@ -646,6 +646,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
 		particle.lifeTime = distTime(randomEngine);
 		particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+		particle.useBillboard = true; // ビルボードを使用する
 		break;
 	}
 
@@ -653,15 +654,13 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomE
 	{
 		std::uniform_real_distribution<float> distScale(0.4f, 1.5f);
 		std::uniform_real_distribution<float> distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
-
-		particle.worldTransform.scale_ = { 0.05f, distScale(randomEngine), 1.0f };
-		particle.startScale = particle.worldTransform.scale_;
-		particle.endScale = { 0.0f, 0.0f, 0.0f };
-		particle.worldTransform.rotate_ = { 0.0f, 0.0f, distRotate(randomEngine) };
 		particle.worldTransform.translate_ = translate;
-		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		particle.worldTransform.scale_ = { 2.0f, distScale(randomEngine), 1.0f };
+		particle.worldTransform.rotate_ = { 0.0f, distRotate(randomEngine), 0.0f};
+		particle.color = { 1.0f, 0.0f, 0.0f, 1.0f };
 		particle.lifeTime = 1.0f;
 		particle.velocity = { 0.0f, 0.0f, 0.0f };
+		particle.useBillboard = false; // ビルボードを使用しない
 		break;
 	}
 	}

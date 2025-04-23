@@ -63,10 +63,7 @@ public: /// ---------- 構造体 ---------- ///
 		Vector4 color = {};		 // 色
 		float lifeTime = 0;		 // 生存可能な時間
 		float currentTime = 0;	 // 発生してからの経過時間
-
-		// スケールアニメーション用（追加）
-		Vector3 startScale = { 1.0f, 1.0f, 1.0f };
-		Vector3 endScale = { 0.0f, 0.0f, 0.0f };
+		static inline bool useBillboard = false; // ビルボードを使うかどうか
 	};
 
 	struct ParticleGroup
@@ -166,10 +163,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::random_device seedGeneral;
 	std::mt19937 randomEngin;
 
+	Matrix4x4 worldMatrix{};
+
 	// 描画数
 	const uint32_t kNumMaxInstance = 128;
-
-	bool useBillboard = true;
 
 	bool isWind = false;
 
