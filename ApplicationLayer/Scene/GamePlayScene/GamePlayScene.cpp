@@ -483,6 +483,7 @@ void GamePlayScene::GameStartUpdate() {
 ///				　		ゲームプレイ初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
+	enemy_->SetPosition(Vector3(0.0f, 0.0f, 8.0f));
 }
 
 /// -------------------------------------------------------------
