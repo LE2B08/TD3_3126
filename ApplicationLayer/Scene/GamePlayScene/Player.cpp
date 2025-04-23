@@ -67,6 +67,7 @@ void Player::Update() {
 
 	// 武器の更新
 	if (weapon_) {
+		weapon_->SetCamera(camera_);
 		weapon_->Update();
 	}
 

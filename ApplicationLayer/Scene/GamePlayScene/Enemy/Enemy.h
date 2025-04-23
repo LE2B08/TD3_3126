@@ -116,6 +116,8 @@ public: /// ---------- ゲッター ---------- ///
 	const bool& GetIsEnemyCameraEffect() const { return isEnemyCameraEffect_; }
 
 	const bool& GetIsCameraEffectEnd() const { return isCameraEffectEnd_; }
+	// 無敵時間の取得
+	const bool& GetIsInvincible() const { return isInvincible_; }
 
 public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }

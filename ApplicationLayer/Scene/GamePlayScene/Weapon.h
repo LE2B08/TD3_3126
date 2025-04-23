@@ -45,6 +45,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
 
+	private: /// ---------- メンバ関数 ---------- ///
+	Vector3 WorldToScreen(const Vector3& worldPosition, Camera* camera);
+
 	///============================
 	/// Getter & Setter
 	///
@@ -54,7 +57,8 @@ public:
 	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }
 	bool GetIsAttack() const { return isAttack_; }
 	// カメラの設定
-	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
+	
+	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
@@ -62,18 +66,21 @@ public:
 	// エネミーの設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
+	
 private: /// ---------- メンバ変数 ---------- ///
 
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
 
+	Camera* camera_ = nullptr;
+
 	//Sprite
-	std::vector<std::unique_ptr<Sprite>> effectSprites_;
+	std::unique_ptr<Sprite> effectSprites_;
 	// スプライトの数
 	const int spriteCount_ = 3;
 	// effectSprites_のワールドトランスフォーム
-	std::vector<WorldTransform> effectSpritesWorldTransform_;
+	WorldTransform effectSpritesWorldTransform_;
 
 	// プレイヤー
 	Player* player_ = nullptr;
@@ -97,6 +104,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	float distance_ = 2.0f;
 
 	bool isAttack_ = false;
+
+	bool isHitEnemy_ = false;
+	Vector3 hitEnemyPosition_ = {0.0f, 0.0f, 0.0f};
+	Vector4 effectColor_ = {1.0f, 1.0f, 1.0f, 1.0f};
 
 	/*------攻撃の持続時間------*/
 	float attackTime_ = 0.0f;

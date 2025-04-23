@@ -5,7 +5,8 @@
 #include "Player.h"
 
 #include <cmath>
-
+#undef max
+#undef min
 /// -------------------------------------------------------------
 ///							コンストラクタ
 /// -------------------------------------------------------------
@@ -33,29 +34,23 @@ void Weapon::Initialize() {
 	// エフェクトスプライト
 	// 三枚用意する
 
-	effectSprites_.resize(spriteCount_);
-	for (int i = 0; i < spriteCount_; i++) {
-		effectSprites_[i] = std::make_unique<Sprite>();
-		effectSprites_[i]->Initialize("Resources/uvChecker.png");
-	}
+	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
+	effectSprites_ = std::make_unique<Sprite>();
+	effectSprites_->Initialize("Resources/circle.png");
+	// アンカーポイントをテクスチャ中央に設定
+	effectSprites_->SetAnchorPoint({0.5f, 0.5f});
 
 	// スプライトのワールドトランスフォームを初期化
-	effectSpritesWorldTransform_.resize(spriteCount_);
-	for (int i = 0; i < spriteCount_; i++) {
-		effectSpritesWorldTransform_[i].Initialize();
-	}
+	effectSpritesWorldTransform_.Initialize();
+	effectSpritesWorldTransform_.translate_ = {0.0f, 0.0f, 0.0f};
+	effectSpritesWorldTransform_.scale_ = {0.005f, 0.1f, 0.1f};
+	effectSpritesWorldTransform_.rotate_ = {0.0f, 0.0f, 0.0f};
 
-	// スプライトの位置を設定
-	for (int i = 0; i < spriteCount_; i++) {
-		effectSpritesWorldTransform_[i].translate_ = {0.0f, 0.0f, 0.0f};
-		effectSpritesWorldTransform_[i].scale_ = {0.005f, 0.1f, 0.1f};
-		effectSpritesWorldTransform_[i].rotate_ = {0.0f, 0.0f, 0.0f};
-
-		// スプライトにワールドトランスフォームを設定
-		effectSprites_[i]->SetPosition({effectSpritesWorldTransform_[i].translate_.x, effectSpritesWorldTransform_[i].translate_.y});
-		effectSprites_[i]->SetRotation({effectSpritesWorldTransform_[i].rotate_.x});
-		effectSprites_[i]->SetSize({effectSpritesWorldTransform_[i].scale_.x, effectSpritesWorldTransform_[i].scale_.y});
-	}
+	// スプライトにワールドトランスフォームを設定
+	effectSprites_->SetPosition({effectSpritesWorldTransform_.translate_.x, effectSpritesWorldTransform_.translate_.y});
+	effectSprites_->SetRotation({effectSpritesWorldTransform_.rotate_.x});
+	effectColor_ = {1.0f, 1.0f, 1.0f, 0.0f}; // 初期化
+	effectSprites_->SetColor(effectColor_);
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
@@ -64,6 +59,7 @@ void Weapon::Initialize() {
 /// -------------------------------------------------------------
 ///						　更新処理
 /// -------------------------------------------------------------
+
 void Weapon::Update() {
 	// 位置
 	position_ = player_->GetPosition();
@@ -80,106 +76,179 @@ void Weapon::Update() {
 	object3D_->SetTranslate(weaponPosition);
 	object3D_->SetRotate({rotation_.x, attackRotationAngle_, rotation_.z});
 	object3D_->SetScale(scale_);
+	object3D_->SetCamera(camera_);
 	object3D_->Update();
 
-	// effectSprite
-	//   スプライトの位置を設定
-	for (int i = 0; i < spriteCount_; i++) {
-		effectSpritesWorldTransform_[i].translate_ = {position_.x, position_.y, position_.z};
-		effectSpritesWorldTransform_[i].rotate_ = {rotation_.x, rotation_.y, rotation_.z};
-		effectSpritesWorldTransform_[i].scale_ = {scale_.x, scale_.y, scale_.z};
-		// スプライトにワールドトランスフォームを設定
-		effectSprites_[i]->SetPosition({effectSpritesWorldTransform_[i].translate_.x, effectSpritesWorldTransform_[i].translate_.y});
-		effectSprites_[i]->SetRotation({effectSpritesWorldTransform_[i].rotate_.x});
-		effectSprites_[i]->SetSize({effectSpritesWorldTransform_[i].scale_.x, effectSpritesWorldTransform_[i].scale_.y});
+	// ワールド座標をスクリーン座標に変換
+	Vector3 screenPosition = WorldToScreen(effectSpritesWorldTransform_.translate_, camera_);
 
-		effectSprites_[i]->Update();
+	// スプライトのポジションをスクリーン座標に設定
+	effectSprites_->SetPosition({screenPosition.x, screenPosition.y});
+
+	// effectSprite
+	if (isHitEnemy_) {
+		// 攻撃を受けてからの経過時間を計算
+		float elapsedTime = static_cast<float>(attackTime_) / 60.0f; // 60FPSを想定
+
+		if (elapsedTime <= 1.0f) {
+			// アルファ値を1秒間かけて下げる
+			effectColor_.w = 1.0f - elapsedTime;
+			effectSprites_->SetColor(effectColor_);
+		} else {
+			// 1秒経過後は非表示にする
+			isHitEnemy_ = false;
+			effectColor_.w = 0.0f;
+			effectSprites_->SetColor(effectColor_);
+		}
+
+		// 攻撃時間をカウント
+		attackTime_++;
+	}
+
+	// スプライトにワールドトランスフォームを設定
+	effectSprites_->SetRotation({effectSpritesWorldTransform_.rotate_.x});
+	// effectSprites_->SetSize({effectSpritesWorldTransform_.scale_.x, effectSpritesWorldTransform_.scale_.y});
+
+	effectSprites_->Update();
+}
+
+/// -------------------------------------------------------------
+///							描画処理
+/// -------------------------------------------------------------
+void Weapon::Draw() { object3D_->Draw(); }
+
+///--------------------------------------------------------------
+///						Effect描画処理
+/// -------------------------------------------------------------
+
+void Weapon::DrawEffect() {
+	// スプライトの描画
+
+	effectSprites_->Draw();
+}
+/// -------------------------------------------------------------
+///							ImGui描画処理
+/// -------------------------------------------------------------
+void Weapon::DrawImGui() {
+	ImGui::Begin("Weapon");
+	ImGui::Text("Weapon");
+	ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Rotation", &rotation_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
+	ImGui::SliderFloat("Rotation Speed", &rotationSpeed_, 0.0f, 5.0f);
+	ImGui::End();
+
+	ImGui::Begin("WeaponEffect");
+	ImGui::Text("WeaponEffect");
+	ImGui::Text("IsHitEnemy: %d", isHitEnemy_);
+	ImGui::SliderFloat2("Position", &effectSpritesWorldTransform_.translate_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat("Rotation", &effectSpritesWorldTransform_.rotate_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat2("Scale", &effectSpritesWorldTransform_.scale_.x, 0.0f, 10.0f);
+
+	ImGui::Text("EffectScale");
+	ImGui::Text("X: %f", effectSprites_->GetSize().x);
+	ImGui::Text("Y: %f", effectSprites_->GetSize().y);
+	ImGui::Text("EffectPosition");
+	ImGui::Text("X: %f", effectSprites_->GetPosition().x);
+	ImGui::Text("Y: %f", effectSprites_->GetPosition().y);
+
+	ImGui::End();
+}
+
+/// -------------------------------------------------------------
+///							攻撃処理
+/// -------------------------------------------------------------
+void Weapon::Attack() {
+	/*------攻撃時間をカウント------*/
+	attackTime_++;
+	/*------攻撃時間が最大値を超えたら攻撃を終了------*/
+	if (attackTime_ > attackMaxTime_) {
+		isAttack_ = false;
+		attackTime_ = 0;
+		attackRotationAngle_ = 0.0f;
+	} else {
+		/*------回転角度を更新------*/
+		attackRotationAngle_ += (2.0f * std::numbers::pi_v<float> * rotationSpeed_) / attackMaxTime_;
 	}
 }
 
-	/// -------------------------------------------------------------
-	///							描画処理
-	/// -------------------------------------------------------------
-	void Weapon::Draw() {
-		
-		object3D_->Draw();
-	
-	}
+/// -------------------------------------------------------------
+///							衝突判定
+/// -------------------------------------------------------------
+void Weapon::OnCollision(Collider* other) {
+	uint32_t typeID = other->GetTypeID();
+	Enemy* enemy = static_cast<Enemy*>(other);
 
-	///--------------------------------------------------------------
-    ///						Effect描画処理
-	/// -------------------------------------------------------------
-	
-	void Weapon::DrawEffect() {
-	    // スプライトの描画
-	    for (int i = 0; i < spriteCount_; i++) {
-		    effectSprites_[i]->Draw();
-	    }
-    }
-	/// -------------------------------------------------------------
-	///							ImGui描画処理
-	/// -------------------------------------------------------------
-	void Weapon::DrawImGui() {
-		ImGui::Begin("Weapon");
-		ImGui::Text("Weapon");
-		ImGui::SliderFloat3("Position", &position_.x, -10.0f, 10.0f);
-		ImGui::SliderFloat3("Rotation", &rotation_.x, -10.0f, 10.0f);
-		ImGui::SliderFloat3("Scale", &scale_.x, 0.0f, 10.0f);
-		ImGui::SliderFloat("Rotation Speed", &rotationSpeed_, 0.0f, 5.0f);
-		ImGui::End();
-	}
-
-	/// -------------------------------------------------------------
-	///							攻撃処理
-	/// -------------------------------------------------------------
-	void Weapon::Attack() {
-		/*------攻撃時間をカウント------*/
-		attackTime_++;
-		/*------攻撃時間が最大値を超えたら攻撃を終了------*/
-		if (attackTime_ > attackMaxTime_) {
-			isAttack_ = false;
+	// 武器が敵に当たった場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
+		// 敵が無敵時間でなければ
+		if (!enemy->GetIsInvincible()) {
+			// フラグを立てる
+			isHitEnemy_ = true;
+			// 攻撃時間をリセット
 			attackTime_ = 0;
-			attackRotationAngle_ = 0.0f;
-		} else {
-			/*------回転角度を更新------*/
-			attackRotationAngle_ += (2.0f * std::numbers::pi_v<float> * rotationSpeed_) / attackMaxTime_;
+			// エフェクトの色を初期化
+			effectColor_ = {1.0f, 1.0f, 1.0f, 1.0f}; // アルファ値を1にする
+			effectSprites_->SetColor(effectColor_);
+			// エフェクトの位置を設定
+			effectSpritesWorldTransform_.translate_ = {enemy->GetPosition().x, enemy->GetPosition().z, enemy->GetPosition().y};
+			
+			
 		}
-	}
 
-	/// -------------------------------------------------------------
-	///							衝突判定
-	/// -------------------------------------------------------------
-	void Weapon::OnCollision(Collider * other) {
-		uint32_t typeID = other->GetTypeID();
-
-		// 武器が敵に当たった場合
-		if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) {
-			Enemy* enemy = static_cast<Enemy*>(other);
-			uint32_t serialNumber = enemy->GetSerialNumber();
-
-			// 接触記録があれば何もせずに抜ける
-			if (contactRecord_.Check(serialNumber))
-				return;
-
-			// 接触記録に追加
-			contactRecord_.Add(serialNumber);
-
-			// 敵にダメージを与える
-			enemy->SetHp(enemy->GetHp() - 1);
-
-			// 敵の位置にパーティクルを生成
-		} else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) {
+		// 接触記録があれば何もせずに抜ける
+		if (contactRecord_.Check(enemy->GetSerialNumber())) {
+			return;
 		}
+
+		// 接触記録に追加
+		contactRecord_.Add(enemy->GetSerialNumber());
+
+		// 敵にダメージを与える
+		enemy->SetHp(enemy->GetHp() - 1);
 	}
 
-	/// -------------------------------------------------------------
-	///				中心座標を取得する純粋仮想関数
-	/// -------------------------------------------------------------
-	Vector3 Weapon::GetCenterPosition() const {
-		// ローカル座標でのオフセット
-		const Vector3 offset = {distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_)};
-		// ワールド座標に変換
-		Vector3 worldPosition = position_ - offset;
-
-		return worldPosition;
+	// 武器が敵の弾に当たった場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) {
 	}
+}
+
+/// -------------------------------------------------------------
+///				中心座標を取得する純粋仮想関数
+/// -------------------------------------------------------------
+Vector3 Weapon::GetCenterPosition() const {
+	// ローカル座標でのオフセット
+	const Vector3 offset = {distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_)};
+	// ワールド座標に変換
+	Vector3 worldPosition = position_ - offset;
+
+	return worldPosition;
+}
+
+
+
+/// -------------------------------------------------------------
+/// ワールド座標をスクリーン座標に変換する関数
+/// -------------------------------------------------------------
+Vector3 Weapon::WorldToScreen(const Vector3& worldPosition, Camera* camera) {
+	// カメラのビュー行列とプロジェクション行列を取得
+	const Matrix4x4& viewMatrix = camera->GetViewMatrix();
+	const Matrix4x4& projectionMatrix = camera->GetProjectionMatrix();
+
+	// ワールド座標をビュー空間に変換
+	Vector4 viewSpacePosition = viewMatrix * Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0f);
+
+	// ビュー空間をプロジェクション空間に変換
+	Vector4 clipSpacePosition = projectionMatrix * viewSpacePosition;
+
+	// 正規化デバイス座標系（NDC）に変換
+	Vector3 ndcPosition = {clipSpacePosition.x / clipSpacePosition.w, clipSpacePosition.y / clipSpacePosition.w, clipSpacePosition.z / clipSpacePosition.w};
+
+	// スクリーン座標に変換
+	Vector3 screenPosition = {
+	    (ndcPosition.x * 0.5f + 0.5f) * 1280,   // スクリーン幅にスケール
+	    (-ndcPosition.y * 0.5f + 0.5f) * 720, // スクリーン高さにスケール（Y軸反転）
+	    ndcPosition.z};
+
+	return screenPosition;
+}

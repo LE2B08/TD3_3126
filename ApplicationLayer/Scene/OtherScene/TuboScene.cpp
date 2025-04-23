@@ -217,7 +217,7 @@ void TuboScene::Draw()
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
 	SkyBoxManager::GetInstance()->SetRenderSetting();
-	skyBox_->Draw();
+	//skyBox_->Draw();
 
 
 	/// ------------------------------------------ ///
@@ -230,6 +230,8 @@ void TuboScene::Draw()
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
 	SpriteManager::GetInstance()->SetRenderSetting_Background();
+
+	weapon_->DrawEffect();
 	
 
 	/// ---------------------------------------- ///
