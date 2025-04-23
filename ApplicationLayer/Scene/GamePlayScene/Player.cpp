@@ -217,8 +217,8 @@ void Player::FallingAnimation() {
 	}
 	
 	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
-
+	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f }, { 0.0f, 0.0f, -8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+	worldTransform_.rotate_.y = -1.55f;
 	// タイマーと最大値が等しい場合
 	if (fallingTimer_ == maxFallingTime) {
 
