@@ -71,7 +71,7 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 		it->second.particles.clear(); // 既存のパーティクルをクリア
 		return;
 	}
-	
+
 	// 新たな空のパーティクルグループを作成し、コンテナに登録
 	ParticleGroup group{};
 	group.materialData.textureFilePath = textureFilePath;
@@ -254,7 +254,7 @@ void ParticleManager::Finalize()
 /// -------------------------------------------------------------
 ///					　パーティクル射出処理
 /// -------------------------------------------------------------
-void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count)
+void ParticleManager::Emit(const std::string name, const Vector3& position, uint32_t count, ParticleEffectType type)
 {
 	// パーティクルグループが存在するかどうか
 	assert(particleGroups.find(name) != particleGroups.end() && "Particle Group is not found");
@@ -269,7 +269,7 @@ void ParticleManager::Emit(const std::string name, const Vector3& position, uint
 	for (uint32_t index = 0; index < count; ++index)
 	{
 		// パーティクルの生成と追加
-		particleGroup.particles.push_back(MakeNewParticle(randomEngin, position));
+		particleGroup.particles.push_back(MakeNewParticle(randomEngin, position, type));
 	}
 }
 
@@ -627,41 +627,55 @@ void ParticleManager::InitializeMaterialData()
 /// -------------------------------------------------------------
 ///						パーティクル生成処理
 /// -------------------------------------------------------------
-ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate)
+ParticleManager::Particle ParticleManager::MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleEffectType type)
 {
 	Particle particle;
 
-	// 一様分布生成期を使って乱数を生成
-	std::uniform_real_distribution<float> distribution(-1.0, 1.0f);
-	std::uniform_real_distribution<float> distColor(0.0, 1.0f);
-	std::uniform_real_distribution<float> distTime(1.0, 3.0f);
+	switch (type)
+	{
+	case ParticleEffectType::Default:
+	{
+		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+		std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
 
-	// 位置と速度を[-1, 1]でランダムに初期化
-	particle.worldTransform.scale_ = { 1.0f, 1.0f, 1.0f };
-	particle.worldTransform.rotate_ = { 0.0f, 0.0f, 0.0f };
-	particle.worldTransform.translate_ = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		Vector3 randomTranslate{ distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+		particle.worldTransform.translate_ = translate + randomTranslate;
+		particle.worldTransform.scale_ = { 1.0f, 1.0f, 1.0f };
+		particle.worldTransform.rotate_ = { 0.0f, 0.0f, 0.0f };
+		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+		particle.lifeTime = distTime(randomEngine);
+		particle.velocity = { distribution(randomEngine), distribution(randomEngine), distribution(randomEngine) };
+		break;
+	}
 
-	// 発生場所を計算
-	Vector3 randomTranslate{ distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-	particle.worldTransform.translate_ = translate + randomTranslate;
+	case ParticleEffectType::Slash:
+	{
+		std::uniform_real_distribution<float> distScale(0.4f, 1.5f);
+		std::uniform_real_distribution<float> distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
 
-	// 色を[0, 1]でランダムに初期化
-	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+		particle.worldTransform.scale_ = { 0.05f, distScale(randomEngine), 1.0f };
+		particle.startScale = particle.worldTransform.scale_;
+		particle.endScale = { 0.0f, 0.0f, 0.0f };
+		particle.worldTransform.rotate_ = { 0.0f, 0.0f, distRotate(randomEngine) };
+		particle.worldTransform.translate_ = translate;
+		particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		particle.lifeTime = 1.0f;
+		particle.velocity = { 0.0f, 0.0f, 0.0f };
+		break;
+	}
+	}
 
-	// パーティクル生成時にランダムに1秒～3秒の間生存
-	particle.lifeTime = distTime(randomEngine);
-	particle.currentTime = 0;
-	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-
+	particle.currentTime = 0.0f;
 	return particle;
 }
 
-std::list<ParticleManager::Particle> ParticleManager::Emit(const Emitter& emitter, std::mt19937& randomEngine)
+std::list<ParticleManager::Particle> ParticleManager::Emit(const Emitter& emitter, std::mt19937& randomEngine, ParticleEffectType type)
 {
 	std::list<Particle> particles;
 	for (uint32_t count = 0; count < emitter.count; ++count)
 	{
-		particles.push_back(MakeNewParticle(randomEngine, emitter.worldTransform.translate_));
+		particles.push_back(MakeNewParticle(randomEngine, emitter.worldTransform.translate_, type));
 	}
 
 	return particles;

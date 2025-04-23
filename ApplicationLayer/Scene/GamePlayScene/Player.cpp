@@ -324,7 +324,7 @@ void Player::HitParticle() {
 	particleEmitter_->SetPosition(playerCenter);
 	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
 	// パーティクルを生成
-	particleEmitter_->Update(1.0f / 60.0f); // deltaTime は 0 で呼び出し
+	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Default); // deltaTime は 0 で呼び出し
 }
 
 void Player::DeadEffect() {

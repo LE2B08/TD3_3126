@@ -22,6 +22,12 @@ class ShaderManager;
 // Δt を定義。とりあえず60fps固定してあるが、実時間を計測して可変fpsで動かせるようにする
 const float kDeltaTime = 1.0f / 60.0f;
 
+// エフェクト種別
+enum class ParticleEffectType
+{
+	Default, // 通常
+	Slash	 // 斬撃
+};
 
 /// -------------------------------------------------------------
 ///				パーティクルマネージャークラス
@@ -57,6 +63,10 @@ public: /// ---------- 構造体 ---------- ///
 		Vector4 color = {};		 // 色
 		float lifeTime = 0;		 // 生存可能な時間
 		float currentTime = 0;	 // 発生してからの経過時間
+
+		// スケールアニメーション用（追加）
+		Vector3 startScale = { 1.0f, 1.0f, 1.0f };
+		Vector3 endScale = { 0.0f, 0.0f, 0.0f };
 	};
 
 	struct ParticleGroup
@@ -96,13 +106,13 @@ public: /// ---------- メンバ関数 ---------- ///
 	void Finalize();
 
 	// パーティクルの発生
-	void Emit(const std::string name, const Vector3& position, uint32_t count);
+	void Emit(const std::string name, const Vector3& position, uint32_t count, ParticleEffectType type);
 
 	// 爆散用関数
 	void Explode(const std::string& name, const Vector3& position, uint32_t count, float speedMin, float speedMax);
 
 	std::unordered_map<std::string, ParticleManager::ParticleGroup> GetParticleGroups() { return particleGroups; }
-	
+
 	// ImGuiの描画
 	void DrawImGui();
 
@@ -121,14 +131,14 @@ private: /// ---------- ヘルパー関数 ---------- ///
 	void InitializeMaterialData();
 
 	// パーティクル生成器
-	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate);
+	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleEffectType type);
 
-	std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine);
+	std::list<Particle> Emit(const Emitter& emitter, std::mt19937& randomEngine, ParticleEffectType type);
 
 	bool IsCollision(const AABB& aabb, const Vector3& point);
 
 private: /// ---------- メンバ変数 ---------- ///
-	
+
 	WorldTransform worldTransform;
 
 	BlendMode cuurenttype = BlendMode::kBlendModeAdd;
@@ -175,7 +185,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// Fieldを作る
 	AccelerationField accelerationField;
-	
+
 private: /// ---------- コピー禁止 ---------- ///
 
 	ParticleManager() = default;
