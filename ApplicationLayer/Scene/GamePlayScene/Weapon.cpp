@@ -34,23 +34,15 @@ void Weapon::Initialize() {
 	// エフェクトスプライト
 	// 三枚用意する
 
-	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
-	effectSprites_ = std::make_unique<Sprite>();
-	effectSprites_->Initialize("Resources/circle.png");
-	// アンカーポイントをテクスチャ中央に設定
-	effectSprites_->SetAnchorPoint({0.5f, 0.5f});
-
+	
+	
 	// スプライトのワールドトランスフォームを初期化
 	effectSpritesWorldTransform_.Initialize();
 	effectSpritesWorldTransform_.translate_ = {0.0f, 0.0f, 0.0f};
 	effectSpritesWorldTransform_.scale_ = {0.005f, 0.1f, 0.1f};
 	effectSpritesWorldTransform_.rotate_ = {0.0f, 0.0f, 0.0f};
 
-	// スプライトにワールドトランスフォームを設定
-	effectSprites_->SetPosition({effectSpritesWorldTransform_.translate_.x, effectSpritesWorldTransform_.translate_.y});
-	effectSprites_->SetRotation({effectSpritesWorldTransform_.rotate_.x});
-	effectColor_ = {1.0f, 1.0f, 1.0f, 0.0f}; // 初期化
-	effectSprites_->SetColor(effectColor_);
+	
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
@@ -82,34 +74,13 @@ void Weapon::Update() {
 	// ワールド座標をスクリーン座標に変換
 	Vector3 screenPosition = WorldToScreen(effectSpritesWorldTransform_.translate_, camera_);
 
-	// スプライトのポジションをスクリーン座標に設定
-	effectSprites_->SetPosition({screenPosition.x, screenPosition.y});
-
+	
 	// effectSprite
 	if (isHitEnemy_) {
-		// 攻撃を受けてからの経過時間を計算
-		float elapsedTime = static_cast<float>(attackTime_) / 60.0f; // 60FPSを想定
-
-		if (elapsedTime <= 1.0f) {
-			// アルファ値を1秒間かけて下げる
-			effectColor_.w = 1.0f - elapsedTime;
-			effectSprites_->SetColor(effectColor_);
-		} else {
-			// 1秒経過後は非表示にする
-			isHitEnemy_ = false;
-			effectColor_.w = 0.0f;
-			effectSprites_->SetColor(effectColor_);
-		}
-
-		// 攻撃時間をカウント
-		attackTime_++;
+		
 	}
 
-	// スプライトにワールドトランスフォームを設定
-	effectSprites_->SetRotation({effectSpritesWorldTransform_.rotate_.x});
-	// effectSprites_->SetSize({effectSpritesWorldTransform_.scale_.x, effectSpritesWorldTransform_.scale_.y});
-
-	effectSprites_->Update();
+	
 }
 
 /// -------------------------------------------------------------
@@ -124,7 +95,7 @@ void Weapon::Draw() { object3D_->Draw(); }
 void Weapon::DrawEffect() {
 	// スプライトの描画
 
-	effectSprites_->Draw();
+	
 }
 /// -------------------------------------------------------------
 ///							ImGui描画処理
@@ -145,14 +116,7 @@ void Weapon::DrawImGui() {
 	ImGui::SliderFloat("Rotation", &effectSpritesWorldTransform_.rotate_.x, -10.0f, 10.0f);
 	ImGui::SliderFloat2("Scale", &effectSpritesWorldTransform_.scale_.x, 0.0f, 10.0f);
 
-	ImGui::Text("EffectScale");
-	ImGui::Text("X: %f", effectSprites_->GetSize().x);
-	ImGui::Text("Y: %f", effectSprites_->GetSize().y);
-	ImGui::Text("EffectPosition");
-	ImGui::Text("X: %f", effectSprites_->GetPosition().x);
-	ImGui::Text("Y: %f", effectSprites_->GetPosition().y);
-
-	ImGui::End();
+	
 }
 
 /// -------------------------------------------------------------
@@ -185,15 +149,6 @@ void Weapon::OnCollision(Collider* other) {
 		if (!enemy->GetIsInvincible()) {
 			// フラグを立てる
 			isHitEnemy_ = true;
-			// 攻撃時間をリセット
-			attackTime_ = 0;
-			// エフェクトの色を初期化
-			effectColor_ = {1.0f, 1.0f, 1.0f, 1.0f}; // アルファ値を1にする
-			effectSprites_->SetColor(effectColor_);
-			// エフェクトの位置を設定
-			effectSpritesWorldTransform_.translate_ = {enemy->GetPosition().x, enemy->GetPosition().z, enemy->GetPosition().y};
-			
-			
 		}
 
 		// 接触記録があれば何もせずに抜ける

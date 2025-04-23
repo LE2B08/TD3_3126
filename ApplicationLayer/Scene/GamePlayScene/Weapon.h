@@ -75,10 +75,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	Camera* camera_ = nullptr;
 
-	//Sprite
-	std::unique_ptr<Sprite> effectSprites_;
-	// スプライトの数
-	const int spriteCount_ = 3;
+	
 	// effectSprites_のワールドトランスフォーム
 	WorldTransform effectSpritesWorldTransform_;
 
@@ -107,7 +104,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	bool isHitEnemy_ = false;
 	Vector3 hitEnemyPosition_ = {0.0f, 0.0f, 0.0f};
-	Vector4 effectColor_ = {1.0f, 1.0f, 1.0f, 1.0f};
+
 
 	/*------攻撃の持続時間------*/
 	float attackTime_ = 0.0f;
