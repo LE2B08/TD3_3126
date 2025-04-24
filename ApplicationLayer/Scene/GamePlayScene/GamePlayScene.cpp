@@ -554,7 +554,7 @@ void GamePlayScene::GameStartUpdate() {
 ///				　		ゲームプレイ初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
-	enemy_->SetPosition(Vector3(0.0f, 0.0f, 8.0f));
+	enemy_->SetPosition(Vector3(0.0f, 1.0f, 8.0f));
 }
 
 /// -------------------------------------------------------------
@@ -636,6 +636,7 @@ void GamePlayScene::GameClearUpdate() {
 		isClearTransitionStarted_ = true;
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			input_->StopVibration();
 			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameClearScene");
 			});
@@ -663,6 +664,7 @@ void GamePlayScene::GameOverUpdate() {
 		isGameOverTransitionStarted_ = true;
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			input_->StopVibration();
 			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameOverScene");
 			});
