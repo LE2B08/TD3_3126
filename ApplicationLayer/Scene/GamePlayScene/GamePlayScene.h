@@ -17,6 +17,7 @@
 
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
+#include "Pause/PauseMenu.h"
 
 #include "EffectManager.h"
 
@@ -28,7 +29,8 @@ enum class GameSceneState {
 	Start,
 	Play,
 	GameClear,
-	GameOver
+	GameOver,
+	Pause
 };
 
 /// ---------- 前方宣言 ---------- ///
@@ -90,6 +92,12 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	// ゲームオーバー更新
 	void GameOverUpdate();
+
+	// ポーズ初期化
+	void PauseInitialize();
+
+	// ポーズ更新
+	void PauseUpdate();
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -167,4 +175,11 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 次の状態をリクエスト
 	std::optional<GameSceneState> nextGameState_ = std::nullopt;
+
+	// ゲームクリア
+	bool isClearTransitionStarted_ = false;
+	// ゲームオーバー
+	bool isGameOverTransitionStarted_ = false;
+	// ポーズメニュー
+	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
 };

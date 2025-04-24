@@ -58,72 +58,70 @@ void Enemy::Update() {
 	// 基底クラスの更新
 	BaseCharacter::Update();
 
-	if (!isHit_) {
-		if (!isHitFromAttack_) {
-			// 状態の変更がリクエストされている場合
-			if (requestBehavior_) {
 
-				// 状態を変更する
-				behavior_ = requestBehavior_.value();
+	// 状態の変更がリクエストされている場合
+	if (requestBehavior_) {
 
-				// 状態ごとの初期化を行う
-				switch (behavior_) {
+		// 状態を変更する
+		behavior_ = requestBehavior_.value();
 
-				case Enemy::Behavior::Normal:
-					BehaviorNormalInitialize();
-					break;
+		// 状態ごとの初期化を行う
+		switch (behavior_) {
 
-				case Enemy::Behavior::Sarch:
-					BehaviorSarchInitialize();
-					break;
+		case Enemy::Behavior::Normal:
+			BehaviorNormalInitialize();
+			break;
 
-				case Enemy::Behavior::Attack:
-					BehaviorAttackInitialize();
-					break;
+		case Enemy::Behavior::Sarch:
+			BehaviorSarchInitialize();
+			break;
 
-				default:
-					break;
-				}
+		case Enemy::Behavior::Attack:
+			BehaviorAttackInitialize();
+			break;
 
-				// リクエストをクリア
-				requestBehavior_ = std::nullopt;
-			}
-
-			// 状態ごとの更新を行う
-			switch (behavior_) {
-
-			case Enemy::Behavior::Normal:
-				BehaviorNormalUpdate();
-				break;
-
-			case Enemy::Behavior::Sarch:
-				BehaviorSarchUpdate();
-				break;
-
-			case Enemy::Behavior::Attack:
-				if (hp_ >= 1) {
-					BehaviorAttackUpdate();
-				}
-				break;
-
-			default:
-				break;
-			}
-
-			// 弾の削除
-			bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-				// 弾が死んでいる場合
-				if (!bullet->IsAlive()) {
-
-					// リセット
-					bullet.reset();
-					return true;
-				}
-
-				return false;
-				});
+		default:
+			break;
 		}
+
+		// リクエストをクリア
+		requestBehavior_ = std::nullopt;
 	}
+
+	// 状態ごとの更新を行う
+	switch (behavior_) {
+
+	case Enemy::Behavior::Normal:
+		BehaviorNormalUpdate();
+		break;
+
+	case Enemy::Behavior::Sarch:
+		BehaviorSarchUpdate();
+		break;
+
+	case Enemy::Behavior::Attack:
+		if (hp_ >= 1) {
+			BehaviorAttackUpdate();
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	// 弾の削除
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+		// 弾が死んでいる場合
+		if (!bullet->IsAlive()) {
+
+			// リセット
+			bullet.reset();
+			return true;
+		}
+
+		return false;
+		});
+
 	// カメラの演出が終わるまでかhpが無くなったときは移動しない
 	if (isCameraEffectEnd_ && hp_ >= 1) {
 		// 移動
@@ -148,7 +146,8 @@ void Enemy::Update() {
 				isHitFromAttack_ = false;
 				hitTime_ = 0;
 			}
-		} else {
+		}
+		else {
 			isHit_ = false;
 		}
 	}
@@ -190,8 +189,10 @@ void Enemy::Draw() {
 		bullet->Draw();
 	}
 
+#ifdef _DEBUG
 	// ワイヤーフレームの処理
 	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
+#endif // _DEBUG
 }
 
 /// -------------------------------------------------------------
@@ -354,7 +355,7 @@ void Enemy::SpawnEffect() {
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = { worldTransform_.translate_.x, 0.56f, worldTransform_.translate_.z - 12.0f };
+	Vector3 cameraOffset = { worldTransform_.translate_.x, 1.56f, worldTransform_.translate_.z - 12.0f };
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -370,7 +371,8 @@ void Enemy::SpawnEffect() {
 			enemyCameraEffectT_ = 0.0f;
 			isCameraBackEffect_ = true; // カメラの演出フラグをオンにする
 		}
-	} else {
+	}
+	else {
 		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
 		worldTransform_.rotate_.y = 1.5f;
 	}
@@ -380,7 +382,7 @@ void Enemy::SpawnEffect() {
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 0.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
 	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);
@@ -392,7 +394,8 @@ void Enemy::SpawnEffect() {
 		if (cameraBackEffectT_ >= cameraBackEffectMaxT_) {
 			cameraBackEffectT_ = cameraBackEffectMaxT_; // カメラの移動時間を最大値に設定
 			isCameraEffectEnd_ = true;                  // カメラの演出フラグをオンにする
-		} else {
+		}
+		else {
 			cameraBackEffectT_ += 1.0f; // カメラの移動時間をカウントアップ
 		}
 		// 新しく移動させるカメラの座標
@@ -428,7 +431,8 @@ void Enemy::CameraMove() {
 	if (cameraMoveT >= cameraMoveMaxT) {
 		cameraMoveT = cameraMoveMaxT; // カメラの移動時間を最大値に設定
 		isEnemyCameraEffect_ = false;
-	} else {
+	}
+	else {
 		cameraMoveT += 1.0f; // カメラの移動時間をカウントアップ
 	}
 
@@ -451,7 +455,8 @@ void Enemy::FaildAnimation()
 	if (rotationStartT_ >= rotationMaxT_) {
 		rotationStartT_ = rotationMaxT_; // 回転時間を最大値に設定
 		isDead_ = true;                  // 死亡フラグを立てる
-	} else {
+	}
+	else {
 		rotationStartT_ += 1.0f; // 回転時間をカウントアップ
 	}
 	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
@@ -481,7 +486,8 @@ void Enemy::FaildCameraMove()
 	if (DeathCameraMoveT_ >= DeathCameraMoveMaxT_) {
 		DeathCameraMoveT_ = DeathCameraMoveMaxT_; // カメラの移動時間を最大値に設定
 		FaildAnimation();                   // 死亡エフェクトを実行
-	} else {
+	}
+	else {
 		DeathCameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
 		worldTransform_.rotate_.y = 1.5f;
 	}
@@ -514,7 +520,8 @@ void Enemy::BehaviorNormalUpdate() {
 
 		// 探索状態にする
 		requestBehavior_ = Behavior::Sarch;
-	} else {
+	}
+	else {
 
 		// タイマーを減らす
 		stateTimer_ -= kDeltaTime;
@@ -546,7 +553,8 @@ void Enemy::BehaviorSarchUpdate() {
 
 		// タイマーをリセット
 		stateTimer_ = 2.0f;
-	} else {
+	}
+	else {
 
 		// タイマーを減らす
 		stateTimer_ -= kDeltaTime;

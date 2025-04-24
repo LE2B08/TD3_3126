@@ -91,6 +91,7 @@
     <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

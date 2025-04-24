@@ -11,6 +11,9 @@ void TitleObject::Initialize()
 	pressToA_ = std::make_unique<Object3D>();
 	pressToA_->Initialize("PressToA.gltf");
 
+	pressBToGuide_ = std::make_unique<Object3D>();
+	pressBToGuide_->Initialize("PressBToGuide.gltf");
+
 	position_ = Vector3(-20.0f, 0.0f, 20.0f); // スタート位置に近い値
 	rotation_ = Vector3(0.0f, 3.14f, 0.0f);    // 初期角度
 	scale_ = Vector3(3.0f, 3.0f, 3.0f);       // 初期スケール
@@ -42,13 +45,20 @@ void TitleObject::Update()
 		object3D_->SetColor(objectColor_);
 
 		// PressToA
-		Vector3 pressPos = Vector3(0.0f, 0.1f + moveOffset, -8.0f);
+		Vector3 pressPos = Vector3(0.0f, 0.1f + moveOffset, -6.0f);
 		pressToA_->SetTranslate(pressPos);
 		pressToAColor_.w = alpha;
 		pressToA_->SetColor(pressToAColor_);
 
+		// PressBToGuide
+		Vector3 pressBPos = Vector3(0.0f, 0.1f + moveOffset, -10.0f);
+		pressBToGuide_->SetTranslate(pressBPos);
+		pressBToGuide_->SetColor(objectColor_);
+		pressBToGuide_->SetAlpha(alpha);
+
 		object3D_->Update();
 		pressToA_->Update();
+		pressBToGuide_->Update();
 		return;
 	}
 
@@ -92,7 +102,7 @@ void TitleObject::Update()
 		// ===== 常時ループアニメーション =====
 		// 揺れる回転（Y軸）
 		float time = static_cast<float>(moveTime_); // 秒数で代用
-		rotation_.y = std::numbers::pi_v<float> + sinf(time * 2.0f) * 0.05f;
+		rotation_.y = std::numbers::pi_v<float> +sinf(time * 2.0f) * 0.05f;
 
 		// ゆっくり上下する（浮いてる感じ）
 		position_.y = 0.3f + sinf(time * 1.5f) * 0.2f;
@@ -113,10 +123,15 @@ void TitleObject::Update()
 	float floatY = sinf(moveTime_ * 2.0f) * 0.1f;
 	float scaleFactor = 1.0f + 0.05f * sinf(moveTime_ * 4.0f);
 
-	pressToA_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -8.0f));
+	pressToA_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -6.0f));
 	pressToA_->SetScale(Vector3(2.0f, 2.0f, 2.0f) * scaleFactor);
-	pressToA_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float> , 0.0f));
+	pressToA_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
 	pressToA_->Update();
+
+	pressBToGuide_->SetScale(Vector3(2.0f, 2.0f, 2.0f) * scaleFactor);
+	pressBToGuide_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
+	pressBToGuide_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -10.0f));
+	pressBToGuide_->Update();
 }
 
 void TitleObject::Draw()
@@ -124,6 +139,8 @@ void TitleObject::Draw()
 	object3D_->Draw();
 
 	pressToA_->Draw();
+
+	pressBToGuide_->Draw();
 }
 
 void TitleObject::Finalize()

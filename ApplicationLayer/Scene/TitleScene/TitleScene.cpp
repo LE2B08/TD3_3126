@@ -33,8 +33,7 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/titleSceneUI.png",
-		//"Resources/uvChecker.png",
+		"Resources/HowToPlayForTitle.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -58,7 +57,7 @@ void TitleScene::Initialize()
 	}
 
 	// wavLoaderの初期化
-	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f,1.0f,true);
+	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, true);
 
 	// タイトルオブジェクトの初期化
 	titleObject_ = std::make_unique<TitleObject>();
@@ -70,17 +69,7 @@ void TitleScene::Initialize()
 /// -------------------------------------------------------------
 void TitleScene::Update()
 {
-	// 入力によるシーン切り替え
-	if (titleState_ == TitleState::Idle &&
-		input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
-	{
-		titleState_ = TitleState::Exit;
-		exitTimer_ = 0.0f;
-
-		wavLoader_->StopBGM();
-		titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
-	}
-
+#ifdef _DEBUG
 	if (input->TriggerKey(DIK_F1)) {
 		if (sceneManager_) {
 			sceneManager_->ChangeScene("TuboScene");
@@ -92,6 +81,7 @@ void TitleScene::Update()
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
 	}
+#endif // _DEBUG
 
 	// Updateの中に状態管理追加
 	switch (titleState_) {
@@ -102,6 +92,24 @@ void TitleScene::Update()
 
 	case TitleState::Idle:
 		// Idle中の点滅演出など（今の titleObject_->Update() に書かれてるかも）
+
+		// 入力によるシーン切り替え
+		if (titleState_ == TitleState::Idle &&
+			input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
+		{
+			titleState_ = TitleState::Exit;
+			exitTimer_ = 0.0f;
+
+			wavLoader_->StopBGM();
+			titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
+		}
+
+		// 操作方法の表示 Bボタンで表示
+		if (input->TriggerButton(XButtons.B))
+		{
+			titleState_ = TitleState::Operate;
+		}
+
 		break;
 
 	case TitleState::Exit:
@@ -128,6 +136,13 @@ void TitleScene::Update()
 		// フェードアウト進行中（fadeManager_->Update() が処理してくれる）
 		// フェードマネージャーの更新処理
 		fadeManager_->Update();
+		break;
+
+	case TitleState::Operate:
+		// 操作方法の表示 Bボタンで非表示
+		if (input->TriggerButton(XButtons.B)) {
+			titleState_ = TitleState::Idle;
+		}
 		break;
 	}
 
@@ -163,12 +178,6 @@ void TitleScene::Draw()
 	// スプライトの描画設定（後面）
 	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
-	/// ----- スプライトの描画設定と描画 ----- ///
-	for (auto& sprite : sprites_)
-	{
-		//sprite->Draw();
-	}
-
 #pragma endregion
 
 
@@ -188,6 +197,15 @@ void TitleScene::Draw()
 	// UIスプライトの描画設定（前面）
 	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
+	// 操作方法を描画
+	if (titleState_ == TitleState::Operate)
+	{
+		/// ----- スプライトの描画設定と描画 ----- ///
+		for (auto& sprite : sprites_)
+		{
+			sprite->Draw();
+		}
+	}
 
 	// フェードの描画（最後尾に置く）
 	fadeManager_->Draw();

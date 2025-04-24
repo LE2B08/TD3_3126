@@ -109,6 +109,10 @@ void GamePlayScene::Initialize()
 	dynamicCamera_->SetPlayer(player_.get());
 	dynamicCamera_->SetEnemy(enemy_.get());
 
+	// ポーズメニューの初期化
+	pauseMenu_ = std::make_unique<PauseMenu>();
+	pauseMenu_->Initialize();
+
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
@@ -127,7 +131,6 @@ void GamePlayScene::Update()
 		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
 		isDebugCamera_ = !isDebugCamera_;
 	}
-#endif // _DEBUG
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
@@ -149,6 +152,7 @@ void GamePlayScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
+#endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
 		effectManager_->SetIsCameraShaking(true);
@@ -182,6 +186,10 @@ void GamePlayScene::Update()
 			GameOverInitialize();
 			break;
 
+		case GameSceneState::Pause:
+			PauseInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -209,6 +217,10 @@ void GamePlayScene::Update()
 		GameOverUpdate();
 		break;
 
+	case GameSceneState::Pause:
+		PauseUpdate();
+		break;
+
 	default:
 		break;
 	}
@@ -218,12 +230,6 @@ void GamePlayScene::Update()
 
 	// フィールドの更新
 	field_->Update();
-
-	// プレイヤー更新
-	player_->Update();
-
-	// 敵の更新
-	enemy_->Update();
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
@@ -314,6 +320,19 @@ void GamePlayScene::Draw()
 
 		break;
 
+	case GameSceneState::Pause:
+
+		// プレイヤー
+		player_->Draw();
+
+		// 敵の描画
+		enemy_->Draw();
+
+		// フックの描画
+		hook_->Draw();
+
+		break;
+
 	default:
 		break;
 	}
@@ -337,16 +356,40 @@ void GamePlayScene::Draw()
 	// 敵のUI
 	enemyUI_->Draw();
 
-	// コントローラー用UIの描画
-	controllerUI_->Draw();
+	switch (gameState_) {
+
+	case GameSceneState::Start:
+		break;
+
+	case GameSceneState::Play:
+		// コントローラー用UIの描画
+		controllerUI_->Draw();
+		break;
+
+	case GameSceneState::GameClear:
+		break;
+
+	case GameSceneState::GameOver:
+		break;
+
+	case GameSceneState::Pause:
+		// ポーズメニューの描画
+		pauseMenu_->Draw();
+		break;
+
+	default:
+		break;
+	}
 
 	// フェードマネージャーの描画（ここから下は書かない）
 	fadeManager_->Draw();
 
 #pragma endregion
 
+#ifdef _DEBUG
 	// コリジョンマネージャーの描画
 	collisionManager_->Draw();
+#endif // _DEBUG
 
 	// ワイヤーフレームの描画
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
@@ -388,6 +431,9 @@ void GamePlayScene::DrawImGui()
 	//case GameSceneState::GameOver:
 	//	ImGui::Text("Game Over");
 	//	break;
+	//case GameSceneState::Pause:
+	//  ImGui::Text("Game Pause");
+	//  break;
 	//default:
 	//	break;
 	//}
@@ -453,12 +499,9 @@ void GamePlayScene::GameStartInitialize() {
 ///				　		ゲームスタート更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameStartUpdate() {
-	// まだアニメーションフラグが立っていなくて対応するキーが押されたら
-	if (!isStartAnimation_ && (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))) {
 
-		// アニメーションを開始
-		isStartAnimation_ = true;
-	}
+	// アニメーションを開始
+	isStartAnimation_ = true;
 
 	// アニメーションフラグが立っていたら
 	if (isStartAnimation_) {
@@ -492,20 +535,26 @@ void GamePlayScene::GameStartUpdate() {
 			}
 		}
 	}
-	
+
 	// 敵の降ってくるアニメーションが終了してたら
 	if (enemy_->GetIsCameraEffectEnd()) {
 
 		// 状態をゲームプレイに変更
 		nextGameState_ = GameSceneState::Play;
 	}
+
+	// プレイヤー更新
+	player_->Update();
+
+	// 敵の更新
+	enemy_->Update();
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームプレイ初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
-	enemy_->SetPosition(Vector3(0.0f, 0.0f, 8.0f));
+	enemy_->SetPosition(Vector3(0.0f, 1.0f, 8.0f));
 }
 
 /// -------------------------------------------------------------
@@ -513,9 +562,15 @@ void GamePlayScene::GamePlayInitialize() {
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayUpdate() {
 
+	// エスケープキーかスタートボタンを押したら
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerButton(12)) {
+		// ポーズ状態に変更
+		nextGameState_ = GameSceneState::Pause;
+	}
+
 	// プレイヤーの体力がなくなったら
 	if (player_->GetHp() <= 0) {
-		
+
 		// 状態をゲームオーバーに変更
 		nextGameState_ = GameSceneState::GameOver;
 	}
@@ -554,6 +609,12 @@ void GamePlayScene::GamePlayUpdate() {
 		enemy_->SetIsHitFromAttack(true);
 	}
 
+	// プレイヤー更新
+	player_->Update();
+
+	// 敵の更新
+	enemy_->Update();
+
 	dynamicCamera_->Update();
 }
 
@@ -561,7 +622,7 @@ void GamePlayScene::GamePlayUpdate() {
 ///				　		ゲームクリア初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearInitialize() {
-	
+
 }
 
 /// -------------------------------------------------------------
@@ -570,23 +631,26 @@ void GamePlayScene::GameClearInitialize() {
 void GamePlayScene::GameClearUpdate() {
 	// 敵の死亡アニメーションが終わったときenemyのisDeadがtrueになる
 	enemy_->FaildCameraMove();
-	// エンターキーかAボタンが押されたら
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+
+	if (enemy_->IsDead() && !isClearTransitionStarted_) {
+		isClearTransitionStarted_ = true;
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-			// BGMを止めて
+			input_->StopVibration();
 			wavLoader_->StopBGM();
-			// ゲームクリアシーンに移動
 			sceneManager_->ChangeScene("GameClearScene");
-		});
+			});
 	}
+
+	// 敵の更新
+	enemy_->Update();
 }
 
 /// -------------------------------------------------------------
 ///				　		ゲームオーバー初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverInitialize() {
-	
+
 }
 
 /// -------------------------------------------------------------
@@ -596,16 +660,64 @@ void GamePlayScene::GameOverUpdate() {
 	// 内部でアニメーションが終わったときplayerのisDeadがtrueになる
 	player_->DeathCameraMove();
 
-	// エンターキーかAボタンが押されたら
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+	if (player_->IsDead() && !isGameOverTransitionStarted_) {
+		isGameOverTransitionStarted_ = true;
 
-		if (sceneManager_) {
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				// BGMを止めて
-				wavLoader_->StopBGM();
-				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
-				});
+		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			input_->StopVibration();
+			wavLoader_->StopBGM();
+			sceneManager_->ChangeScene("GameOverScene");
+			});
+	}
+
+	// プレイヤー更新
+	player_->Update();
+}
+
+/// -------------------------------------------------------------
+///				　		  ポーズ初期化
+/// -------------------------------------------------------------
+void GamePlayScene::PauseInitialize() {
+}
+
+/// -------------------------------------------------------------
+///				　		   ポーズ更新
+/// -------------------------------------------------------------
+void GamePlayScene::PauseUpdate() {
+
+	// ポーズメニューの更新
+	pauseMenu_->Update();
+
+	// エスケープキーかSTARTボタンを押したら
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerButton(12)) {
+		// ゲームプレイ状態に変更
+		nextGameState_ = GameSceneState::Play;
+	}
+
+	// メニューの状態が「ゲームに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToGame) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// ゲームプレイ状態に変更
+			nextGameState_ = GameSceneState::Play;
+		}
+	}
+
+	// メニューの状態が「遊び方」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::HowToPlay) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// 遊び方の説明を表示する処理を追加
+			// 例: ShowHowToPlay();
+		}
+	}
+
+	// メニューの状態が「タイトルに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToTitle) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			if (sceneManager_) {
+				fadeManager_->StartFadeToWhite(0.02f, [this]() {
+					sceneManager_->ChangeScene("TitleScene");
+					});
+			}
 		}
 	}
 }
