@@ -76,6 +76,12 @@ private:
 	// タイトルに戻るテキストの位置
 	Vector2 returnToTitleTextPos_ = { 0.0f, 0.0f };
 
+	// 決定ボタン
+	std::unique_ptr<Sprite> decisionButton_ = nullptr;
+
+	// 決定ボタンの位置
+	Vector2 decisionButtonPos_ = { 0.0f, 0.0f };
+
 	// 選択している矢印
 	std::unique_ptr<Sprite> selectionArrow_ = nullptr;
 
