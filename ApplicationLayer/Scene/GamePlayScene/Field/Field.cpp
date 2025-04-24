@@ -38,13 +38,14 @@ void Field::Update()
 /// -------------------------------------------------------------
 void Field::Draw()
 {
-
+#ifdef _DEBUG
 	// ワイヤーフレームの描画
 	// Fieldの描画
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, maxPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, minPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {maxPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({minPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, maxPosition_.z }, { minPosition_.x, 0.0f, maxPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, minPosition_.z }, { minPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, maxPosition_.z }, { maxPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ minPosition_.x, 0.0f, maxPosition_.z }, { minPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+#endif // _DEBUG
 
 	objectField_->Draw();
 }
@@ -67,7 +68,7 @@ void Field::ShowImGui(const char* name) {
 }
 
 void Field::ScalingAnimation() {
-	
+
 	// タイマー処理
 	if (scalingTimer_ >= maxScalingTime_) {
 

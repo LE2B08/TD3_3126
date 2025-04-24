@@ -131,7 +131,6 @@ void GamePlayScene::Update()
 		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
 		isDebugCamera_ = !isDebugCamera_;
 	}
-#endif // _DEBUG
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
@@ -153,6 +152,7 @@ void GamePlayScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
+#endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
 		effectManager_->SetIsCameraShaking(true);
@@ -386,8 +386,10 @@ void GamePlayScene::Draw()
 
 #pragma endregion
 
+#ifdef _DEBUG
 	// コリジョンマネージャーの描画
 	collisionManager_->Draw();
+#endif // _DEBUG
 
 	// ワイヤーフレームの描画
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
@@ -497,12 +499,9 @@ void GamePlayScene::GameStartInitialize() {
 ///				　		ゲームスタート更新
 /// -------------------------------------------------------------
 void GamePlayScene::GameStartUpdate() {
-	// まだアニメーションフラグが立っていなくて対応するキーが押されたら
-	if (!isStartAnimation_ && (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))) {
 
-		// アニメーションを開始
-		isStartAnimation_ = true;
-	}
+	// アニメーションを開始
+	isStartAnimation_ = true;
 
 	// アニメーションフラグが立っていたら
 	if (isStartAnimation_) {
