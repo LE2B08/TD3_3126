@@ -86,7 +86,7 @@ void GameOverScene::Update()
 
 		wavLoader_->StopBGM();
 	}
-
+#ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F1))
 	{
 		if (sceneManager_)
@@ -102,11 +102,7 @@ void GameOverScene::Update()
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
 	}
-
-	if (input_->TriggerKey(DIK_F3))
-	{
-
-	}
+#endif // _DEBUG
 
 	// スプライトの更新処理
 	for (auto& sprite : sprites_)

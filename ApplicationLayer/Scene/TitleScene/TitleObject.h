@@ -84,6 +84,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	std::unique_ptr<Object3D> object3D_; // 3Dオブジェクト
 	std::unique_ptr<Object3D> pressToA_; // 3Dオブジェクト
+	std::unique_ptr<Object3D> pressBToGuide_; // 3Dオブジェクト
 
 	Vector3 position_{}; // 位置
 	Vector3 rotation_{}; // 回転

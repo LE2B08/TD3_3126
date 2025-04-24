@@ -33,7 +33,7 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/uvChecker.png",
+		"Resources/HowToPlay.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -57,7 +57,7 @@ void TitleScene::Initialize()
 	}
 
 	// wavLoaderの初期化
-	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f,1.0f,true);
+	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, true);
 
 	// タイトルオブジェクトの初期化
 	titleObject_ = std::make_unique<TitleObject>();
@@ -69,6 +69,7 @@ void TitleScene::Initialize()
 /// -------------------------------------------------------------
 void TitleScene::Update()
 {
+#ifdef _DEBUG
 	if (input->TriggerKey(DIK_F1)) {
 		if (sceneManager_) {
 			sceneManager_->ChangeScene("TuboScene");
@@ -80,6 +81,7 @@ void TitleScene::Update()
 			sceneManager_->ChangeScene("AkimotoScene");
 		}
 	}
+#endif // _DEBUG
 
 	// Updateの中に状態管理追加
 	switch (titleState_) {
