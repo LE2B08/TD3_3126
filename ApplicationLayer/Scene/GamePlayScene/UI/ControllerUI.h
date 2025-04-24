@@ -94,6 +94,12 @@ private: /// ---------- メンバ変数 ---------- ///
 	// ゲームスタート位置
 	Vector2 gameStartPosition_;
 
+	// ポーズボタン
+	std::unique_ptr<Sprite> pauseButton_;
+
+	// ポーズボタン位置
+	Vector2 pauseButtonPosition_;
+
 	// フック借りポインタ
 	Hook* hook_ = nullptr;
 };

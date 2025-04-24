@@ -22,6 +22,8 @@ ControllerUI::ControllerUI()
 	TextureManager::GetInstance()->LoadTexture("Resources/direction_ui.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/game_start_ui.png");
 
+	TextureManager::GetInstance()->LoadTexture("Resources/SelectPause.png");
+
 	// 位置の初期化
 	RButtonPosition_ = { 1000.0f, 0.0f };
 	LButtonPosition_ = { 1000.0f, 60.0f };
@@ -35,6 +37,8 @@ ControllerUI::ControllerUI()
 	attackPosition_ = { 1064.0f, 60.0f };
 	directionPosition_ = { 1064.0f, 180.0f };
 	gameStartPosition_ = { 1064.0f, 240.0f };
+
+	pauseButtonPosition_ = { 950.0f, 32.0f };
 }
 
 
@@ -86,6 +90,10 @@ void ControllerUI::Initialize()
 	// ゲームスタートの生成&初期化
 	gameStart_ = std::make_unique<Sprite>();
 	gameStart_->Initialize("Resources/game_start_ui.png");
+
+	// ポーズボタンの生成&初期化
+	pauseButton_ = std::make_unique<Sprite>();
+	pauseButton_->Initialize("Resources/SelectPause.png");
 }
 
 
@@ -138,6 +146,10 @@ void ControllerUI::Update()
 	// ゲームスタートの更新
 	gameStart_->SetPosition(gameStartPosition_);
 	gameStart_->Update();
+
+	// ポーズボタンの更新
+	pauseButton_->SetPosition(pauseButtonPosition_);
+	pauseButton_->Update();
 }
 
 
@@ -148,37 +160,40 @@ void ControllerUI::Draw()
 {
 
 	// Rボタンの描画
-	RButton_->Draw();
+	//RButton_->Draw();
 
 	// Lボタンの描画
-	LButton_->Draw();
+	//LButton_->Draw();
 
 	// Rトリガーの描画
-	RTrigger_->Draw();
+	//RTrigger_->Draw();
 
 	// Rスティックの描画
-	RStick_->Draw();
+	//RStick_->Draw();
 
 	// Aボタンの描画
-	AButton_->Draw();
+	//AButton_->Draw();
 
 	// 投げるの描画
-	throw_->Draw();
+	//throw_->Draw();
 
 	// 戻すの描画
 	//back_->Draw();
 
 	// 巻くの描画
-	wind_->Draw();
+	//wind_->Draw();
 
 	// 攻撃の描画
-	attack_->Draw();
+	//attack_->Draw();
 
 	// 向きの描画
-	direction_->Draw();
+	//direction_->Draw();
 
 	// ゲームスタートの描画
-	gameStart_->Draw();
+	//gameStart_->Draw();
+
+	// ポーズボタンの描画
+	pauseButton_->Draw();
 }
 
 

@@ -11,6 +11,7 @@ PauseMenu::PauseMenu() {
 	TextureManager::GetInstance()->LoadTexture("Resources/ReturnToGameText.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/HowToPlayText.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/ReturnToTitleText.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Decision.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/SelectionArrow.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/HowToPlay.png");
 
@@ -19,6 +20,9 @@ PauseMenu::PauseMenu() {
 	returnToGameTextPos_ = { 484.0f, 360.0f };
 	howToPlayTextPos_ = { 516.0f, 488.0f };
 	returnToTitleTextPos_ = { 468.0f, 616.0f };
+
+	// 決定ボタンの位置
+	decisionButtonPos_ = { 1000.0f, 620.0f };
 
 	// 選択している矢印の位置
 	selectionArrowPos_ = { 400.0f, 380.0f };
@@ -54,12 +58,17 @@ void PauseMenu::Initialize() {
 	returnToTitleText_->Initialize("Resources/ReturnToTitleText.png");
 	returnToTitleText_->SetPosition(returnToTitleTextPos_);
 
+	// 決定ボタンの生成&初期化
+	decisionButton_ = std::make_unique<Sprite>();
+	decisionButton_->Initialize("Resources/Decision.png");
+	decisionButton_->SetPosition(decisionButtonPos_);
+
 	// 選択している矢印の生成&初期化
 	selectionArrow_ = std::make_unique<Sprite>();
 	selectionArrow_->Initialize("Resources/SelectionArrow.png");
 	selectionArrow_->SetPosition(selectionArrowPos_);
 
-	// コントローラーの画像の生成&初期化
+	// 遊び方の説明の生成&初期化
 	HowToPlay = std::make_unique<Sprite>();
 	HowToPlay->Initialize("Resources/HowToPlay.png");
 	HowToPlay->SetPosition(HowToPlayPos_);
@@ -145,6 +154,9 @@ void PauseMenu::Update() {
 
 	returnToTitleText_->Update();
 
+	// 決定ボタンの更新
+	decisionButton_->Update();
+
 	// 選択している矢印の更新
 	selectionArrow_->SetPosition(selectionArrowPos_);
 	selectionArrow_->Update();
@@ -173,6 +185,9 @@ void PauseMenu::Draw() {
 		howToPlayText_->Draw();
 
 		returnToTitleText_->Draw();
+
+		// 決定ボタンの描画
+		decisionButton_->Draw();
 
 		// 選択している矢印の描画
 		selectionArrow_->Draw();
