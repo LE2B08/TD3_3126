@@ -354,7 +354,7 @@ void Enemy::SpawnEffect() {
 	Vector3 moveCameraPosition = cameraPosition;
 
 	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = { worldTransform_.translate_.x, 0.56f, worldTransform_.translate_.z - 12.0f };
+	Vector3 cameraOffset = { worldTransform_.translate_.x, 1.56f, worldTransform_.translate_.z - 12.0f };
 
 	// カメラの回転を取得
 	Vector3 cameraRotation = camera_->GetRotate();
@@ -380,7 +380,7 @@ void Enemy::SpawnEffect() {
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 0.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
 	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);
