@@ -492,7 +492,7 @@ void GamePlayScene::GameStartUpdate() {
 			}
 		}
 	}
-	
+
 	// 敵の降ってくるアニメーションが終了してたら
 	if (enemy_->GetIsCameraEffectEnd()) {
 
@@ -515,7 +515,7 @@ void GamePlayScene::GamePlayUpdate() {
 
 	// プレイヤーの体力がなくなったら
 	if (player_->GetHp() <= 0) {
-		
+
 		// 状態をゲームオーバーに変更
 		nextGameState_ = GameSceneState::GameOver;
 	}
@@ -561,7 +561,7 @@ void GamePlayScene::GamePlayUpdate() {
 ///				　		ゲームクリア初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameClearInitialize() {
-	
+
 }
 
 /// -------------------------------------------------------------
@@ -570,15 +570,14 @@ void GamePlayScene::GameClearInitialize() {
 void GamePlayScene::GameClearUpdate() {
 	// 敵の死亡アニメーションが終わったときenemyのisDeadがtrueになる
 	enemy_->FaildCameraMove();
-	// エンターキーかAボタンが押されたら
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+
+	if (enemy_->IsDead() && !isClearTransitionStarted_) {
+		isClearTransitionStarted_ = true;
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
-			// BGMを止めて
 			wavLoader_->StopBGM();
-			// ゲームクリアシーンに移動
 			sceneManager_->ChangeScene("GameClearScene");
-		});
+			});
 	}
 }
 
@@ -586,7 +585,7 @@ void GamePlayScene::GameClearUpdate() {
 ///				　		ゲームオーバー初期化
 /// -------------------------------------------------------------
 void GamePlayScene::GameOverInitialize() {
-	
+
 }
 
 /// -------------------------------------------------------------
@@ -596,16 +595,12 @@ void GamePlayScene::GameOverUpdate() {
 	// 内部でアニメーションが終わったときplayerのisDeadがtrueになる
 	player_->DeathCameraMove();
 
-	// エンターキーかAボタンが押されたら
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+	if (player_->IsDead() && !isGameOverTransitionStarted_) {
+		isGameOverTransitionStarted_ = true;
 
-		if (sceneManager_) {
-			fadeManager_->StartFadeToWhite(0.02f, [this]() {
-				// フェード完了後の処理
-				// BGMを止めて
-				wavLoader_->StopBGM();
-				sceneManager_->ChangeScene("GameOverScene"); // シーン名を指定して変更
-				});
-		}
+		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			wavLoader_->StopBGM();
+			sceneManager_->ChangeScene("GameOverScene");
+			});
 	}
 }
