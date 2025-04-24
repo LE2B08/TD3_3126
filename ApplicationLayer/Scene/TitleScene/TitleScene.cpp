@@ -33,8 +33,7 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/titleSceneUI.png",
-		//"Resources/uvChecker.png",
+		"Resources/uvChecker.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -70,17 +69,6 @@ void TitleScene::Initialize()
 /// -------------------------------------------------------------
 void TitleScene::Update()
 {
-	// 入力によるシーン切り替え
-	if (titleState_ == TitleState::Idle &&
-		input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
-	{
-		titleState_ = TitleState::Exit;
-		exitTimer_ = 0.0f;
-
-		wavLoader_->StopBGM();
-		titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
-	}
-
 	if (input->TriggerKey(DIK_F1)) {
 		if (sceneManager_) {
 			sceneManager_->ChangeScene("TuboScene");
@@ -102,6 +90,24 @@ void TitleScene::Update()
 
 	case TitleState::Idle:
 		// Idle中の点滅演出など（今の titleObject_->Update() に書かれてるかも）
+
+		// 入力によるシーン切り替え
+		if (titleState_ == TitleState::Idle &&
+			input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
+		{
+			titleState_ = TitleState::Exit;
+			exitTimer_ = 0.0f;
+
+			wavLoader_->StopBGM();
+			titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
+		}
+
+		// 操作方法の表示 Bボタンで表示
+		if (input->TriggerButton(XButtons.B))
+		{
+			titleState_ = TitleState::Operate;
+		}
+
 		break;
 
 	case TitleState::Exit:
@@ -128,6 +134,13 @@ void TitleScene::Update()
 		// フェードアウト進行中（fadeManager_->Update() が処理してくれる）
 		// フェードマネージャーの更新処理
 		fadeManager_->Update();
+		break;
+
+	case TitleState::Operate:
+		// 操作方法の表示 Bボタンで非表示
+		if (input->TriggerButton(XButtons.B)) {
+			titleState_ = TitleState::Idle;
+		}
 		break;
 	}
 
@@ -163,12 +176,6 @@ void TitleScene::Draw()
 	// スプライトの描画設定（後面）
 	SpriteManager::GetInstance()->SetRenderSetting_Background();
 
-	/// ----- スプライトの描画設定と描画 ----- ///
-	for (auto& sprite : sprites_)
-	{
-		//sprite->Draw();
-	}
-
 #pragma endregion
 
 
@@ -188,6 +195,15 @@ void TitleScene::Draw()
 	// UIスプライトの描画設定（前面）
 	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
+	// 操作方法を描画
+	if (titleState_ == TitleState::Operate)
+	{
+		/// ----- スプライトの描画設定と描画 ----- ///
+		for (auto& sprite : sprites_)
+		{
+			sprite->Draw();
+		}
+	}
 
 	// フェードの描画（最後尾に置く）
 	fadeManager_->Draw();

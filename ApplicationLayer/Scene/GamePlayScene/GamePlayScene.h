@@ -176,6 +176,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 次の状態をリクエスト
 	std::optional<GameSceneState> nextGameState_ = std::nullopt;
 
+	// ゲームクリア
+	bool isClearTransitionStarted_ = false;
+	// ゲームオーバー
+	bool isGameOverTransitionStarted_ = false;
 	// ポーズメニュー
 	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
 };
