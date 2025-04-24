@@ -33,7 +33,7 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/HowToPlay.png",
+		"Resources/HowToPlayForTitle.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
