@@ -135,9 +135,16 @@ void Enemy::Update() {
 
 	/*------ヒット時の処理------*/
 	if (isHit_) {
+
+		// プレイヤーからの攻撃だったら
 		if (isHitFromAttack_) {
+
 			// ヒット時のパーティクルを生成
 			HitParticle();
+
+			// ノックバックさせる
+			KnockBack();
+
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
 			if (hitTime_ >= hitMaxTime_) {
@@ -206,10 +213,35 @@ void Enemy::Move() {
 	// 向きを合わせる
 	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
 
-
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
+
+	//// 壁に当たったらVelocityを0にする
+	//if (worldTransform_.translate_.x >= maxMoveLimit_.x || worldTransform_.translate_.x <= minMoveLimit_.x) {
+	//	velocity_.x = 0.0f;
+	//	velocity_.z = 0.0f;
+	//}
+	//
+	//if (worldTransform_.translate_.z >= maxMoveLimit_.z || worldTransform_.translate_.z <= minMoveLimit_.z) {
+	//	velocity_.x = 0.0f;
+	//	velocity_.z = 0.0f;
+	//}
+	
+	// 壁に当たったら向きをランダムに抽選
+	if (worldTransform_.translate_.x >= maxMoveLimit_.x) { // 右の壁に当たった
+		direction_ = RondomDirection({ -1.0f, -1.0f }, { 0.0f, 1.0f });
+	}
+	else if (worldTransform_.translate_.x <= minMoveLimit_.x) { // 左の壁に当たった
+		direction_ = RondomDirection({ 0.0f, -1.0f }, { 1.0f, 1.0f });
+	}
+	
+	if (worldTransform_.translate_.z >= maxMoveLimit_.z) { // 上の壁に当たった
+		direction_ = RondomDirection({ -1.0f, -1.0f }, { 1.0f, 0.0f });
+	}
+	else if (worldTransform_.translate_.z <= minMoveLimit_.z) { // 下の壁に当たった
+		direction_ = RondomDirection({ -1.0f, 0.0f }, { 1.0f, 1.0f });
+	}
 }
 
 /// -------------------------------------------------------------
@@ -238,21 +270,24 @@ void Enemy::ShowImGui(const char* name) {
 		break;
 	}
 
-	ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+	// ステートタイマー
+	ImGui::SliderFloat("StateTimer", &stateTimer_, 0.0f, 5.0f);
+
+	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
+	//ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
-	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	//ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
-	ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
+	//ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
 	ImGui::Text("HitTime : %f", hitTime_);
-	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
-	ImGui::Text("HP : %d", hp_);
-	ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
-	ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
-	ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
-	ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
+	//ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
+	//ImGui::Text("HP : %d", hp_);
+	//ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
+	//ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
+	//ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
+	//ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
 	ImGui::End();
 }
 
@@ -304,11 +339,12 @@ void Enemy::HitParticle() {
 /// -------------------------------------------------------------
 ///						ランダム方向処理
 /// -------------------------------------------------------------
-Vector3 Enemy::RondomDirection(float min, float max) {
+Vector3 Enemy::RondomDirection(XZVector2 min, XZVector2 max) {
 
 	// XZ平面上のランダムな方向を生成
-	std::uniform_real_distribution<float> dist(min, max);
-	Vector3 direction = { dist(randomEngine), 0.0f, dist(randomEngine) };
+	std::uniform_real_distribution<float> distX(min.x, max.x);
+	std::uniform_real_distribution<float> distZ(min.z, max.z);
+	Vector3 direction = { distX(randomEngine), 0.0f, distZ(randomEngine) };
 	direction = Vector3::Normalize(direction);
 
 	return direction;
@@ -502,6 +538,21 @@ void Enemy::FaildCameraMove()
 }
 
 /// -------------------------------------------------------------
+///					   	ノックバック処理
+/// -------------------------------------------------------------
+void Enemy::KnockBack() {
+
+	// プレイヤーの位置を確認
+	Vector3 playerPosition = player_->GetPosition();
+
+	// ノックバック方向のを計算
+	Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
+
+	// 敵の向きにノックバックの速度を加算
+	velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
+}
+
+/// -------------------------------------------------------------
 ///						通常状態の初期化処理
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalInitialize() {
@@ -535,9 +586,6 @@ void Enemy::BehaviorSarchInitialize() {
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
-
-	// 初回の向きを決める
-	direction_ = RondomDirection(-1.0f, 1.0f);
 }
 
 /// -------------------------------------------------------------
@@ -548,8 +596,17 @@ void Enemy::BehaviorSarchUpdate() {
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
 
+		// プレイヤーの位置を確認
+		Vector3 playerPosition = player_->GetPosition();
+
+		// プレイヤーの方向を計算
+		Vector3 toPlayer = Vector3::Normalize(playerPosition - worldTransform_.translate_);
+
+		// 露骨に向かないようにオフセットをランダムに付ける
+		Vector3 randaomOffset = RondomDirection(XZVector2(-0.2f, -0.2f), XZVector2(0.2f, 0.2f));
+
 		// ランダムに向きを決める
-		direction_ = RondomDirection(-1.0f, 1.0f);
+		direction_ = Vector3::Normalize(toPlayer + randaomOffset);
 
 		// タイマーをリセット
 		stateTimer_ = 2.0f;

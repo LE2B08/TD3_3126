@@ -15,6 +15,11 @@ class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
 
+struct XZVector2 {
+	float x;
+	float z;
+};
+
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
@@ -63,7 +68,7 @@ public: /// ---------- メンバ関数 ---------- ///
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
 
 	// 向きをランダムに設定
-	Vector3 RondomDirection(float min, float max);
+	Vector3 RondomDirection(XZVector2 min, XZVector2 max);
 
 	// 攻撃コマンドをランダムに設定
 	std::unique_ptr<AttackCommand> RandomAttackCommand();
@@ -79,6 +84,9 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// エネミーが死んだときのカメラワーク
 	void FaildCameraMove();
+
+	// 攻撃を受けたときのノックバック処理
+	void KnockBack();
 
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
@@ -254,4 +262,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 死亡フラグ
 	bool isDead_ = false;
+
+	// ノックバックする速さ
+	float knockBackSpeed_ = 0.2f;
 };
