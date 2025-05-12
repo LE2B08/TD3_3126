@@ -39,9 +39,9 @@ void Enemy::Initialize() {
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
 	particleManager_ = ParticleManager::GetInstance();
-	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
 	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("EnemyHitParticles", "Resources/uvChecker.png");
+	particleManager_->CreateParticleGroup("EnemyHitParticles", "gradationLine.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
@@ -331,7 +331,7 @@ void Enemy::HitParticle() {
 
 	// パーティクルエミッターの位置をエネミーの中心に設定
 	particleEmitter_->SetPosition(enemyCenter);
-	particleEmitter_->SetEmissionRate(3); // パーティクルの発生率を設定
+	particleEmitter_->SetEmissionRate(0); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
 }

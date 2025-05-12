@@ -34,10 +34,10 @@ void Player::Initialize() {
 	particleManager_ = ParticleManager::GetInstance();
 
 	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
 
 	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("PlayerHitParticles", "Resources/uvChecker.png");
+	particleManager_->CreateParticleGroup("PlayerHitParticles", "gradationLine.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "PlayerHitParticles");
@@ -322,7 +322,7 @@ void Player::HitParticle() {
 
 	// パーティクルエミッターの位置をエネミーの中心に設定
 	particleEmitter_->SetPosition(playerCenter);
-	particleEmitter_->SetEmissionRate(100); // パーティクルの発生率を設定
+	particleEmitter_->SetEmissionRate(3.0f); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Default); // deltaTime は 0 で呼び出し
 }

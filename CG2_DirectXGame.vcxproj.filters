@@ -55,7 +55,7 @@
     <ClCompile Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.cpp" />
     <ClCompile Include="EngineLayer\3D\Object3DCommon\Object3DCommon.cpp" />
     <ClCompile Include="ApplicationLayer\EffectLayer\ParticleEmitter.cpp" />
-    <ClCompile Include="ApplicationLayer\EffectLayer\ParticleManager.cpp" />
+    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleManager.cpp" />
     <ClCompile Include="EngineLayer\Audio\WavLoader.cpp" />
     <ClCompile Include="EngineLayer\Managers\SRVManager\SRVManager.cpp" />
     <ClCompile Include="ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.cpp" />
@@ -92,6 +92,9 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.cpp" />
+    <ClCompile Include="EngineLayer\WorldTransform\ParticleTransform.cpp" />
+    <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
+    <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,7 +151,7 @@
     <ClInclude Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.h" />
     <ClInclude Include="EngineLayer\3D\Object3DCommon\Object3DCommon.h" />
     <ClInclude Include="ApplicationLayer\EffectLayer\ParticleEmitter.h" />
-    <ClInclude Include="ApplicationLayer\EffectLayer\ParticleManager.h" />
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleManager.h" />
     <ClInclude Include="EngineLayer\Audio\WavLoader.h" />
     <ClInclude Include="EngineLayer\Base\FrameworkLayer\Framework\GameEngine.h" />
     <ClInclude Include="EngineLayer\Managers\SRVManager\SRVManager.h" />
@@ -190,6 +193,10 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.h" />
+    <ClInclude Include="EngineLayer\WorldTransform\ParticleTransform.h" />
+    <ClInclude Include="EngineLayer\Mesh\ParticleMesh.h" />
+    <ClInclude Include="ApplicationLayer\EffectLayer\Particle.h" />
+    <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
   </ItemGroup>
   <ItemGroup>
