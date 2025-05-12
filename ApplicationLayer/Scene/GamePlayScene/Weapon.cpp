@@ -38,9 +38,9 @@ void Weapon::Initialize()
 
 	//パーティクル
 	particleManager_ = ParticleManager::GetInstance();
-	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
 	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("WeaponHitParticles", "Resources/uvChecker.png");
+	particleManager_->CreateParticleGroup("WeaponHitParticles", "gradationLine.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "WeaponHitParticles");
@@ -73,6 +73,8 @@ void Weapon::Update()
 	if (isEnemyHit_) {
 		// パーティクルエミッターの位置を武器の位置に設定
 		particleEmitter_->SetPosition(weaponPosition);
+		// パーティクルの発生率を設定
+		particleEmitter_->SetEmissionRate(5.0f); // 3.0fは適当な値
 		// 斬撃のパーティクルを生成
 		particleEmitter_->Update(1.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
 	}

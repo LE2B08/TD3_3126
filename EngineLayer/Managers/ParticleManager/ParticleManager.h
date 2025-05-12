@@ -1,33 +1,34 @@
 #pragma once
 #include <DX12Include.h>
 #include <ModelData.h>
-#include <Material.h>
-#include <VertexData.h>
 #include <Emitter.h>
-#include "BlendModeType.h"
-#include <AABB.h>
+#include <ParticleMaterial.h>
+#include <Particle.h>
+#include <ParticleMesh.h>
 
 #include <unordered_map>
 #include <list>
 #include <random>
 #include <numbers>
-#include <chrono>
+#include <AABB.h>
 
 /// ---------- 前方宣言 ----------///
 class DirectXCommon;
 class SRVManager;
 class Camera;
-class ShaderManager;
 
 // Δt を定義。とりあえず60fps固定してあるが、実時間を計測して可変fpsで動かせるようにする
 const float kDeltaTime = 1.0f / 60.0f;
 
-// エフェクト種別
+// エフェクトの種類を列挙型で定義
 enum class ParticleEffectType
 {
-	Default, // 通常
-	Slash	 // 斬撃
+	Default, 	// デフォルト
+	Slash,		// スラッシュ
+	Ring,		// リング
+	Cylinder,	// シリンダー
 };
+
 
 /// -------------------------------------------------------------
 ///				パーティクルマネージャークラス
@@ -56,20 +57,17 @@ public: /// ---------- 構造体 ---------- ///
 		Vector4 color;
 	};
 
-	struct Particle
+	struct VertexData
 	{
-		WorldTransform worldTransform{};	 // 位置
-		Vector3 velocity = {};	 // 速度
-		Vector4 color = {};		 // 色
-		float lifeTime = 0;		 // 生存可能な時間
-		float currentTime = 0;	 // 発生してからの経過時間
-		static inline bool useBillboard = false; // ビルボードを使うかどうか
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
 	};
 
 	struct ParticleGroup
 	{
 		// マテリアルデータ(テクスチャファイルとテクスチャ用SRVインデックス)
-		MaterialData materialData;
+		ParticleMaterial materialData;
 		// パーティクルのリスト(std::list<Particle>型)
 		uint32_t srvIndex;
 		// インスタンシングデータ用SRVインデックス
@@ -80,6 +78,8 @@ public: /// ---------- 構造体 ---------- ///
 		uint32_t numParticles = 0;
 		// インスタンシングデータを書き込むためのポインタ
 		std::list<Particle> particles;
+		// パーティクルの種別
+		ParticleEffectType type = ParticleEffectType::Default;
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
@@ -103,15 +103,24 @@ public: /// ---------- メンバ関数 ---------- ///
 	void Finalize();
 
 	// パーティクルの発生
-	void Emit(const std::string name, const Vector3& position, uint32_t count, ParticleEffectType type);
-
-	// 爆散用関数
-	void Explode(const std::string& name, const Vector3& position, uint32_t count, float speedMin, float speedMax);
+	void Emit(const std::string name, const Vector3 position, uint32_t count, ParticleEffectType type);
 
 	std::unordered_map<std::string, ParticleManager::ParticleGroup> GetParticleGroups() { return particleGroups; }
 
 	// ImGuiの描画
 	void DrawImGui();
+
+	// デバッグカメラの有無
+	void SetDebugCamera(bool isDebugCamera) { isDebugCamera_ = isDebugCamera; }
+
+	// デバッグカメラの有無を取得
+	bool GetDebugCamera() { return isDebugCamera_; }
+
+	// ビルボードを有効にするかを設定
+	void SetBillboard(bool isBillboard) { useBillboard = isBillboard; }
+
+	// ビルボードを有効にするかを取得
+	bool GetBillboard() { return useBillboard; }
 
 private: /// ---------- ヘルパー関数 ---------- ///
 
@@ -120,12 +129,6 @@ private: /// ---------- ヘルパー関数 ---------- ///
 
 	// PSOを生成
 	void CreatePSO();
-
-	// 頂点データの初期化
-	void InitializeVertexData();
-
-	// マテリアルデータの初期化
-	void InitializeMaterialData();
 
 	// パーティクル生成器
 	Particle MakeNewParticle(std::mt19937& randomEngine, const Vector3& translate, ParticleEffectType type);
@@ -136,14 +139,19 @@ private: /// ---------- ヘルパー関数 ---------- ///
 
 private: /// ---------- メンバ変数 ---------- ///
 
-	WorldTransform worldTransform;
+	ParticleTransform transform;
+	ParticleMaterial material_;
+	ParticleMesh mesh_;
 
 	BlendMode cuurenttype = BlendMode::kBlendModeAdd;
 
 	DirectXCommon* dxCommon_ = nullptr;
 	SRVManager* srvManager_ = nullptr;
 	Camera* camera_ = nullptr;
-	ShaderManager* shaderManager = nullptr;
+
+	Matrix4x4 worldViewProjectionMatrix;
+	Matrix4x4 debugViewProjectionMatrix_;
+	Matrix4x4 viewProjectionMatrix_;
 
 	ComPtr <ID3D12RootSignature> rootSignature = nullptr;
 	ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
@@ -163,12 +171,14 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::random_device seedGeneral;
 	std::mt19937 randomEngin;
 
-	Matrix4x4 worldMatrix{};
-
 	// 描画数
 	const uint32_t kNumMaxInstance = 128;
 
+	bool useBillboard = true;
+
 	bool isWind = false;
+
+	bool isDebugCamera_ = false;
 
 	// 分割数
 	uint32_t kSubdivision = 32;
@@ -182,6 +192,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// Fieldを作る
 	AccelerationField accelerationField;
+
+	// スピード
+	float speed = 0.0f;
 
 private: /// ---------- コピー禁止 ---------- ///
 
