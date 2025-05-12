@@ -15,6 +15,11 @@ class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
 
+struct XZVector2 {
+	float x;
+	float z;
+};
+
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
@@ -63,7 +68,7 @@ public: /// ---------- メンバ関数 ---------- ///
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
 
 	// 向きをランダムに設定
-	Vector3 RondomDirection(float min, float max);
+	Vector3 RondomDirection(XZVector2 min, XZVector2 max);
 
 	// 攻撃コマンドをランダムに設定
 	std::unique_ptr<AttackCommand> RandomAttackCommand();

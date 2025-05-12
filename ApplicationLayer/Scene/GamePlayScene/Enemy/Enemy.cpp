@@ -217,15 +217,30 @@ void Enemy::Move() {
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
-	// 壁に到達したらVelocityを0にする
-	if (worldTransform_.translate_.x >= maxMoveLimit_.x || worldTransform_.translate_.x <= minMoveLimit_.x) {
-		velocity_.x = 0.0f;
-		velocity_.z = 0.0f;
+	//// 壁に当たったらVelocityを0にする
+	//if (worldTransform_.translate_.x >= maxMoveLimit_.x || worldTransform_.translate_.x <= minMoveLimit_.x) {
+	//	velocity_.x = 0.0f;
+	//	velocity_.z = 0.0f;
+	//}
+	//
+	//if (worldTransform_.translate_.z >= maxMoveLimit_.z || worldTransform_.translate_.z <= minMoveLimit_.z) {
+	//	velocity_.x = 0.0f;
+	//	velocity_.z = 0.0f;
+	//}
+	
+	// 壁に当たったら向きをランダムに抽選
+	if (worldTransform_.translate_.x >= maxMoveLimit_.x) { // 右の壁に当たった
+		direction_ = RondomDirection({ -1.0f, -1.0f }, { 0.0f, 1.0f });
 	}
-
-	if (worldTransform_.translate_.z >= maxMoveLimit_.z || worldTransform_.translate_.z <= minMoveLimit_.z) {
-		velocity_.x = 0.0f;
-		velocity_.z = 0.0f;
+	else if (worldTransform_.translate_.x <= minMoveLimit_.x) { // 左の壁に当たった
+		direction_ = RondomDirection({ 0.0f, -1.0f }, { 1.0f, 1.0f });
+	}
+	
+	if (worldTransform_.translate_.z >= maxMoveLimit_.z) { // 上の壁に当たった
+		direction_ = RondomDirection({ -1.0f, -1.0f }, { 1.0f, 0.0f });
+	}
+	else if (worldTransform_.translate_.z <= minMoveLimit_.z) { // 下の壁に当たった
+		direction_ = RondomDirection({ -1.0f, 0.0f }, { 1.0f, 1.0f });
 	}
 }
 
@@ -255,10 +270,8 @@ void Enemy::ShowImGui(const char* name) {
 		break;
 	}
 
-	// ボタンを押したらノックバック
-	if (ImGui::Button("KnockBack")) {
-		KnockBack();
-	}
+	// ステートタイマー
+	ImGui::SliderFloat("StateTimer", &stateTimer_, 0.0f, 5.0f);
 
 	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
 	//ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
@@ -326,11 +339,12 @@ void Enemy::HitParticle() {
 /// -------------------------------------------------------------
 ///						ランダム方向処理
 /// -------------------------------------------------------------
-Vector3 Enemy::RondomDirection(float min, float max) {
+Vector3 Enemy::RondomDirection(XZVector2 min, XZVector2 max) {
 
 	// XZ平面上のランダムな方向を生成
-	std::uniform_real_distribution<float> dist(min, max);
-	Vector3 direction = { dist(randomEngine), 0.0f, dist(randomEngine) };
+	std::uniform_real_distribution<float> distX(min.x, max.x);
+	std::uniform_real_distribution<float> distZ(min.z, max.z);
+	Vector3 direction = { distX(randomEngine), 0.0f, distZ(randomEngine) };
 	direction = Vector3::Normalize(direction);
 
 	return direction;
@@ -572,9 +586,6 @@ void Enemy::BehaviorSarchInitialize() {
 
 	// タイマー初期化
 	stateTimer_ = 5.0f;
-
-	// 初回の向きを決める
-	direction_ = RondomDirection(-1.0f, 1.0f);
 }
 
 /// -------------------------------------------------------------
@@ -585,8 +596,17 @@ void Enemy::BehaviorSarchUpdate() {
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
 
+		// プレイヤーの位置を確認
+		Vector3 playerPosition = player_->GetPosition();
+
+		// プレイヤーの方向を計算
+		Vector3 toPlayer = Vector3::Normalize(playerPosition - worldTransform_.translate_);
+
+		// 露骨に向かないようにオフセットをランダムに付ける
+		Vector3 randaomOffset = RondomDirection(XZVector2(-0.2f, -0.2f), XZVector2(0.2f, 0.2f));
+
 		// ランダムに向きを決める
-		direction_ = RondomDirection(-1.0f, 1.0f);
+		direction_ = Vector3::Normalize(toPlayer + randaomOffset);
 
 		// タイマーをリセット
 		stateTimer_ = 2.0f;
