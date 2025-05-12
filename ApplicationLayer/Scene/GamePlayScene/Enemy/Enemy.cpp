@@ -135,9 +135,16 @@ void Enemy::Update() {
 
 	/*------ヒット時の処理------*/
 	if (isHit_) {
+
+		// プレイヤーからの攻撃だったら
 		if (isHitFromAttack_) {
+
 			// ヒット時のパーティクルを生成
 			HitParticle();
+
+			// ノックバックさせる
+			KnockBack();
+
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
 			if (hitTime_ >= hitMaxTime_) {
@@ -206,10 +213,20 @@ void Enemy::Move() {
 	// 向きを合わせる
 	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
 
-
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
+
+	// 壁に到達したらVelocityを0にする
+	if (worldTransform_.translate_.x >= maxMoveLimit_.x || worldTransform_.translate_.x <= minMoveLimit_.x) {
+		velocity_.x = 0.0f;
+		velocity_.z = 0.0f;
+	}
+
+	if (worldTransform_.translate_.z >= maxMoveLimit_.z || worldTransform_.translate_.z <= minMoveLimit_.z) {
+		velocity_.x = 0.0f;
+		velocity_.z = 0.0f;
+	}
 }
 
 /// -------------------------------------------------------------
@@ -238,21 +255,26 @@ void Enemy::ShowImGui(const char* name) {
 		break;
 	}
 
-	ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+	// ボタンを押したらノックバック
+	if (ImGui::Button("KnockBack")) {
+		KnockBack();
+	}
+
+	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
+	//ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
-	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	//ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
-	ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
+	//ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
 	ImGui::Text("HitTime : %f", hitTime_);
-	ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
-	ImGui::Text("HP : %d", hp_);
-	ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
-	ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
-	ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
-	ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
+	//ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
+	//ImGui::Text("HP : %d", hp_);
+	//ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
+	//ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
+	//ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
+	//ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
 	ImGui::End();
 }
 
@@ -499,6 +521,21 @@ void Enemy::FaildCameraMove()
 	camera_->SetTranslate(moveCameraPosition);
 
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+}
+
+/// -------------------------------------------------------------
+///					   	ノックバック処理
+/// -------------------------------------------------------------
+void Enemy::KnockBack() {
+
+	// プレイヤーの位置を確認
+	Vector3 playerPosition = player_->GetPosition();
+
+	// ノックバック方向のを計算
+	Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
+
+	// 敵の向きにノックバックの速度を加算
+	velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
 }
 
 /// -------------------------------------------------------------
