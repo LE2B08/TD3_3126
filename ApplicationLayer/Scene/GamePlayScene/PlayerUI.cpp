@@ -4,7 +4,6 @@
 #include <corecrt_math_defines.h>
 #include <imgui.h>
 
-
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
@@ -57,12 +56,12 @@ void PlayerUI::Update() {
 	speed_ = static_cast<float>(sqrt(playerVelocity.x * playerVelocity.x + playerVelocity.z * playerVelocity.z));
 
 	// HPバーの位置とサイズを設定
-	hpGaugeSprite_->SetHPBar(static_cast<float>(hp_), {hpPosition_.x, hpPosition_.y + yOffset}, {0.0f, yOffset, 32.0f, newHeight}, DecreaseHpDirection::TopToBottom);
+	hpGaugeSprite_->SetHPBar(static_cast<float>(hp_), { hpPosition_.x, hpPosition_.y + yOffset }, { 0.0f, yOffset, 32.0f, newHeight }, DecreaseHpDirection::TopToBottom);
 	hpGaugeSprite_->SetColor(hpGaugeColor); // HPバーの色を設定
 	hpGaugeSprite_->Update();               // 更新
 
 	// HPのスプライトの更新
-	hpSprite_->SetTextureRect({hpPosition_.x, hpPosition_.y}, {0.0f, 0.0f, 32.0f, 320.0f});
+	hpSprite_->SetTextureRect({ hpPosition_.x, hpPosition_.y }, { 0.0f, 0.0f, 32.0f, 320.0f });
 	hpSprite_->Update();
 }
 

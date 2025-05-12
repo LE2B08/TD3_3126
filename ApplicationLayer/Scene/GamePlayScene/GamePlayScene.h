@@ -14,6 +14,7 @@
 #include "Weapon.h"
 #include "EnemyBullet.h"
 #include"Skydome.h"
+#include "PlayerDirectionalArrow.h"
 
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
@@ -182,4 +183,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isGameOverTransitionStarted_ = false;
 	// ポーズメニュー
 	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
+
+	// プレイヤーの矢印
+	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
 };
