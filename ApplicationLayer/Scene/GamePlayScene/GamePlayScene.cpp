@@ -58,6 +58,7 @@ void GamePlayScene::Initialize()
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
 	effectManager_ = std::make_unique<EffectManager>();
+	playerDirectionalArrow_ = std::make_unique<PlayerDirectionalArrow>();
 
 	// 演出の初期化
 	effectManager_->Initialize(camera_, input_, player_.get(), field_.get());
@@ -112,6 +113,9 @@ void GamePlayScene::Initialize()
 	// ポーズメニューの初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
+
+	playerDirectionalArrow_->Initialize();
+	playerDirectionalArrow_->SetPlayer(player_.get());
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -251,6 +255,8 @@ void GamePlayScene::Update()
 
 	// フェードマネージャの更新（ここから下は書かない）
 	fadeManager_->Update();
+
+	playerDirectionalArrow_->Update();
 }
 
 
@@ -303,6 +309,9 @@ void GamePlayScene::Draw()
 
 		// フックの描画
 		hook_->Draw();
+
+		// 矢印の描画
+		playerDirectionalArrow_->Draw();
 
 		break;
 
