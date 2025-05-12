@@ -134,11 +134,12 @@ void Player::Draw() {
 	if (isAttack_ && weapon_) {
 		weapon_->Draw();
 	}
-
+#ifdef _DEBUG
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = {cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y)};
 	Vector3 endPos = worldTransform_.translate_ + -direction * 5.0f;                                  // 5.0fは線の長さ
 	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, endPos, {0.0f, 1.0f, 0.0f, 1.0f}); // 緑色の線
+#endif
 }
 
 /// -------------------------------------------------------------
