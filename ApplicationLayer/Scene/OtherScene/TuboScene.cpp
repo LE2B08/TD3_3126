@@ -20,12 +20,10 @@
 
 using namespace Easing;
 
-
 /// -------------------------------------------------------------
 ///				　			　初期化処理
 /// -------------------------------------------------------------
-void TuboScene::Initialize()
-{
+void TuboScene::Initialize() {
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -35,6 +33,14 @@ void TuboScene::Initialize()
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
+	wavLoader_ = std::make_unique<WavLoader>();
+	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
+
+	fadeManager_ = std::make_unique<FadeManager>();
+	fadeManager_->Initialize();
+
+	// シーン開始時に白からフェードアウトする（白 → 透明）
+	fadeManager_->StartFadeFromWhite(0.02f);
 
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
@@ -46,9 +52,11 @@ void TuboScene::Initialize()
 	enemy_ = std::make_unique<Enemy>();
 	field_ = std::make_unique<Field>();
 	playerUI_ = std::make_unique<PlayerUI>();
+	enemyUI_ = std::make_unique<EnemyUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
 	effectManager_ = std::make_unique<EffectManager>();
+	playerDirectionalArrow_ = std::make_unique<PlayerDirectionalArrow>();
 
 	// 演出の初期化
 	effectManager_->Initialize(camera_, input_, player_.get(), field_.get());
@@ -56,11 +64,10 @@ void TuboScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-	player_->SetPosition({ 1000.0f, 1000.0f, 1000.0f });
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get()); // 敵の情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
@@ -71,14 +78,15 @@ void TuboScene::Initialize()
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPlayer(player_.get());
+	enemy_->SetPlayer(player_.get()); // プレイヤーの情報を敵にセット
+	enemyUI_->Initialize();
+	enemyUI_->SetEnemy(enemy_.get()); // 敵の情報をUIにセット
 
 	// 敵の弾の情報をセット
 	enemyBullets_ = &enemy_->GetBullets();
 
 	// フィールドの初期化
 	field_->Initialize();
-	field_->SetScale(fieldScale_);
 
 	// PlayerUIの初期化
 	playerUI_->Initialize();
@@ -90,22 +98,30 @@ void TuboScene::Initialize()
 	skyBox_ = std::make_unique<SkyBox>();
 	skyBox_->Initialize("rostock_laage_airport_4k.dds");
 
+	skydome_ = std::make_unique<Skydome>();
+	skydome_->Initialize();
+
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
 	dynamicCamera_->SetPlayer(player_.get());
 	dynamicCamera_->SetEnemy(enemy_.get());
+
+	// ポーズメニューの初期化
+	pauseMenu_ = std::make_unique<PauseMenu>();
+	pauseMenu_->Initialize();
+
+	playerDirectionalArrow_->Initialize();
+	playerDirectionalArrow_->SetPlayer(player_.get());
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void TuboScene::Update()
-{
+void TuboScene::Update() {
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F12)) {
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
@@ -113,7 +129,6 @@ void TuboScene::Update()
 		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
 		isDebugCamera_ = !isDebugCamera_;
 	}
-#endif // _DEBUG
 
 	// シーン切り替え
 	if (input_->TriggerKey(DIK_F1)) {
@@ -135,66 +150,89 @@ void TuboScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
+#endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
 		effectManager_->SetIsCameraShaking(true);
 	}
 
-	//// 演出の更新
+	// 演出の更新
 	effectManager_->Update();
 
-	// ダイナミックカメラの更新
+	// 次の状態がリクエストされたら
+	if (nextGameState_) {
 
-	GameStart();
+		// 次の状態に遷移
+		gameState_ = nextGameState_.value();
 
-	// 計算したあとのカメラの値をセット
-	camera_->SetTranslate(cameraPosition_);
-	camera_->SetScale(dynamicCamera_->GetScale());
-	camera_->SetRotate(dynamicCamera_->GetRotate());
-	camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	
+		// 状態ごとの初期化を一回行う
+		switch (gameState_) {
+
+		case GameSceneState::Start:
+			GameStartInitialize();
+			break;
+
+		case GameSceneState::Play:
+			GamePlayInitialize();
+			break;
+
+		case GameSceneState::GameClear:
+			GameClearInitialize();
+			break;
+
+		case GameSceneState::GameOver:
+			GameOverInitialize();
+			break;
+
+		case GameSceneState::Pause:
+			PauseInitialize();
+			break;
+
+		default:
+			break;
+		}
+
+		// 次の状態をリセット
+		nextGameState_ = std::nullopt;
+	}
+
+	// 状態ごとの更新を行う
+	switch (gameState_) {
+
+	case GameSceneState::Start:
+		GameStartUpdate();
+		break;
+
+	case GameSceneState::Play:
+		GamePlayUpdate();
+		break;
+
+	case GameSceneState::GameClear:
+		GameClearUpdate();
+		break;
+
+	case GameSceneState::GameOver:
+		GameOverUpdate();
+		break;
+
+	case GameSceneState::Pause:
+		PauseUpdate();
+		break;
+
+	default:
+		break;
+	}
+
 	// カメラの更新
 	camera_->Update();
-	dynamicCamera_->Update();
 
 	// フィールドの更新
-	field_->SetScale(fieldScale_);
 	field_->Update();
-
-	// フックから移動情報を取得
-	if (isGameStart_)
-	{
-		// プレイヤーの位置をフックにセット
-		player_->SetPosition(hook_->GetPlayerPosition());
-		player_->SetVelocity(hook_->GetPlayerVelocity());
-		player_->SetAcceleration(hook_->GetPlayerAcceleration());
-
-		player_->SetMinMoveLimit(field_->GetMinPosition());
-		player_->SetMaxMoveLimit(field_->GetMaxPosition());
-	}
-
-	// プレイヤーの更新
-	player_->Update();
-
-	if (player_->IsDead())
-	{
-		sceneManager_->ChangeScene("GameOverScene");
-	}
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
-
-	// フックの更新処理
-	hook_->Update();
-
-	enemy_->SetMinMoveLimit(field_->GetMinPosition());
-	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
-	enemy_->Update();
-
-	// 攻撃判定
-    if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
-        enemy_->SetIsHitFromAttack(true);
-    }
+	// 敵のUIの更新
+	enemyUI_->Update();
 
 	// コントローラー用UIの更新
 	controllerUI_->Update();
@@ -202,104 +240,203 @@ void TuboScene::Update()
 	// スカイボックスの更新処理
 	skyBox_->Update();
 
+	// スカイドームの更新処理
+	skydome_->Update();
+
 	// 衝突マネージャの更新
 	collisionManager_->Update();
-	CheckAllCollisions();// 衝突判定と応答
-}
+	CheckAllCollisions(); // 衝突判定と応答
 
+	// フェードマネージャの更新（ここから下は書かない）
+	fadeManager_->Update();
+
+	playerDirectionalArrow_->Update();
+}
 
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void TuboScene::Draw()
-{
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+void TuboScene::Draw() {
+#pragma region スカイボックスの描画
+
+	// スカイボックスの描画設定
 	SkyBoxManager::GetInstance()->SetRenderSetting();
-	skyBox_->Draw();
+	// skyBox_->Draw();
 
+#pragma endregion
 
-	/// ------------------------------------------ ///
-	/// ---------- スカイボックスの描画 ---------- ///
-	/// ------------------------------------------ ///
+#pragma region スプライトの描画（後面描画・背景用）
 
-
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
-	// スプライトの共通描画設定
+	// スプライトの描画設定（後面）
 	SpriteManager::GetInstance()->SetRenderSetting_Background();
-	
 
-	/// ---------------------------------------- ///
-	/// ----------  スプライトの描画  ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
 
+#pragma region オブジェクト3Dの描画
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
-	// プレイヤー
-	player_->Draw();
+	switch (gameState_) {
 
-	// フックの描画
-	hook_->Draw();
+	case GameSceneState::Start:
 
-	enemy_->Draw();
+		// プレイヤー
+		player_->Draw();
 
+		// 敵の描画
+		enemy_->Draw();
+
+		break;
+
+	case GameSceneState::Play:
+
+		// プレイヤー
+		player_->Draw();
+
+		// 敵の描画
+		enemy_->Draw();
+
+		// フックの描画
+		hook_->Draw();
+
+		// 矢印の描画
+		playerDirectionalArrow_->Draw();
+
+		break;
+
+	case GameSceneState::GameClear:
+
+		// 敵の描画
+		enemy_->Draw();
+
+		break;
+
+	case GameSceneState::GameOver:
+
+		// プレイヤー
+		player_->Draw();
+
+		break;
+
+	case GameSceneState::Pause:
+
+		// プレイヤー
+		player_->Draw();
+
+		// 敵の描画
+		enemy_->Draw();
+
+		// フックの描画
+		hook_->Draw();
+
+		break;
+
+	default:
+		break;
+	}
+
+	// フィールドの描画
 	field_->Draw();
+	// スカイドームの描画
+	skydome_->Draw();
 
-	/// ---------------------------------------- ///
-	/// ---------- オブジェクト3D描画 ---------- ///
-	/// ---------------------------------------- ///
+#pragma endregion
 
+#pragma region スプライトの描画（前面描画・UI用）
 
-	// スプライトの共通描画設定
+	// スプライトの描画設定（前面）
 	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
 	// プレイヤーUI
 	playerUI_->Draw();
 
-	// コントローラー用UIの描画
-	controllerUI_->Draw();
+	// 敵のUI
+	enemyUI_->Draw();
 
+	switch (gameState_) {
 
+	case GameSceneState::Start:
+		break;
+
+	case GameSceneState::Play:
+		// コントローラー用UIの描画
+		controllerUI_->Draw();
+		break;
+
+	case GameSceneState::GameClear:
+		break;
+
+	case GameSceneState::GameOver:
+		break;
+
+	case GameSceneState::Pause:
+		// ポーズメニューの描画
+		pauseMenu_->Draw();
+		break;
+
+	default:
+		break;
+	}
+
+	// フェードマネージャーの描画（ここから下は書かない）
+	fadeManager_->Draw();
+
+#pragma endregion
+
+#ifdef _DEBUG
+	// コリジョンマネージャーの描画
 	collisionManager_->Draw();
+#endif // _DEBUG
 
 	// ワイヤーフレームの描画
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void TuboScene::Finalize()
-{
-
-}
-
+void TuboScene::Finalize() {}
 
 /// -------------------------------------------------------------
 ///				　			ImGui描画処理
 /// -------------------------------------------------------------
-void TuboScene::DrawImGui()
-{
-
-	player_->DrawImGui();
+void TuboScene::DrawImGui() {
 	playerUI_->DrawImGui();
-}
+	enemyUI_->DrawImGui();
 
+	enemy_->ShowImGui("Enemy");
+
+	// ImGui::Begin("GamePlayScene");
+	//
+	//// シーンの状態を表示
+	// switch (gameState_) {
+	// case GameSceneState::Start:
+	//	ImGui::Text("Game Start");
+	//	break;
+	// case GameSceneState::Play:
+	//	ImGui::Text("Game Play");
+	//	break;
+	// case GameSceneState::GameClear:
+	//	ImGui::Text("Game Clear");
+	//	break;
+	// case GameSceneState::GameOver:
+	//	ImGui::Text("Game Over");
+	//	break;
+	// case GameSceneState::Pause:
+	//   ImGui::Text("Game Pause");
+	//   break;
+	// default:
+	//	break;
+	// }
+	//
+	// ImGui::End();
+}
 
 /// -------------------------------------------------------------
 ///				　			衝突判定と応答
 /// -------------------------------------------------------------
-void TuboScene::CheckAllCollisions()
-{
+void TuboScene::CheckAllCollisions() {
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
@@ -307,73 +444,256 @@ void TuboScene::CheckAllCollisions()
 	collisionManager_->AddCollider(player_.get());
 
 	// 攻撃フラグを取得したらコライダーを追加
-	if (player_->GetIsAttack())
-	{
+	if (player_->GetIsAttack()) {
 		collisionManager_->AddCollider(weapon_.get());
 	}
 	collisionManager_->AddCollider(hook_.get());
 	collisionManager_->AddCollider(enemy_.get());
 
 	// 複数についてコライダーをリストに登録
-	for (const auto& bullet : *enemyBullets_)
-	{
+	for (const auto& bullet : *enemyBullets_) {
 		collisionManager_->AddCollider(bullet.get());
+	}
+
+	// プレイヤーが死亡したらコライダーを削除または敵が死亡したらコライダーを削除
+	if (player_->GetHp() <= 0 || enemy_->GetHp() <= 0) {
+		collisionManager_->RemoveCollider(player_.get());
+		collisionManager_->RemoveCollider(weapon_.get());
+		collisionManager_->RemoveCollider(hook_.get());
+		collisionManager_->RemoveCollider(enemy_.get());
+
+		// 複数についてコライダーを削除
+		for (const auto& bullet : *enemyBullets_) {
+			collisionManager_->RemoveCollider(bullet.get());
+		}
 	}
 
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();
 }
 
+/// -------------------------------------------------------------
+///				　		ゲームスタート初期化
+/// -------------------------------------------------------------
+void TuboScene::GameStartInitialize() {
 
-void TuboScene::GameStart()
-{
-	if (!isGameStartEffectEnabled_)
-	{
-		isGameStart_ = true;
-		return;
+	// アニメーションフラグを下げておく
+	isStartAnimation_ = false;
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームスタート更新
+/// -------------------------------------------------------------
+void TuboScene::GameStartUpdate() {
+
+	// アニメーションを開始
+	isStartAnimation_ = true;
+
+	// アニメーションフラグが立っていたら
+	if (isStartAnimation_) {
+
+		// フィールドの拡縮を開始
+		field_->ScalingAnimation();
 	}
 
-	// エンターキーかAボタンが押されるたびに演出を開始
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))
-	{
-		if (!isStartEasing_)
-		{
-			startTimer_ = 0.0f;
-			playerStartTimer_ = 0.0f;
-			isStartEasing_ = true;
+	// フィールドの拡縮が終わったら
+	if (field_->IsScaleEnd()) {
+
+		// プレイヤーを落とす
+		player_->FallingAnimation();
+	}
+
+	// プレイヤーの落下が終わったら
+	if (player_->GetIsFallEnd()) {
+
+		// 降ってくるアニメーションフラグが立っていなかったら(まだ行っていなかったら)
+		if (enemy_->GetIsEnemyCameraEffect()) {
+
+			// カメラ目線にして
+			enemy_->SetRotation(Vector3(0.0f, 1.5f, 0.0f));
+
+			// アニメーションが終わったことを確認して
+			if (!enemy_->GetIsCameraEffectEnd()) {
+
+				// アニメーションを行う
+				enemy_->SpawnEffect();
+			}
 		}
 	}
 
-	if (isStartEasing_)
-	{
-		if (startTimer_ >= maxStartT_)
-		{
-			startTimer_ = maxStartT_;
-			isStartEasing_ = false;
-			isPlayerPositionSet_ = true;
-		}
-		else
-		{
-			startTimer_ += 0.5f;
-		}
+	// 敵の降ってくるアニメーションが終了してたら
+	if (enemy_->GetIsCameraEffectEnd()) {
 
-		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
+		// 状態をゲームプレイに変更
+		nextGameState_ = GameSceneState::Play;
 	}
 
-	if (isPlayerPositionSet_)
-	{
-		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
+	// プレイヤー更新
+	player_->Update();
 
-		if (playerStartTimer_ >= maxPlayerStartT_)
-		{
-			playerStartTimer_ = maxPlayerStartT_;
-			isPlayerPositionSet_ = false;
-			isGameStart_ = true;
+	// 敵の更新
+	enemy_->Update();
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームプレイ初期化
+/// -------------------------------------------------------------
+void TuboScene::GamePlayInitialize() { enemy_->SetPosition(Vector3(0.0f, 1.0f, 8.0f)); }
+
+/// -------------------------------------------------------------
+///				　		ゲームプレイ更新
+/// -------------------------------------------------------------
+void TuboScene::GamePlayUpdate() {
+
+	// エスケープキーかスタートボタンを押したら
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerButton(12)) {
+		// ポーズ状態に変更
+		nextGameState_ = GameSceneState::Pause;
+	}
+
+	// プレイヤーの体力がなくなったら
+	if (player_->GetHp() <= 0) {
+
+		// 状態をゲームオーバーに変更
+		nextGameState_ = GameSceneState::GameOver;
+	}
+
+	// 敵の体力が無くなったら
+	if (enemy_->GetHp() <= 0) {
+
+		// 状態をゲームクリアに変更
+		nextGameState_ = GameSceneState::GameClear;
+	}
+
+	// フックの更新処理
+	hook_->Update();
+
+	// プレイヤーの位置をフックにセット
+	player_->SetPosition(hook_->GetPlayerPosition());
+	player_->SetVelocity(hook_->GetPlayerVelocity());
+	player_->SetAcceleration(hook_->GetPlayerAcceleration());
+
+	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+
+	// 計算したあとのカメラの値をセット
+	if (player_->GetHp() > 0) {
+		camera_->SetTranslate(cameraPosition_);
+		camera_->SetScale(dynamicCamera_->GetScale());
+		camera_->SetRotate(dynamicCamera_->GetRotate());
+		camera_->SetTranslate(dynamicCamera_->GetTranslate());
+	}
+
+	enemy_->SetMinMoveLimit(field_->GetMinPosition());
+	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
+
+	// 攻撃判定
+	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
+		enemy_->SetIsHitFromAttack(true);
+	}
+
+	// プレイヤー更新
+	player_->Update();
+
+	// 敵の更新
+	enemy_->Update();
+
+	dynamicCamera_->Update();
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームクリア初期化
+/// -------------------------------------------------------------
+void TuboScene::GameClearInitialize() {}
+
+/// -------------------------------------------------------------
+///				　		ゲームクリア更新
+/// -------------------------------------------------------------
+void TuboScene::GameClearUpdate() {
+	// 敵の死亡アニメーションが終わったときenemyのisDeadがtrueになる
+	enemy_->FaildCameraMove();
+
+	if (enemy_->IsDead() && !isClearTransitionStarted_) {
+		isClearTransitionStarted_ = true;
+
+		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			input_->StopVibration();
+			wavLoader_->StopBGM();
+			sceneManager_->ChangeScene("GameClearScene");
+		});
+	}
+
+	// 敵の更新
+	enemy_->Update();
+}
+
+/// -------------------------------------------------------------
+///				　		ゲームオーバー初期化
+/// -------------------------------------------------------------
+void TuboScene::GameOverInitialize() {}
+
+/// -------------------------------------------------------------
+///				　		ゲームオーバー更新
+/// -------------------------------------------------------------
+void TuboScene::GameOverUpdate() {
+	// 内部でアニメーションが終わったときplayerのisDeadがtrueになる
+	player_->DeathCameraMove();
+
+	if (player_->IsDead() && !isGameOverTransitionStarted_) {
+		isGameOverTransitionStarted_ = true;
+
+		fadeManager_->StartFadeToWhite(0.02f, [this]() {
+			input_->StopVibration();
+			wavLoader_->StopBGM();
+			sceneManager_->ChangeScene("GameOverScene");
+		});
+	}
+
+	// プレイヤー更新
+	player_->Update();
+}
+
+/// -------------------------------------------------------------
+///				　		  ポーズ初期化
+/// -------------------------------------------------------------
+void TuboScene::PauseInitialize() {}
+
+/// -------------------------------------------------------------
+///				　		   ポーズ更新
+/// -------------------------------------------------------------
+void TuboScene::PauseUpdate() {
+
+	// ポーズメニューの更新
+	pauseMenu_->Update();
+
+	// エスケープキーかSTARTボタンを押したら
+	if (input_->TriggerKey(DIK_ESCAPE) || input_->TriggerButton(12)) {
+		// ゲームプレイ状態に変更
+		nextGameState_ = GameSceneState::Play;
+	}
+
+	// メニューの状態が「ゲームに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToGame) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// ゲームプレイ状態に変更
+			nextGameState_ = GameSceneState::Play;
 		}
-		else
-		{
-			playerStartTimer_ += 0.5f;
-			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+	}
+
+	// メニューの状態が「遊び方」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::HowToPlay) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			// 遊び方の説明を表示する処理を追加
+			// 例: ShowHowToPlay();
+		}
+	}
+
+	// メニューの状態が「タイトルに戻る」でAボタンが押されたら
+	if (pauseMenu_->GetMenuState() == MenuState::ReturnToTitle) {
+		if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+			if (sceneManager_) {
+				fadeManager_->StartFadeToWhite(0.02f, [this]() { sceneManager_->ChangeScene("TitleScene"); });
+			}
 		}
 	}
 }
