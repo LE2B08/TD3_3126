@@ -31,7 +31,9 @@ void Weapon::Initialize()
 
 	object3D_->SetTranslate(player_->GetPosition());
 	object3D_->SetRotate(player_->GetRotation());
-	object3D_->SetScale(player_->GetScale());
+	object3D_->SetScale(player_->GetScale() * Vector3(2.0f,2.0f,2.0f));
+
+	radius_ = 2.0f;
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
@@ -57,7 +59,7 @@ void Weapon::Update()
 	// 回転
 	rotation_ = player_->GetRotation();
 	// スケール
-	scale_ = player_->GetScale();
+	scale_ = player_->GetScale() * Vector3(2.0f, 2.0f, 2.0f);
 
 	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };
@@ -68,6 +70,7 @@ void Weapon::Update()
 	object3D_->SetRotate({ rotation_.x,attackRotationAngle_,rotation_.z });
 	object3D_->SetScale(scale_);
 	object3D_->Update();
+	SetRadius(radius_);
 
 	//// 攻撃中の処理
 	if (isEnemyHit_) {

@@ -46,6 +46,7 @@ void GamePlayScene::Initialize()
 
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	camera_->SetTranslate(Vector3(0.0f,150.0f,0.0f));
 
 	// 生成処理
 	player_ = std::make_unique<Player>();
@@ -421,7 +422,7 @@ void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
 	enemyUI_->DrawImGui();
-
+	player_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 
 	//ImGui::Begin("GamePlayScene");
@@ -604,7 +605,7 @@ void GamePlayScene::GamePlayUpdate() {
 
 	// 計算したあとのカメラの値をセット
 	if (player_->GetHp() > 0) {
-		camera_->SetTranslate(cameraPosition_);
+		//camera_->SetTranslate(cameraPosition_);
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());

@@ -6,7 +6,7 @@ void Skydome::Initialize() {
 
 
 	position_ = { 0.0f, 0.0f, 0.0f };
-	scale_ = { 500.0f, 500.0f, 500.0f };
+	scale_ = { 3000.0f, 3000.0f, 3000.0f };
 	rotation_ = { 0.0f, 0.0f, 0.0f };
 
 
