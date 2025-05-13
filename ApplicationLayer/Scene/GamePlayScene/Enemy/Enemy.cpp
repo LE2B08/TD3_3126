@@ -197,8 +197,13 @@ void Enemy::Draw() {
 	}
 
 #ifdef _DEBUG
-	// ワイヤーフレームの処理
+
+	// 発見までの距離の可視化
 	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 向きの可視化
+	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, worldTransform_.translate_ + direction_ * 2.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
+
 #endif // _DEBUG
 }
 
@@ -227,20 +232,24 @@ void Enemy::Move() {
 	//	velocity_.x = 0.0f;
 	//	velocity_.z = 0.0f;
 	//}
-	
+
 	// 壁に当たったら向きをランダムに抽選
 	if (worldTransform_.translate_.x >= maxMoveLimit_.x) { // 右の壁に当たった
-		direction_ = RondomDirection({ -1.0f, -1.0f }, { 0.0f, 1.0f });
+		direction_ = RandomDirection(-1.0f, 0.0f, -1.0f, 1.0f);
+		velocity_ = direction_ * moveSpeed_;
 	}
 	else if (worldTransform_.translate_.x <= minMoveLimit_.x) { // 左の壁に当たった
-		direction_ = RondomDirection({ 0.0f, -1.0f }, { 1.0f, 1.0f });
+		direction_ = RandomDirection(0.0f, 1.0f, -1.0f,  1.0f);
+		velocity_ = direction_ * moveSpeed_;
 	}
 	
 	if (worldTransform_.translate_.z >= maxMoveLimit_.z) { // 上の壁に当たった
-		direction_ = RondomDirection({ -1.0f, -1.0f }, { 1.0f, 0.0f });
+		direction_ = RandomDirection(-1.0f, 1.0f, -1.0f, 0.0f);
+		velocity_ = direction_ * moveSpeed_;
 	}
 	else if (worldTransform_.translate_.z <= minMoveLimit_.z) { // 下の壁に当たった
-		direction_ = RondomDirection({ -1.0f, 0.0f }, { 1.0f, 1.0f });
+		direction_ = RandomDirection(-1.0f, 1.0f, 0.0f, 1.0f);
+		velocity_ = direction_ * moveSpeed_;
 	}
 }
 
@@ -274,10 +283,15 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::SliderFloat("StateTimer", &stateTimer_, 0.0f, 5.0f);
 
 	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
-	//ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
 	//ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
+
+	// Directionを角度を表示
+	float angle = std::atan2(-direction_.z, -direction_.x) * (180.0f / std::numbers::pi_v<float>);
+	ImGui::Text("Direction Angle: %f", angle);
+
 	//ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
 	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
@@ -339,15 +353,23 @@ void Enemy::HitParticle() {
 /// -------------------------------------------------------------
 ///						ランダム方向処理
 /// -------------------------------------------------------------
-Vector3 Enemy::RondomDirection(XZVector2 min, XZVector2 max) {
+Vector3 Enemy::RandomDirection(float minXAngle, float maxXAngle, float minZAngle, float maxZAngle) {
 
 	// XZ平面上のランダムな方向を生成
-	std::uniform_real_distribution<float> distX(min.x, max.x);
-	std::uniform_real_distribution<float> distZ(min.z, max.z);
+	std::uniform_real_distribution<float> distX(minXAngle, maxXAngle);
+	std::uniform_real_distribution<float> distZ(minZAngle, maxZAngle);
 	Vector3 direction = { distX(randomEngine), 0.0f, distZ(randomEngine) };
 	direction = Vector3::Normalize(direction);
 
 	return direction;
+}
+
+float Enemy::RandomRadian(float minRadian, float maxRadian) {
+
+	// ランダムにラジアンを生成
+	std::uniform_real_distribution<float> dist(minRadian, maxRadian);
+	float radian = dist(randomEngine);
+	return radian;
 }
 
 /// -------------------------------------------------------------
@@ -481,8 +503,7 @@ void Enemy::CameraMove() {
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
 
-void Enemy::FaildAnimation()
-{
+void Enemy::FaildAnimation() {
 	// プレイヤーを回転させながら小さくなって消滅する
 	Vector3 scale = worldTransform_.scale_;
 	Vector3 rotation = worldTransform_.rotate_;
@@ -499,8 +520,7 @@ void Enemy::FaildAnimation()
 	worldTransform_.scale_ = Vector3::Lerp(scale, Vector3(0.0f, 0.0f, 0.0f), Easing::easeInOutElastic(rotationStartT_ / rotationMaxT_));
 }
 
-void Enemy::FaildCameraMove()
-{
+void Enemy::FaildCameraMove() {
 	//  プレイヤーの位置を取得
 	Vector3 playerPosition = GetPosition();
 
@@ -602,11 +622,14 @@ void Enemy::BehaviorSarchUpdate() {
 		// プレイヤーの方向を計算
 		Vector3 toPlayer = Vector3::Normalize(playerPosition - worldTransform_.translate_);
 
-		// 露骨に向かないようにオフセットをランダムに付ける
-		Vector3 randaomOffset = RondomDirection(XZVector2(-0.2f, -0.2f), XZVector2(0.2f, 0.2f));
+		// 基準の角度を計算
+		float baseAngle = std::atan2(toPlayer.z, toPlayer.x);
 
-		// ランダムに向きを決める
-		direction_ = Vector3::Normalize(toPlayer + randaomOffset);
+		// 基準から±30度の範囲をランダムに決定
+		float randomAngle = RandomRadian(baseAngle - std::numbers::pi_v<float> / 6.0f, baseAngle + std::numbers::pi_v<float> / 6.0f);
+
+		// Directionに代入
+		direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
 
 		// タイマーをリセット
 		stateTimer_ = 2.0f;
@@ -618,7 +641,7 @@ void Enemy::BehaviorSarchUpdate() {
 	}
 
 	// 速度を向きに合わせる
-	velocity_ = direction_ * 0.1f;
+	velocity_ = direction_ * moveSpeed_;
 
 	// プレイヤーとの距離を計算
 	const float distance = Vector3::Distance(player_->GetPosition(), worldTransform_.translate_);
