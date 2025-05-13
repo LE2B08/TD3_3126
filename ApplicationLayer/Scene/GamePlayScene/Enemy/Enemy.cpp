@@ -33,7 +33,7 @@ void Enemy::Initialize() {
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 	// 画面外に移動させる
-	worldTransform_.translate_ = { 0.0f, 100.0f, 8.0f };
+	worldTransform_.translate_ = { 0.0f, 1000.0f, 8.0f };
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
@@ -382,7 +382,7 @@ std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
 }
 
 void Enemy::SpawnEffect() {
-	worldTransform_.translate_ = { 0.0f, 20.0f, 8.0f }; // エネミーの位置を初期化
+	worldTransform_.translate_ = { 0.0f, 20.0f, 8.0f * 3.0f }; // エネミーの位置を初期化
 
 	// カメラの現在の位置を取得
 	Vector3 cameraPosition = camera_->GetTranslate();
@@ -418,7 +418,7 @@ void Enemy::SpawnEffect() {
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.0f, 8.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.0f, 8.0f * 3.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
 	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);
@@ -437,7 +437,7 @@ void Enemy::SpawnEffect() {
 		// 新しく移動させるカメラの座標
 		cameraPosition = moveCameraPosition;
 		cameraRotation = moveCameraRotation;
-		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(0.0f, 50.0f, 0.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
+		moveCameraPosition = Vector3::Lerp(cameraPosition, Vector3(0.0f, 50.0f * 3.0f, 0.0f), easeInSine(cameraBackEffectT_ / cameraBackEffectMaxT_)); // カメラの位置を補間
 		moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(1.57f, 0.0f, 0.0f), easeOut(cameraBackEffectT_ / cameraBackEffectMaxT_));     // カメラの回転を補間
 		camera_->SetTranslate(moveCameraPosition);                                                                                               // カメラの位置をリセット
 		camera_->SetRotate(moveCameraRotation);                                                                                                  // カメラの回転をリセット
