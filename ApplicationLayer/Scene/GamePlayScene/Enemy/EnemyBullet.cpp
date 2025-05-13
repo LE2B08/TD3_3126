@@ -106,6 +106,12 @@ void EnemyBullet::OnCollision(Collider* other)
 
 	// 弾同時の衝突だった場合何も処理せずに終了
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) return;
+
+	// プレイヤーの攻撃だった場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kPlayer)) {
+		// 生存フラグを下げて消す
+		isAlive_ = false;
+	}
 }
 
 
