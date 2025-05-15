@@ -122,7 +122,7 @@ public:
 	void Update(const Vector3& position, const Vector3& direction, std::list<std::unique_ptr<EnemyBullet>>& bullets) override;
 
 	// ランダムに位置を決める
-	Vector3 RandomPosition(const Vector3& position, float maxRadius);
+	Vector3 RandomPosition(const Vector3& position, float minRadius, float maxRadius);
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -132,8 +132,11 @@ private:
 	// 位置
 	Vector3 position_ = {};
 
+	// 弾が出る最小半径
+	float minRadius_ = 4.0f;
+
 	// 弾が出る最大半径
-	float maxRadius_ = 0.0f;
+	float maxRadius_ = 10.0f;
 
 	// 乱数生成器
 	std::random_device seedGenerator;
