@@ -82,7 +82,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isMove_ = false;
 
 	// 生存フレーム
-	uint32_t lifeFrame_ = 360;
+	uint32_t lifeFrame_ = 420;
 
 	// 速度
 	const float speed_ = 0.2f;

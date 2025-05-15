@@ -266,4 +266,21 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// ノックバックする速さ
 	float knockBackSpeed_ = 0.2f;
+
+	// 中心に戻るフラグ
+	bool isReturningCenter_ = false;
+
+	// 中心に戻る速度
+	Vector3 returnVelocity_ = {};
+
+	// 開始位置
+	Vector3 returnStartPosition_ = {};
+
+	// 中心座標
+	Vector3 centerPosition_ = { 0.0f, 1.0f, 0.0f };
+
+	// 中心に戻る用タイマー
+	float returnTimer_ = 0.0f;
+
+	float returnMaxTime_ = 60.0f;
 };

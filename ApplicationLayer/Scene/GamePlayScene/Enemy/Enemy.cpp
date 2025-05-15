@@ -212,6 +212,22 @@ void Enemy::Draw() {
 /// -------------------------------------------------------------
 void Enemy::Move() {
 
+	// 中心に戻るなら
+	if (isReturningCenter_) {
+
+		returnTimer_ += 1.0f;
+		float t = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, 1.0f);
+		// イージングで補間
+		float easeT = easeOut(t);
+		worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
+
+		if (t >= 1.0f) {
+			isReturningCenter_ = false;
+			velocity_ = { 0.0f, 0.0f, 0.0f };
+		}
+		return;
+	}
+
 	// 速度を位置に加算
 	worldTransform_.translate_ += velocity_;
 
@@ -222,27 +238,16 @@ void Enemy::Move() {
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
 
-	//// 壁に当たったらVelocityを0にする
-	//if (worldTransform_.translate_.x >= maxMoveLimit_.x || worldTransform_.translate_.x <= minMoveLimit_.x) {
-	//	velocity_.x = 0.0f;
-	//	velocity_.z = 0.0f;
-	//}
-	//
-	//if (worldTransform_.translate_.z >= maxMoveLimit_.z || worldTransform_.translate_.z <= minMoveLimit_.z) {
-	//	velocity_.x = 0.0f;
-	//	velocity_.z = 0.0f;
-	//}
-
 	// 壁に当たったら向きをランダムに抽選
 	if (worldTransform_.translate_.x >= maxMoveLimit_.x) { // 右の壁に当たった
 		direction_ = RandomDirection(-1.0f, 0.0f, -1.0f, 1.0f);
 		velocity_ = direction_ * moveSpeed_;
 	}
 	else if (worldTransform_.translate_.x <= minMoveLimit_.x) { // 左の壁に当たった
-		direction_ = RandomDirection(0.0f, 1.0f, -1.0f,  1.0f);
+		direction_ = RandomDirection(0.0f, 1.0f, -1.0f, 1.0f);
 		velocity_ = direction_ * moveSpeed_;
 	}
-	
+
 	if (worldTransform_.translate_.z >= maxMoveLimit_.z) { // 上の壁に当たった
 		direction_ = RandomDirection(-1.0f, 1.0f, -1.0f, 0.0f);
 		velocity_ = direction_ * moveSpeed_;
@@ -250,6 +255,22 @@ void Enemy::Move() {
 	else if (worldTransform_.translate_.z <= minMoveLimit_.z) { // 下の壁に当たった
 		direction_ = RandomDirection(-1.0f, 1.0f, 0.0f, 1.0f);
 		velocity_ = direction_ * moveSpeed_;
+	}
+
+	// 角に当たったときの処理
+	if (worldTransform_.translate_.x >= maxMoveLimit_.x && worldTransform_.translate_.z >= maxMoveLimit_.z || // 右上の角に当たった
+		worldTransform_.translate_.x >= maxMoveLimit_.x && worldTransform_.translate_.z <= minMoveLimit_.z || // 右下の角に当たった
+		worldTransform_.translate_.x <= minMoveLimit_.x && worldTransform_.translate_.z >= maxMoveLimit_.z || // 左上の角に当たった
+		worldTransform_.translate_.x <= minMoveLimit_.x && worldTransform_.translate_.z <= minMoveLimit_.z) { // 左下の角に当たった
+
+		// 中心に戻るフラグを立てる
+		isReturningCenter_ = true;
+
+		// 開始位置を当たった時の場所から
+		returnStartPosition_ = worldTransform_.translate_;
+
+		// タイマーリセット
+		returnTimer_ = 0.0f;
 	}
 }
 
@@ -284,8 +305,8 @@ void Enemy::ShowImGui(const char* name) {
 
 	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
+	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
-	//ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
 
 	// Directionを角度を表示
