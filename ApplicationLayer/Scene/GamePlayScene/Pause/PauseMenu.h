@@ -8,6 +8,8 @@ class Input;
 enum class MenuState {
 	ReturnToGame,
 	HowToPlay,
+	cameraShakeOn,
+	cameraShakeOff,
 	ReturnToTitle,
 };
 
@@ -93,6 +95,12 @@ private:
 
 	// 操作方法の位置
 	Vector2 HowToPlayPos_ = { 0.0f, 0.0f };
+
+	// カメラの揺れ : ON
+	std::unique_ptr<Sprite> cameraShakeOn_ = nullptr;
+
+	// カメラの揺れの位置
+	Vector2 cameraShakeOnTextPos_ = { 0.0f, 0.0f };
 
 	// 選択しているメニューの状態
 	MenuState menuState_ = MenuState::ReturnToGame;

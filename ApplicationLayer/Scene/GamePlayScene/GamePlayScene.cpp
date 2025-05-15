@@ -58,11 +58,11 @@ void GamePlayScene::Initialize()
 	enemyUI_ = std::make_unique<EnemyUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
-	effectManager_ = std::make_unique<EffectManager>();
+	//effectManager_ = std::make_unique<EffectManager>();
 	playerDirectionalArrow_ = std::make_unique<PlayerDirectionalArrow>();
 
 	// 演出の初期化
-	effectManager_->Initialize(camera_, input_, player_.get(), field_.get());
+	effectManager_->GetInstance()->Initialize(input_, player_.get(), field_.get());
 
 	// Playerクラスの初期化
 	player_->Initialize();
@@ -160,11 +160,9 @@ void GamePlayScene::Update()
 #endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
-		effectManager_->SetIsCameraShaking(true);
+		effectManager_->GetInstance()->SetIsCameraShaking(true);
 	}
-
-	// 演出の更新
-	effectManager_->Update();
+	
 
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {
@@ -565,6 +563,7 @@ void GamePlayScene::GameStartUpdate() {
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
 	enemy_->SetPosition(Vector3(0.0f, 1.0f, 8.0f));
+	effectManager_->GetInstance()->StopShake();
 }
 
 /// -------------------------------------------------------------
@@ -626,6 +625,12 @@ void GamePlayScene::GamePlayUpdate() {
 	enemy_->Update();
 
 	dynamicCamera_->Update();
+
+	effectManager_->GetInstance()->SetDynamicCamera(dynamicCamera_.get());
+
+	// 演出の更新
+	// カメラとコントローラーのシェイク
+	effectManager_->GetInstance()->Update();
 }
 
 /// -------------------------------------------------------------
@@ -694,7 +699,7 @@ void GamePlayScene::PauseInitialize() {
 ///				　		   ポーズ更新
 /// -------------------------------------------------------------
 void GamePlayScene::PauseUpdate() {
-
+	input_->StopVibration();
 	// ポーズメニューの更新
 	pauseMenu_->Update();
 
