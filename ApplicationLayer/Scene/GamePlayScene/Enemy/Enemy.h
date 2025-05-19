@@ -41,9 +41,6 @@ public: /// ---------- メンバ関数 ---------- ///
 	/// 描画
 	void Draw() override;
 
-	/// 移動
-	void Move();
-
 	/// ImGui
 	void ShowImGui(const char* name);
 
@@ -62,15 +59,6 @@ public: /// ---------- メンバ関数 ---------- ///
 	// シリアルナンバーを設定
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
 
-	// 向きをランダムに設定
-	Vector3 RandomDirection(float minXAngle, float maxXAngle, float minZAngle, float maxZAngle);
-
-	// 角度をランダムに設定
-	float RandomRadian(float minRadian, float maxRadian);
-
-	// 攻撃コマンドをランダムに設定
-	std::unique_ptr<AttackCommand> RandomAttackCommand();
-
 	// 敵の出現演出
 	void SpawnEffect();
 
@@ -82,9 +70,6 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// エネミーが死んだときのカメラワーク
 	void FaildCameraMove();
-
-	// 攻撃を受けたときのノックバック処理
-	void KnockBack();
 
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
@@ -116,6 +101,26 @@ public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// 攻撃時更新
 	/// </summary>
 	void BehaviorAttackUpdate();
+
+///-------------------------------------------/// 
+/// クラス内処理
+///-------------------------------------------///
+private:
+
+	// 攻撃コマンドをランダムに設定
+	std::unique_ptr<AttackCommand> RandomAttackCommand();
+
+	/// 移動
+	void Move();
+
+	// 向きをランダムに設定
+	Vector3 RandomDirection(float minXAngle, float maxXAngle, float minZAngle, float maxZAngle);
+
+	// 角度をランダムに設定
+	float RandomRadian(float minRadian, float maxRadian);
+
+	// 攻撃を受けたときのノックバック処理
+	void KnockBack();
 
 public: /// ---------- ゲッター ---------- ///
 	bool GetIsHit() const { return isHit_; }
@@ -264,8 +269,15 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 移動の速さ
 	float moveSpeed_ = 0.1f;
 
+	// ノックバック中
+	bool isKnockBack_ = false;
+
 	// ノックバックする速さ
 	float knockBackSpeed_ = 0.2f;
+
+	// ノックバックの時間
+	float knockBackTime_ = 0.0f;
+	float knockBackMaxTime_ = 60.0f;
 
 	// 中心に戻るフラグ
 	bool isReturningCenter_ = false;
@@ -283,4 +295,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	float returnTimer_ = 0.0f;
 
 	float returnMaxTime_ = 60.0f;
+
+///-------------------------------------------/// 
+/// チュートリアル用メンバ変数
+///-------------------------------------------///
 };
