@@ -6,6 +6,7 @@
 class Camera;
 class Input;
 class Player;
+class TutorialPlayer;
 class Field;
 
 
@@ -53,6 +54,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	Camera* camera_ = nullptr; // カメラ
 	Input* input_ = nullptr;   // 入力
 	Player* player_ = nullptr; // プレイヤー
+	TutorialPlayer* tutorialPlayer_ = nullptr; // チュートリアルプレイヤー
 	Field* field_ = nullptr;   // フィールド
 
 	// カメラ揺れ用の変数

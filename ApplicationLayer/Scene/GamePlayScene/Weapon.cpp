@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 #include "Enemy.h"
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
@@ -29,9 +30,18 @@ void Weapon::Initialize()
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Weapon.gltf");
 
-	object3D_->SetTranslate(player_->GetPosition());
-	object3D_->SetRotate(player_->GetRotation());
-	object3D_->SetScale(player_->GetScale());
+	if (player_) {
+		object3D_->SetTranslate(player_->GetPosition());
+		object3D_->SetRotate(player_->GetRotation());
+		object3D_->SetScale(player_->GetScale());
+	} else if (tutorialPlayer_) {
+		object3D_->SetTranslate(tutorialPlayer_->GetPosition());
+		object3D_->SetRotate(tutorialPlayer_->GetRotation());
+		object3D_->SetScale(tutorialPlayer_->GetScale());
+	}
+	
+
+
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
@@ -52,12 +62,25 @@ void Weapon::Initialize()
 /// -------------------------------------------------------------
 void Weapon::Update()
 {
-	// 位置
-	position_ = player_->GetPosition();
-	// 回転
-	rotation_ = player_->GetRotation();
-	// スケール
-	scale_ = player_->GetScale();
+	// プレイヤーが存在する場合
+	if (player_) {
+		// 位置
+		position_ = player_->GetPosition();
+		// 回転
+		rotation_ = player_->GetRotation();
+		// スケール
+		scale_ = player_->GetScale();
+	}else if (tutorialPlayer_) {
+
+	//プレイヤーがチュートリアル用になっている時
+	
+		// プレイヤーの位置を取得
+		position_ = tutorialPlayer_->GetPosition();
+		// プレイヤーの回転を取得
+		rotation_ = tutorialPlayer_->GetRotation();
+		// プレイヤーのスケールを取得
+		scale_ = tutorialPlayer_->GetScale();
+	}
 
 	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };

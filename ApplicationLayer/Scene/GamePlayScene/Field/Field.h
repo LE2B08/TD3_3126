@@ -23,6 +23,8 @@ public: /// ---------- メンバ関数 ---------- ///
 	// スタート時の拡縮の挙動
 	void ScalingAnimation();
 
+	void TutorialScale();
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetMinPosition() { return minPosition_; }

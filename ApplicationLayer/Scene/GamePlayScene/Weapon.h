@@ -8,6 +8,7 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
 
 
@@ -55,6 +56,7 @@ public:
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// エネミーの設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -72,6 +74,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// プレイヤー
 	Player* player_ = nullptr;
+	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;

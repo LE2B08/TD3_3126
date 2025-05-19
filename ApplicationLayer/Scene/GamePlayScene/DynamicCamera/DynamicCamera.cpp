@@ -1,5 +1,6 @@
 #include "DynamicCamera.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 #include "Enemy.h"
 
 #include <imgui.h>
@@ -26,7 +27,13 @@ void DynamicCamera::Update()
 {
 
 	// プレイヤーの位置を取得
-	Vector3 playerPos = player_->GetPosition();
+	Vector3 playerPos = {};
+	if (player_) {
+		playerPos = player_->GetPosition();
+	} else if (tutorialPlayer_) {
+		playerPos = tutorialPlayer_->GetPosition();
+	}
+	
 
 	// 敵の位置を取得
 	Vector3 enemyPos = enemy_->GetPosition();

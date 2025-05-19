@@ -1,5 +1,5 @@
+
 #define NOMINMAX
-#include "Player.h"
 #include "CollisionTypeIdDef.h"
 #include "Enemy.h"
 #include "ImGuiManager.h"
@@ -8,12 +8,12 @@
 #include "Weapon.h"
 #include "Wireframe.h"
 #include <Easing.h>
+#include "TutorialPlayer.h"
 using namespace Easing;
-
 /// -------------------------------------------------------------
 ///						　コンストラクタ
 /// -------------------------------------------------------------
-Player::Player() {
+TutorialPlayer::TutorialPlayer() {
 	// シリアルナンバーを振る
 	serialNumber_ = nextSerialNumber_;
 	// 次のシリアルナンバーに1を足す
@@ -23,7 +23,7 @@ Player::Player() {
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
-void Player::Initialize() {
+void TutorialPlayer::Initialize() {
 	// 基底クラスの初期化
 	BaseCharacter::Initialize();
 
@@ -45,13 +45,13 @@ void Player::Initialize() {
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f };
+	worldTransform_.translate_ = {8.0f, 0.0f, 8.0f};
 }
 
 /// -------------------------------------------------------------
 ///						　	　更新処理
 /// -------------------------------------------------------------
-void Player::Update() {
+void TutorialPlayer::Update() {
 	// 無敵時間のカウントダウン
 	if (isInvincible_) {
 		isEnemyHit_ = true; // 敵に当たったフラグを立てる
@@ -124,7 +124,7 @@ void Player::Update() {
 /// -------------------------------------------------------------
 ///						　	描画処理
 /// -------------------------------------------------------------
-void Player::Draw() {
+void TutorialPlayer::Draw() {
 	if (!isInvincible_ || static_cast<int>(invincibleTime_) % 2 == 0) {
 		// 基底クラスの描画処理
 		BaseCharacter::Draw();
@@ -145,7 +145,7 @@ void Player::Draw() {
 /// -------------------------------------------------------------
 ///							衝突判定処理
 /// -------------------------------------------------------------
-void Player::OnCollision(Collider* other) {
+void TutorialPlayer::OnCollision(Collider* other) {
 	// 種別IDを取得
 	uint32_t typeID = other->GetTypeID();
 
@@ -181,94 +181,26 @@ void Player::OnCollision(Collider* other) {
 /// -------------------------------------------------------------
 ///				　中心座標を取得する純粋仮想関数
 /// -------------------------------------------------------------
-Vector3 Player::GetCenterPosition() const {
+Vector3 TutorialPlayer::GetCenterPosition() const {
 	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Player::AppearFromAbove(float t) { SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, Easing::easeOutBounce(t))); }
-
-void Player::DrawImGui() {
-
-	ImGui::Begin("Player");
-	ImGui::Text("HP: %d", hp_);
-	ImGui::DragInt("HP", &hp_, 1, 0, 10);
-	ImGui::DragFloat3("Translate", &worldTransform_.translate_.x, 0.1f);
-	ImGui::DragFloat3("Rotation", &worldTransform_.rotate_.x, 0.1f);
-	ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.1f);
+ void TutorialPlayer::DrawImGui()
+{
+	ImGui::Begin("PlayerTutorial");
+	ImGui::SliderFloat3("playerPosition", &worldTransform_.translate_.x, -10.0f, 10.0f);
+	ImGui::SliderFloat3("playerRotation", &worldTransform_.rotate_.x, -20.0f, 10.0f);
+	ImGui::SliderFloat3("playerScale", &worldTransform_.scale_.x, 0.0f, 10.0f);
+	ImGui::SliderInt("hp", &hp_, 0, 10);
 	ImGui::End();
-
-}
-
-///-------------------------------------------/// 
-/// 				落下エフェクト
-///-------------------------------------------///
-void Player::FallingAnimation() {
-
-	// タイマー処理
-	if (fallingTimer_ >= maxFallingTime) {
-
-		// タイマーが最大値を超えないようにする
-		fallingTimer_ = maxFallingTime;
-	}
-	else {
-		// タイマーを加算
-		fallingTimer_ += 0.5f;
-	}
-	
-	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f }, { 0.0f, 1.0f, -8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
-	worldTransform_.rotate_.y = -1.55f;
-	// タイマーと最大値が等しい場合
-	if (fallingTimer_ == maxFallingTime) {
-
-		// 落下アニメーションフラグを立てる
-		isFallEnd_ = true;
-	}
-}
-
-void Player::DeathCameraMove() {
-	//  プレイヤーの位置を取得
-	Vector3 playerPosition = GetPosition();
-
-	// カメラの現在の位置を取得
-	Vector3 cameraPosition = camera_->GetTranslate();
-
-	// 移動させるカメラの座標
-	Vector3 moveCameraPosition = cameraPosition;
-
-	// カメラの移動後の位置を計算
-	Vector3 cameraOffset = playerPosition + Vector3(0.0f, 0.56f, -10.0f);
-
-	// カメラの回転を取得
-	Vector3 cameraRotation = camera_->GetRotate();
-
-	// 移動させるカメラの回転
-	Vector3 moveCameraRotation = cameraRotation;
-
-	if (cameraMoveT_ >= cameraMoveMaxT_) {
-		cameraMoveT_ = cameraMoveMaxT_; // カメラの移動時間を最大値に設定
-		DeadEffect();                   // 死亡エフェクトを実行
-	} else {
-		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
-		worldTransform_.rotate_.y = 1.5f;
-	}
-
-	moveCameraPosition = Vector3::Lerp(cameraPosition, cameraOffset, easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの位置を補間
-
-	moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
-	// カメラの位置をプレイヤーの位置に設定
-	camera_->SetTranslate(moveCameraPosition);
-
-	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
-}
-
+ }
 
 /// -------------------------------------------------------------
 ///						　　移動処理
 /// -------------------------------------------------------------
-void Player::Move() {
+void TutorialPlayer::Move() {
 	// 速度の加算
 	velocity_ += acceleration_;
 
@@ -307,7 +239,7 @@ void Player::Move() {
 /// -------------------------------------------------------------
 ///					ヒット時のパーティクル処理
 /// -------------------------------------------------------------
-void Player::HitParticle() {
+void TutorialPlayer::HitParticle() {
 	// エネミーの中心位置を取得
 	Vector3 playerCenter = GetCenterPosition();
 
@@ -318,7 +250,7 @@ void Player::HitParticle() {
 	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Default); // deltaTime は 0 で呼び出し
 }
 
-void Player::DeadEffect() {
+void TutorialPlayer::DeadEffect() {
 	// プレイヤーを回転させながら小さくなって消滅する
 	Vector3 scale = worldTransform_.scale_;
 	Vector3 rotation = worldTransform_.rotate_;
@@ -337,7 +269,7 @@ void Player::DeadEffect() {
 /// -------------------------------------------------------------
 ///					通常行動の初期化処理
 /// -------------------------------------------------------------
-void Player::BehaviorRootInitialize() {
+void TutorialPlayer::BehaviorRootInitialize() {
 	isAttack_ = false;  // 攻撃フラグをリセット
 	attackTime_ = 0.0f; // 攻撃時間をリセット
 }
@@ -345,7 +277,7 @@ void Player::BehaviorRootInitialize() {
 /// -------------------------------------------------------------
 ///					通常行動の更新処理
 /// -------------------------------------------------------------
-void Player::BehaviorRootUpdate() {
+void TutorialPlayer::BehaviorRootUpdate() {
 	// 移動処理
 	Move();
 }
@@ -353,7 +285,7 @@ void Player::BehaviorRootUpdate() {
 /// -------------------------------------------------------------
 ///					攻撃行動の初期化処理
 /// -------------------------------------------------------------
-void Player::BehaviorAttackInitialize() {
+void TutorialPlayer::BehaviorAttackInitialize() {
 	attackTime_ = 0.0f; // 攻撃時間をリセット
 	isAttack_ = true;   // 攻撃フラグを立てる
 }
@@ -361,7 +293,7 @@ void Player::BehaviorAttackInitialize() {
 /// -------------------------------------------------------------
 ///					攻撃行動の更新処理
 /// -------------------------------------------------------------
-void Player::BehaviorAttackUpdate() {
+void TutorialPlayer::BehaviorAttackUpdate() {
 
 	// 攻撃中も移動できるようにする
 	velocity_ *= 0.5f; // 移動速度を半分にする

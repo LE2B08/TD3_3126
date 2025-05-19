@@ -3,6 +3,7 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
 
 /// -------------------------------------------------------------
@@ -36,6 +37,8 @@ public: /// ---------- セッター ---------- ///
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	// チュートリアルプレイヤーの設定
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -47,6 +50,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤー借りポインタ
 	Player* player_ = nullptr;
+	// チュートリアルプレイヤー借りポインタ
+	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// 敵借りポインタ
 	Enemy* enemy_ = nullptr;

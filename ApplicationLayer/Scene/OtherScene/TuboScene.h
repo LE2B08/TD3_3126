@@ -11,9 +11,8 @@
 #include "Enemy.h"
 #include "EnemyBullet.h"
 #include "Field.h"
-#include "Player.h"
+#include "TutorialPlayer.h"
 #include "PlayerDirectionalArrow.h"
-#include "Skydome.h"
 #include "Weapon.h"
 
 #include "ControllerUI.h"
@@ -26,7 +25,24 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
-enum class GameSceneState { Start, Play, GameClear, GameOver, Pause };
+// チュートリアルの流れ
+enum class TutorialSteps {
+	Start,            // 初め
+	PlayerRotation,   // プレイヤーの回転
+	HookThrowAndBack, // フックの投げ、戻す
+	HookArcMove,      // フックの弧を描く移動
+	HookMove,         // フックの移動
+	Attack,           // 攻撃
+	End,              // 終わり
+
+};
+
+enum class SceneStatus {
+
+	Play,
+	Pause,
+
+};
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -57,38 +73,54 @@ private: /// ---------- メンバ関数 ---------- ///
 	// 衝突判定と応答
 	void CheckAllCollisions();
 
-	/*------カメラのシェイク------*/
-	void CameraShake();
+	
 
-	// ゲームスタート初期化
-	void GameStartInitialize();
+	// ゲーム開始時の初期化
+	void TutorialStartInitialize();
+	// チュートリアル開始時の更新
+	void TutorialStartUpdate();
 
-	// ゲームスタート更新
-	void GameStartUpdate();
+	// プレイヤーの回転の初期化
+	void TutorialPlayerRotationInitialize();
+	// プレイヤーの回転初期化の更新
+	void TutorialPlayerRotationUpdate();
 
-	// ゲームプレイ初期化
-	void GamePlayInitialize();
+	// フックを投げて戻す初期化
+	void TutorialHookThrowAndBackInitialize();
+	// フックを投げて戻す更新
+	void TutorialHookThrowAndBackUpdate();
 
-	// ゲームプレイ更新
-	void GamePlayUpdate();
+	// フックの弧を描く移動初期化
+	void TutorialHookArcMoveInitialize();
+	// フックの弧を描く移動更新
+	void TutorialHookArcMoveUpdate();
 
-	// ゲームクリア初期化
-	void GameClearInitialize();
+	// フックの移動初期化
+	void TutorialHookMoveInitialize();
+	// フックの移動更新
+	void TutorialHookMoveUpdate();
 
-	// ゲームクリア更新
-	void GameClearUpdate();
+	// 攻撃初期化
+	void TutorialAttackInitialize();
+	// 攻撃更新
+	void TutorialAttackUpdate();
 
-	// ゲームオーバー初期化
-	void GameOverInitialize();
-
-	// ゲームオーバー更新
-	void GameOverUpdate();
-
+	// ゲーム開始初期化
+	void PlayInitialize();
+	// ゲーム開始更新
+	void PlayUpdate();
 	// ポーズ初期化
 	void PauseInitialize();
-
 	// ポーズ更新
 	void PauseUpdate();
+
+	// チュートリアル終了初期化
+	void TutorialEndInitialize();
+	// チュートリアル終了更新
+	void TutorialEndUpdate();
+
+	void SetTutorialStep(TutorialSteps step);
+
 
 private: /// ---------- メンバ変数 ---------- ///
 	DirectXCommon* dxCommon_ = nullptr;
@@ -101,7 +133,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-	std::unique_ptr<EffectManager> effectManager_;
+	//std::unique_ptr<EffectManager> effectManager_;
 
 	std::string particleGroupName;
 
@@ -109,9 +141,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isDebugCamera_ = false;
 
 	// Playerクラスのインスタンス
-	std::unique_ptr<Player> player_ = nullptr;
-	// プレイヤーUI
-	std::unique_ptr<PlayerUI> playerUI_;
+	std::unique_ptr<TutorialPlayer> player_ = nullptr;
+
 	// プレイヤーの武器
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
@@ -120,8 +151,6 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 敵
 	std::unique_ptr<Enemy> enemy_;
-	// 敵のUI
-	std::unique_ptr<EnemyUI> enemyUI_ = nullptr;
 
 	// フィールド
 	std::unique_ptr<Field> field_;
@@ -134,41 +163,21 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	std::unique_ptr<SkyBox> skyBox_;
 
-	// スカイドーム
-	std::unique_ptr<Skydome> skydome_ = nullptr;
-
 	/*------カメラの座標------*/
 	Vector3 cameraPosition_ = {0.0f, 50.0f, 0.0f};
 
-	// カメラの揺れを管理する変数
-	bool isCameraShaking_ = false;
-	// 揺れの持続時間
-	float shakeDuration_ = 0.05f;
-	// 揺れの強さ
-	float shakeMagnitude_ = 0.5f;
-	float shakeElapsedTime_ = 0.0f;
-
 	/*------ゲーム開始演出------*/
-
-	// ゲームクリアのフラグ
-	bool isGameClear_ = false;
-
-	// イージングがスタートしたか
-	bool isStartAnimation_ = false;
 
 	// 計算用のダイナミックカメラ
 	std::unique_ptr<DynamicCamera> dynamicCamera_ = nullptr;
 
 	// ゲームの状態
-	GameSceneState gameState_ = GameSceneState::Start;
+	SceneStatus sceneStatus_ = SceneStatus::Play; // 例: 初期値
+	std::optional<SceneStatus> nextGameState_ = std::nullopt;
 
-	// 次の状態をリクエスト
-	std::optional<GameSceneState> nextGameState_ = std::nullopt;
+	// チュートリアルの進行状態
+	TutorialSteps tutorialSteps_ = TutorialSteps::Start;
 
-	// ゲームクリア
-	bool isClearTransitionStarted_ = false;
-	// ゲームオーバー
-	bool isGameOverTransitionStarted_ = false;
 	// ポーズメニュー
 	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
 

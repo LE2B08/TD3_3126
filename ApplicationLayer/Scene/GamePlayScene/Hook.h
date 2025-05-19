@@ -8,6 +8,7 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
 class Field;
 
@@ -79,6 +80,7 @@ public: /// ---------- セッター ---------- ///
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -121,6 +123,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤー
 	Player* player_ = nullptr;
+	// チュートリアルプレイヤー
+	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
@@ -211,10 +215,12 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 状態リクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
-	//
-	Vector2 rightStick_ = {};
-	bool isRightStickRight = false;
-	bool isRightStickLeft = false;
+	// 左スティックの入力
+	Vector2 leftStick_ = {};
+	// 左スティックを右に倒したかどうか
+	bool isLeftStickRight = false;
+	// 左スティックを左に倒したかどうか
+	bool isLeftStickLeft = false;
 
 	///===================================
 	/// 弧
