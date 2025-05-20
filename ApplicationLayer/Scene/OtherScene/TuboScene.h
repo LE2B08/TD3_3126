@@ -8,8 +8,7 @@
 #include <WavLoader.h>
 
 #include "CollisionManager.h"
-#include "Enemy.h"
-#include "EnemyBullet.h"
+#include "TutorialEnemy.h"
 #include "Field.h"
 #include "TutorialPlayer.h"
 #include "PlayerDirectionalArrow.h"
@@ -18,12 +17,15 @@
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
 #include "Pause/PauseMenu.h"
+#include "TutorialUI.h"
 
 #include "EffectManager.h"
 
 #include "AABB.h"
 #include "OBB.h"
 #include <SkyBox.h>
+
+
 
 // チュートリアルの流れ
 enum class TutorialSteps {
@@ -150,7 +152,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<Hook> hook_ = nullptr;
 
 	// 敵
-	std::unique_ptr<Enemy> enemy_;
+	std::unique_ptr<TutorialEnemy> enemy_;
 
 	// フィールド
 	std::unique_ptr<Field> field_;
@@ -183,4 +185,13 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤーの矢印
 	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
+
+	/// -------------------------------------------------------------
+	///					　		TutorialUI
+	///							
+	
+	std::unique_ptr <TutorialUI> tutorialUI_ = nullptr;
+	
+
+
 };

@@ -5,6 +5,7 @@
 class Player;
 class TutorialPlayer;
 class Enemy;
+class TutorialEnemy;
 
 /// -------------------------------------------------------------
 ///					ダイナミックカメラクラス
@@ -42,6 +43,9 @@ public: /// ---------- セッター ---------- ///
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	// チュートリアル敵の設定
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
+
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -55,6 +59,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 敵借りポインタ
 	Enemy* enemy_ = nullptr;
+	// チュートリアル敵借りポインタ
+	TutorialEnemy* tutorialEnemy_ = nullptr;
 	
 	// 中心座標
 	Vector3 centerPos_ = {};

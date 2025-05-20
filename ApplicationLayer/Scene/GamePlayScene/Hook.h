@@ -10,6 +10,7 @@
 class Player;
 class TutorialPlayer;
 class Enemy;
+class TutorialEnemy;
 class Field;
 
 
@@ -84,6 +85,7 @@ public: /// ---------- セッター ---------- ///
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
@@ -128,6 +130,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
+	// チュートリアルエネミー
+	TutorialEnemy* tutorialEnemy_ = nullptr;
 
 	// フィールド
 	Field* field_ = nullptr;

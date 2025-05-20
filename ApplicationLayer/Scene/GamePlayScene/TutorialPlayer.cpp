@@ -142,6 +142,12 @@ void TutorialPlayer::Draw() {
 #endif
 }
 
+void TutorialPlayer::TutorialStep() {
+
+
+
+}
+
 /// -------------------------------------------------------------
 ///							衝突判定処理
 /// -------------------------------------------------------------
@@ -152,7 +158,7 @@ void TutorialPlayer::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) // 敵と衝突した場合
 	{
 		if (!isInvincible_) {
-			hp_ -= 2;
+			//hp_ -= 2;
 
 			if (hp_ <= 0) {
 				// isDead_ = true; // 死亡フラグを立てる
@@ -164,7 +170,7 @@ void TutorialPlayer::OnCollision(Collider* other) {
 	} else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
 	{
 		if (!isInvincible_) {
-			hp_ -= 1;
+			//hp_ -= 1;
 
 			// if (hp_ <= 0)
 			//{
@@ -222,9 +228,10 @@ void TutorialPlayer::Move() {
 
 	/// ---------- 回転処理 ---------- ///
 	// 右スティックの入力があるとき
-	if (!input_->RStickInDeadZone() && hp_ > 0)
-		worldTransform_.rotate_.y = -atan2(input_->GetRightStick().x, input_->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
+	if (!input_->RStickInDeadZone() && hp_ > 0) {
 
+		worldTransform_.rotate_.y = -atan2(input_->GetRightStick().x, input_->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
+	}
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);

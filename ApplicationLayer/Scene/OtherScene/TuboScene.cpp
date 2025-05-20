@@ -49,32 +49,32 @@ void TuboScene::Initialize() {
 	player_ = std::make_unique<TutorialPlayer>();
 	weapon_ = std::make_unique<Weapon>();
 	hook_ = std::make_unique<Hook>();
-	enemy_ = std::make_unique<Enemy>();
+	enemy_ = std::make_unique<TutorialEnemy>();
 	field_ = std::make_unique<Field>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
-	
+	tutorialUI_ = std::make_unique<TutorialUI>();
+
 	playerDirectionalArrow_ = std::make_unique<PlayerDirectionalArrow>();
 
-	
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
 
 	// 武器の初期化
 	weapon_->SetTutorialPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get());           // 敵の情報を武器にセット
+	weapon_->SetTutorialEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
 	hook_->SetTutorialPlayer(player_.get());
-	hook_->SetEnemy(enemy_.get());
+	hook_->SetTutorialEnemy(enemy_.get());
 	hook_->SetField(field_.get());
 	hook_->Initialize();
 
 	// 敵の初期化
-	 //enemy_->Initialize();
-	 //enemy_->SetTutorialPlayer(tutorialplayer_.get()); // プレイヤーの情報を敵にセット
+	enemy_->Initialize();
+	enemy_->SetPosition({0.0f, 0.0f, 8.0f});
 	// 敵の弾の情報をセット
 	// enemyBullets_ = &enemy_->GetBullets();
 
@@ -90,7 +90,7 @@ void TuboScene::Initialize() {
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
 	dynamicCamera_->SetTutorialPlayer(player_.get());
-	dynamicCamera_->SetEnemy(enemy_.get());
+	dynamicCamera_->SetTutorialEnemy(enemy_.get());
 
 	// ポーズメニューの初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
@@ -102,6 +102,9 @@ void TuboScene::Initialize() {
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// チュートリアルUIの初期化
+	tutorialUI_->Initialize();
 }
 
 /// -------------------------------------------------------------
@@ -138,7 +141,6 @@ void TuboScene::Update() {
 	}
 #endif // _DEBUG
 
-	
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {
 
@@ -146,11 +148,11 @@ void TuboScene::Update() {
 		sceneStatus_ = nextGameState_.value();
 
 		switch (sceneStatus_) {
-	
+
 		case SceneStatus::Pause:
 			// ポーズメニューの初期化
 			PauseInitialize();
-			break;	
+			break;
 		case SceneStatus::Play:
 			// ゲームプレイの初期化
 			PlayInitialize();
@@ -179,7 +181,6 @@ void TuboScene::Update() {
 
 		PlayUpdate();
 
-		
 		switch (tutorialSteps_) {
 		case TutorialSteps::Start:
 			// チュートリアル開始時の初期化
@@ -216,7 +217,6 @@ void TuboScene::Update() {
 		}
 		break;
 
-	
 	default:
 		break;
 	}
@@ -270,7 +270,7 @@ void TuboScene::Draw() {
 	player_->Draw();
 
 	// 敵の描画
-	// enemy_->Draw();
+	enemy_->Draw();
 
 	// フックの描画
 	hook_->Draw();
@@ -326,20 +326,34 @@ void TuboScene::Draw() {
 
 		switch (tutorialSteps_) {
 		case TutorialSteps::Start:
+			// チュートリアル開始のUIの描画
+			tutorialUI_->StartDraw();
 			break;
 
 		case TutorialSteps::PlayerRotation:
+			// プレイヤーの回転のUIの描画
+			tutorialUI_->RotationDraw();
 			break;
 		case TutorialSteps::HookThrowAndBack:
+			// フックを投げて戻すのUIの描画
+			tutorialUI_->ThrowDraw();
 			break;
 		case TutorialSteps::HookArcMove:
+			// フックの弧を描く移動のUIの描画
+			tutorialUI_->ArcDraw();
 			break;
 		case TutorialSteps::HookMove:
+			// フックの移動のUIの描画
+			tutorialUI_->MoveDraw();
 			break;
 		case TutorialSteps::Attack:
+			// 攻撃のUIの描画
+			tutorialUI_->AttackDraw();
 			break;
 
 		case TutorialSteps::End:
+			// チュートリアル終了のUIの描画
+			tutorialUI_->EndDraw();
 			break;
 		default:
 			break;
@@ -420,11 +434,6 @@ void TuboScene::CheckAllCollisions() {
 		collisionManager_->RemoveCollider(weapon_.get());
 		collisionManager_->RemoveCollider(hook_.get());
 		collisionManager_->RemoveCollider(enemy_.get());
-
-		// 複数についてコライダーを削除
-		for (const auto& bullet : *enemyBullets_) {
-			collisionManager_->RemoveCollider(bullet.get());
-		}
 	}
 
 	// 衝突判定と応答
@@ -434,46 +443,63 @@ void TuboScene::CheckAllCollisions() {
 void TuboScene::TutorialStartInitialize() {}
 
 void TuboScene::TutorialStartUpdate() {
+	// Aボタンが押されたら
+	if (Input::GetInstance()->PushButton(0)) {
 
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::PlayerRotation);
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::PlayerRotation);
+	}
 }
 
 void TuboScene::TutorialPlayerRotationInitialize() {}
 
 void TuboScene::TutorialPlayerRotationUpdate() {
 
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::HookThrowAndBack);
+	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::HookThrowAndBack);
+	}
 }
 
 void TuboScene::TutorialHookThrowAndBackInitialize() {}
 
 void TuboScene::TutorialHookThrowAndBackUpdate() {
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::HookArcMove);
+	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::HookArcMove);
+	}
 }
 
 void TuboScene::TutorialHookArcMoveInitialize() {}
 
 void TuboScene::TutorialHookArcMoveUpdate() {
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::HookMove);
+	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::HookMove);
+	}
 }
 
 void TuboScene::TutorialHookMoveInitialize() {}
 
 void TuboScene::TutorialHookMoveUpdate() {
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::Attack);
+	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::Attack);
+	}
 }
 
 void TuboScene::TutorialAttackInitialize() {}
 
 void TuboScene::TutorialAttackUpdate() {
+	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
 
-	// 次に行く処理
-	SetTutorialStep(TutorialSteps::End);
+		// 次に行く処理
+		SetTutorialStep(TutorialSteps::End);
+	}
 }
 
 void TuboScene::PlayInitialize() {}
@@ -491,16 +517,25 @@ void TuboScene::PlayUpdate() {
 	// プレイヤーの移動制限をフィールドにセット
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
-	//プレイヤーの更新
+	// プレイヤーの更新
 	player_->Update();
 
-	
+	enemy_->SetMinMoveLimit(field_->GetMinPosition());
+	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
+
+	// 攻撃判定
+	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
+		enemy_->SetIsHitFromAttack(true);
+	}
+	enemy_->SetTutorialPlayer(player_.get());
+	enemy_->Update();
+
 	// コントローラー用UIの更新
 	controllerUI_->Update();
 	// プレイヤーの方向UIの更新
 	playerDirectionalArrow_->Update();
-	
-	
+	// チュートリアルUIの更新
+	tutorialUI_->Update();
 }
 
 void TuboScene::TutorialEndInitialize() {}

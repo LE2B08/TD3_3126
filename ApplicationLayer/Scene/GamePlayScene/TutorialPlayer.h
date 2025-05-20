@@ -17,7 +17,7 @@ class Hook;
 ///						　プレイヤークラス
 /// -------------------------------------------------------------
 class TutorialPlayer : public BaseCharacter {
-	private: /// ---------- 構造体 ---------- ///
+private: /// ---------- 構造体 ---------- ///
 	/// ---------- 振る舞い ---------- ///
 	enum class Behavior {
 		kRoot,   // 通常状態
@@ -36,6 +36,9 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// 描画処理
 	void Draw() override;
+
+	// チュートリアルステップ
+	void TutorialStep();
 
 	// 衝突判定
 	void OnCollision(Collider* other) override;
@@ -64,9 +67,9 @@ public:                                                                         
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; } // 移動制限の最大値の設定
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; } // 移動制限の最小値の設定
 
-	void SetIsHitEnemy(bool isHitEnemy) { isEnemyHit_ = isHitEnemy; }     // 敵に当たったかの設定
-	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }             // 攻撃の設定
-	
+	void SetIsHitEnemy(bool isHitEnemy) { isEnemyHit_ = isHitEnemy; } // 敵に当たったかの設定
+	void SetIsAttack(bool isAttack) { isAttack_ = isAttack; }         // 攻撃の設定
+
 	void SetCamera(Camera* camera) { camera_ = camera; } // カメラの設定
 
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }      // 敵の設定
@@ -147,7 +150,6 @@ private: /// ---------- 定数 ---------- ///
 	// 攻撃の最大時間
 	float attackMaxTime_ = 60.0f;
 
-
 	// プレイヤーが敵に当たったか
 	bool isEnemyHit_ = false;
 
@@ -160,6 +162,4 @@ private: /// ---------- 定数 ---------- ///
 	/*------カメラの移動タイマー------*/
 	float cameraMoveT_ = 0.0f;     // カメラの移動時間
 	float cameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
-
-	
 };
