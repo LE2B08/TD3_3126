@@ -110,14 +110,14 @@ private:
 	// 攻撃コマンドをランダムに設定
 	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
+	// 角度をランダムに設定
+	float RandomRadian(float minRadian, float maxRadian);
+
 	/// 移動
 	void Move();
 
-	// 向きをランダムに設定
-	Vector3 RandomDirection(float minXAngle, float maxXAngle, float minZAngle, float maxZAngle);
-
-	// 角度をランダムに設定
-	float RandomRadian(float minRadian, float maxRadian);
+	// 壁に当たった時の処理
+	void WallHit();
 
 	// 攻撃を受けたときのノックバック処理
 	void KnockBack();
@@ -167,11 +167,16 @@ public: /// ---------- セッター ---------- ///
 	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
 
 private: /// ---------- メンバ変数 ---------- ///
+
 	// 速度
 	Vector3 velocity_;
 
 	// 向き
 	Vector3 direction_ = {};
+
+	// 敵の大きさを考慮した座標
+	Vector3 minPosition = {};
+	Vector3 maxPosition = {};
 
 	ParticleManager* particleManager_ = nullptr;
 
@@ -269,6 +274,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 移動の速さ
 	float moveSpeed_ = 0.1f;
 
+///-------------------------------------------/// 
+/// ノックバック処理用の変数
+///-------------------------------------------///
+
 	// ノックバック中
 	bool isKnockBack_ = false;
 
@@ -277,10 +286,15 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
-	float knockBackMaxTime_ = 60.0f;
+	// ノックバックの最大時間
+	float knockBackMaxTime_ = 1.0f; // 1秒
+
+///-------------------------------------------/// 
+/// 中心に戻る処理用の変数
+///-------------------------------------------///
 
 	// 中心に戻るフラグ
-	bool isReturningCenter_ = false;
+	bool isReturnCenter_ = false;
 
 	// 中心に戻る速度
 	Vector3 returnVelocity_ = {};
@@ -293,10 +307,6 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 中心に戻る用タイマー
 	float returnTimer_ = 0.0f;
-
-	float returnMaxTime_ = 60.0f;
-
-///-------------------------------------------/// 
-/// チュートリアル用メンバ変数
-///-------------------------------------------///
+	// 中心に戻る最大時間
+	float returnMaxTime_ = 1.0f; // 1秒
 };
