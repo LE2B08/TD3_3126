@@ -67,5 +67,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
 
+	bool cameraShakeEnabled_;
+
+	std::unique_ptr<Sprite> cameraShakeOnSprite_;
+
+	std::unique_ptr<Sprite> cameraShakeOffSprite_;
 };
 

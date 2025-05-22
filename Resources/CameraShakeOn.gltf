@@ -64,61 +64,61 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":3822,
+			"count":9638,
 			"max":[
-				3.2209999561309814,
+				6.968499660491943,
 				0.09999999403953552,
-				0.08100000023841858
+				0.08000000566244125
 			],
 			"min":[
-				-3.168999671936035,
+				-7.041500091552734,
 				-0.09999999403953552,
-				-0.8410000205039978
+				-0.8400000333786011
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":3822,
+			"count":9638,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":3822,
+			"count":9638,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":11100,
+			"count":28188,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":45864,
+			"byteLength":115656,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":45864,
-			"byteOffset":45864,
+			"byteLength":115656,
+			"byteOffset":115656,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":30576,
-			"byteOffset":91728,
+			"byteLength":77104,
+			"byteOffset":231312,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":22200,
-			"byteOffset":122304,
+			"byteLength":56376,
+			"byteOffset":308416,
 			"target":34963
 		}
 	],
@@ -130,8 +130,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":144504,
-			"uri":"PressToA.bin"
+			"byteLength":364792,
+			"uri":"CameraShakeOn.bin"
 		}
 	]
 }

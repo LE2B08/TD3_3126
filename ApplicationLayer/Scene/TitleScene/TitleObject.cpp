@@ -14,6 +14,12 @@ void TitleObject::Initialize()
 	pressBToGuide_ = std::make_unique<Object3D>();
 	pressBToGuide_->Initialize("PressBToGuide.gltf");
 
+	cameraShakeOn_ = std::make_unique<Object3D>();
+	cameraShakeOn_->Initialize("CameraShakeOn.gltf");
+
+	cameraShakeOff_ = std::make_unique<Object3D>();
+	cameraShakeOff_->Initialize("CameraShakeOff.gltf");
+
 	position_ = Vector3(-20.0f, 0.0f, 20.0f); // スタート位置に近い値
 	rotation_ = Vector3(0.0f, 3.14f, 0.0f);    // 初期角度
 	scale_ = Vector3(3.0f, 3.0f, 3.0f);       // 初期スケール
@@ -45,20 +51,31 @@ void TitleObject::Update()
 		object3D_->SetColor(objectColor_);
 
 		// PressToA
-		Vector3 pressPos = Vector3(0.0f, 0.1f + moveOffset, -6.0f);
+		Vector3 pressPos = Vector3(0.0f, 0.1f + moveOffset, -3.0f);
 		pressToA_->SetTranslate(pressPos);
 		pressToAColor_.w = alpha;
 		pressToA_->SetColor(pressToAColor_);
 
 		// PressBToGuide
-		Vector3 pressBPos = Vector3(0.0f, 0.1f + moveOffset, -10.0f);
+		Vector3 pressBPos = Vector3(0.0f, 0.1f + moveOffset, -6.0f);
 		pressBToGuide_->SetTranslate(pressBPos);
 		pressBToGuide_->SetColor(objectColor_);
 		pressBToGuide_->SetAlpha(alpha);
 
+		Vector3 cameraShakePos = Vector3(0.0f, 0.1f + moveOffset, -9.0f);
+		cameraShakeOn_->SetTranslate(cameraShakePos);
+		cameraShakeOn_->SetColor(objectColor_);
+		cameraShakeOn_->SetAlpha(alpha);
+
+		cameraShakeOff_->SetTranslate(cameraShakePos);
+		cameraShakeOff_->SetColor(objectColor_);
+		cameraShakeOff_->SetAlpha(alpha);
+
 		object3D_->Update();
 		pressToA_->Update();
 		pressBToGuide_->Update();
+		cameraShakeOn_->Update();
+		cameraShakeOff_->Update();
 		return;
 	}
 
@@ -123,15 +140,32 @@ void TitleObject::Update()
 	float floatY = sinf(moveTime_ * 2.0f) * 0.1f;
 	float scaleFactor = 1.0f + 0.05f * sinf(moveTime_ * 4.0f);
 
-	pressToA_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -6.0f));
-	pressToA_->SetScale(Vector3(2.0f, 2.0f, 2.0f) * scaleFactor);
+	// --- 配置座標の調整 ---
+	// 上にずらす量
+	float yOffset = 0.6f;
+	// cameraShakeOn/OffのY座標
+	float cameraShakeY = 0.1f + floatY - 0.3f; // pressBToGuide_より下
+
+
+	pressToA_->SetScale(Vector3(1.5f, 1.5f, 1.5f) * scaleFactor);
 	pressToA_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
+	pressToA_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -3.0f));
 	pressToA_->Update();
 
-	pressBToGuide_->SetScale(Vector3(2.0f, 2.0f, 2.0f) * scaleFactor);
+	pressBToGuide_->SetScale(Vector3(1.5f, 1.5f, 1.5f) * scaleFactor);
 	pressBToGuide_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
-	pressBToGuide_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -10.0f));
+	pressBToGuide_->SetTranslate(Vector3(0.0f, 0.1f + floatY, -6.0f));
 	pressBToGuide_->Update();
+
+	cameraShakeOn_->SetScale(Vector3(1.5f, 1.5f, 1.5f)* scaleFactor);
+	cameraShakeOn_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
+	cameraShakeOn_->SetTranslate(Vector3(0.0f, cameraShakeY, -9.0f));
+	cameraShakeOn_->Update();
+
+	cameraShakeOff_->SetScale(Vector3(1.5f, 1.5f, 1.5f)* scaleFactor);
+	cameraShakeOff_->SetRotate(Vector3(0.0f, std::numbers::pi_v<float>, 0.0f));
+	cameraShakeOff_->SetTranslate(Vector3(0.0f, cameraShakeY, -9.0f));
+	cameraShakeOff_->Update();
 }
 
 void TitleObject::Draw()
@@ -141,6 +175,16 @@ void TitleObject::Draw()
 	pressToA_->Draw();
 
 	pressBToGuide_->Draw();
+}
+
+void TitleObject::DrawCameraShakeOn()
+{
+	cameraShakeOn_->Draw();
+}
+
+void TitleObject::DrawCameraShakeOff()
+{
+	cameraShakeOff_->Draw();
 }
 
 void TitleObject::Finalize()
