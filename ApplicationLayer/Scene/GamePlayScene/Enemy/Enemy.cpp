@@ -38,17 +38,22 @@ void Enemy::Initialize() {
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
-	particleManager_ = ParticleManager::GetInstance();
-	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
-	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("EnemyHitParticles", "gradationLine.png");
-
-	// パーティクルエミッターの初期化
-	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "EnemyHitParticles");
+	// ヒットタイム
 	hitTime_ = 0;
 
 	// 体力を20設定
 	hp_ = 20;
+
+
+	// パーティクルマネージャー
+	ParticleManager::GetInstance()->CreateParticleGroup("HitParticle", "gradationLine.png", ParticleEffectType::Slash);
+	ParticleManager::GetInstance()->CreateParticleGroup("HitParticle2", "gradationLine.png", ParticleEffectType::Ring);
+	ParticleManager::GetInstance()->CreateParticleGroup("HitParticle3", "circle.png", ParticleEffectType::Explosion);
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "HitParticle");
+	particleEmitter2_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "HitParticle2");
+	particleEmitter2_->SetEmissionRate(1.0f);
+
+	particleEmitter3_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "HitParticle3");
 }
 
 /// -------------------------------------------------------------
@@ -279,6 +284,15 @@ void Enemy::OnCollision(Collider* other) {
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
 
+		// パーティクルを発生させる
+		particleEmitter_->SetPosition(GetCenterPosition());
+		particleEmitter_->Update(1.0f / 60.0f);
+
+		particleEmitter2_->SetPosition(GetCenterPosition());
+		particleEmitter2_->Update(1.0f / 60.0f);
+
+		particleEmitter3_->SetPosition(GetCenterPosition());
+		particleEmitter3_->Update(1.0f / 60.0f);
 	}
 }
 
@@ -295,14 +309,7 @@ Vector3 Enemy::GetCenterPosition() const {
 ///				　衝突時にパーティクルが発生する
 /// -------------------------------------------------------------
 void Enemy::HitParticle() {
-	// エネミーの中心位置を取得
-	Vector3 enemyCenter = GetCenterPosition();
 
-	// パーティクルエミッターの位置をエネミーの中心に設定
-	particleEmitter_->SetPosition(enemyCenter);
-	particleEmitter_->SetEmissionRate(0); // パーティクルの発生率を設定
-	// パーティクルを生成
-	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
 }
 
 void Enemy::SpawnEffect() {

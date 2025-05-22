@@ -147,8 +147,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	Vector3 minMoveLimit_ = { -8.0f * 3.0f, 0.0f, -8.0f * 3.0f };
 
 	/*------パーティクル------*/
-	ParticleManager* particleManager_ = nullptr;
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<ParticleEmitter> particleEmitter2_;
 
 private: /// ---------- 定数 ---------- ///
 

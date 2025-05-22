@@ -8,13 +8,19 @@ ParticleEmitter::ParticleEmitter(ParticleManager* manager, const std::string& gr
 {
 }
 
-void ParticleEmitter::Update(float deltaTime, ParticleEffectType type)
+void ParticleEmitter::Update(float deltaTime)
 {
     accumulatedTime_ += deltaTime;
     
-    // 発生させるパーティクルの数を計算
-    if (static_cast<int>(emissionRate_) > 0) {
-        particleManager_->Emit(groupName_, position_, static_cast<int>(emissionRate_), type);
-        accumulatedTime_ -= static_cast<float>(static_cast<float>(emissionRate_)) / emissionRate_;
+    int particleCount = static_cast<int>(emissionRate_);
+    if (particleCount > 0)
+    {
+        // ← グループに設定された type を取得
+        ParticleEffectType type = particleManager_->GetGroupType(groupName_);
+
+        // ← 自動で対応した type を使って射出
+        particleManager_->Emit(groupName_, position_, particleCount, type);
+
+        accumulatedTime_ -= static_cast<float>(particleCount) / emissionRate_;
     }
 }

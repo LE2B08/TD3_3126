@@ -181,8 +181,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	Vector3 minPosition = {};
 	Vector3 maxPosition = {};
 
-	ParticleManager* particleManager_ = nullptr;
-
 	// プレイヤー
 	Player* player_;
 
@@ -214,6 +212,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/*------パーティクル------*/
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<ParticleEmitter> particleEmitter2_;
+	std::unique_ptr<ParticleEmitter> particleEmitter3_;
 
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
