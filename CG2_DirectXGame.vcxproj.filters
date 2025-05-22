@@ -98,7 +98,8 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\TutorialPlayer.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\TutorialEnemy.cpp" />
-    <ClCompile Include="TutorialUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -203,7 +204,8 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\TutorialPlayer.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\TutorialEnemy.h" />
-    <ClInclude Include="TutorialUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
