@@ -112,7 +112,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-	std::unique_ptr<EffectManager> effectManager_;
+	EffectManager* effectManager_;
 
 	std::string particleGroupName;
 

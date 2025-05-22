@@ -48,10 +48,10 @@ void TuboScene::Initialize()
 	playerUI_ = std::make_unique<PlayerUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
-	effectManager_ = std::make_unique<EffectManager>();
+	//effectManager_ = std::make_unique<EffectManager>();
 
 	// 演出の初期化
-	effectManager_->Initialize(camera_, input_, player_.get(), field_.get());
+	effectManager_->GetInstance()->Initialize(input_, player_.get(), field_.get());
 
 	// Playerクラスの初期化
 	player_->Initialize();
@@ -137,11 +137,12 @@ void TuboScene::Update()
 	}
 
 	if (player_->GetIsHitEnemy()) {
-		effectManager_->SetIsCameraShaking(true);
+		effectManager_->GetInstance()->SetIsCameraShaking(true);
 	}
 
 	//// 演出の更新
-	effectManager_->Update();
+	effectManager_->GetInstance()->Update();
+	effectManager_->GetInstance()->SetDynamicCamera(dynamicCamera_.get());
 
 	// ダイナミックカメラの更新
 

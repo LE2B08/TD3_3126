@@ -40,6 +40,11 @@ public: /// ---------- セッタ ---------- ///
 	// シーン切り替え
 	void ChangeScene(const std::string& sceneName);
 
+	void SetCameraShakeEnabled(bool enabled) { cameraShakeEnabled = enabled; }
+
+public: /// ---------- ゲッタ ---------- ///
+	bool GetCameraShakeEnabled() const { return cameraShakeEnabled; }
+
 private: /// ---------- メンバ関数 ---------- ///
 
 	// 今のシーン
@@ -50,5 +55,7 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_;
+
+	bool cameraShakeEnabled = true;
 };
 

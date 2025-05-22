@@ -7,7 +7,7 @@ void GameOverLogo::Initialize()
 	object3D_->Initialize("GameOverLogo.gltf");
 
 	pressToA_ = std::make_unique<Object3D>();
-	pressToA_->Initialize("PressToA.gltf");
+	pressToA_->Initialize("PressAToTitle.gltf");
 
 	position_ = Vector3(0.0f, 0.0f, 0.0f); // スタート位置に近い値
 	rotation_ = Vector3(0.0f, 3.14f, 0.0f);    // 初期角度
