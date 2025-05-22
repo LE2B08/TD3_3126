@@ -142,12 +142,6 @@ void TutorialPlayer::Draw() {
 #endif
 }
 
-void TutorialPlayer::TutorialStep() {
-
-
-
-}
-
 /// -------------------------------------------------------------
 ///							衝突判定処理
 /// -------------------------------------------------------------
@@ -227,11 +221,22 @@ void TutorialPlayer::Move() {
 	acceleration_ = {0.0f, 0.0f, 0.0f};
 
 	/// ---------- 回転処理 ---------- ///
+
+	// 右スティックの入力があるとき
 	// 右スティックの入力があるとき
 	if (!input_->RStickInDeadZone() && hp_ > 0) {
-
 		worldTransform_.rotate_.y = -atan2(input_->GetRightStick().x, input_->GetRightStick().y) - std::numbers::pi_v<float> / 2.0f;
 	}
+
+	if (worldTransform_.rotate_.y != prevRotateY_) {
+		isRotation_ = true;
+	} else {
+		isRotation_ = false;
+	}
+	prevRotateY_ = worldTransform_.rotate_.y;
+
+
+	
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
 	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);

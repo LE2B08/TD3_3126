@@ -8,10 +8,10 @@
 #include <WavLoader.h>
 
 #include "CollisionManager.h"
-#include "TutorialEnemy.h"
 #include "Field.h"
-#include "TutorialPlayer.h"
 #include "PlayerDirectionalArrow.h"
+#include "TutorialEnemy.h"
+#include "TutorialPlayer.h"
 #include "Weapon.h"
 
 #include "ControllerUI.h"
@@ -24,8 +24,6 @@
 #include "AABB.h"
 #include "OBB.h"
 #include <SkyBox.h>
-
-
 
 // チュートリアルの流れ
 enum class TutorialSteps {
@@ -75,8 +73,6 @@ private: /// ---------- メンバ関数 ---------- ///
 	// 衝突判定と応答
 	void CheckAllCollisions();
 
-	
-
 	// ゲーム開始時の初期化
 	void TutorialStartInitialize();
 	// チュートリアル開始時の更新
@@ -123,7 +119,6 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	void SetTutorialStep(TutorialSteps step);
 
-
 private: /// ---------- メンバ変数 ---------- ///
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
@@ -135,7 +130,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-	//std::unique_ptr<EffectManager> effectManager_;
+	// std::unique_ptr<EffectManager> effectManager_;
 
 	std::string particleGroupName;
 
@@ -188,10 +183,21 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/// -------------------------------------------------------------
 	///					　		TutorialUI
-	///							
-	
-	std::unique_ptr <TutorialUI> tutorialUI_ = nullptr;
-	
+	///
+	// チュートリアルUIのスプライト
+	std::unique_ptr<TutorialUI> tutorialUI_ = nullptr;
 
+	// 回った時間
+	float rotationStepTimer_ = 0.0f;
+	// プレイヤーのフックを投げる回数
+	int hookThrowCount_ = 0;
+	// フックの戻す回数
+	int hookBackCount_ = 0;
+	// フックの弧移動時の時間
+	float arcMoveStepTimer_ = 0.0f;
 
+	// フックの移動時の回数
+	int hookActiveCount_ = 0;
+	// 攻撃が行われた回数
+	int playerAttackCount_ = 0;
 };

@@ -62,8 +62,14 @@ public: /// ---------- ゲッター ---------- ///
 	float GetSpeed() { return speed_; }
 
 	bool GetIsActive() { return isActive_; }
+	bool GetIsPulling() { return isPulling_; }
+	bool GetIsExtending() { return isExtending_; }
+	bool GetIsMoving() { return isMoving_; }
+	bool GetIsThrowing() { return isThrowing_; }
+	bool GetIsBack() { return isBack_; }
 	bool GetEnemyHit() { return enemyHit_; }
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
+	bool GetIsArcMove() const { return isArcMove_; }
 
 public: /// ---------- セッター ---------- ///
 
@@ -189,12 +195,16 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	bool isMoving_ = false;
 
+	 Vector2 prevLeftStick_ = {0.0f, 0.0f};
+	bool isArcMove_ = false;
+
 	Vector3 potentialEndPos;
 
 	// 敵のリスト
 	std::vector<Enemy*> enemies_;
 
 	bool isThrowing_;
+	bool isBack_ = false; // 戻す状態かどうか
 
 	Vector3 enemyHitPosition_; // 敵に当たった位置を保存するメンバ変数
 	bool enemyHit_;            // 敵に当たったかどうかを示すフラグ

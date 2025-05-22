@@ -408,6 +408,43 @@ void TuboScene::DrawImGui() {
 	                         : tutorialSteps_ == TutorialSteps::End              ? "End"
 	                                                                             : "Unknown");
 
+	// --- ゲージ表示 ---
+	// プレイヤー回転（時間ゲージ）
+	ImGui::Text("Player Rotation");
+	ImGui::ProgressBar(rotationStepTimer_ / 3.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%.1f / 3.0 sec", rotationStepTimer_);
+
+	// フック投げ回数
+	ImGui::Text("Hook Throw");
+	ImGui::ProgressBar((float)hookThrowCount_ / 2.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%d / 2", hookThrowCount_);
+
+	// フック戻し回数
+	ImGui::Text("Hook Back");
+	ImGui::ProgressBar((float)hookBackCount_ / 2.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%d / 2", hookBackCount_);
+
+	// 弧移動（時間ゲージ）
+	ImGui::Text("Arc Move");
+	ImGui::ProgressBar(arcMoveStepTimer_ / 5.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%.1f / 5.0 sec", arcMoveStepTimer_);
+
+	// フック移動回数
+	ImGui::Text("Hook Move");
+	ImGui::ProgressBar((float)hookActiveCount_ / 3.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%d / 3", hookActiveCount_);
+
+	// 攻撃回数
+	ImGui::Text("Attack");
+	ImGui::ProgressBar((float)playerAttackCount_ / 3.0f, ImVec2(200, 20));
+	ImGui::SameLine();
+	ImGui::Text("%d / 3", playerAttackCount_);
+
 	ImGui::End();
 }
 
@@ -451,53 +488,99 @@ void TuboScene::TutorialStartUpdate() {
 	}
 }
 
-void TuboScene::TutorialPlayerRotationInitialize() {}
+void TuboScene::TutorialPlayerRotationInitialize() { rotationStepTimer_ = 0.0f; }
+
 
 void TuboScene::TutorialPlayerRotationUpdate() {
+	static constexpr float kRotationStepWaitTime = 3.0f;
 
-	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+	if (player_->GetIsRotation()) {
+		rotationStepTimer_ += ImGui::GetIO().DeltaTime; // フレーム時間を加算
 
-		// 次に行く処理
-		SetTutorialStep(TutorialSteps::HookThrowAndBack);
+		if (rotationStepTimer_ >= kRotationStepWaitTime) {
+			SetTutorialStep(TutorialSteps::HookThrowAndBack);
+			rotationStepTimer_ = 0.0f; // タイマーリセット
+		}
 	}
 }
 
-void TuboScene::TutorialHookThrowAndBackInitialize() {}
 
+void TuboScene::TutorialHookThrowAndBackInitialize() {
+	hookThrowCount_ = 0;
+	hookBackCount_ = 0;
+}
 void TuboScene::TutorialHookThrowAndBackUpdate() {
-	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+	// フックを投げた回数をカウント
+	static bool prevIsThrow = false;
+	static bool prevIsBack = false;
 
-		// 次に行く処理
+	bool isThrow = hook_->GetIsThrowing();
+	bool isBack = hook_->GetIsBack();
+
+	// 立ち上がり判定でカウント
+	if (isThrow && !prevIsThrow) {
+		++hookThrowCount_;
+	}
+	if (isBack && !prevIsBack) {
+		++hookBackCount_;
+	}
+
+	prevIsThrow = isThrow;
+	prevIsBack = isBack;
+
+	// 2回ずつ行われたら次へ
+	if (hookThrowCount_ >= 2 && hookBackCount_ >= 2) {
 		SetTutorialStep(TutorialSteps::HookArcMove);
 	}
 }
 
-void TuboScene::TutorialHookArcMoveInitialize() {}
+
+void TuboScene::TutorialHookArcMoveInitialize() { arcMoveStepTimer_ = 0.0f; }
 
 void TuboScene::TutorialHookArcMoveUpdate() {
-	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+	static constexpr float kArcMoveStepWaitTime = 5.0f;
 
-		// 次に行く処理
-		SetTutorialStep(TutorialSteps::HookMove);
-	}
+	if (hook_->GetIsArcMove()) {
+		arcMoveStepTimer_ += ImGui::GetIO().DeltaTime;
+		if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
+			SetTutorialStep(TutorialSteps::HookMove);
+			arcMoveStepTimer_ = 0.0f;
+		}
+	} 
 }
 
-void TuboScene::TutorialHookMoveInitialize() {}
+void TuboScene::TutorialHookMoveInitialize() { hookActiveCount_ = 0; }
 
 void TuboScene::TutorialHookMoveUpdate() {
-	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+	static bool prevIsActive = false;
+	bool isActive = hook_->GetIsPulling();
 
-		// 次に行く処理
+	// 立ち上がり判定でカウント
+	if (isActive && !prevIsActive) {
+		++hookActiveCount_;
+	}
+	prevIsActive = isActive;
+
+	// 3回になったら次へ
+	if (hookActiveCount_ >= 3) {
 		SetTutorialStep(TutorialSteps::Attack);
 	}
 }
+void TuboScene::TutorialAttackInitialize() { playerAttackCount_ = 0; }
 
-void TuboScene::TutorialAttackInitialize() {}
 
 void TuboScene::TutorialAttackUpdate() {
-	if (Input::GetInstance()->PushKey(DIK_RETURN) || Input::GetInstance()->TriggerButton(0)) {
+	static bool prevIsAttack = false;
+	bool isAttack = player_->GetIsAttack();
 
-		// 次に行く処理
+	// 立ち上がり判定でカウント
+	if (isAttack && !prevIsAttack) {
+		++playerAttackCount_;
+	}
+	prevIsAttack = isAttack;
+
+	// 3回になったら次へ
+	if (playerAttackCount_ >= 3) {
 		SetTutorialStep(TutorialSteps::End);
 	}
 }

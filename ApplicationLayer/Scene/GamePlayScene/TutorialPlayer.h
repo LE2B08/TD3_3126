@@ -59,6 +59,8 @@ public:                                                             /// --------
 	bool GetIsAttack() const { return isAttack_; }     // 攻撃の取得
 	bool GetIsHitEnemy() const { return isEnemyHit_; } // 敵に当たったかの取得
 
+	bool GetIsRotation() const { return isRotation_; } // 回転しているかの取得
+
 public:                                                                                             /// ---------- セッター ---------- ///
 	void SetVelocity(const Vector3& velocity) { velocity_ = velocity; }                             // 速度の設定
 	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }             // 加速度の設定
@@ -162,4 +164,8 @@ private: /// ---------- 定数 ---------- ///
 	/*------カメラの移動タイマー------*/
 	float cameraMoveT_ = 0.0f;     // カメラの移動時間
 	float cameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
+
+
+	bool isRotation_ = false; // 回転しているかどうか
+	float prevRotateY_ = 0.0f; // 前回のY軸の回転角度
 };
