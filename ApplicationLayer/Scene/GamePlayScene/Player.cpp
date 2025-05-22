@@ -147,7 +147,11 @@ void Player::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) // 敵と衝突した場合
 	{
 		if (!isInvincible_) {
-			hp_ -= 2;
+
+			// 敵がダメージを与えられる状態の時
+			if (enemy_->CanGiveDamage()) {
+				hp_ -= 2;
+			}
 
 			if (hp_ <= 0) {
 				// isDead_ = true; // 死亡フラグを立てる
