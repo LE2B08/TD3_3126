@@ -64,11 +64,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
-
-	//パーティクル
-	std::unique_ptr<ParticleEmitter> particleEmitter_ = nullptr;
-	ParticleManager* particleManager_ = nullptr;
-
 	
 	// プレイヤー
 	Player* player_ = nullptr;

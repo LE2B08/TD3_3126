@@ -168,8 +168,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 向き
 	Vector3 direction_ = {};
 
-	ParticleManager* particleManager_ = nullptr;
-
 	// プレイヤー
 	Player* player_;
 
@@ -201,6 +199,8 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/*------パーティクル------*/
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<ParticleEmitter> particleEmitter2_;
+	std::unique_ptr<ParticleEmitter> particleEmitter3_;
 
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
