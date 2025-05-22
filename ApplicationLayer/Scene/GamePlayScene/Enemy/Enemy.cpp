@@ -128,6 +128,11 @@ void Enemy::Update() {
 		Move();
 	}
 
+	// ノックバック中
+	if (isKnockBack_) {
+		KnockBack();
+	}
+
 	// 弾の更新
 	for (auto& bullet : bullets_) {
 		bullet->Update();
@@ -143,7 +148,7 @@ void Enemy::Update() {
 			HitParticle();
 
 			// ノックバックさせる
-			KnockBack();
+			isKnockBack_ = true;
 
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
@@ -162,7 +167,6 @@ void Enemy::Update() {
 	// 無敵時間のカウントダウン
 	if (isInvincible_) {
 
-
 		invincibleTime_ += 1; // 1フレームごとにカウントアップ
 
 		if (invincibleTime_ > invincibleDuration_) {
@@ -171,8 +175,6 @@ void Enemy::Update() {
 
 		}
 	}
-
-
 
 	// Object3Dの更新
 	object3D_->SetScale(worldTransform_.scale_); // スケールを設定
@@ -208,73 +210,6 @@ void Enemy::Draw() {
 }
 
 /// -------------------------------------------------------------
-///						　移動処理
-/// -------------------------------------------------------------
-void Enemy::Move() {
-
-	// 中心に戻るなら
-	if (isReturningCenter_) {
-
-		returnTimer_ += 1.0f;
-		float t = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, 1.0f);
-		// イージングで補間
-		float easeT = easeOut(t);
-		worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
-
-		if (t >= 1.0f) {
-			isReturningCenter_ = false;
-			velocity_ = { 0.0f, 0.0f, 0.0f };
-		}
-		return;
-	}
-
-	// 速度を位置に加算
-	worldTransform_.translate_ += velocity_;
-
-	// 向きを合わせる
-	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
-
-	// 移動制限
-	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
-	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
-
-	// 壁に当たったら向きをランダムに抽選
-	if (worldTransform_.translate_.x >= maxMoveLimit_.x) { // 右の壁に当たった
-		direction_ = RandomDirection(-1.0f, 0.0f, -1.0f, 1.0f);
-		velocity_ = direction_ * moveSpeed_;
-	}
-	else if (worldTransform_.translate_.x <= minMoveLimit_.x) { // 左の壁に当たった
-		direction_ = RandomDirection(0.0f, 1.0f, -1.0f, 1.0f);
-		velocity_ = direction_ * moveSpeed_;
-	}
-
-	if (worldTransform_.translate_.z >= maxMoveLimit_.z) { // 上の壁に当たった
-		direction_ = RandomDirection(-1.0f, 1.0f, -1.0f, 0.0f);
-		velocity_ = direction_ * moveSpeed_;
-	}
-	else if (worldTransform_.translate_.z <= minMoveLimit_.z) { // 下の壁に当たった
-		direction_ = RandomDirection(-1.0f, 1.0f, 0.0f, 1.0f);
-		velocity_ = direction_ * moveSpeed_;
-	}
-
-	// 角に当たったときの処理
-	if (worldTransform_.translate_.x >= maxMoveLimit_.x && worldTransform_.translate_.z >= maxMoveLimit_.z || // 右上の角に当たった
-		worldTransform_.translate_.x >= maxMoveLimit_.x && worldTransform_.translate_.z <= minMoveLimit_.z || // 右下の角に当たった
-		worldTransform_.translate_.x <= minMoveLimit_.x && worldTransform_.translate_.z >= maxMoveLimit_.z || // 左上の角に当たった
-		worldTransform_.translate_.x <= minMoveLimit_.x && worldTransform_.translate_.z <= minMoveLimit_.z) { // 左下の角に当たった
-
-		// 中心に戻るフラグを立てる
-		isReturningCenter_ = true;
-
-		// 開始位置を当たった時の場所から
-		returnStartPosition_ = worldTransform_.translate_;
-
-		// タイマーリセット
-		returnTimer_ = 0.0f;
-	}
-}
-
-/// -------------------------------------------------------------
 ///						　ImGuiの描画
 /// -------------------------------------------------------------
 void Enemy::ShowImGui(const char* name) {
@@ -303,7 +238,6 @@ void Enemy::ShowImGui(const char* name) {
 	// ステートタイマー
 	ImGui::SliderFloat("StateTimer", &stateTimer_, 0.0f, 5.0f);
 
-	//ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
@@ -313,16 +247,16 @@ void Enemy::ShowImGui(const char* name) {
 	float angle = std::atan2(-direction_.z, -direction_.x) * (180.0f / std::numbers::pi_v<float>);
 	ImGui::Text("Direction Angle: %f", angle);
 
-	//ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
-	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
-	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
-	ImGui::Text("HitTime : %f", hitTime_);
-	//ImGui::SliderFloat("HitMaxTime", &hitMaxTime_, 0.0f, 600.0f);
-	//ImGui::Text("HP : %d", hp_);
-	//ImGui::Text("isEnemyCameraEffect : %s", isEnemyCameraEffect_ ? "true" : "false");
-	//ImGui::Text("isCameraBackEffect : %s", isCameraBackEffect_ ? "true" : "false");
-	//ImGui::Text("isCameraEffectEnd : %s", isCameraEffectEnd_ ? "true" : "false");
-	//ImGui::Text("isDead : %s", isDead_ ? "true" : "false");
+	ImGui::Checkbox("isHit", &isHit_);
+	ImGui::Checkbox("isHitFromAttack", &isHitFromAttack_);
+	// ノックバックの情報
+	ImGui::Checkbox("isKnokBack", &isKnockBack_);
+	ImGui::SliderFloat("KnockBackTime", &knockBackTime_, 0.0f, knockBackMaxTime_);
+	// リターンセンターの情報
+	ImGui::Checkbox("isReturnCenter", &isReturnCenter_);
+	ImGui::SliderFloat("ReturnCenterTime", &returnTimer_, 0.0f, returnMaxTime_);
+	ImGui::DragFloat3("ReturnStartPosition", &returnStartPosition_.x, 0.01f);
+	ImGui::DragFloat3("ReturnVelocity", &returnVelocity_.x, 0.01f);
 	ImGui::End();
 }
 
@@ -369,59 +303,6 @@ void Enemy::HitParticle() {
 	particleEmitter_->SetEmissionRate(0); // パーティクルの発生率を設定
 	// パーティクルを生成
 	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
-}
-
-/// -------------------------------------------------------------
-///						ランダム方向処理
-/// -------------------------------------------------------------
-Vector3 Enemy::RandomDirection(float minXAngle, float maxXAngle, float minZAngle, float maxZAngle) {
-
-	// XZ平面上のランダムな方向を生成
-	std::uniform_real_distribution<float> distX(minXAngle, maxXAngle);
-	std::uniform_real_distribution<float> distZ(minZAngle, maxZAngle);
-	Vector3 direction = { distX(randomEngine), 0.0f, distZ(randomEngine) };
-	direction = Vector3::Normalize(direction);
-
-	return direction;
-}
-
-float Enemy::RandomRadian(float minRadian, float maxRadian) {
-
-	// ランダムにラジアンを生成
-	std::uniform_real_distribution<float> dist(minRadian, maxRadian);
-	float radian = dist(randomEngine);
-	return radian;
-}
-
-/// -------------------------------------------------------------
-///					攻撃パターンのコマンド処理
-/// -------------------------------------------------------------
-std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
-
-	// ランダムに攻撃コマンドを選択
-	std::uniform_int_distribution<int> dist(0, 3);
-
-	// インデックスに結果を代入
-	int commandIndex = dist(randomEngine);
-
-	// 選ばれたコマンドを生成する
-	switch (commandIndex) {
-
-	case 0:
-		return std::make_unique<FanShotCommand>();
-
-	case 1:
-		return std::make_unique<RotateShotCommand>();
-
-	case 2:
-		return std::make_unique<RecallCommand>();
-
-	case 3:
-		return std::make_unique<SpreadCenterShotCommand>();
-
-	default:
-		return std::make_unique<ShotCommand>();
-	}
 }
 
 void Enemy::SpawnEffect() {
@@ -579,21 +460,6 @@ void Enemy::FaildCameraMove() {
 }
 
 /// -------------------------------------------------------------
-///					   	ノックバック処理
-/// -------------------------------------------------------------
-void Enemy::KnockBack() {
-
-	// プレイヤーの位置を確認
-	Vector3 playerPosition = player_->GetPosition();
-
-	// ノックバック方向のを計算
-	Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
-
-	// 敵の向きにノックバックの速度を加算
-	velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
-}
-
-/// -------------------------------------------------------------
 ///						通常状態の初期化処理
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalInitialize() {
@@ -637,17 +503,8 @@ void Enemy::BehaviorSarchUpdate() {
 	// タイマーが0になったら
 	if (stateTimer_ <= 0) {
 
-		// プレイヤーの位置を確認
-		Vector3 playerPosition = player_->GetPosition();
-
-		// プレイヤーの方向を計算
-		Vector3 toPlayer = Vector3::Normalize(playerPosition - worldTransform_.translate_);
-
-		// 基準の角度を計算
-		float baseAngle = std::atan2(toPlayer.z, toPlayer.x);
-
-		// 基準から±30度の範囲をランダムに決定
-		float randomAngle = RandomRadian(baseAngle - std::numbers::pi_v<float> / 6.0f, baseAngle + std::numbers::pi_v<float> / 6.0f);
+		// ±30度の範囲をランダムに決定
+		float randomAngle = RandomRadian(std::numbers::pi_v<float> / 6.0f, std::numbers::pi_v<float> / 6.0f);
 
 		// Directionに代入
 		direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
@@ -694,6 +551,13 @@ void Enemy::BehaviorAttackInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorAttackUpdate() {
 
+	// ノックバック中だったら
+	if (isKnockBack_) {
+
+		// 何もしない(早期リターン)
+		return;
+	}
+
 	// プレイヤーの方向を向く
 	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);
 
@@ -706,4 +570,192 @@ void Enemy::BehaviorAttackUpdate() {
 		// 通常状態にする
 		requestBehavior_ = Behavior::Normal;
 	}
+}
+
+/// -------------------------------------------------------------
+///					攻撃パターンをランダムに選択
+/// -------------------------------------------------------------
+std::unique_ptr<AttackCommand> Enemy::RandomAttackCommand() {
+
+	// ランダムに攻撃コマンドを選択
+	std::uniform_int_distribution<int> dist(0, 3);
+
+	// インデックスに結果を代入
+	int commandIndex = dist(randomEngine);
+
+	// 選ばれたコマンドを生成する
+	switch (commandIndex) {
+
+	case 0:
+		return std::make_unique<FanShotCommand>();
+
+	case 1:
+		return std::make_unique<RotateShotCommand>();
+
+	case 2:
+		return std::make_unique<RecallCommand>();
+
+	case 3:
+		return std::make_unique<SpreadCenterShotCommand>();
+
+	default:
+		return std::make_unique<ShotCommand>();
+	}
+}
+
+/// -------------------------------------------------------------
+///					 角度をランダムに設定
+/// -------------------------------------------------------------
+float Enemy::RandomRadian(float minRadian, float maxRadian) {
+
+	// プレイヤーの位置を確認
+	Vector3 playerPosition = player_->GetPosition();
+
+	// プレイヤーの方向を計算
+	Vector3 toPlayer = Vector3::Normalize(playerPosition - worldTransform_.translate_);
+
+	// 基準の角度を計算
+	float baseAngle = std::atan2(toPlayer.z, toPlayer.x);
+
+	// ランダムにラジアンを生成
+	std::uniform_real_distribution<float> dist(baseAngle - minRadian, baseAngle + maxRadian);
+	float radian = dist(randomEngine);
+	return radian;
+}
+
+/// -------------------------------------------------------------
+///						　	移動
+/// -------------------------------------------------------------
+void Enemy::Move() {
+
+	// 中心に戻るなら
+	if (isReturnCenter_) {
+
+		// タイマーが最大値に達したら
+		if (returnTimer_ >= returnMaxTime_) {
+
+			// フラグをオフにする
+			isReturnCenter_ = false;
+
+			// 速度をリセット
+			velocity_ = { 0.0f, 0.0f, 0.0f };
+		}
+		else {
+
+			// タイマーを加算
+			returnTimer_ += kDeltaTime;
+
+			// イージング用タイマー
+			float t = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, returnMaxTime_);
+
+			// イージングで補間
+			float easeT = easeOut(t);
+
+			// 中心に戻る
+			worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
+		}
+
+		return;
+	}
+
+	// 速度を位置に加算
+	worldTransform_.translate_ += velocity_;
+
+	// 向きを合わせる
+	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
+
+	// 壁にあたったときの処理
+	WallHit();
+
+	// 移動制限
+	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
+	worldTransform_.translate_.z = std::clamp(worldTransform_.translate_.z, minMoveLimit_.z, maxMoveLimit_.z);
+}
+
+///-------------------------------------------/// 
+/// 壁に当たった時の処理
+///-------------------------------------------///
+void Enemy::WallHit() {
+
+	// 敵の大きさを考慮した座標
+	minPosition = worldTransform_.translate_ - (worldTransform_.scale_ / 2.0f);
+	maxPosition = worldTransform_.translate_ + (worldTransform_.scale_ / 2.0f);
+
+	// 壁に当たったら向きをランダムに抽選
+	if (maxPosition.x >= maxMoveLimit_.x || // 右の壁に当たった
+		minPosition.x <= minMoveLimit_.x || // 左の壁に当たった
+		maxPosition.z >= maxMoveLimit_.z || // 上の壁に当たった
+		minPosition.z <= minMoveLimit_.z) { // 下の壁に当たった
+
+		// ノックバック中だったら
+		if (isKnockBack_) {
+
+			// 中心に戻るフラグを立てる
+			isReturnCenter_ = true;
+
+			// 開始位置を当たった時の場所に設定
+			returnStartPosition_ = worldTransform_.translate_;
+
+			// タイマーリセット
+			returnTimer_ = 0.0f;
+		}
+		// ノックバック中でなければ
+		else {
+
+			// ±30度の範囲をランダムに決定
+			float randomAngle = RandomRadian(std::numbers::pi_v<float> / 6.0f, std::numbers::pi_v<float> / 6.0f);
+
+			// Directionに代入
+			direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
+
+			// 速度を向きに合わせる
+			velocity_ = direction_ * moveSpeed_;
+		}
+	}
+}
+
+/// -------------------------------------------------------------
+///					   	ノックバック処理
+/// -------------------------------------------------------------
+void Enemy::KnockBack() {
+
+	// タイマーが最大値に達したら
+	if (knockBackTime_ >= knockBackMaxTime_) {
+
+		// タイマーをリセット
+		knockBackTime_ = 0.0f;
+
+		// 速度をリセット
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+
+		// ノックバックフラグをオフにする
+		isKnockBack_ = false;
+	}
+	else {
+
+		// タイマーをカウントアップ
+		knockBackTime_ += kDeltaTime;
+
+		// プレイヤーの位置を確認
+		Vector3 playerPosition = player_->GetPosition();
+
+		// ノックバック方向のを計算
+		Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
+
+		// 敵の向きにノックバックの速度を加算
+		velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
+	}
+}
+
+bool Enemy::CanGiveDamage() {
+
+	// ノックバック中や中心に戻る途中だったら
+	if (isKnockBack_ || isReturnCenter_) {
+
+		// ダメージを与えられない
+		return false;
+	}
+
+	// 普段はダメージを与えられる
+	return true;
 }
