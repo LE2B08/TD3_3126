@@ -230,6 +230,8 @@ void GamePlayScene::Update()
 		break;
 	}
 
+	player_->SetEnemy(enemy_.get()); // プレイヤーの情報を敵にセット
+
 	// カメラの更新
 	camera_->Update();
 

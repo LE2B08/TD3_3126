@@ -247,8 +247,8 @@ void Enemy::ShowImGui(const char* name) {
 	float angle = std::atan2(-direction_.z, -direction_.x) * (180.0f / std::numbers::pi_v<float>);
 	ImGui::Text("Direction Angle: %f", angle);
 
-	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");
-	ImGui::Text("isHitFromAttack : %s", isHitFromAttack_ ? "true" : "false");
+	ImGui::Checkbox("isHit", &isHit_);
+	ImGui::Checkbox("isHitFromAttack", &isHitFromAttack_);
 	// ノックバックの情報
 	ImGui::Checkbox("isKnokBack", &isKnockBack_);
 	ImGui::SliderFloat("KnockBackTime", &knockBackTime_, 0.0f, knockBackMaxTime_);
@@ -664,9 +664,8 @@ void Enemy::Move() {
 	// 向きを合わせる
 	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
 
-	// 敵の大きさを考慮した座標
-	Vector3 minPosition = worldTransform_.translate_ - (worldTransform_.scale_ / 2.0f);
-	Vector3 maxPosition = worldTransform_.translate_ + (worldTransform_.scale_ / 2.0f);
+	// 壁にあたったときの処理
+	WallHit();
 
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
@@ -736,14 +735,27 @@ void Enemy::KnockBack() {
 
 		// タイマーをカウントアップ
 		knockBackTime_ += kDeltaTime;
+
+		// プレイヤーの位置を確認
+		Vector3 playerPosition = player_->GetPosition();
+
+		// ノックバック方向のを計算
+		Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
+
+		// 敵の向きにノックバックの速度を加算
+		velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
+	}
+}
+
+bool Enemy::CanGiveDamage() {
+
+	// ノックバック中や中心に戻る途中だったら
+	if (isKnockBack_ || isReturnCenter_) {
+
+		// ダメージを与えられない
+		return false;
 	}
 
-	// プレイヤーの位置を確認
-	Vector3 playerPosition = player_->GetPosition();
-
-	// ノックバック方向のを計算
-	Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
-
-	// 敵の向きにノックバックの速度を加算
-	velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
+	// 普段はダメージを与えられる
+	return true;
 }

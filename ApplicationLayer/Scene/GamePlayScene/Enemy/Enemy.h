@@ -141,6 +141,9 @@ public: /// ---------- ゲッター ---------- ///
 	//無敵時間
 	const bool& GetIsInvincible() const { return isInvincible_; }
 
+	// ダメージを受けたかどうか
+	bool CanGiveDamage();
+
 public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -282,12 +285,12 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isKnockBack_ = false;
 
 	// ノックバックする速さ
-	float knockBackSpeed_ = 0.2f;
+	float knockBackSpeed_ = 0.5f;
 
 	// ノックバックの時間
 	float knockBackTime_ = 0.0f;
 	// ノックバックの最大時間
-	float knockBackMaxTime_ = 1.0f; // 1秒
+	float knockBackMaxTime_ = 0.5f; // 0.5秒
 
 ///-------------------------------------------/// 
 /// 中心に戻る処理用の変数
