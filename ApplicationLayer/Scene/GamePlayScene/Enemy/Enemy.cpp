@@ -246,6 +246,8 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
+
+
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
 
 	// Directionを角度を表示

@@ -430,10 +430,13 @@ void GamePlayScene::DrawImGui()
 	enemyUI_->DrawImGui();
 	player_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
+	// フックのImGui描画
+	hook_->ImGuiDraw();
 	pauseMenu_->ShowImGui();
 	ImGui::Begin("SceneManager");
 	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());
 	ImGui::End();
+
 	//ImGui::Begin("GamePlayScene");
 	//
 	//// シーンの状態を表示
@@ -602,6 +605,7 @@ void GamePlayScene::GamePlayUpdate() {
 		nextGameState_ = GameSceneState::GameClear;
 	}
 
+	hook_->SetEnemyPosition(enemy_->GetPosition()); // フックに敵の位置をセット
 	// フックの更新処理
 	hook_->Update();
 
