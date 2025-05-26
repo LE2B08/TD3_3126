@@ -161,11 +161,13 @@ void Player::OnCollision(Collider* other) {
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
 
-		particleEmitter_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
-		particleEmitter_->Update(1.0f / 60.0f); // パーティクルの更新
+		if (enemy_->CanGiveDamage()) {
+			particleEmitter_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+			particleEmitter_->Update(1.0f / 60.0f); // パーティクルの更新
 
-		particleEmitter2_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
-		particleEmitter2_->Update(1.0f / 60.0f); // パーティクルの更新
+			particleEmitter2_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+			particleEmitter2_->Update(1.0f / 60.0f); // パーティクルの更新
+		}
 	}
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
 	{

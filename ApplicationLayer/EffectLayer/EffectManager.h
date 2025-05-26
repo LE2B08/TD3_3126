@@ -74,7 +74,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	// カメラ揺れ用の変数
 	bool isCameraShaking_ = false;
 	float shakeElapsedTime_ = 0.0f;
-	float shakeDuration_ = 0.5f;
+	float shakeDuration_ = 0.4f;
 	float shakeMagnitude_ = 1.0f;
 	Vector3 cameraPosition_;
 

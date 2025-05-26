@@ -160,7 +160,7 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-	if (player_->GetIsHitEnemy()) {
+	if (player_->GetIsHitEnemy() && enemy_->CanGiveDamage()) {
 		// カメラの揺れ尾有効にしている時のみカメラを揺らす
 		if (sceneManager_->GetCameraShakeEnabled()) {
 			effectManager_->GetInstance()->SetIsCameraShaking(true);

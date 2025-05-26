@@ -286,15 +286,19 @@ void Enemy::OnCollision(Collider* other) {
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
 
-		// パーティクルを発生させる
-		particleEmitter_->SetPosition(GetCenterPosition());
-		particleEmitter_->Update(1.0f / 60.0f);
+		// ノックバック中や中心に戻る途中だったら
+		if (isKnockBack_ || isReturnCenter_) {
 
-		particleEmitter2_->SetPosition(GetCenterPosition());
-		particleEmitter2_->Update(1.0f / 60.0f);
+			// パーティクルを発生させる
+			particleEmitter_->SetPosition(GetCenterPosition());
+			particleEmitter_->Update(1.0f / 60.0f);
 
-		particleEmitter3_->SetPosition(GetCenterPosition());
-		particleEmitter3_->Update(1.0f / 60.0f);
+			particleEmitter2_->SetPosition(GetCenterPosition());
+			particleEmitter2_->Update(1.0f / 60.0f);
+
+			particleEmitter3_->SetPosition(GetCenterPosition());
+			particleEmitter3_->Update(1.0f / 60.0f);
+		}
 	}
 }
 
