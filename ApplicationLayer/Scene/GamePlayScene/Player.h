@@ -150,6 +150,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
 	std::unique_ptr<ParticleEmitter> particleEmitter2_;
 
+	// 一度だけ出現演出を行うフラグ
+	bool hasEmittedAppearEffect_ = false;
+
 private: /// ---------- 定数 ---------- ///
 
 	// 無敵時間の設定

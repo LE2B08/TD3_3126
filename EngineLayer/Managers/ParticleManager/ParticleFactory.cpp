@@ -88,6 +88,23 @@ Particle ParticleFactory::Create(std::mt19937& randomEngine, const Vector3& posi
 		particle.lifeTime = distLife(randomEngine);
 		break;
 	}
+	case ParticleEffectType::DisappearGlow: {
+		std::uniform_real_distribution<float> distOffset(-0.5f, 0.5f);
+		std::uniform_real_distribution<float> distScale(1.0f, 2.5f);
+		std::uniform_real_distribution<float> distLife(0.8f, 1.5f);
+
+		particle.transform.translate_ = position + Vector3{ distOffset(randomEngine), distOffset(randomEngine), distOffset(randomEngine) };
+		particle.transform.scale_ = { distScale(randomEngine), distScale(randomEngine), distScale(randomEngine) };
+		particle.startScale = particle.transform.scale_;
+		particle.endScale = { 0.0f, 0.0f, 0.0f };
+
+		particle.transform.rotate_ = { 0.0f, 0.0f, 0.0f };
+		particle.color = { 1.0f, 1.0f, 0.6f, 1.0f }; // 黄色っぽい白光
+		particle.lifeTime = distLife(randomEngine);
+		particle.velocity = { 0.0f, 1.5f, 0.0f }; // 上昇
+		break;
+	}
+
 	}
 
 	particle.currentTime = 0.0f;
