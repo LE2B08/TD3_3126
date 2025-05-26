@@ -179,6 +179,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	//
 	float backSpeed = 15.0f; // フックの戻る速度
+	
+	// フックの戻る速度の減速
+	float backDecelerationRate = 0.9f; // フックの戻る速度の減速率
 
 
 	// 最大距離

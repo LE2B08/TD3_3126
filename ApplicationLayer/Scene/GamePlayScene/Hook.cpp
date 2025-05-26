@@ -104,11 +104,16 @@ void Hook::Draw() {
 
 void Hook::ImGuiDraw() {
 
-	ImGui::Begin("Hook");
+	ImGui::Begin("Hook Speed");
 	ImGui::DragFloat("pullSpeed", &pullSpeed_, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("extendSpeed", &extendSpeed_, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("arcSpeed", &arcSpeed_, 0.1f, 0.0f, 100.0f);
 	ImGui::DragFloat("backSpeed", &backSpeed, 0.1f, 0.0f, 100.0f);
+	ImGui::DragFloat("backDecelerationRate", &backDecelerationRate, 0.01f, 0.0f, 1.0f);
+	ImGui::End();
+
+
+	ImGui::Begin("Hook");
 	ImGui::DragFloat3("playerVelocity", &playerVelocity_.x, 0.1f, -100.0f, 100.0f);
 	ImGui::DragFloat3("enemyPosition", &enemyPosition_.x, 0.1f, -100.0f, 100.0f);
 	ImGui::Text("endPosition: (%f, %f, %f)", endPos_.x, endPos_.y, endPos_.z);
@@ -627,6 +632,7 @@ void Hook::BehaviorBackInitialize() {}
 void Hook::BehaviorBackUpdate() {
 	// フックの終了位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
+	playerVelocity_ *= backDecelerationRate;
 
 	// フックの方向ベクトルを計算
 	Vector3 moveDirection = startPos_ - endPos_;
