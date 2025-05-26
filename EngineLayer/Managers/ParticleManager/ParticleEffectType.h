@@ -7,4 +7,5 @@ enum class ParticleEffectType
 	Ring,		// リング
 	Cylinder,	// シリンダー
 	Explosion, // 爆散エフェクト
+	DisappearGlow, // 光と共に消滅
 };

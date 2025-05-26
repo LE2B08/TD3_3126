@@ -215,6 +215,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<ParticleEmitter> particleEmitter2_;
 	std::unique_ptr<ParticleEmitter> particleEmitter3_;
 
+	// 一度だけ出現演出を行うフラグ
+	bool hasEmittedDisappearEffect_ = false;
+
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
 

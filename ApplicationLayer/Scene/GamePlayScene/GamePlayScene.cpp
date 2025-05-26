@@ -46,7 +46,7 @@ void GamePlayScene::Initialize()
 
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
-	camera_->SetTranslate(Vector3(0.0f,150.0f,0.0f));
+	camera_->SetTranslate(Vector3(0.0f, 150.0f, 0.0f));
 
 	// 生成処理
 	player_ = std::make_unique<Player>();
@@ -166,7 +166,7 @@ void GamePlayScene::Update()
 			effectManager_->GetInstance()->SetIsCameraShaking(true);
 		}
 	}
-	
+
 
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {

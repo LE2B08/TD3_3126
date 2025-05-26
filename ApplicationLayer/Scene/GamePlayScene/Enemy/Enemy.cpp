@@ -429,6 +429,19 @@ void Enemy::FaildAnimation() {
 	}
 	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
 	worldTransform_.scale_ = Vector3::Lerp(scale, Vector3(0.0f, 0.0f, 0.0f), Easing::easeInOutElastic(rotationStartT_ / rotationMaxT_));
+
+	if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f)
+	{
+		if (!hasEmittedDisappearEffect_)
+		{
+			// パーティクルの位置を設定
+			particleEmitter3_->SetPosition(GetCenterPosition());
+			particleEmitter3_->SetEmissionRate(5.0f); // エミッションレートを設定
+			particleEmitter3_->Update(1.0f / 60.0f); // パーティクルの更新
+			hasEmittedDisappearEffect_ = true; // パーティクルを発生させたフラグを立てる
+		}
+		return; // パーティクルの更新が終わったらリターン
+	}
 }
 
 void Enemy::FaildCameraMove() {
