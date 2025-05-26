@@ -20,12 +20,10 @@
 
 using namespace Easing;
 
-
 /// -------------------------------------------------------------
 ///				　			　初期化処理
 /// -------------------------------------------------------------
-void TuboScene::Initialize()
-{
+void TuboScene::Initialize() {
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -56,11 +54,11 @@ void TuboScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-	player_->SetPosition({ 1000.0f, 1000.0f, 1000.0f });
+	player_->SetPosition({1000.0f, 1000.0f, 1000.0f});
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get()); // 敵の情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
@@ -100,12 +98,10 @@ void TuboScene::Initialize()
 	collisionManager_->Initialize();
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
-void TuboScene::Update()
-{
+void TuboScene::Update() {
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F12)) {
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
@@ -152,7 +148,7 @@ void TuboScene::Update()
 	camera_->SetScale(dynamicCamera_->GetScale());
 	camera_->SetRotate(dynamicCamera_->GetRotate());
 	camera_->SetTranslate(dynamicCamera_->GetTranslate());
-	
+
 	// カメラの更新
 	camera_->Update();
 	dynamicCamera_->Update();
@@ -162,8 +158,7 @@ void TuboScene::Update()
 	field_->Update();
 
 	// フックから移動情報を取得
-	if (isGameStart_)
-	{
+	if (isGameStart_) {
 		// プレイヤーの位置をフックにセット
 		player_->SetPosition(hook_->GetPlayerPosition());
 		player_->SetVelocity(hook_->GetPlayerVelocity());
@@ -176,25 +171,24 @@ void TuboScene::Update()
 	// プレイヤーの更新
 	player_->Update();
 
-	if (player_->IsDead())
-	{
+	if (player_->IsDead()) {
 		sceneManager_->ChangeScene("GameOverScene");
 	}
 
 	// プレイヤーUIの更新
 	playerUI_->Update();
 
-	// フックの更新処理
-	hook_->Update();
-
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
 	enemy_->Update();
 
+	hook_->SetEnemyPosition(enemy_->GetCenterPosition());
+	// フックの更新処理
+	hook_->Update();
 	// 攻撃判定
-    if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
-        enemy_->SetIsHitFromAttack(true);
-    }
+	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
+		enemy_->SetIsHitFromAttack(true);
+	}
 
 	// コントローラー用UIの更新
 	controllerUI_->Update();
@@ -204,38 +198,32 @@ void TuboScene::Update()
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
-	CheckAllCollisions();// 衝突判定と応答
+	CheckAllCollisions(); // 衝突判定と応答
 }
-
 
 /// -------------------------------------------------------------
 ///				　			　 描画処理
 /// -------------------------------------------------------------
-void TuboScene::Draw()
-{
+void TuboScene::Draw() {
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
 	SkyBoxManager::GetInstance()->SetRenderSetting();
 	skyBox_->Draw();
 
-
 	/// ------------------------------------------ ///
 	/// ---------- スカイボックスの描画 ---------- ///
 	/// ------------------------------------------ ///
-
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
 	// スプライトの共通描画設定
 	SpriteManager::GetInstance()->SetRenderSetting_Background();
-	
 
 	/// ---------------------------------------- ///
 	/// ----------  スプライトの描画  ---------- ///
 	/// ---------------------------------------- ///
-
 
 	/// ---------------------------------------- ///
 	/// ---------- オブジェクト3D描画 ---------- ///
@@ -257,7 +245,6 @@ void TuboScene::Draw()
 	/// ---------- オブジェクト3D描画 ---------- ///
 	/// ---------------------------------------- ///
 
-
 	// スプライトの共通描画設定
 	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
@@ -267,39 +254,31 @@ void TuboScene::Draw()
 	// コントローラー用UIの描画
 	controllerUI_->Draw();
 
-
 	collisionManager_->Draw();
 
 	// ワイヤーフレームの描画
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 }
 
-
 /// -------------------------------------------------------------
 ///				　			　 終了処理
 /// -------------------------------------------------------------
-void TuboScene::Finalize()
-{
-
-}
-
+void TuboScene::Finalize() {}
 
 /// -------------------------------------------------------------
 ///				　			ImGui描画処理
 /// -------------------------------------------------------------
-void TuboScene::DrawImGui()
-{
+void TuboScene::DrawImGui() {
 
 	player_->DrawImGui();
 	playerUI_->DrawImGui();
+	hook_->ImGuiDraw();
 }
-
 
 /// -------------------------------------------------------------
 ///				　			衝突判定と応答
 /// -------------------------------------------------------------
-void TuboScene::CheckAllCollisions()
-{
+void TuboScene::CheckAllCollisions() {
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
@@ -307,16 +286,14 @@ void TuboScene::CheckAllCollisions()
 	collisionManager_->AddCollider(player_.get());
 
 	// 攻撃フラグを取得したらコライダーを追加
-	if (player_->GetIsAttack())
-	{
+	if (player_->GetIsAttack()) {
 		collisionManager_->AddCollider(weapon_.get());
 	}
 	collisionManager_->AddCollider(hook_.get());
 	collisionManager_->AddCollider(enemy_.get());
 
 	// 複数についてコライダーをリストに登録
-	for (const auto& bullet : *enemyBullets_)
-	{
+	for (const auto& bullet : *enemyBullets_) {
 		collisionManager_->AddCollider(bullet.get());
 	}
 
@@ -324,56 +301,43 @@ void TuboScene::CheckAllCollisions()
 	collisionManager_->CheckAllCollisions();
 }
 
-
-void TuboScene::GameStart()
-{
-	if (!isGameStartEffectEnabled_)
-	{
+void TuboScene::GameStart() {
+	if (!isGameStartEffectEnabled_) {
 		isGameStart_ = true;
 		return;
 	}
 
 	// エンターキーかAボタンが押されるたびに演出を開始
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0))
-	{
-		if (!isStartEasing_)
-		{
+	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(0)) {
+		if (!isStartEasing_) {
 			startTimer_ = 0.0f;
 			playerStartTimer_ = 0.0f;
 			isStartEasing_ = true;
 		}
 	}
 
-	if (isStartEasing_)
-	{
-		if (startTimer_ >= maxStartT_)
-		{
+	if (isStartEasing_) {
+		if (startTimer_ >= maxStartT_) {
 			startTimer_ = maxStartT_;
 			isStartEasing_ = false;
 			isPlayerPositionSet_ = true;
-		}
-		else
-		{
+		} else {
 			startTimer_ += 0.5f;
 		}
 
 		fieldScale_ = Vector3::Lerp(startFieldScale_, defaultFieldScale_, easeOutBounce(startTimer_ / maxStartT_));
 	}
 
-	if (isPlayerPositionSet_)
-	{
-		player_->SetPosition({ 8.0f, 20.0f, 8.0f });
+	if (isPlayerPositionSet_) {
+		player_->SetPosition({8.0f, 20.0f, 8.0f});
 
-		if (playerStartTimer_ >= maxPlayerStartT_)
-		{
+		if (playerStartTimer_ >= maxPlayerStartT_) {
 			playerStartTimer_ = maxPlayerStartT_;
 			isPlayerPositionSet_ = false;
 			isGameStart_ = true;
-		}
-		else
-		{
+		} else {
 			playerStartTimer_ += 0.5f;
-			player_->SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
+			player_->SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, easeOutBounce(playerStartTimer_ / maxPlayerStartT_)));
 		}
 	}
 }

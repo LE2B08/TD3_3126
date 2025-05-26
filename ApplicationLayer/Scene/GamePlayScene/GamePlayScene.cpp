@@ -423,6 +423,8 @@ void GamePlayScene::DrawImGui()
 	enemyUI_->DrawImGui();
 
 	enemy_->ShowImGui("Enemy");
+	// フックのImGui描画
+	hook_->ImGuiDraw();
 
 	//ImGui::Begin("GamePlayScene");
 	//
@@ -591,6 +593,7 @@ void GamePlayScene::GamePlayUpdate() {
 		nextGameState_ = GameSceneState::GameClear;
 	}
 
+	hook_->SetEnemyPosition(enemy_->GetPosition()); // フックに敵の位置をセット
 	// フックの更新処理
 	hook_->Update();
 

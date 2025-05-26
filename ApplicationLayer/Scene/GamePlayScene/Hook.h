@@ -40,6 +40,8 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 描画処理
 	void Draw();
 
+	void ImGuiDraw();
+
 	// 衝突判定
 	void OnCollision(Collider* other) override;
 
@@ -57,11 +59,12 @@ public: /// ---------- ゲッター ---------- ///
 	Vector3 GetMinMoveLimit() { return minMoveLimit_; }
 	Vector3 GetEndPos() { return endPos_; }
 
-	float GetSpeed() { return speed_; }
+	float GetPullSpeed() { return pullSpeed_; }
 
 	bool GetIsActive() { return isActive_; }
 	bool GetEnemyHit() { return enemyHit_; }
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
+	Vector3 GetEnemyPosition() { return enemyPosition_; }
 
 public: /// ---------- セッター ---------- ///
 
@@ -72,10 +75,11 @@ public: /// ---------- セッター ---------- ///
 	void SetMaxMoveLimit(const Vector3& maxMoveLimit) { maxMoveLimit_ = maxMoveLimit; }
 	void SetMinMoveLimit(const Vector3& minMoveLimit) { minMoveLimit_ = minMoveLimit; }
 	void SetEndPos(const Vector3& endPos) { endPos_ = endPos; }
-	void SetSpeed(float speed) { speed_ = speed; }
+	void SetPullSpeed(float speed) { pullSpeed_ = speed; }
 	void SetIsActive(bool isActive) { isActive_ = isActive; }
 	void SetEnemyHit(bool enemyHit) { enemyHit_ = enemyHit; }
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
+	void SetEnemyPosition(const Vector3& enemyPosition) { enemyPosition_ = enemyPosition; }
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
@@ -85,6 +89,7 @@ public: /// ---------- セッター ---------- ///
 
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
+
 
 private:  /// ---------- ルートビヘイビア用メンバ関数 ---------- ///
 
@@ -165,8 +170,16 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 方向
 	Vector3 direction_;
 
-	// 速さ
-	float speed_ = 5.0f;
+	
+	float extendSpeed_ = 5.0f;// フックを張る速さ
+
+	float pullSpeed_ = 30.0f; // フックを引っ張る速さ
+
+	float arcSpeed_ = 0.0f; // 弧の速さ
+
+	//
+	float backSpeed = 15.0f; // フックの戻る速度
+
 
 	// 最大距離
 	float maxDistance_ = 50.0f;
@@ -200,7 +213,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	// フックの引っ張るフラグ
 	bool isPulling_ = false;
 
-
+	Vector3 enemyPosition_; // 敵の位置
 
 	//================================================
 	// Behavior
