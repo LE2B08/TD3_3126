@@ -200,8 +200,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\TutorialPlayer.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\TutorialEnemy.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
     <ClCompile Include="WinMain.cpp">
@@ -349,8 +349,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayer\Mesh\ParticleMesh.h" />
     <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\TutorialPlayer.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\TutorialEnemy.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
   </ItemGroup>

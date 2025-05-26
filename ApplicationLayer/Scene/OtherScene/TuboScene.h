@@ -25,24 +25,26 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
-// チュートリアルの流れ
-enum class TutorialSteps {
-	Start,            // 初め
-	PlayerRotation,   // プレイヤーの回転
-	HookThrowAndBack, // フックの投げ、戻す
-	HookArcMove,      // フックの弧を描く移動
-	HookMove,         // フックの移動
-	Attack,           // 攻撃
-	End,              // 終わり
+#include "TutorialScene.h"
 
-};
-
-enum class SceneStatus {
-
-	Play,
-	Pause,
-
-};
+//// チュートリアルの流れ
+//enum class TutorialSteps {
+//	Start,            // 初め
+//	PlayerRotation,   // プレイヤーの回転
+//	HookThrowAndBack, // フックの投げ、戻す
+//	HookArcMove,      // フックの弧を描く移動
+//	HookMove,         // フックの移動
+//	Attack,           // 攻撃
+//	End,              // 終わり
+//
+//};
+//
+//enum class SceneStatus {
+//
+//	Play,
+//	Pause,
+//
+//};
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
