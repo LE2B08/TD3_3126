@@ -17,6 +17,12 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 描画処理
 	void Draw();
 
+	// カメラの揺れがオンの描画
+	void DrawCameraShakeOn();
+
+	// カメラの揺れがオフの描画
+	void DrawCameraShakeOff();
+
 	// 終了処理
 	void Finalize();
 
@@ -85,6 +91,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<Object3D> object3D_; // 3Dオブジェクト
 	std::unique_ptr<Object3D> pressToA_; // 3Dオブジェクト
 	std::unique_ptr<Object3D> pressBToGuide_; // 3Dオブジェクト
+	std::unique_ptr<Object3D> cameraShakeOn_; // 3Dオブジェクト
+	std::unique_ptr<Object3D> cameraShakeOff_; // 3Dオブジェクト
 
 	Vector3 position_{}; // 位置
 	Vector3 rotation_{}; // 回転

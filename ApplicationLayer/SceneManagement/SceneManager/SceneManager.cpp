@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include <FadeManager.h>
+#include <imgui.h>
 
 
 /// -------------------------------------------------------------

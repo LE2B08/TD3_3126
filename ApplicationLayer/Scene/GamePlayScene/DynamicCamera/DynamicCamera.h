@@ -34,6 +34,9 @@ public: /// ---------- セッター ---------- ///
 	// 移動の取得
 	const Vector3& GetTranslate() const { return worldTransform_.translate_; }
 
+	// 座標のセット
+	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
+
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -61,9 +64,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	float zoom_ = 0.0f;
 
 	// ズーム最小値
-	const float zoomMin_ = 50.0f;
+	const float zoomMin_ = 50.0f + 20.0f;
 
 	// ズーム最大値
-	const float zoomMax_ = 150.0f;
+	const float zoomMax_ = 150.0f + 30.0f;
 };
 

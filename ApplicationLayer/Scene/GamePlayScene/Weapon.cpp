@@ -31,19 +31,12 @@ void Weapon::Initialize()
 
 	object3D_->SetTranslate(player_->GetPosition());
 	object3D_->SetRotate(player_->GetRotation());
-	object3D_->SetScale(player_->GetScale());
+	object3D_->SetScale(player_->GetScale() * Vector3(2.0f, 2.0f, 2.0f));
+
+	radius_ = 2.0f;
 
 	attackTime_ = 0;
 	attackRotationAngle_ = 0.0f;
-
-	//パーティクル
-	particleManager_ = ParticleManager::GetInstance();
-	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
-	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("WeaponHitParticles", "gradationLine.png");
-
-	// パーティクルエミッターの初期化
-	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "WeaponHitParticles");
 }
 
 
@@ -57,7 +50,7 @@ void Weapon::Update()
 	// 回転
 	rotation_ = player_->GetRotation();
 	// スケール
-	scale_ = player_->GetScale();
+	scale_ = player_->GetScale() * Vector3(2.0f, 2.0f, 2.0f);
 
 	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };
@@ -68,17 +61,7 @@ void Weapon::Update()
 	object3D_->SetRotate({ rotation_.x,attackRotationAngle_,rotation_.z });
 	object3D_->SetScale(scale_);
 	object3D_->Update();
-
-	//// 攻撃中の処理
-	if (isEnemyHit_) {
-		// パーティクルエミッターの位置を武器の位置に設定
-		particleEmitter_->SetPosition(weaponPosition);
-		// パーティクルの発生率を設定
-		particleEmitter_->SetEmissionRate(5.0f); // 3.0fは適当な値
-		// 斬撃のパーティクルを生成
-		particleEmitter_->Update(1.0f, ParticleEffectType::Slash); // deltaTime は 0 で呼び出し
-	}
-
+	SetRadius(radius_);
 }
 
 
@@ -88,8 +71,8 @@ void Weapon::Update()
 void Weapon::Draw()
 {
 	object3D_->Draw();
-	
-	
+
+
 }
 
 
@@ -156,7 +139,8 @@ void Weapon::OnCollision(Collider* other)
 		enemy->SetHp(enemy->GetHp() - 1);
 
 		// 敵の位置にパーティクルを生成
-	} else {
+	}
+	else {
 		isEnemyHit_ = false; // 敵に当たったフラグを解除
 	}
 

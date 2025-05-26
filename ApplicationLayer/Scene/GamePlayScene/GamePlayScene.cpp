@@ -46,6 +46,7 @@ void GamePlayScene::Initialize()
 
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
+	camera_->SetTranslate(Vector3(0.0f,150.0f,0.0f));
 
 	// 生成処理
 	player_ = std::make_unique<Player>();
@@ -57,11 +58,11 @@ void GamePlayScene::Initialize()
 	enemyUI_ = std::make_unique<EnemyUI>();
 	controllerUI_ = std::make_unique<ControllerUI>();
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
-	effectManager_ = std::make_unique<EffectManager>();
+	//effectManager_ = std::make_unique<EffectManager>();
 	playerDirectionalArrow_ = std::make_unique<PlayerDirectionalArrow>();
 
 	// 演出の初期化
-	effectManager_->Initialize(camera_, input_, player_.get(), field_.get());
+	effectManager_->GetInstance()->Initialize(input_, player_.get(), field_.get());
 
 	// Playerクラスの初期化
 	player_->Initialize();
@@ -113,6 +114,7 @@ void GamePlayScene::Initialize()
 	// ポーズメニューの初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
+	pauseMenu_->SetSceneManager(sceneManager_);
 
 	playerDirectionalArrow_->Initialize();
 	playerDirectionalArrow_->SetPlayer(player_.get());
@@ -159,11 +161,12 @@ void GamePlayScene::Update()
 #endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
-		effectManager_->SetIsCameraShaking(true);
+		// カメラの揺れ尾有効にしている時のみカメラを揺らす
+		if (sceneManager_->GetCameraShakeEnabled()) {
+			effectManager_->GetInstance()->SetIsCameraShaking(true);
+		}
 	}
-
-	// 演出の更新
-	effectManager_->Update();
+	
 
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {
@@ -229,6 +232,8 @@ void GamePlayScene::Update()
 		break;
 	}
 
+	player_->SetEnemy(enemy_.get()); // プレイヤーの情報を敵にセット
+
 	// カメラの更新
 	camera_->Update();
 
@@ -248,6 +253,8 @@ void GamePlayScene::Update()
 
 	// スカイドームの更新処理
 	skydome_->Update();
+
+	sceneManager_->SetCameraShakeEnabled(sceneManager_->GetCameraShakeEnabled());
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
@@ -421,10 +428,14 @@ void GamePlayScene::DrawImGui()
 {
 	playerUI_->DrawImGui();
 	enemyUI_->DrawImGui();
-
+	player_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 	// フックのImGui描画
 	hook_->ImGuiDraw();
+	pauseMenu_->ShowImGui();
+	ImGui::Begin("SceneManager");
+	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());
+	ImGui::End();
 
 	//ImGui::Begin("GamePlayScene");
 	//
@@ -566,6 +577,7 @@ void GamePlayScene::GameStartUpdate() {
 /// -------------------------------------------------------------
 void GamePlayScene::GamePlayInitialize() {
 	enemy_->SetPosition(Vector3(0.0f, 1.0f, 8.0f));
+	effectManager_->GetInstance()->StopShake();
 }
 
 /// -------------------------------------------------------------
@@ -607,7 +619,7 @@ void GamePlayScene::GamePlayUpdate() {
 
 	// 計算したあとのカメラの値をセット
 	if (player_->GetHp() > 0) {
-		camera_->SetTranslate(cameraPosition_);
+		//camera_->SetTranslate(cameraPosition_);
 		camera_->SetScale(dynamicCamera_->GetScale());
 		camera_->SetRotate(dynamicCamera_->GetRotate());
 		camera_->SetTranslate(dynamicCamera_->GetTranslate());
@@ -628,6 +640,12 @@ void GamePlayScene::GamePlayUpdate() {
 	enemy_->Update();
 
 	dynamicCamera_->Update();
+
+	effectManager_->GetInstance()->SetDynamicCamera(dynamicCamera_.get());
+
+	// 演出の更新
+	// カメラとコントローラーのシェイク
+	effectManager_->GetInstance()->Update();
 }
 
 /// -------------------------------------------------------------
@@ -696,7 +714,7 @@ void GamePlayScene::PauseInitialize() {
 ///				　		   ポーズ更新
 /// -------------------------------------------------------------
 void GamePlayScene::PauseUpdate() {
-
+	input_->StopVibration();
 	// ポーズメニューの更新
 	pauseMenu_->Update();
 

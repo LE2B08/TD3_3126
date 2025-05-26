@@ -7,6 +7,7 @@ class Camera;
 class Input;
 class Player;
 class Field;
+class DynamicCamera;
 
 
 /// -------------------------------------------------------------
@@ -15,14 +16,19 @@ class Field;
 class EffectManager
 {
 public: /// ---------- メンバ関数 ---------- ///
+	// シングルトンインスタンス取得
+	static EffectManager* GetInstance();
+
 
 	// 初期化処理
-	void Initialize(Camera* camera, Input* input, Player* player, Field* field);
+	void Initialize(Input* input, Player* player, Field* field);
 
 	// 更新処理
 	void Update();
 
 	void StartGameEffect();  // ゲーム開始演出を開始
+
+	void StopShake(); // カメラの揺れを止める
 
 public: /// ---------- ゲッター ---------- ///
 
@@ -34,6 +40,9 @@ public: /// ---------- ゲッター ---------- ///
 
 public: /// ---------- セッター ---------- ///
 
+	// カメラを設定
+	void SetDynamicCamera(DynamicCamera* dynamicCamera) { dynamicCamera_ = dynamicCamera; }
+
 	// ゲーム開始フラグを設定
 	void SetIsGameStart(bool isGameStart) { isGameStart_ = isGameStart; }
 
@@ -41,6 +50,12 @@ public: /// ---------- セッター ---------- ///
 	void SetIsCameraShaking(bool isCameraShaking) { isCameraShaking_ = isCameraShaking; }
 
 private: /// ---------- メンバ関数 ---------- ///
+	// コンストラクタ・デストラクタをprivateに
+	EffectManager() = default;
+	~EffectManager() = default;
+	EffectManager(const EffectManager&) = delete;
+	EffectManager& operator=(const EffectManager&) = delete;
+
 	
 	// カメラの揺れ
 	void CameraShake();
@@ -50,10 +65,11 @@ private: /// ---------- メンバ関数 ---------- ///
 
 private: /// ---------- メンバ変数 ---------- ///
 
-	Camera* camera_ = nullptr; // カメラ
+	//Camera* camera_ = nullptr; // カメラ
 	Input* input_ = nullptr;   // 入力
 	Player* player_ = nullptr; // プレイヤー
 	Field* field_ = nullptr;   // フィールド
+	DynamicCamera* dynamicCamera_ = nullptr; // ダイナミックカメラ
 
 	// カメラ揺れ用の変数
 	bool isCameraShaking_ = false;

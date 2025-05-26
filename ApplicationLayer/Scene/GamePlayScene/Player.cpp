@@ -30,22 +30,17 @@ void Player::Initialize() {
 	// プレイヤーのコライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kPlayer));
 
-	// パーティクルマネージャの生成
-	particleManager_ = ParticleManager::GetInstance();
-
-	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
-
-	// パーティクルグループの追加
-	particleManager_->CreateParticleGroup("PlayerHitParticles", "gradationLine.png");
-
-	// パーティクルエミッターの初期化
-	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "PlayerHitParticles");
-
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f };
+	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f * 3.0f };
+
+	ParticleManager::GetInstance()->CreateParticleGroup("ExplosionEffect", "circle.png", ParticleEffectType::Explosion);
+	ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", "gradationLine.png", ParticleEffectType::Ring);
+	particleEmitter_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "ExplosionEffect");
+
+	particleEmitter2_ = std::make_unique<ParticleEmitter>(ParticleManager::GetInstance(), "RingEffect");
+	particleEmitter2_->SetEmissionRate(1.0f);
 }
 
 /// -------------------------------------------------------------
@@ -136,9 +131,9 @@ void Player::Draw() {
 	}
 #ifdef _DEBUG
 	// プレイヤーの向きを示す線を描画
-	Vector3 direction = {cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y)};
+	Vector3 direction = { cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y) };
 	Vector3 endPos = worldTransform_.translate_ + -direction * 5.0f;                                  // 5.0fは線の長さ
-	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, endPos, {0.0f, 1.0f, 0.0f, 1.0f}); // 緑色の線
+	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, endPos, { 0.0f, 1.0f, 0.0f, 1.0f }); // 緑色の線
 #endif
 }
 
@@ -152,7 +147,11 @@ void Player::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) // 敵と衝突した場合
 	{
 		if (!isInvincible_) {
-			hp_ -= 2;
+
+			// 敵がダメージを与えられる状態の時
+			if (enemy_->CanGiveDamage()) {
+				hp_ -= 2;
+			}
 
 			if (hp_ <= 0) {
 				// isDead_ = true; // 死亡フラグを立てる
@@ -161,7 +160,14 @@ void Player::OnCollision(Collider* other) {
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
-	} else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
+
+		particleEmitter_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+		particleEmitter_->Update(1.0f / 60.0f); // パーティクルの更新
+
+		particleEmitter2_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+		particleEmitter2_->Update(1.0f / 60.0f); // パーティクルの更新
+	}
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
 	{
 		if (!isInvincible_) {
 			hp_ -= 1;
@@ -175,6 +181,12 @@ void Player::OnCollision(Collider* other) {
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
+
+		particleEmitter_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+		particleEmitter_->Update(1.0f / 60.0f); // パーティクルの更新
+
+		particleEmitter2_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
+		particleEmitter2_->Update(1.0f / 60.0f); // パーティクルの更新
 	}
 }
 
@@ -182,12 +194,12 @@ void Player::OnCollision(Collider* other) {
 ///				　中心座標を取得する純粋仮想関数
 /// -------------------------------------------------------------
 Vector3 Player::GetCenterPosition() const {
-	const Vector3 offset = {0.0f, 0.0f, 0.0f}; // プレイヤーの中心を考慮
+	const Vector3 offset = { 0.0f, 0.0f, 0.0f }; // プレイヤーの中心を考慮
 	Vector3 worldPosition = worldTransform_.translate_ + offset;
 	return worldPosition;
 }
 
-void Player::AppearFromAbove(float t) { SetPosition(Vector3::Lerp({8.0f, 20.0f, 8.0f}, {8.0f, 0.0f, 8.0f}, Easing::easeOutBounce(t))); }
+void Player::AppearFromAbove(float t) { SetPosition(Vector3::Lerp({ 8.0f, 20.0f, 8.0f }, { 8.0f, 0.0f, 8.0f }, Easing::easeOutBounce(t))); }
 
 void Player::DrawImGui() {
 
@@ -216,9 +228,9 @@ void Player::FallingAnimation() {
 		// タイマーを加算
 		fallingTimer_ += 0.5f;
 	}
-	
+
 	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f }, { 0.0f, 1.0f, -8.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f * 3.0f }, { 0.0f, 1.0f, -8.0f * 3.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
 	worldTransform_.rotate_.y = -1.55f;
 	// タイマーと最大値が等しい場合
 	if (fallingTimer_ == maxFallingTime) {
@@ -250,7 +262,8 @@ void Player::DeathCameraMove() {
 	if (cameraMoveT_ >= cameraMoveMaxT_) {
 		cameraMoveT_ = cameraMoveMaxT_; // カメラの移動時間を最大値に設定
 		DeadEffect();                   // 死亡エフェクトを実行
-	} else {
+	}
+	else {
 		cameraMoveT_ += 1.0f; // カメラの移動時間をカウントアップ
 		worldTransform_.rotate_.y = 1.5f;
 	}
@@ -295,7 +308,7 @@ void Player::Move() {
 	worldTransform_.translate_ += velocity_;
 
 	// 加速度をリセット（加速度は一時的なものが多いので）
-	acceleration_ = {0.0f, 0.0f, 0.0f};
+	acceleration_ = { 0.0f, 0.0f, 0.0f };
 
 	/// ---------- 回転処理 ---------- ///
 	// 右スティックの入力があるとき
@@ -314,29 +327,19 @@ void Player::Move() {
 }
 
 /// -------------------------------------------------------------
-///					ヒット時のパーティクル処理
+///						　死亡エフェクト
 /// -------------------------------------------------------------
-void Player::HitParticle() {
-	// エネミーの中心位置を取得
-	Vector3 playerCenter = GetCenterPosition();
-
-	// パーティクルエミッターの位置をエネミーの中心に設定
-	particleEmitter_->SetPosition(playerCenter);
-	particleEmitter_->SetEmissionRate(3.0f); // パーティクルの発生率を設定
-	// パーティクルを生成
-	particleEmitter_->Update(1.0f / 60.0f, ParticleEffectType::Default); // deltaTime は 0 で呼び出し
-}
-
 void Player::DeadEffect() {
 	// プレイヤーを回転させながら小さくなって消滅する
 	Vector3 scale = worldTransform_.scale_;
 	Vector3 rotation = worldTransform_.rotate_;
 
-	Vector3 rotationEnd = {0.0f, -17.2f, 0.0f}; // 回転の最終値
+	Vector3 rotationEnd = { 0.0f, -17.2f, 0.0f }; // 回転の最終値
 	if (rotationStartT_ >= rotationMaxT_) {
 		rotationStartT_ = rotationMaxT_; // 回転時間を最大値に設定
 		isDead_ = true;                  // 死亡フラグを立てる
-	} else {
+	}
+	else {
 		rotationStartT_ += 1.0f; // 回転時間をカウントアップ
 	}
 	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
@@ -383,7 +386,8 @@ void Player::BehaviorAttackUpdate() {
 	if (attackTime_ >= attackMaxTime_) {
 		isAttack_ = false;
 		behaviorRequest_ = Behavior::kRoot;
-	} else {
+	}
+	else {
 		weapon_->Attack();
 	}
 }
