@@ -68,11 +68,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
-
-	//パーティクル
-	std::unique_ptr<ParticleEmitter> particleEmitter_ = nullptr;
-	ParticleManager* particleManager_ = nullptr;
-
 	
 	// プレイヤー
 	Player* player_ = nullptr;
@@ -97,7 +92,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	//半径
 	float radius_ = 0.5f;
 	// プレイヤーと武器の距離
-	float distance_ = 2.0f;
+	float distance_ = 2.0f * 2.0f;
 
 	bool isAttack_ = false;
 

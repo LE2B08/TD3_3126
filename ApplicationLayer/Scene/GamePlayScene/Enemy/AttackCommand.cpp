@@ -216,7 +216,7 @@ void RecallCommand::Update(const Vector3& position, const Vector3& direction, st
 		bullet->Initialize();
 
 		// 位置をランダムに決める
-		position_ = RandomPosition(position, maxRadius_);
+		position_ = RandomPosition(position, minRadius_, maxRadius_);
 
 		// 弾の位置を設定
 		bullet->SetPosition(position_);
@@ -255,10 +255,10 @@ void RecallCommand::Update(const Vector3& position, const Vector3& direction, st
 	}
 }
 
-Vector3 RecallCommand::RandomPosition(const Vector3& position, float maxRadius) {
+Vector3 RecallCommand::RandomPosition(const Vector3& position, float minRadius, float maxRadius) {
 
 	// ランダムに半径を決める
-	std::uniform_real_distribution<float> radiusDist(1.0f, maxRadius);
+	std::uniform_real_distribution<float> radiusDist(minRadius, maxRadius);
 
 	// ランダムに角度を決める
 	std::uniform_real_distribution<float> angleDist(0.0f, 2.0f * std::numbers::pi_v<float>);

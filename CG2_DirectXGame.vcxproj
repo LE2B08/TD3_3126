@@ -44,12 +44,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(SolutuinDir)Externals\Audio\minimp3;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(SolutuinDir)Externals\Audio\minimp3;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -126,6 +126,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.cpp" />
+    <ClCompile Include="EngineLayer\Audio\AudioManager.cpp" />
+    <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp" />
     <ClCompile Include="EngineLayer\Managers\LightManager\LightManager.cpp" />
     <ClCompile Include="EngineLayer\Math\Quaternion\Quaternion.cpp" />
     <ClCompile Include="EngineLayer\Managers\AnimationManager\AnimationManager.cpp" />
@@ -204,6 +206,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
+    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
     <ClCompile Include="WinMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -261,6 +264,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
     <ClInclude Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.h" />
+    <ClInclude Include="EngineLayer\Audio\AudioCategory.h" />
+    <ClInclude Include="EngineLayer\Audio\AudioManager.h" />
+    <ClInclude Include="EngineLayer\Audio\MP3Loader.h" />
     <ClInclude Include="EngineLayer\Managers\LightManager\LightManager.h" />
     <ClInclude Include="EngineLayer\Math\Quaternion\Quaternion.h" />
     <ClInclude Include="EngineLayer\Managers\AnimationManager\AnimationManager.h" />
@@ -286,6 +292,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayer\Base\DXLib\DX12Include.h" />
     <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h" />
     <ClInclude Include="EngineLayer\Base\MultipleStructs\BlendModeType.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Externals\imgui\imconfig.h" />
     <ClInclude Include="Externals\imgui\imgui.h" />
     <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />
@@ -353,6 +367,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

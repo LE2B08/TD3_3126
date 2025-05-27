@@ -1,7 +1,6 @@
 #pragma once
 #include <Sprite.h>
 #include <TextureManager.h>
-#include <WavLoader.h>
 #include <SRVManager.h>
 #include "Input.h"
 #include <BaseScene.h>
@@ -58,8 +57,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	TitleState titleState_ = TitleState::Appear;
 	float exitTimer_ = 0.0f;
 
-	std::unique_ptr<WavLoader> wavLoader_;
-
 	std::unique_ptr<TitleObject> titleObject_;
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
@@ -67,5 +64,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
 
+	bool cameraShakeEnabled_;
+
+	std::unique_ptr<Sprite> cameraShakeOnSprite_;
+
+	std::unique_ptr<Sprite> cameraShakeOffSprite_;
 };
 

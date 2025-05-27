@@ -100,6 +100,9 @@
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
+    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
+    <ClCompile Include="EngineLayer\Audio\AudioManager.cpp" />
+    <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -206,6 +209,13 @@
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h" />
+    <ClInclude Include="EngineLayer\Audio\AudioCategory.h" />
+    <ClInclude Include="EngineLayer\Audio\AudioManager.h" />
+    <ClInclude Include="EngineLayer\Audio\MP3Loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

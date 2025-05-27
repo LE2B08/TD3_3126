@@ -60,7 +60,7 @@ void TuboScene::Initialize() {
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-
+  
 	// 武器の初期化
 	weapon_->SetTutorialPlayer(player_.get()); // プレイヤーの情報を武器にセット
 	weapon_->SetTutorialEnemy(enemy_.get());   // 敵の情報を武器にセット
@@ -106,7 +106,6 @@ void TuboScene::Initialize() {
 	// チュートリアルUIの初期化
 	tutorialUI_->Initialize();
 }
-
 /// -------------------------------------------------------------
 ///				　			　 更新処理
 /// -------------------------------------------------------------
@@ -262,7 +261,6 @@ void TuboScene::Draw() {
 #pragma endregion
 
 #pragma region オブジェクト3Dの描画
-
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
@@ -369,6 +367,7 @@ void TuboScene::Draw() {
 
 	// フェードマネージャーの描画（ここから下は書かない）
 	fadeManager_->Draw();
+
 
 #pragma endregion
 
@@ -503,7 +502,6 @@ void TuboScene::TutorialPlayerRotationUpdate() {
 		}
 	}
 }
-
 
 void TuboScene::TutorialHookThrowAndBackInitialize() {
 	hookThrowCount_ = 0;

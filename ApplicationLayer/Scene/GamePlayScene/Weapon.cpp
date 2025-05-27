@@ -49,6 +49,11 @@ void Weapon::Initialize() {
 
 	// パーティクルエミッターの初期化
 	particleEmitter_ = std::make_unique<ParticleEmitter>(particleManager_, "WeaponHitParticles");
+
+	radius_ = 2.0f;
+
+	attackTime_ = 0;
+	attackRotationAngle_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -167,7 +172,8 @@ void Weapon::OnCollision(Collider* other) {
 
 
 		// 敵の位置にパーティクルを生成
-	} else {
+	}
+	else {
 		isEnemyHit_ = false; // 敵に当たったフラグを解除
 	}
 

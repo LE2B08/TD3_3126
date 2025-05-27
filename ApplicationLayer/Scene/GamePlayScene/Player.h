@@ -142,13 +142,16 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/*----- 移動制限-----*/
 	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = { 8.0f, 0.0f, 8.0f };
+	Vector3 maxMoveLimit_ = { 8.0f * 3.0f, 0.0f, 8.0f * 3.0f};
 	//  移動制限の最小値
-	Vector3 minMoveLimit_ = { -8.0f, 0.0f, -8.0f };
+	Vector3 minMoveLimit_ = { -8.0f * 3.0f, 0.0f, -8.0f * 3.0f };
 
 	/*------パーティクル------*/
-	ParticleManager* particleManager_ = nullptr;
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<ParticleEmitter> particleEmitter2_;
+
+	// 一度だけ出現演出を行うフラグ
+	bool hasEmittedAppearEffect_ = false;
 
 private: /// ---------- 定数 ---------- ///
 
