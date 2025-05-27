@@ -460,7 +460,7 @@ void TutorialScene::DrawImGui() {
 }
 
 ///-------------------------------------------/// 
-/// 
+/// 衝突判定と応答処理
 ///-------------------------------------------///
 void TutorialScene::CheckAllCollisions() {
 
@@ -534,6 +534,12 @@ void TutorialScene::TutorialPlayerRotationUpdate() {
 }
 
 ///-------------------------------------------/// 
+/// プレイヤーの回転描画
+///-------------------------------------------///
+void TutorialScene::TutorialPlayerRotationDraw() {
+}
+
+///-------------------------------------------/// 
 /// フックの投げ戻し初期化
 ///-------------------------------------------///
 void TutorialScene::TutorialHookThrowAndBackInitialize() {
@@ -565,10 +571,16 @@ void TutorialScene::TutorialHookThrowAndBackUpdate() {
 	prevIsThrow = isThrow;
 	prevIsBack = isBack;
 
-	// 2回ずつ行われたら次へ
-	if (hookThrowCount_ >= 2 && hookBackCount_ >= 2) {
+	// 投げ戻しの回数がそれぞれ最大値に達したら次のステップへ
+	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_) {
 		SetTutorialStep(TutorialSteps::HookArcMove);
 	}
+}
+
+///-------------------------------------------/// 
+/// フックの投げ戻し描画
+///-------------------------------------------///
+void TutorialScene::TutorialHookThrowAndBackDraw() {
 }
 
 ///-------------------------------------------/// 
@@ -593,6 +605,12 @@ void TutorialScene::TutorialHookArcMoveUpdate() {
 			arcMoveStepTimer_ = 0.0f;
 		}
 	}
+}
+
+///-------------------------------------------/// 
+/// 弧の移動描画
+///-------------------------------------------///
+void TutorialScene::TutorialHookArcMoveDraw() {
 }
 
 ///-------------------------------------------/// 
@@ -624,6 +642,12 @@ void TutorialScene::TutorialHookMoveUpdate() {
 }
 
 ///-------------------------------------------/// 
+/// フックの移動描画
+///-------------------------------------------///
+void TutorialScene::TutorialHookMoveDraw() {
+}
+
+///-------------------------------------------/// 
 /// 攻撃の初期化
 ///-------------------------------------------///
 void TutorialScene::TutorialAttackInitialize() {
@@ -649,6 +673,12 @@ void TutorialScene::TutorialAttackUpdate() {
 	if (playerAttackCount_ >= 3) {
 		SetTutorialStep(TutorialSteps::End);
 	}
+}
+
+///-------------------------------------------/// 
+/// 攻撃の描画
+///-------------------------------------------///
+void TutorialScene::TutorialAttackDraw() {
 }
 
 ///-------------------------------------------/// 

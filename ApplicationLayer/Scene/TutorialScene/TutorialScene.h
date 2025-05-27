@@ -81,26 +81,36 @@ public: /// ---------- クラス内関数 ---------- ///
 	void TutorialPlayerRotationInitialize();
 	// プレイヤーの回転初期化の更新
 	void TutorialPlayerRotationUpdate();
+	// プレイヤーの回転の描画
+	void TutorialPlayerRotationDraw();
 
 	// フックを投げて戻す初期化
 	void TutorialHookThrowAndBackInitialize();
 	// フックを投げて戻す更新
 	void TutorialHookThrowAndBackUpdate();
+	// フックを投げて戻す描画
+	void TutorialHookThrowAndBackDraw();
 
 	// フックの弧を描く移動初期化
 	void TutorialHookArcMoveInitialize();
 	// フックの弧を描く移動更新
 	void TutorialHookArcMoveUpdate();
+	// フックの弧を描く移動描画
+	void TutorialHookArcMoveDraw();
 
 	// フックの移動初期化
 	void TutorialHookMoveInitialize();
 	// フックの移動更新
 	void TutorialHookMoveUpdate();
+	// フックの移動描画
+	void TutorialHookMoveDraw();
 
 	// 攻撃初期化
 	void TutorialAttackInitialize();
 	// 攻撃更新
 	void TutorialAttackUpdate();
+	// 攻撃描画
+	void TutorialAttackDraw();
 
 	// ゲーム開始初期化
 	void PlayInitialize();
@@ -199,4 +209,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	int hookActiveCount_ = 0;
 	// 攻撃が行われた回数
 	int playerAttackCount_ = 0;
+
+	// フックを投げる最大回数
+	const int maxHookThrowCount_ = 2;
+	// フックを戻す最大回数
+	const int maxHookBackCount_ = 2;
 };

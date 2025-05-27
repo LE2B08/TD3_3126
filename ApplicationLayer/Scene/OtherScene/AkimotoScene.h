@@ -5,11 +5,7 @@
 #include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
-#include "GamePlayScene/Enemy/Enemy.h"
-#include "GamePlayScene/Field/Field.h"
-#include "Player.h"
 #include "Camera.h"
-#include "GamePlayScene/DynamicCamera/DynamicCamera.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -37,6 +33,11 @@ public: /// ---------- メンバ関数 ---------- ///
 	// ImGui描画処理
 	void DrawImGui();
 
+private:
+
+	// 進行度のゲージ処理
+	void UpdateGauge();
+
 private: /// ---------- メンバ変数 ---------- ///
 	
 	DirectXCommon* dxCommon_ = nullptr;
@@ -47,19 +48,23 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// テクスチャのパスをリストで管理
 	std::vector<std::string> texturePaths_;
-	
-	std::unique_ptr<Player> player_;
-
-	// 敵
-	std::unique_ptr<Enemy> enemy_;
-
-	// フィールド
-	std::unique_ptr<Field> field_;
 
 	// カメラ
 	Camera* camera_ = nullptr;
 
-	// 計算用のダイナミックカメラ
-	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;
+	// ゲージ用スプライト
+	std::unique_ptr<Sprite> progressGauge_;
+
+	// ゲージのデフォルトサイズ
+	const Vector2 gaugeDefaultSize_ = { 640.0f, 32.0f };
+
+	// 進行度(回数)
+	int progressCount_ = 0;
+
+	// 最大値(回数)
+	int maxCount_ = 10;
+
+	// ゲージの進行度(割合)
+	float progressRatio_ = 0.0f;
 };
 
