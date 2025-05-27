@@ -208,9 +208,9 @@ private:
 	/// 入力・壁判定・弧のパラメータ
 	///----------------------------
 
-	Vector2 rightStick_ = {};       // 右スティック入力
-	bool isRightStickRight = false; // 右スティック右入力フラグ
-	bool isRightStickLeft = false;  // 右スティック左入力フラグ
+	Vector2 leftStick_ = {};       // 右スティック入力
+	bool isLeftStickRight = false; // 右スティック右入力フラグ
+	bool isLeftStickLeft = false;  // 右スティック左入力フラグ
 
 	// 壁ヒット判定
 	bool isHitWallTop = false;
