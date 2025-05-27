@@ -1,24 +1,27 @@
 #include "Field.h"
-#include "Easing.h"
-#include "Wireframe.h"
 #include <imgui.h>
+#include "Wireframe.h"
+#include "Easing.h"
 
 using namespace Easing;
 
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
-void Field::Initialize() {
+void Field::Initialize()
+{
 
 	// 仮リソース
 	objectField_ = std::make_unique<Object3D>();
 	objectField_->Initialize("Field.gltf");
 }
 
+
 /// -------------------------------------------------------------
 ///						　更新処理
 ///	-------------------------------------------------------------
-void Field::Update() {
+void Field::Update()
+{
 
 	minPosition_ = position_ - scale_;
 	maxPosition_ = position_ + scale_;
@@ -29,21 +32,24 @@ void Field::Update() {
 	objectField_->Update();
 }
 
+
 /// -------------------------------------------------------------
 ///						　描画処理
 /// -------------------------------------------------------------
-void Field::Draw() {
+void Field::Draw()
+{
 #ifdef _DEBUG
 	// ワイヤーフレームの描画
 	// Fieldの描画
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, maxPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, minPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({maxPosition_.x, 0.0f, maxPosition_.z}, {maxPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
-	Wireframe::GetInstance()->DrawLine({minPosition_.x, 0.0f, maxPosition_.z}, {minPosition_.x, 0.0f, minPosition_.z}, {1.0f, 1.0f, 1.0f, 1.0f});
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, maxPosition_.z }, { minPosition_.x, 0.0f, maxPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, minPosition_.z }, { minPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ maxPosition_.x, 0.0f, maxPosition_.z }, { maxPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawLine({ minPosition_.x, 0.0f, maxPosition_.z }, { minPosition_.x, 0.0f, minPosition_.z }, { 1.0f, 1.0f, 1.0f, 1.0f });
 #endif // _DEBUG
 
 	objectField_->Draw();
 }
+
 
 /// -------------------------------------------------------------
 ///						　ImGui描画処理
@@ -68,7 +74,8 @@ void Field::ScalingAnimation() {
 
 		// タイマーが最大値を超えないようにする
 		scalingTimer_ = maxScalingTime_;
-	} else {
+	}
+	else {
 		// タイマーを進める
 		scalingTimer_ += 0.5f;
 	}
@@ -82,5 +89,3 @@ void Field::ScalingAnimation() {
 		isScaleEnd_ = true;
 	}
 }
-
-void Field::TutorialScale() { scale_ = defaultScale_ * 2.0f; }

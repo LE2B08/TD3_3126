@@ -1,61 +1,27 @@
 #pragma once
-#include "AnimationManager.h"
-#include "ParticleManager.h"
 #include <BaseScene.h>
-#include <Object3D.h>
-#include <Sprite.h>
-#include <TextureManager.h>
-#include <WavLoader.h>
+#include <TitleScene.h>
+#include <GamePlayScene.h>
+#include "AbstractSceneFactory.h"
+#include"Camera.h"
 
+#include "Player.h"
+#include "GamePlayScene/Enemy/Enemy.h"
+#include "GamePlayScene/Field/Field.h"
 #include "CollisionManager.h"
-#include "Field.h"
-#include "PlayerDirectionalArrow.h"
-#include "TutorialEnemy.h"
-#include "TutorialPlayer.h"
-#include "Weapon.h"
-
-#include "ControllerUI.h"
-#include "DynamicCamera.h"
-#include "Pause/PauseMenu.h"
-#include "TutorialUI.h"
-
-#include "EffectManager.h"
-
-#include "AABB.h"
-#include "OBB.h"
-#include <SkyBox.h>
-
-#include "TutorialScene.h"
-
-//// チュートリアルの流れ
-//enum class TutorialSteps {
-//	Start,            // 初め
-//	PlayerRotation,   // プレイヤーの回転
-//	HookThrowAndBack, // フックの投げ、戻す
-//	HookArcMove,      // フックの弧を描く移動
-//	HookMove,         // フックの移動
-//	Attack,           // 攻撃
-//	End,              // 終わり
-//
-//};
-//
-//enum class SceneStatus {
-//
-//	Play,
-//	Pause,
-//
-//};
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
-class Camera;
+
 
 /// -------------------------------------------------------------
 ///					　	ツボキ専用クラス
 /// -------------------------------------------------------------
-class TuboScene : public BaseScene {
+class TuboScene : public BaseScene
+{
 public: /// ---------- メンバ関数 ---------- ///
+
 	// 初期化処理
 	void Initialize() override;
 
@@ -71,57 +37,20 @@ public: /// ---------- メンバ関数 ---------- ///
 	// ImGui描画処理
 	void DrawImGui() override;
 
+
 private: /// ---------- メンバ関数 ---------- ///
+
 	// 衝突判定と応答
 	void CheckAllCollisions();
 
-	// ゲーム開始時の初期化
-	void TutorialStartInitialize();
-	// チュートリアル開始時の更新
-	void TutorialStartUpdate();
+	/*------カメラのシェイク------*/
+	void CameraShake();
 
-	// プレイヤーの回転の初期化
-	void TutorialPlayerRotationInitialize();
-	// プレイヤーの回転初期化の更新
-	void TutorialPlayerRotationUpdate();
-
-	// フックを投げて戻す初期化
-	void TutorialHookThrowAndBackInitialize();
-	// フックを投げて戻す更新
-	void TutorialHookThrowAndBackUpdate();
-
-	// フックの弧を描く移動初期化
-	void TutorialHookArcMoveInitialize();
-	// フックの弧を描く移動更新
-	void TutorialHookArcMoveUpdate();
-
-	// フックの移動初期化
-	void TutorialHookMoveInitialize();
-	// フックの移動更新
-	void TutorialHookMoveUpdate();
-
-	// 攻撃初期化
-	void TutorialAttackInitialize();
-	// 攻撃更新
-	void TutorialAttackUpdate();
-
-	// ゲーム開始初期化
-	void PlayInitialize();
-	// ゲーム開始更新
-	void PlayUpdate();
-	// ポーズ初期化
-	void PauseInitialize();
-	// ポーズ更新
-	void PauseUpdate();
-
-	// チュートリアル終了初期化
-	void TutorialEndInitialize();
-	// チュートリアル終了更新
-	void TutorialEndUpdate();
-
-	void SetTutorialStep(TutorialSteps step);
+	/*------ゲーム開始演出------*/
+	void GameStart();
 
 private: /// ---------- メンバ変数 ---------- ///
+
 	DirectXCommon* dxCommon_ = nullptr;
 	TextureManager* textureManager = nullptr;
 	Input* input_ = nullptr;
@@ -131,7 +60,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-	// std::unique_ptr<EffectManager> effectManager_;
+	EffectManager* effectManager_;
 
 	std::string particleGroupName;
 
@@ -139,8 +68,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isDebugCamera_ = false;
 
 	// Playerクラスのインスタンス
-	std::unique_ptr<TutorialPlayer> player_ = nullptr;
-
+	std::unique_ptr<Player> player_ = nullptr;
+	// プレイヤーUI
+	std::unique_ptr<PlayerUI> playerUI_;
 	// プレイヤーの武器
 	std::unique_ptr<Weapon> weapon_ = nullptr;
 
@@ -148,7 +78,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<Hook> hook_ = nullptr;
 
 	// 敵
-	std::unique_ptr<TutorialEnemy> enemy_;
+	std::unique_ptr<Enemy> enemy_;
 
 	// フィールド
 	std::unique_ptr<Field> field_;
@@ -159,46 +89,52 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 敵の弾
 	std::list<std::unique_ptr<EnemyBullet>>* enemyBullets_;
 
+
 	std::unique_ptr<SkyBox> skyBox_;
 
 	/*------カメラの座標------*/
-	Vector3 cameraPosition_ = {0.0f, 50.0f, 0.0f};
+	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };
+
+	// カメラの揺れを管理する変数
+	bool isCameraShaking_ = false;
+	// 揺れの持続時間
+	float shakeDuration_ = 0.05f;
+	// 揺れの強さ
+	float shakeMagnitude_ = 0.5f;
+	float shakeElapsedTime_ = 0.0f;
 
 	/*------ゲーム開始演出------*/
+	// スタートしたか
+	bool isGameStart_ = false;
+
+	// イージングがスタートしたか
+	bool isStartEasing_ = false;
+
+	// プレイヤーの位置がセットされたか
+	bool isPlayerPositionSet_ = false;
+
+	// タイマー用のメンバ変数
+	float startTimer_ = 0;
+	const float maxStartT_ = 40;
+
+	// プレイヤー用のタイマー
+	float playerStartTimer_ = 0;
+	const float maxPlayerStartT_ = 40;
+
+	// デフォルトのフィールド
+	const Vector3 defaultFieldScale_ = { 10.0f,1.0f,10.0f };
+	const Vector3 defaultFieldPosition_ = { 0.0f,0.0f,0.0f };
+
+	// 初期のフィールド
+	const Vector3 startFieldScale_ = { 0.0f,0.0f,0.0f };
+	const Vector3 startFieldPosition_ = { 0.0f,0.0f,0.0f };
+
+	bool isGameStartEffectEnabled_ = true;
+
+	// 拡大するフィールド
+	Vector3 fieldScale_ = startFieldScale_;
+	Vector3 fieldPosition_ = startFieldPosition_;
 
 	// 計算用のダイナミックカメラ
-	std::unique_ptr<DynamicCamera> dynamicCamera_ = nullptr;
+	std::unique_ptr <DynamicCamera> dynamicCamera_ = nullptr;};
 
-	// ゲームの状態
-	SceneStatus sceneStatus_ = SceneStatus::Play; // 例: 初期値
-	std::optional<SceneStatus> nextGameState_ = std::nullopt;
-
-	// チュートリアルの進行状態
-	TutorialSteps tutorialSteps_ = TutorialSteps::Start;
-
-	// ポーズメニュー
-	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
-
-	// プレイヤーの矢印
-	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
-
-	/// -------------------------------------------------------------
-	///					　		TutorialUI
-	///
-	// チュートリアルUIのスプライト
-	std::unique_ptr<TutorialUI> tutorialUI_ = nullptr;
-
-	// 回った時間
-	float rotationStepTimer_ = 0.0f;
-	// プレイヤーのフックを投げる回数
-	int hookThrowCount_ = 0;
-	// フックの戻す回数
-	int hookBackCount_ = 0;
-	// フックの弧移動時の時間
-	float arcMoveStepTimer_ = 0.0f;
-
-	// フックの移動時の回数
-	int hookActiveCount_ = 0;
-	// 攻撃が行われた回数
-	int playerAttackCount_ = 0;
-};

@@ -6,7 +6,6 @@
 class Camera;
 class Input;
 class Player;
-class TutorialPlayer;
 class Field;
 class DynamicCamera;
 
@@ -69,7 +68,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	//Camera* camera_ = nullptr; // カメラ
 	Input* input_ = nullptr;   // 入力
 	Player* player_ = nullptr; // プレイヤー
-	TutorialPlayer* tutorialPlayer_ = nullptr; // チュートリアルプレイヤー
 	Field* field_ = nullptr;   // フィールド
 	DynamicCamera* dynamicCamera_ = nullptr; // ダイナミックカメラ
 

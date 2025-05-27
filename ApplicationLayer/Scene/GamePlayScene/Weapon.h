@@ -8,9 +8,7 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
-class TutorialPlayer;
 class Enemy;
-class TutorialEnemy;
 
 
 /// -------------------------------------------------------------
@@ -57,11 +55,9 @@ public:
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// エネミーの設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -71,11 +67,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	
 	// プレイヤー
 	Player* player_ = nullptr;
-	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
-	TutorialEnemy* tutorialEnemy_ = nullptr;
 
 	bool isEnemyHit_ = false; // 敵に当たったかのフラグ
 

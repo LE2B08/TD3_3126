@@ -4,7 +4,6 @@
 #include <WorldTransform.h>
 
 class Player;
-class TutorialPlayer;
 class Camera;
 class PlayerDirectionalArrow
 {
@@ -25,14 +24,11 @@ public:
 
 	// プレイヤーをセット
 	void SetPlayer(Player* player) { player_ = player; }
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
-
 
 private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤー
 	Player* player_ = nullptr;
-	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// カメラ
 	Camera* camera_ = nullptr;
