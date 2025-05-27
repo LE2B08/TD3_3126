@@ -22,8 +22,8 @@ PauseMenu::PauseMenu() {
 	pauseTextPos_ = { 488.0f, 60.0f };
 	returnToGameTextPos_ = { 484.0f,232.0f };
 	howToPlayTextPos_ = { 516.0f, 360.0f };
-	cameraShakeOnTextPos_ = { 440.0f, 488.0f };
-	cameraShakeOffTextPos_ = { 440.0f, 488.0f };
+	cameraShakeOnTextPos_ = { 516.0f, 488.0f };
+	cameraShakeOffTextPos_ = { 508.0f, 488.0f };
 	returnToTitleTextPos_ = { 468.0f, 616.0f };
 
 	// 決定ボタンの位置

@@ -9,6 +9,7 @@
 #include <SkyBoxManager.h>
 #include "SceneManager.h"
 #include "FadeManager.h"
+#include <AudioManager.h>
 
 
 /// -------------------------------------------------------------
@@ -19,7 +20,6 @@ void GameOverScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
@@ -83,8 +83,6 @@ void GameOverScene::Update()
 				sceneManager_->ChangeScene("TitleScene"); // シーン名を指定して変更
 				});
 		}
-
-		wavLoader_->StopBGM();
 	}
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F1))
@@ -175,7 +173,7 @@ void GameOverScene::Draw()
 /// -------------------------------------------------------------
 void GameOverScene::Finalize()
 {
-
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 

@@ -8,6 +8,7 @@
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
 #include "SceneManager.h"
+#include <AudioManager.h>
 
 
 /// -------------------------------------------------------------
@@ -18,7 +19,6 @@ void GameClearScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
@@ -113,6 +113,7 @@ void GameClearScene::Draw()
 /// -------------------------------------------------------------
 void GameClearScene::Finalize()
 {
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 
