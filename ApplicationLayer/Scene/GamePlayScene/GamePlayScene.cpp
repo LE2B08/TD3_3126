@@ -17,6 +17,7 @@
 #endif // _DEBUG
 #include <SkyBoxManager.h>
 #include <SpriteManager.h>
+#include <AudioManager.h>
 
 using namespace Easing;
 
@@ -35,8 +36,6 @@ void GamePlayScene::Initialize()
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
-	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -46,7 +45,7 @@ void GamePlayScene::Initialize()
 
 	// カメラの初期化
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
-	camera_->SetTranslate(Vector3(0.0f,150.0f,0.0f));
+	camera_->SetTranslate(Vector3(0.0f, 150.0f, 0.0f));
 
 	// 生成処理
 	player_ = std::make_unique<Player>();
@@ -175,7 +174,7 @@ void GamePlayScene::Update()
 	}
 #endif // _DEBUG
 
-	if (player_->GetIsHitEnemy()) {
+	if (player_->GetIsHitEnemy() && enemy_->CanGiveDamage()) {
 		// カメラの揺れ尾有効にしている時のみカメラを揺らす
 		if (sceneManager_->GetCameraShakeEnabled()) {
 			effectManager_->GetInstance()->SetIsCameraShaking(true);
@@ -433,7 +432,7 @@ void GamePlayScene::Draw()
 /// -------------------------------------------------------------
 void GamePlayScene::Finalize()
 {
-
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 
@@ -447,10 +446,13 @@ void GamePlayScene::DrawImGui()
 	player_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 	tutorialUI_->DrawImGui();
+	// フックのImGui描画
+	hook_->ImGuiDraw();
 	pauseMenu_->ShowImGui();
 	ImGui::Begin("SceneManager");
 	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());
 	ImGui::End();
+
 	//ImGui::Begin("GamePlayScene");
 	//
 	//// シーンの状態を表示
@@ -619,6 +621,7 @@ void GamePlayScene::GamePlayUpdate() {
 		nextGameState_ = GameSceneState::GameClear;
 	}
 
+	hook_->SetEnemyPosition(enemy_->GetPosition()); // フックに敵の位置をセット
 	// フックの更新処理
 	hook_->Update();
 
@@ -680,7 +683,6 @@ void GamePlayScene::GameClearUpdate() {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
 			input_->StopVibration();
-			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameClearScene");
 			});
 	}
@@ -708,7 +710,6 @@ void GamePlayScene::GameOverUpdate() {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
 			input_->StopVibration();
-			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameOverScene");
 			});
 	}

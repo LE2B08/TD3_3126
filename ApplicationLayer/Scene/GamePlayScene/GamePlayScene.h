@@ -2,7 +2,6 @@
 #include <Sprite.h>
 #include <TextureManager.h>
 #include <Object3D.h>
-#include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
 #include "AnimationManager.h"
@@ -109,7 +108,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	ParticleManager* particleManager = nullptr;
 	Camera* camera_ = nullptr;
 
-	std::unique_ptr<WavLoader> wavLoader_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 

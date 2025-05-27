@@ -8,6 +8,7 @@
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
 #include <WinApp.h>
+#include <AudioManager.h>
 
 
 /// -------------------------------------------------------------
@@ -18,7 +19,6 @@ void TitleScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
@@ -55,9 +55,6 @@ void TitleScene::Initialize()
 
 		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
 	}
-
-	// wavLoaderの初期化
-	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, true);
 
 	// タイトルオブジェクトの初期化
 	titleObject_ = std::make_unique<TitleObject>();
@@ -112,7 +109,6 @@ void TitleScene::Update()
 			titleState_ = TitleState::Exit;
 			exitTimer_ = 0.0f;
 
-			wavLoader_->StopBGM();
 			titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
 		}
 
@@ -253,9 +249,7 @@ void TitleScene::Finalize()
 		sprites_.clear();
 	}
 
-	if (wavLoader_) {
-		wavLoader_.reset();
-	}
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 /// -------------------------------------------------------------
