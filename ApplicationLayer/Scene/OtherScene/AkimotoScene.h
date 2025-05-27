@@ -35,8 +35,8 @@ public: /// ---------- メンバ関数 ---------- ///
 
 private:
 
-	// 進行度のゲージ処理
-	void UpdateGauge();
+	// ゲージの進行度
+	void GaugeProgress(int count, int maxCount);
 
 private: /// ---------- メンバ変数 ---------- ///
 	
@@ -53,18 +53,15 @@ private: /// ---------- メンバ変数 ---------- ///
 	Camera* camera_ = nullptr;
 
 	// ゲージ用スプライト
-	std::unique_ptr<Sprite> progressGauge_;
+	std::unique_ptr<Sprite> gauge_;
 
 	// ゲージのデフォルトサイズ
 	const Vector2 gaugeDefaultSize_ = { 640.0f, 32.0f };
 
 	// 進行度(回数)
-	int progressCount_ = 0;
+	int count_ = 0;
 
 	// 最大値(回数)
 	int maxCount_ = 10;
-
-	// ゲージの進行度(割合)
-	float progressRatio_ = 0.0f;
 };
 

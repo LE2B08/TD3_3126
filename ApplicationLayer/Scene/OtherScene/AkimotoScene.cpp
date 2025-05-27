@@ -24,8 +24,8 @@ void AkimotoScene::Initialize() {
 	textureManager->LoadTexture("Resources/Green.png"); // テクスチャの読み込み
 
 	// スプライトの初期化
-	progressGauge_ = std::make_unique<Sprite>();
-	progressGauge_->Initialize("Resources/Green.png");
+	gauge_ = std::make_unique<Sprite>();
+	gauge_->Initialize("Resources/Green.png");
 }
 
 void AkimotoScene::Update() {
@@ -55,20 +55,21 @@ void AkimotoScene::Update() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 
 		// 進行度が最大値に達していない場合
-		if (progressCount_ < maxCount_) {
+		if (count_ < maxCount_) {
 
-			progressCount_++; // 進行度を1増やす
+			count_++; // 進行度を1増やす
 		}
 		// 最大値に達したら
 		else {
-			progressCount_ = 0; // リセット
+			count_ = 0; // リセット
 		}
 	}
 
 	// カメラの更新
 	camera_->Update();
 
-	UpdateGauge(); // ゲージの更新
+	// ゲージの進行度を計算
+	GaugeProgress(count_, maxCount_);
 }
 
 void AkimotoScene::Draw() {
@@ -96,7 +97,7 @@ void AkimotoScene::Draw() {
 	SpriteManager::GetInstance()->SetRenderSetting_UI();
 
 	// ゲージの描画
-	progressGauge_->Draw();
+	gauge_->Draw();
 }
 
 void AkimotoScene::Finalize() {
@@ -106,29 +107,29 @@ void AkimotoScene::DrawImGui() {
 
 	ImGui::Begin("SettingGauge");
 
-	Vector2 pos = progressGauge_->GetPosition();
+	Vector2 pos = gauge_->GetPosition();
 	ImGui::SliderFloat2("Position", &pos.x, 0.0f, 1280.0f);
-	progressGauge_->SetPosition(pos);
+	gauge_->SetPosition(pos);
 
-	Vector2 size = progressGauge_->GetSize();
+	Vector2 size = gauge_->GetSize();
 	ImGui::SliderFloat2("Size", &size.x, 0.0f, 1280.0f);
-	progressGauge_->SetSize(size);
+	gauge_->SetSize(size);
 
-	ImGui::SliderInt("Count", &progressCount_, 0, maxCount_); // 進行度のスライダー
-	ImGui::SliderFloat("Ratio", &progressRatio_, 0.0f, 1.0f); // 進行度の割合のスライダー
+	ImGui::SliderInt("Count", &count_, 0, maxCount_); // 進行度のスライダー
+	ImGui::SliderInt("Max Count", &maxCount_, 1, 100); // 最大進行度のスライダー
 
 	ImGui::End();
 }
 
-void AkimotoScene::UpdateGauge() {
+void AkimotoScene::GaugeProgress(int count, int maxCount) {
 
 	// 進行度の割合を計算
-	progressRatio_ = static_cast<float>(progressCount_) / maxCount_;
+	const float progressRatio_ = static_cast<float>(count) / maxCount;
 
 	// ゲージのサイズを設定
 	Vector2 size = { gaugeDefaultSize_.x * progressRatio_, gaugeDefaultSize_.y };
 
-	progressGauge_->SetSize(size);
+	gauge_->SetSize(size);
 
-	progressGauge_->Update();
+	gauge_->Update();
 }

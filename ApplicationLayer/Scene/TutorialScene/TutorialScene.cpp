@@ -24,7 +24,7 @@ using namespace Easing;
 /// 初期化処理
 ///-------------------------------------------///
 void TutorialScene::Initialize() {
-	
+
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -106,6 +106,13 @@ void TutorialScene::Initialize() {
 
 	// チュートリアルUIの初期化
 	tutorialUI_->Initialize();
+
+	// テクスチャの読み込み
+	textureManager->LoadTexture("Resources/Green.png");
+	// スプライトの初期化
+	gauge_ = std::make_unique<Sprite>();
+	gauge_->Initialize("Resources/Green.png");
+	gauge_->SetPosition(gaugePosition_);
 }
 
 ///-------------------------------------------/// 
@@ -343,22 +350,32 @@ void TutorialScene::Draw() {
 		case TutorialSteps::PlayerRotation:
 			// プレイヤーの回転のUIの描画
 			tutorialUI_->RotationDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookThrowAndBack:
 			// フックを投げて戻すのUIの描画
 			tutorialUI_->ThrowDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookArcMove:
 			// フックの弧を描く移動のUIの描画
 			tutorialUI_->ArcDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookMove:
 			// フックの移動のUIの描画
 			tutorialUI_->MoveDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::Attack:
 			// 攻撃のUIの描画
 			tutorialUI_->AttackDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 
 		case TutorialSteps::End:
@@ -525,18 +542,22 @@ void TutorialScene::TutorialPlayerRotationUpdate() {
 
 	if (player_->GetIsRotation()) {
 		rotationStepTimer_ += ImGui::GetIO().DeltaTime; // フレーム時間を加算
+	}
 
-		if (rotationStepTimer_ >= kRotationStepWaitTime) {
+	// ゲージの進行度を更新
+	GaugeProgress(rotationStepTimer_, kRotationStepWaitTime);
+
+	// タイマーが指定時間を超えたら
+	if (rotationStepTimer_ >= kRotationStepWaitTime) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの投げ戻しに変更
 			SetTutorialStep(TutorialSteps::HookThrowAndBack);
-			rotationStepTimer_ = 0.0f; // タイマーリセット
+			rotationStepTimer_ = 0.0f;
 		}
 	}
-}
-
-///-------------------------------------------/// 
-/// プレイヤーの回転描画
-///-------------------------------------------///
-void TutorialScene::TutorialPlayerRotationDraw() {
 }
 
 ///-------------------------------------------/// 
@@ -571,16 +592,19 @@ void TutorialScene::TutorialHookThrowAndBackUpdate() {
 	prevIsThrow = isThrow;
 	prevIsBack = isBack;
 
-	// 投げ戻しの回数がそれぞれ最大値に達したら次のステップへ
-	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_) {
-		SetTutorialStep(TutorialSteps::HookArcMove);
-	}
-}
+	// ゲージの進行度を更新
+	GaugeProgress((float)hookThrowCount_, (float)maxHookThrowCount_);
 
-///-------------------------------------------/// 
-/// フックの投げ戻し描画
-///-------------------------------------------///
-void TutorialScene::TutorialHookThrowAndBackDraw() {
+	// 投げ戻しの回数がそれぞれ最大値に達したら
+	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの弧を描く移動に変更
+			SetTutorialStep(TutorialSteps::HookArcMove);
+		}
+	}
 }
 
 ///-------------------------------------------/// 
@@ -600,17 +624,22 @@ void TutorialScene::TutorialHookArcMoveUpdate() {
 
 	if (hook_->GetIsArcMove()) {
 		arcMoveStepTimer_ += ImGui::GetIO().DeltaTime;
-		if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
+	}
+
+	// ゲージの進行度を更新
+	GaugeProgress(arcMoveStepTimer_, kArcMoveStepWaitTime);
+
+	// タイマーが指定時間を超えたら
+	if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの移動に変更
 			SetTutorialStep(TutorialSteps::HookMove);
 			arcMoveStepTimer_ = 0.0f;
 		}
 	}
-}
-
-///-------------------------------------------/// 
-/// 弧の移動描画
-///-------------------------------------------///
-void TutorialScene::TutorialHookArcMoveDraw() {
 }
 
 ///-------------------------------------------/// 
@@ -635,16 +664,19 @@ void TutorialScene::TutorialHookMoveUpdate() {
 	}
 	prevIsActive = isActive;
 
-	// 3回になったら次へ
-	if (hookActiveCount_ >= 3) {
-		SetTutorialStep(TutorialSteps::Attack);
-	}
-}
+	// ゲージの進行度を更新
+	GaugeProgress((float)hookActiveCount_, static_cast<float>(maxHookActiveCount_));
 
-///-------------------------------------------/// 
-/// フックの移動描画
-///-------------------------------------------///
-void TutorialScene::TutorialHookMoveDraw() {
+	// 最大回数になったら
+	if (hookActiveCount_ >= maxHookActiveCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップを攻撃に変更
+			SetTutorialStep(TutorialSteps::Attack);
+		}
+	}
 }
 
 ///-------------------------------------------/// 
@@ -669,16 +701,18 @@ void TutorialScene::TutorialAttackUpdate() {
 	}
 	prevIsAttack = isAttack;
 
-	// 3回になったら次へ
-	if (playerAttackCount_ >= 3) {
-		SetTutorialStep(TutorialSteps::End);
-	}
-}
+	// ゲージの進行度を更新
+	GaugeProgress((float)playerAttackCount_, static_cast<float>(maxPlayerAttackCount_));
 
-///-------------------------------------------/// 
-/// 攻撃の描画
-///-------------------------------------------///
-void TutorialScene::TutorialAttackDraw() {
+	// 最大回数になったら
+	if (playerAttackCount_ >= maxPlayerAttackCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+			// チュートリアルステップをチュートリアル終了に変更
+			SetTutorialStep(TutorialSteps::End);
+		}
+	}
 }
 
 ///-------------------------------------------/// 
@@ -813,4 +847,25 @@ void TutorialScene::SetTutorialStep(TutorialSteps step) {
 	default:
 		break;
 	}
+}
+
+void TutorialScene::GaugeProgress(float count, float maxCount) {
+
+	// カウントが最大値を超えたら
+	if (count > maxCount) {
+
+		count = maxCount; // 最大値に制限
+	}
+
+	// 進行度の割合を計算
+	const float progressRatio_ = count / maxCount;
+
+	// ゲージのサイズを計算
+	Vector2 size = { gaugeDefaultSize_.x * progressRatio_, gaugeDefaultSize_.y };
+
+	// ゲージにサイズを設定
+	gauge_->SetSize(size);
+
+	// ゲージの更新
+	gauge_->Update();
 }
