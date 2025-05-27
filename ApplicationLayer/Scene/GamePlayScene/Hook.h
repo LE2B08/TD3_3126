@@ -218,6 +218,10 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	Vector3 enemyPosition_; // 敵の位置
 
+
+	Vector3 ArcVelocity_; // 弧の速度
+	Vector3 MoveVelocity_; // 移動の速度
+
 	//================================================
 	// Behavior
 
