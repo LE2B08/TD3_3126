@@ -24,6 +24,7 @@
 #include "AABB.h"
 #include "OBB.h"
 #include <SkyBox.h>
+#include <TutorialUI.h>
 
 enum class GameSceneState {
 	Start,
@@ -184,4 +185,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤーの矢印
 	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
+
+	// チュートリアルUI
+	std::unique_ptr<TutorialUI> tutorialUI_ = nullptr;
 };

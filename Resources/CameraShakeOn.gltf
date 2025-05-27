@@ -15,13 +15,13 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"X\u30dc\u30bf\u30f3\u3067\u63fa\u308c\u306e\u5207\u308a\u66ff\u3048 : ON"
+			"name":"\u30c6\u30ad\u30b9\u30c8"
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -33,7 +33,7 @@
 	],
 	"meshes":[
 		{
-			"name":"X\u30dc\u30bf\u30f3\u3067\u63fa\u308c\u306e\u5207\u308a\u66ff\u3048 : ON",
+			"name":"\u30c6\u30ad\u30b9\u30c8",
 			"primitives":[
 				{
 					"attributes":{
@@ -64,61 +64,61 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":9638,
+			"count":1481,
 			"max":[
-				6.968499660491943,
-				0.09999999403953552,
-				0.08000000566244125
+				3.239499807357788,
+				0,
+				0.0860000029206276
 			],
 			"min":[
-				-7.041500091552734,
-				-0.09999999403953552,
-				-0.8400000333786011
+				-3.2044999599456787,
+				0,
+				-0.8440000414848328
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":9638,
+			"count":1481,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":9638,
+			"count":1481,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":28188,
+			"count":4368,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":115656,
+			"byteLength":17772,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":115656,
-			"byteOffset":115656,
+			"byteLength":17772,
+			"byteOffset":17772,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":77104,
-			"byteOffset":231312,
+			"byteLength":11848,
+			"byteOffset":35544,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":56376,
-			"byteOffset":308416,
+			"byteLength":8736,
+			"byteOffset":47392,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":364792,
+			"byteLength":56128,
 			"uri":"CameraShakeOn.bin"
 		}
 	]

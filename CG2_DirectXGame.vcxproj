@@ -202,6 +202,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
+    <ClCompile Include="TutorialUI.cpp" />
     <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
     <ClCompile Include="WinMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -359,6 +360,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayer\Mesh\ParticleMesh.h" />
     <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
+    <ClInclude Include="TutorialUI.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
   </ItemGroup>
