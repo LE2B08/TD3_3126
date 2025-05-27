@@ -142,8 +142,8 @@ void Hook::ImGuiDraw() {
 	ImGui::Checkbox("isPulling", &isPulling_);
 	ImGui::Checkbox("enemyHit", &enemyHit_);
 	ImGui::Checkbox("isHitPlayerToEnemy", &isHitPlayerToEnemy_);
-	ImGui::Checkbox("isRightStickLeft", &isRightStickLeft);
-	ImGui::Checkbox("isRightStickRight", &isRightStickRight);
+	ImGui::Checkbox("isLeftStickLeft", &isLeftStickLeft);
+	ImGui::Checkbox("isLeftStickRight", &isLeftStickRight);
 
 	ImGui::Text("=== Behavior ===");
 	ImGui::Text(
@@ -314,8 +314,8 @@ void Hook::BehaviorMoveInitialize() {
 
 	// 角速度や弧の動きのフラグもリセット
 	angularSpeed = 0.0f;
-	isRightStickLeft = false;
-	isRightStickRight = false;
+	isLeftStickLeft = false;
+	isLeftStickRight = false;
 	angle = 0.0f;
 }
 
@@ -354,7 +354,7 @@ void Hook::BehaviorMoveUpdate() {
 	// ※ArcVelocity_は後で計算するのでここでは初期化しない
 
 	// 右スティックの入力を取得
-	rightStick_ = Input::GetInstance()->GetRightStick();
+	leftStick_ = Input::GetInstance()->GetLeftStick();
 
 	// プレイヤーからフック終点へのベクトル
 	Vector3 toCenter = playerPosition_ - endPos_;
@@ -371,8 +371,8 @@ void Hook::BehaviorMoveUpdate() {
 			angle = atan2(toCenter.z, toCenter.x);
 
 			// 右スティック入力を小数第3位で丸める
-			rightStick_.x = round(rightStick_.x * 1000) / 1000;
-			rightStick_.y = round(rightStick_.y * 1000) / 1000;
+			leftStick_.x = round(leftStick_.x * 1000) / 1000;
+			leftStick_.y = round(leftStick_.y * 1000) / 1000;
 
 			// 角度変化量
 			float angleDelta = 0.0f;
@@ -389,9 +389,9 @@ void Hook::BehaviorMoveUpdate() {
 			isHitWallRight = (endPos_.x >= maxMoveLimit_.x - wallEpsilon);
 
 			// 右スティック入力がある場合、回転方向フラグをリセット
-			if (!Input::GetInstance()->RStickInDeadZone()) {
-				isRightStickLeft = false;
-				isRightStickRight = false;
+			if (!Input::GetInstance()->LStickInDeadZone()) {
+				isLeftStickLeft = false;
+				isLeftStickRight = false;
 			}
 
 			///----------------------------
@@ -401,51 +401,51 @@ void Hook::BehaviorMoveUpdate() {
 			// 上壁
 			if (isHitWallTop) {
 				// 右スティック左入力
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angleDelta -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
+					isLeftStickLeft = true;
 					stickInput = true;
 				}
 				// 右スティック右入力
-				else if (rightStick_.x > 0.1f) {
+				else if (leftStick_.x > 0.1f) {
 					angleDelta += angularSpeed * 0.016f;
-					isRightStickRight = true;
+					isLeftStickRight = true;
 					stickInput = true;
 				}
 			}
 			// 下壁
 			if (isHitWallBottom) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angleDelta += angularSpeed * 0.016f;
-					isRightStickRight = true;
+					isLeftStickRight = true;
 					stickInput = true;
-				} else if (rightStick_.x > 0.1f) {
+				} else if (leftStick_.x > 0.1f) {
 					angleDelta -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
+					isLeftStickLeft = true;
 					stickInput = true;
 				}
 			}
 			// 左壁
 			if (isHitWallLeft) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angleDelta += angularSpeed * 0.016f;
-					isRightStickRight = true;
+					isLeftStickRight = true;
 					stickInput = true;
-				} else if (rightStick_.x > 0.1f) {
+				} else if (leftStick_.x > 0.1f) {
 					angleDelta -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
+					isLeftStickLeft = true;
 					stickInput = true;
 				}
 			}
 			// 右壁
 			if (isHitWallRight) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angleDelta -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
+					isLeftStickLeft = true;
 					stickInput = true;
-				} else if (rightStick_.x > 0.1f) {
+				} else if (leftStick_.x > 0.1f) {
 					angleDelta += angularSpeed * 0.016f;
-					isRightStickRight = true;
+					isLeftStickRight = true;
 					stickInput = true;
 				}
 			}
@@ -460,10 +460,10 @@ void Hook::BehaviorMoveUpdate() {
 			} else {
 				// 入力がない場合：角速度を減衰し、直前の入力方向で慣性回転
 				angularSpeed *= decelerationRate;
-				if (isRightStickRight) {
+				if (isLeftStickRight) {
 					angle += angularSpeed * 0.016f;
 				}
-				if (isRightStickLeft) {
+				if (isLeftStickLeft) {
 					angle -= angularSpeed * 0.016f;
 				}
 			}
@@ -482,8 +482,8 @@ void Hook::BehaviorMoveUpdate() {
 			// 入力がなく、弧の速度がほぼゼロなら停止
 			if (!stickInput && Vector3::Length(arcMoveVelocity_) < 0.01f) {
 				arcMoveVelocity_ = Vector3(0.0f, 0.0f, 0.0f);
-				isRightStickLeft = false;
-				isRightStickRight = false;
+				isLeftStickLeft = false;
+				isLeftStickRight = false;
 			}
 		}
 		//----------------------------
@@ -498,28 +498,28 @@ void Hook::BehaviorMoveUpdate() {
 				endPos_ = enemyPosition_ - direction * enemyRadius;
 
 				// 右スティックの入力を取得
-				rightStick_ = Input::GetInstance()->GetRightStick();
+				leftStick_ = Input::GetInstance()->GetLeftStick();
 				Vector3 toCenter = playerPosition_ - endPos_;
 				float radius = Vector3::Length(toCenter);
 				angle = atan2(toCenter.z, toCenter.x);
 
 				// 右スティック入力を小数第3位で丸める
-				rightStick_.x = round(rightStick_.x * 1000) / 1000;
-				rightStick_.y = round(rightStick_.y * 1000) / 1000;
+				leftStick_.x = round(leftStick_.x * 1000) / 1000;
+				leftStick_.y = round(leftStick_.y * 1000) / 1000;
 
 				// 右スティック入力による角度更新・フラグ
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
-					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
+				} else if (leftStick_.x > 0.1f) {
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
 				}
 
 				// 角速度・弧の速度更新
-				if (!Input::GetInstance()->RStickInDeadZone()) {
+				if (!Input::GetInstance()->LStickInDeadZone()) {
 					angularSpeed = std::min(maxAngularSpeed, angularSpeed + angularSpeedIncrement * 0.016f);
 
 					Vector3 newPosition;
@@ -530,9 +530,9 @@ void Hook::BehaviorMoveUpdate() {
 					arcMoveVelocity_.z = newPosition.z - playerPosition_.z;
 				} else {
 					angularSpeed *= decelerationRate;
-					if (isRightStickRight) {
+					if (isLeftStickRight) {
 						angle += angularSpeed * 0.016f;
-					} else if (isRightStickLeft) {
+					} else if (isLeftStickLeft) {
 						angle -= angularSpeed * 0.016f;
 					}
 					Vector3 newPosition;
