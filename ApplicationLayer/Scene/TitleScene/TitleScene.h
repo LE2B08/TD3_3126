@@ -1,7 +1,6 @@
 #pragma once
 #include <Sprite.h>
 #include <TextureManager.h>
-#include <WavLoader.h>
 #include <SRVManager.h>
 #include "Input.h"
 #include <BaseScene.h>
@@ -57,8 +56,6 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	TitleState titleState_ = TitleState::Appear;
 	float exitTimer_ = 0.0f;
-
-	std::unique_ptr<WavLoader> wavLoader_;
 
 	std::unique_ptr<TitleObject> titleObject_;
 

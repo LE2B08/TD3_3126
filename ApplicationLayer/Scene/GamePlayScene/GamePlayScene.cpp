@@ -17,6 +17,7 @@
 #endif // _DEBUG
 #include <SkyBoxManager.h>
 #include <SpriteManager.h>
+#include <AudioManager.h>
 
 using namespace Easing;
 
@@ -35,8 +36,6 @@ void GamePlayScene::Initialize()
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
-	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -417,7 +416,7 @@ void GamePlayScene::Draw()
 /// -------------------------------------------------------------
 void GamePlayScene::Finalize()
 {
-
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 
@@ -667,7 +666,6 @@ void GamePlayScene::GameClearUpdate() {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
 			input_->StopVibration();
-			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameClearScene");
 			});
 	}
@@ -695,7 +693,6 @@ void GamePlayScene::GameOverUpdate() {
 
 		fadeManager_->StartFadeToWhite(0.02f, [this]() {
 			input_->StopVibration();
-			wavLoader_->StopBGM();
 			sceneManager_->ChangeScene("GameOverScene");
 			});
 	}
