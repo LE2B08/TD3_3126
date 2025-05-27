@@ -96,7 +96,10 @@
     <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
-    <ClCompile Include="TutorialUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
     <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
     <ClCompile Include="EngineLayer\Audio\AudioManager.cpp" />
     <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp" />
@@ -202,7 +205,10 @@
     <ClInclude Include="ApplicationLayer\EffectLayer\Particle.h" />
     <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
-    <ClInclude Include="TutorialUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
     <ClInclude Include="Externals\Audio\minimp3\minimp3.h" />

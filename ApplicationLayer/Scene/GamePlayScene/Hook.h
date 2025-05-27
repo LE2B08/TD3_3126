@@ -8,7 +8,9 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
+class TutorialEnemy;
 class Field;
 
 
@@ -62,8 +64,14 @@ public: /// ---------- ゲッター ---------- ///
 	float GetPullSpeed() { return pullSpeed_; }
 
 	bool GetIsActive() { return isActive_; }
+	bool GetIsPulling() { return isPulling_; }
+	bool GetIsExtending() { return isExtending_; }
+	bool GetIsMoving() { return isMoving_; }
+	bool GetIsThrowing() { return isThrowing_; }
+	bool GetIsBack() { return isBack_; }
 	bool GetEnemyHit() { return enemyHit_; }
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
+	bool GetIsArcMove() const { return isArcMove_; }
 	Vector3 GetEnemyPosition() { return enemyPosition_; }
 
 public: /// ---------- セッター ---------- ///
@@ -83,9 +91,11 @@ public: /// ---------- セッター ---------- ///
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
@@ -126,9 +136,13 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤー
 	Player* player_ = nullptr;
+	// チュートリアルプレイヤー
+	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
+	// チュートリアルエネミー
+	TutorialEnemy* tutorialEnemy_ = nullptr;
 
 	// フィールド
 	Field* field_ = nullptr;
@@ -197,12 +211,16 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	bool isMoving_ = false;
 
+	 Vector2 prevLeftStick_ = {0.0f, 0.0f};
+	bool isArcMove_ = false;
+
 	Vector3 potentialEndPos;
 
 	// 敵のリスト
 	std::vector<Enemy*> enemies_;
 
 	bool isThrowing_;
+	bool isBack_ = false; // 戻す状態かどうか
 
 	Vector3 enemyHitPosition_; // 敵に当たった位置を保存するメンバ変数
 	bool enemyHit_;            // 敵に当たったかどうかを示すフラグ
@@ -227,10 +245,12 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 状態リクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
-	//
-	Vector2 rightStick_ = {};
-	bool isRightStickRight = false;
-	bool isRightStickLeft = false;
+	// 左スティックの入力
+	Vector2 leftStick_ = {};
+	// 左スティックを右に倒したかどうか
+	bool isLeftStickRight = false;
+	// 左スティックを左に倒したかどうか
+	bool isLeftStickLeft = false;
 
 	///===================================
 	/// 弧

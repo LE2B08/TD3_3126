@@ -1,4 +1,4 @@
-#include "TuboScene.h"
+#include "TutorialScene.h"
 #include "Camera.h"
 #include "Easing.h"
 #include "Object3DCommon.h"
@@ -20,10 +20,11 @@
 
 using namespace Easing;
 
-/// -------------------------------------------------------------
-///				　			　初期化処理
-/// -------------------------------------------------------------
-void TuboScene::Initialize() {
+///-------------------------------------------/// 
+/// 初期化処理
+///-------------------------------------------///
+void TutorialScene::Initialize() {
+
 #ifdef _DEBUG
 	// デバッグカメラの初期化
 	DebugCamera::GetInstance()->Initialize();
@@ -60,7 +61,7 @@ void TuboScene::Initialize() {
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
-  
+
 	// 武器の初期化
 	weapon_->SetTutorialPlayer(player_.get()); // プレイヤーの情報を武器にセット
 	weapon_->SetTutorialEnemy(enemy_.get());   // 敵の情報を武器にセット
@@ -74,7 +75,7 @@ void TuboScene::Initialize() {
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPosition({0.0f, 0.0f, 8.0f});
+	enemy_->SetPosition({ 0.0f, 0.0f, 8.0f });
 	// 敵の弾の情報をセット
 	// enemyBullets_ = &enemy_->GetBullets();
 
@@ -105,11 +106,20 @@ void TuboScene::Initialize() {
 
 	// チュートリアルUIの初期化
 	tutorialUI_->Initialize();
+
+	// テクスチャの読み込み
+	textureManager->LoadTexture("Resources/Green.png");
+	// スプライトの初期化
+	gauge_ = std::make_unique<Sprite>();
+	gauge_->Initialize("Resources/Green.png");
+	gauge_->SetPosition(gaugePosition_);
 }
-/// -------------------------------------------------------------
-///				　			　 更新処理
-/// -------------------------------------------------------------
-void TuboScene::Update() {
+
+///-------------------------------------------/// 
+/// 更新処理
+///-------------------------------------------///
+void TutorialScene::Update() {
+
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F12)) {
 		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
@@ -136,6 +146,13 @@ void TuboScene::Update() {
 	if (input_->TriggerKey(DIK_F3)) {
 		if (sceneManager_) {
 			sceneManager_->ChangeScene("SatouScene");
+		}
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_RETURN)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("GamePlayScene"); // ゲームプレイシーンに戻る
 		}
 	}
 #endif // _DEBUG
@@ -241,10 +258,11 @@ void TuboScene::Update() {
 	fadeManager_->Update();
 }
 
-/// -------------------------------------------------------------
-///				　			　 描画処理
-/// -------------------------------------------------------------
-void TuboScene::Draw() {
+///-------------------------------------------/// 
+/// 描画処理
+///-------------------------------------------///
+void TutorialScene::Draw() {
+
 #pragma region スカイボックスの描画
 
 	// スカイボックスの描画設定
@@ -261,6 +279,7 @@ void TuboScene::Draw() {
 #pragma endregion
 
 #pragma region オブジェクト3Dの描画
+
 	// オブジェクト3D共通描画設定
 	Object3DCommon::GetInstance()->SetRenderSetting();
 
@@ -331,22 +350,32 @@ void TuboScene::Draw() {
 		case TutorialSteps::PlayerRotation:
 			// プレイヤーの回転のUIの描画
 			tutorialUI_->RotationDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookThrowAndBack:
 			// フックを投げて戻すのUIの描画
 			tutorialUI_->ThrowDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookArcMove:
 			// フックの弧を描く移動のUIの描画
 			tutorialUI_->ArcDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::HookMove:
 			// フックの移動のUIの描画
 			tutorialUI_->MoveDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 		case TutorialSteps::Attack:
 			// 攻撃のUIの描画
 			tutorialUI_->AttackDraw();
+			// ゲージの描画
+			gauge_->Draw();
 			break;
 
 		case TutorialSteps::End:
@@ -368,7 +397,6 @@ void TuboScene::Draw() {
 	// フェードマネージャーの描画（ここから下は書かない）
 	fadeManager_->Draw();
 
-
 #pragma endregion
 
 #ifdef _DEBUG
@@ -380,16 +408,17 @@ void TuboScene::Draw() {
 	// Wireframe::GetInstance()->DrawGrid(100.0f, 20.0f, { 0.25f, 0.25f, 0.25f,1.0f });
 }
 
-/// -------------------------------------------------------------
-///				　			　 終了処理
-/// -------------------------------------------------------------
-void TuboScene::Finalize() {}
+///-------------------------------------------/// 
+/// 終了処理
+///-------------------------------------------///
+void TutorialScene::Finalize() {
+}
 
-/// -------------------------------------------------------------
-///				　			ImGui描画処理
-/// -------------------------------------------------------------
+///-------------------------------------------/// 
+/// ImGuiの描画処理
+///-------------------------------------------///
+void TutorialScene::DrawImGui() {
 
-void TuboScene::DrawImGui() {
 	enemy_->ShowImGui("Enemy");
 
 	// SceneStatusの表示
@@ -398,14 +427,14 @@ void TuboScene::DrawImGui() {
 
 	// TutorialStepsの表示
 	ImGui::Text(
-	    "TutorialSteps: %s", tutorialSteps_ == TutorialSteps::Start              ? "Start"
-	                         : tutorialSteps_ == TutorialSteps::PlayerRotation   ? "PlayerRotation"
-	                         : tutorialSteps_ == TutorialSteps::HookThrowAndBack ? "HookThrowAndBack"
-	                         : tutorialSteps_ == TutorialSteps::HookArcMove      ? "HookArcMove"
-	                         : tutorialSteps_ == TutorialSteps::HookMove         ? "HookMove"
-	                         : tutorialSteps_ == TutorialSteps::Attack           ? "Attack"
-	                         : tutorialSteps_ == TutorialSteps::End              ? "End"
-	                                                                             : "Unknown");
+		"TutorialSteps: %s", tutorialSteps_ == TutorialSteps::Start ? "Start"
+		: tutorialSteps_ == TutorialSteps::PlayerRotation ? "PlayerRotation"
+		: tutorialSteps_ == TutorialSteps::HookThrowAndBack ? "HookThrowAndBack"
+		: tutorialSteps_ == TutorialSteps::HookArcMove ? "HookArcMove"
+		: tutorialSteps_ == TutorialSteps::HookMove ? "HookMove"
+		: tutorialSteps_ == TutorialSteps::Attack ? "Attack"
+		: tutorialSteps_ == TutorialSteps::End ? "End"
+		: "Unknown");
 
 	// --- ゲージ表示 ---
 	// プレイヤー回転（時間ゲージ）
@@ -447,10 +476,11 @@ void TuboScene::DrawImGui() {
 	ImGui::End();
 }
 
-/// -------------------------------------------------------------
-///				　			衝突判定と応答
-/// -------------------------------------------------------------
-void TuboScene::CheckAllCollisions() {
+///-------------------------------------------/// 
+/// 衝突判定と応答処理
+///-------------------------------------------///
+void TutorialScene::CheckAllCollisions() {
+
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
@@ -476,9 +506,17 @@ void TuboScene::CheckAllCollisions() {
 	collisionManager_->CheckAllCollisions();
 }
 
-void TuboScene::TutorialStartInitialize() {}
+///-------------------------------------------/// 
+/// チュートリアル開始時初期化
+///-------------------------------------------///
+void TutorialScene::TutorialStartInitialize() {
+}
 
-void TuboScene::TutorialStartUpdate() {
+///-------------------------------------------/// 
+/// チュートリアル開始時更新
+///-------------------------------------------///
+void TutorialScene::TutorialStartUpdate() {
+
 	// Aボタンが押されたら
 	if (Input::GetInstance()->PushButton(0)) {
 
@@ -487,27 +525,55 @@ void TuboScene::TutorialStartUpdate() {
 	}
 }
 
-void TuboScene::TutorialPlayerRotationInitialize() { rotationStepTimer_ = 0.0f; }
+///-------------------------------------------/// 
+/// プレイヤーの回転初期化
+///-------------------------------------------///
+void TutorialScene::TutorialPlayerRotationInitialize() {
 
+	rotationStepTimer_ = 0.0f;
+}
 
-void TuboScene::TutorialPlayerRotationUpdate() {
+///-------------------------------------------/// 
+/// プレイヤーの回転更新
+///-------------------------------------------///
+void TutorialScene::TutorialPlayerRotationUpdate() {
+
 	static constexpr float kRotationStepWaitTime = 3.0f;
 
 	if (player_->GetIsRotation()) {
 		rotationStepTimer_ += ImGui::GetIO().DeltaTime; // フレーム時間を加算
+	}
 
-		if (rotationStepTimer_ >= kRotationStepWaitTime) {
+	// ゲージの進行度を更新
+	GaugeProgress(rotationStepTimer_, kRotationStepWaitTime);
+
+	// タイマーが指定時間を超えたら
+	if (rotationStepTimer_ >= kRotationStepWaitTime) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの投げ戻しに変更
 			SetTutorialStep(TutorialSteps::HookThrowAndBack);
-			rotationStepTimer_ = 0.0f; // タイマーリセット
+			rotationStepTimer_ = 0.0f;
 		}
 	}
 }
 
-void TuboScene::TutorialHookThrowAndBackInitialize() {
+///-------------------------------------------/// 
+/// フックの投げ戻し初期化
+///-------------------------------------------///
+void TutorialScene::TutorialHookThrowAndBackInitialize() {
+
 	hookThrowCount_ = 0;
 	hookBackCount_ = 0;
 }
-void TuboScene::TutorialHookThrowAndBackUpdate() {
+
+///-------------------------------------------/// 
+/// フックの投げ戻し更新
+///-------------------------------------------///
+void TutorialScene::TutorialHookThrowAndBackUpdate() {
+
 	// フックを投げた回数をカウント
 	static bool prevIsThrow = false;
 	static bool prevIsBack = false;
@@ -526,30 +592,69 @@ void TuboScene::TutorialHookThrowAndBackUpdate() {
 	prevIsThrow = isThrow;
 	prevIsBack = isBack;
 
-	// 2回ずつ行われたら次へ
-	if (hookThrowCount_ >= 2 && hookBackCount_ >= 2) {
-		SetTutorialStep(TutorialSteps::HookArcMove);
+	// ゲージの進行度を更新
+	GaugeProgress((float)hookThrowCount_, (float)maxHookThrowCount_);
+
+	// 投げ戻しの回数がそれぞれ最大値に達したら
+	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの弧を描く移動に変更
+			SetTutorialStep(TutorialSteps::HookArcMove);
+		}
 	}
 }
 
+///-------------------------------------------/// 
+/// 弧の移動初期化
+///-------------------------------------------///
+void TutorialScene::TutorialHookArcMoveInitialize() {
 
-void TuboScene::TutorialHookArcMoveInitialize() { arcMoveStepTimer_ = 0.0f; }
+	arcMoveStepTimer_ = 0.0f;
+}
 
-void TuboScene::TutorialHookArcMoveUpdate() {
+///-------------------------------------------/// 
+/// 弧の移動更新
+///-------------------------------------------///
+void TutorialScene::TutorialHookArcMoveUpdate() {
+
 	static constexpr float kArcMoveStepWaitTime = 5.0f;
 
 	if (hook_->GetIsArcMove()) {
 		arcMoveStepTimer_ += ImGui::GetIO().DeltaTime;
-		if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
+	}
+
+	// ゲージの進行度を更新
+	GaugeProgress(arcMoveStepTimer_, kArcMoveStepWaitTime);
+
+	// タイマーが指定時間を超えたら
+	if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップをフックの移動に変更
 			SetTutorialStep(TutorialSteps::HookMove);
 			arcMoveStepTimer_ = 0.0f;
 		}
-	} 
+	}
 }
 
-void TuboScene::TutorialHookMoveInitialize() { hookActiveCount_ = 0; }
+///-------------------------------------------/// 
+/// フックの移動初期化
+///-------------------------------------------///
+void TutorialScene::TutorialHookMoveInitialize() {
 
-void TuboScene::TutorialHookMoveUpdate() {
+	hookActiveCount_ = 0;
+}
+
+///-------------------------------------------/// 
+/// フックの移動更新
+///-------------------------------------------///
+void TutorialScene::TutorialHookMoveUpdate() {
+
 	static bool prevIsActive = false;
 	bool isActive = hook_->GetIsPulling();
 
@@ -559,15 +664,34 @@ void TuboScene::TutorialHookMoveUpdate() {
 	}
 	prevIsActive = isActive;
 
-	// 3回になったら次へ
-	if (hookActiveCount_ >= 3) {
-		SetTutorialStep(TutorialSteps::Attack);
+	// ゲージの進行度を更新
+	GaugeProgress((float)hookActiveCount_, static_cast<float>(maxHookActiveCount_));
+
+	// 最大回数になったら
+	if (hookActiveCount_ >= maxHookActiveCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+
+			// チュートリアルステップを攻撃に変更
+			SetTutorialStep(TutorialSteps::Attack);
+		}
 	}
 }
-void TuboScene::TutorialAttackInitialize() { playerAttackCount_ = 0; }
 
+///-------------------------------------------/// 
+/// 攻撃の初期化
+///-------------------------------------------///
+void TutorialScene::TutorialAttackInitialize() {
 
-void TuboScene::TutorialAttackUpdate() {
+	playerAttackCount_ = 0;
+}
+
+///-------------------------------------------/// 
+/// 攻撃の更新
+///-------------------------------------------///
+void TutorialScene::TutorialAttackUpdate() {
+
 	static bool prevIsAttack = false;
 	bool isAttack = player_->GetIsAttack();
 
@@ -577,15 +701,30 @@ void TuboScene::TutorialAttackUpdate() {
 	}
 	prevIsAttack = isAttack;
 
-	// 3回になったら次へ
-	if (playerAttackCount_ >= 3) {
-		SetTutorialStep(TutorialSteps::End);
+	// ゲージの進行度を更新
+	GaugeProgress((float)playerAttackCount_, static_cast<float>(maxPlayerAttackCount_));
+
+	// 最大回数になったら
+	if (playerAttackCount_ >= maxPlayerAttackCount_) {
+
+		// Aボタンが押されたら
+		if (Input::GetInstance()->PushButton(0)) {
+			// チュートリアルステップをチュートリアル終了に変更
+			SetTutorialStep(TutorialSteps::End);
+		}
 	}
 }
 
-void TuboScene::PlayInitialize() {}
+///-------------------------------------------/// 
+/// シーン初期化
+///-------------------------------------------///
+void TutorialScene::PlayInitialize() {
+}
 
-void TuboScene::PlayUpdate() {
+///-------------------------------------------/// 
+/// シーン更新
+///-------------------------------------------///
+void TutorialScene::PlayUpdate() {
 
 	hook_->Update();
 	// プレイヤーの位置をフックにセット
@@ -619,19 +758,16 @@ void TuboScene::PlayUpdate() {
 	tutorialUI_->Update();
 }
 
-void TuboScene::TutorialEndInitialize() {}
+///-------------------------------------------/// 
+/// ポーズ初期化
+///-------------------------------------------///
+void TutorialScene::PauseInitialize() {
+}
 
-void TuboScene::TutorialEndUpdate() {}
-
-/// -------------------------------------------------------------
-///				　		  ポーズ初期化
-/// -------------------------------------------------------------
-void TuboScene::PauseInitialize() {}
-
-/// -------------------------------------------------------------
-///				　		   ポーズ更新
-/// -------------------------------------------------------------
-void TuboScene::PauseUpdate() {
+///-------------------------------------------/// 
+/// ポーズ更新
+///-------------------------------------------///
+void TutorialScene::PauseUpdate() {
 
 	// ポーズメニューの更新
 	pauseMenu_->Update();
@@ -668,7 +804,23 @@ void TuboScene::PauseUpdate() {
 	}
 }
 
-void TuboScene::SetTutorialStep(TutorialSteps step) {
+///-------------------------------------------/// 
+/// チュートリアル終了初期化
+///-------------------------------------------///
+void TutorialScene::TutorialEndInitialize() {
+}
+
+///-------------------------------------------/// 
+/// チュートリアル終了更新
+///-------------------------------------------///
+void TutorialScene::TutorialEndUpdate() {
+}
+
+///-------------------------------------------/// 
+/// チュートリアルステップを設定
+///-------------------------------------------///
+void TutorialScene::SetTutorialStep(TutorialSteps step) {
+
 	tutorialSteps_ = step;
 	switch (tutorialSteps_) {
 	case TutorialSteps::Start:
@@ -695,4 +847,25 @@ void TuboScene::SetTutorialStep(TutorialSteps step) {
 	default:
 		break;
 	}
+}
+
+void TutorialScene::GaugeProgress(float count, float maxCount) {
+
+	// カウントが最大値を超えたら
+	if (count > maxCount) {
+
+		count = maxCount; // 最大値に制限
+	}
+
+	// 進行度の割合を計算
+	const float progressRatio_ = count / maxCount;
+
+	// ゲージのサイズを計算
+	Vector2 size = { gaugeDefaultSize_.x * progressRatio_, gaugeDefaultSize_.y };
+
+	// ゲージにサイズを設定
+	gauge_->SetSize(size);
+
+	// ゲージの更新
+	gauge_->Update();
 }

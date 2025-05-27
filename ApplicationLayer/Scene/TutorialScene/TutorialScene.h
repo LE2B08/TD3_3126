@@ -25,26 +25,21 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
-#include "TutorialScene.h"
+// チュートリアルの流れ
+enum class TutorialSteps {
+	Start,            // 初め
+	PlayerRotation,   // プレイヤーの回転
+	HookThrowAndBack, // フックの投げ、戻す
+	HookArcMove,      // フックの弧を描く移動
+	HookMove,         // フックの移動
+	Attack,           // 攻撃
+	End,              // 終わり
+};
 
-//// チュートリアルの流れ
-//enum class TutorialSteps {
-//	Start,            // 初め
-//	PlayerRotation,   // プレイヤーの回転
-//	HookThrowAndBack, // フックの投げ、戻す
-//	HookArcMove,      // フックの弧を描く移動
-//	HookMove,         // フックの移動
-//	Attack,           // 攻撃
-//	End,              // 終わり
-//
-//};
-//
-//enum class SceneStatus {
-//
-//	Play,
-//	Pause,
-//
-//};
+enum class SceneStatus {
+	Play,
+	Pause,
+};
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -52,10 +47,12 @@ class Input;
 class Camera;
 
 /// -------------------------------------------------------------
-///					　	ツボキ専用クラス
+///				　		チュートリアルシーン
 /// -------------------------------------------------------------
-class TuboScene : public BaseScene {
+class TutorialScene : public BaseScene
+{
 public: /// ---------- メンバ関数 ---------- ///
+
 	// 初期化処理
 	void Initialize() override;
 
@@ -68,10 +65,10 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 終了処理
 	void Finalize() override;
 
-	// ImGui描画処理
 	void DrawImGui() override;
 
-private: /// ---------- メンバ関数 ---------- ///
+public: /// ---------- クラス内関数 ---------- ///
+
 	// 衝突判定と応答
 	void CheckAllCollisions();
 
@@ -121,17 +118,20 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	void SetTutorialStep(TutorialSteps step);
 
-private: /// ---------- メンバ変数 ---------- ///
-	DirectXCommon* dxCommon_ = nullptr;
-	TextureManager* textureManager = nullptr;
-	Input* input_ = nullptr;
-	ParticleManager* particleManager = nullptr;
-	Camera* camera_ = nullptr;
+	// ゲージの進行度
+	void GaugeProgress(float count, float maxCount);
 
+private: /// ---------- メンバ変数 ---------- ///
+	
+	DirectXCommon* dxCommon_ = nullptr;
+	Input* input_ = nullptr;
+	Camera* camera_ = nullptr;
+	TextureManager* textureManager = nullptr;
+	ParticleManager* particleManager = nullptr;
+
+	std::unique_ptr<WavLoader> wavLoader_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
-
-	// std::unique_ptr<EffectManager> effectManager_;
 
 	std::string particleGroupName;
 
@@ -162,7 +162,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<SkyBox> skyBox_;
 
 	/*------カメラの座標------*/
-	Vector3 cameraPosition_ = {0.0f, 50.0f, 0.0f};
+	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };
 
 	/*------ゲーム開始演出------*/
 
@@ -182,9 +182,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// プレイヤーの矢印
 	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
 
-	/// -------------------------------------------------------------
-	///					　		TutorialUI
-	///
+///-------------------------------------------/// 
+/// チュートリアル用UI
+///-------------------------------------------///
+	
 	// チュートリアルUIのスプライト
 	std::unique_ptr<TutorialUI> tutorialUI_ = nullptr;
 
@@ -201,4 +202,22 @@ private: /// ---------- メンバ変数 ---------- ///
 	int hookActiveCount_ = 0;
 	// 攻撃が行われた回数
 	int playerAttackCount_ = 0;
+
+	// フックを投げる最大回数
+	const int maxHookThrowCount_ = 2;
+	// フックを戻す最大回数
+	const int maxHookBackCount_ = 2;
+	// フックの移動最大回数
+	const int maxHookActiveCount_ = 3;
+	// プレイヤーの攻撃最大回数
+	const int maxPlayerAttackCount_ = 3;
+
+	// ゲージ用スプライト
+	std::unique_ptr<Sprite> gauge_;
+
+	// ゲージの位置(左上)
+	Vector2 gaugePosition_ = { 0.0f, 0.0f };
+
+	// ゲージのデフォルトサイズ
+	const Vector2 gaugeDefaultSize_ = { 640.0f, 32.0f };
 };

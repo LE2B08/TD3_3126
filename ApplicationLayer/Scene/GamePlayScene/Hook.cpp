@@ -4,6 +4,7 @@
 #include "Field.h"
 #include "Input.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
@@ -33,6 +34,12 @@ void Hook::Update() {
 		playerVelocity_ = player_->GetVelocity();
 		playerAcceleration_ = player_->GetAcceleration();
 		isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
+	} else if (tutorialPlayer_) {
+		playerPosition_ = tutorialPlayer_->GetPosition();
+		playerRotation_ = tutorialPlayer_->GetRotation();
+		playerVelocity_ = tutorialPlayer_->GetVelocity();
+		playerAcceleration_ = tutorialPlayer_->GetAcceleration();
+		isHitPlayerToEnemy_ = tutorialPlayer_->GetIsHitEnemy();
 	}
 
 	// フックの状態ごとの更新を行う
@@ -155,6 +162,7 @@ void Hook::BehaviorThrowInitialize() {
 	isActive_ = false;
 	isThrowing_ = false;
 	isExtending_ = false;
+	isBack_ = false;
 	angularSpeed = 0.0f;
 	playerVelocity_ = {0.0f, 0.0f, 0.0f};
 	playerAcceleration_ = {0.0f, 0.0f, 0.0f};
@@ -227,7 +235,7 @@ void Hook::BehaviorThrowUpdate() {
 /// -------------------------------------------------------------
 ///						フックを伸ばす初期化処理
 /// -------------------------------------------------------------
-void Hook::BehaviorExtendInitialize() {}
+void Hook::BehaviorExtendInitialize() { isBack_ = false; }
 
 /// -------------------------------------------------------------
 ///						フックを伸ばす更新処理
@@ -263,6 +271,7 @@ void Hook::BehaviorExtendUpdate() {
 void Hook::BehaviorMoveInitialize() {
 	// フックの初期化
 	isPulling_ = false;
+	isBack_ = false;
 }
 
 /// -------------------------------------------------------------
@@ -300,7 +309,21 @@ void Hook::BehaviorMoveUpdate() {
 	// 弧の動きは外積を使って計算を一度やってみて
 
 	// 右スティックの入力を取得
-	rightStick_ = Input::GetInstance()->GetRightStick();
+	leftStick_ = Input::GetInstance()->GetLeftStick();
+
+	     // isArcMove_の判定
+	if (!isPulling_) {
+		if (playerVelocity_.x != 0.0f || playerVelocity_.y != 0.0f || playerVelocity_.z != 0.0f) {
+			isArcMove_ = true;
+		} else {
+			isArcMove_ = false;
+		}
+	} else {
+		isArcMove_ = false;
+	}
+
+
+
 	// フックの終点から中心へのベクトルを計算
 	Vector3 toCenter = playerPosition_ - endPos_;
 	// フックの終点から中心までの距離を計算
@@ -317,8 +340,8 @@ void Hook::BehaviorMoveUpdate() {
 			angle = atan2(toCenter.z, toCenter.x);
 
 			// 右スティックの小数点三桁の四捨五入
-			rightStick_.x = round(rightStick_.x * 1000) / 1000;
-			rightStick_.y = round(rightStick_.y * 1000) / 1000;
+			leftStick_.x = round(leftStick_.x * 1000) / 1000;
+			leftStick_.y = round(leftStick_.y * 1000) / 1000;
 
 			// 右スティックの入力に応じて角度を変更
 			// あたっている壁の方向ごとに角度を変更
@@ -328,15 +351,17 @@ void Hook::BehaviorMoveUpdate() {
 			/////
 
 			if (endPos_.z >= maxMoveLimit_.z) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle -= angularSpeed * 0.016f;
 
-					isRightStickLeft = true;
-					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
+          
+				} else if (leftStick_.x > 0.1f) {
+          
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
 				}
 			}
 
@@ -345,14 +370,17 @@ void Hook::BehaviorMoveUpdate() {
 			/////
 
 			if (endPos_.z <= minMoveLimit_.z) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
-				} else if (rightStick_.x > 0.1f) {
+          
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
+          
+				} else if (leftStick_.x > 0.1f) {
+          
 					angle -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
-					isRightStickRight = false;
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
 				}
 			}
 
@@ -361,14 +389,16 @@ void Hook::BehaviorMoveUpdate() {
 			/////
 
 			if (endPos_.x <= minMoveLimit_.x) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
-				} else if (rightStick_.x > 0.1f) {
+
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
+				} else if (leftStick_.x > 0.1f) {
+
 					angle -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
-					isRightStickRight = false;
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
 				}
 			}
 
@@ -377,19 +407,21 @@ void Hook::BehaviorMoveUpdate() {
 			/////
 
 			if (endPos_.x >= maxMoveLimit_.x) {
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
-					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
+				} else if (leftStick_.x > 0.1f) {
+
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
 				}
 			}
 
 			// 右スティックの入力がある場合のみ弧の動きを計算
-			if (!Input::GetInstance()->RStickInDeadZone()) {
+			if (!Input::GetInstance()->LStickInDeadZone()) {
 				// 角速度を徐々に増加させる
 				angularSpeed = std::min(maxAngularSpeed, angularSpeed + angularSpeedIncrement * 0.016f);
 
@@ -418,9 +450,9 @@ void Hook::BehaviorMoveUpdate() {
 				angularSpeed *= decelerationRate;
 
 				// 角度を更新
-				if (isRightStickRight) {
+				if (isLeftStickRight) {
 					angle += angularSpeed * 0.016f;
-				} else if (isRightStickLeft) {
+				} else if (isLeftStickLeft) {
 					angle -= angularSpeed * 0.016f;
 				}
 
@@ -437,6 +469,7 @@ void Hook::BehaviorMoveUpdate() {
 
 				// 速度が非常に小さくなったら停止
 				if (Vector3::Length(playerVelocity_) < 0.01f) {
+
 					playerVelocity_ = Vector3(0.0f, 0.0f, 0.0f);
 				}
 			}
@@ -449,7 +482,7 @@ void Hook::BehaviorMoveUpdate() {
 			if (enemyHit_) {
 				endPos_ = enemyPosition_;
 				// 右スティックの入力を取得
-				rightStick_ = Input::GetInstance()->GetRightStick();
+				leftStick_ = Input::GetInstance()->GetLeftStick();
 				// フックの終点から中心へのベクトルを計算
 				Vector3 toCenter = playerPosition_ - endPos_;
 				// フックの終点から中心までの距離を計算
@@ -458,21 +491,22 @@ void Hook::BehaviorMoveUpdate() {
 				angle = atan2(toCenter.z, toCenter.x);
 
 				// 右スティックの小数点三桁の四捨五入
-				rightStick_.x = round(rightStick_.x * 1000) / 1000;
-				rightStick_.y = round(rightStick_.y * 1000) / 1000;
+				leftStick_.x = round(leftStick_.x * 1000) / 1000;
+				leftStick_.y = round(leftStick_.y * 1000) / 1000;
 
 				// 右スティックの入力に応じて角度を変更
-				if (rightStick_.x < -0.1f) {
+				if (leftStick_.x < -0.1f) {
 					angle -= angularSpeed * 0.016f;
-					isRightStickLeft = true;
-					isRightStickRight = false;
-				} else if (rightStick_.x > 0.1f) {
+					isLeftStickLeft = true;
+					isLeftStickRight = false;
+				} else if (leftStick_.x > 0.1f) {
+
 					angle += angularSpeed * 0.016f;
-					isRightStickRight = true;
-					isRightStickLeft = false;
+					isLeftStickRight = true;
+					isLeftStickLeft = false;
 				}
 				// 右スティックの入力がある場合のみ弧の動きを計算
-				if (!Input::GetInstance()->RStickInDeadZone()) {
+				if (!Input::GetInstance()->LStickInDeadZone()) {
 					// 角速度を徐々に増加させる
 					angularSpeed = std::min(maxAngularSpeed, angularSpeed + angularSpeedIncrement * 0.016f);
 
@@ -501,9 +535,11 @@ void Hook::BehaviorMoveUpdate() {
 					angularSpeed *= decelerationRate;
 
 					// 角度を更新
-					if (isRightStickRight) {
+					if (isLeftStickRight) {
 						angle += angularSpeed * 0.016f;
-					} else if (isRightStickLeft) {
+
+					} else if (isLeftStickLeft) {
+
 						angle -= angularSpeed * 0.016f;
 					}
 
@@ -586,9 +622,20 @@ void Hook::BehaviorMoveUpdate() {
 					isActive_ = false;
 					// フックの状態をなしに変更
 					behaviorRequest_ = Behavior::None;
+          
+				} else {
+					// フックの方向に向かって移動
+					direction.Normalize(direction);
+					Vector3 newPosition = playerPosition_ + direction * speed_ * 0.016f; // 0.016fは1フレームの時間（約60FPS）
+
+					// 壁に触れたらそれ以上ポジションを追加しない
+					if (newPosition.x < minMoveLimit_.x || newPosition.x > maxMoveLimit_.x || newPosition.z < minMoveLimit_.z || newPosition.z > maxMoveLimit_.z) {
+						isActive_ = false;
+					} else {
+						playerPosition_ = newPosition;
+					}
 				}
-
-
+        
 			} else {
 
 				///===============
@@ -621,15 +668,20 @@ void Hook::BehaviorMoveUpdate() {
 	}
 }
 
+
 /// -------------------------------------------------------------
 ///						フックを戻す初期化処理
 /// -------------------------------------------------------------
-void Hook::BehaviorBackInitialize() {}
+void Hook::BehaviorBackInitialize() { isBack_ = false; }
+
 
 /// -------------------------------------------------------------
 ///						フックを戻す更新処理
 /// -------------------------------------------------------------
 void Hook::BehaviorBackUpdate() {
+
+	isBack_ = true;
+
 	// フックの終了位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 	playerVelocity_ *= backDecelerationRate;
