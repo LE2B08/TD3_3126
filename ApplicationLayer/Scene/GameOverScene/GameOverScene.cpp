@@ -83,8 +83,6 @@ void GameOverScene::Update()
 				sceneManager_->ChangeScene("TitleScene"); // シーン名を指定して変更
 				});
 		}
-
-		wavLoader_->StopBGM();
 	}
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_F1))
