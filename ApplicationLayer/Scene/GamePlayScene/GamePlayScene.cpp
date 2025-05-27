@@ -122,6 +122,9 @@ void GamePlayScene::Initialize()
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	tutorialUI_ = std::make_unique<TutorialUI>();
+	tutorialUI_->Initialize();
 }
 
 
@@ -158,6 +161,18 @@ void GamePlayScene::Update()
 			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
+	if (input_->TriggerKey(DIK_K)) {
+		tutorialUI_->PlayerHPGuideAppear();
+	}
+	if (input_->TriggerKey(DIK_L)) {
+		tutorialUI_->PlayerHPGuideDisappear();
+	}
+	if (input_->TriggerKey(DIK_Y)) {
+		tutorialUI_->EnemyHPGuideAppear();
+	}
+	if (input_->TriggerKey(DIK_U)) {
+		tutorialUI_->EnemyHPGuideDisappear();
+	}
 #endif // _DEBUG
 
 	if (player_->GetIsHitEnemy()) {
@@ -166,7 +181,6 @@ void GamePlayScene::Update()
 			effectManager_->GetInstance()->SetIsCameraShaking(true);
 		}
 	}
-	
 
 	// 次の状態がリクエストされたら
 	if (nextGameState_) {
@@ -259,6 +273,8 @@ void GamePlayScene::Update()
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 	CheckAllCollisions();// 衝突判定と応答
+
+	tutorialUI_->Update();
 
 	// フェードマネージャの更新（ここから下は書かない）
 	fadeManager_->Update();
@@ -396,7 +412,7 @@ void GamePlayScene::Draw()
 	default:
 		break;
 	}
-
+	tutorialUI_->Draw();
 	// フェードマネージャーの描画（ここから下は書かない）
 	fadeManager_->Draw();
 
@@ -430,6 +446,7 @@ void GamePlayScene::DrawImGui()
 	enemyUI_->DrawImGui();
 	player_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
+	tutorialUI_->DrawImGui();
 	pauseMenu_->ShowImGui();
 	ImGui::Begin("SceneManager");
 	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());

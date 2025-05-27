@@ -201,6 +201,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
     <ClCompile Include="EngineLayer\Managers\ParameterManager\ParticleFactory.cpp" />
+    <ClCompile Include="TutorialUI.cpp" />
     <ClCompile Include="WinMain.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -348,6 +349,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
     <ClInclude Include="EngineLayer\Managers\ParameterManager\ParticleEffectType.h" />
     <ClInclude Include="EngineLayer\Managers\ParameterManager\ParticleFactory.h" />
+    <ClInclude Include="TutorialUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

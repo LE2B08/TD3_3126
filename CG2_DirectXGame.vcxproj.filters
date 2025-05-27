@@ -97,6 +97,7 @@
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
     <ClCompile Include="EngineLayer\Managers\ParameterManager\ParticleFactory.cpp" />
+    <ClCompile Include="TutorialUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -201,6 +202,7 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
     <ClInclude Include="EngineLayer\Managers\ParameterManager\ParticleFactory.h" />
     <ClInclude Include="EngineLayer\Managers\ParameterManager\ParticleEffectType.h" />
+    <ClInclude Include="TutorialUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
