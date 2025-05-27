@@ -66,7 +66,7 @@ void Player::Update() {
 	}
 
 	// 攻撃を入力したら攻撃開始
-	if (input_->TriggerButton(XButtons.X) && behavior_ == Behavior::kRoot) {
+	if (input_->TriggerButton(8) && behavior_ == Behavior::kRoot) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 
