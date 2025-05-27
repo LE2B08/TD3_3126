@@ -11,7 +11,6 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
-class TutorialPlayer;
 class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
@@ -184,8 +183,6 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// プレイヤー
 	Player* player_;
-	// チュートリアルプレイヤー
-	TutorialPlayer* tutorialPlayer_;
 
 	// 状態
 	Behavior behavior_ = Behavior::Normal;

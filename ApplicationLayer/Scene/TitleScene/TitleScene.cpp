@@ -92,12 +92,6 @@ void TitleScene::Update()
 	}
 #endif // _DEBUG
 
-	if (input->TriggerKey(DIK_F4)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("TutorialScene");
-		}
-	}
-
 	// Updateの中に状態管理追加
 	switch (titleState_) {
 	case TitleState::Appear:
