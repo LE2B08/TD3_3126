@@ -44,12 +44,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(SolutuinDir)Externals\Audio\minimp3;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\nlohmann;$(SolutionDir)Externals\DirectXTex;$(SolutuinDir)imgui;$(SolutuinDir)Externals\imgui;$(SolutuinDir)Externals\Audio\minimp3;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)..\Generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\Generated\outputs\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -283,6 +283,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="EngineLayer\Base\DXLib\DX12Include.h" />
     <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h" />
     <ClInclude Include="EngineLayer\Base\MultipleStructs\BlendModeType.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Externals\imgui\imconfig.h" />
     <ClInclude Include="Externals\imgui\imgui.h" />
     <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />

@@ -201,6 +201,8 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3.h" />
+    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />
