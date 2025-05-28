@@ -344,43 +344,43 @@ void TutorialScene::Draw() {
 		switch (tutorialSteps_) {
 		case TutorialSteps::Start:
 			// チュートリアル開始のUIの描画
-			tutorialUI_->StartDraw();
+			//tutorialUI_->StartDraw();
 			break;
 
 		case TutorialSteps::PlayerRotation:
 			// プレイヤーの回転のUIの描画
-			tutorialUI_->RotationDraw();
+			//tutorialUI_->RotationDraw();
 			// ゲージの描画
 			gauge_->Draw();
 			break;
 		case TutorialSteps::HookThrowAndBack:
 			// フックを投げて戻すのUIの描画
-			tutorialUI_->ThrowDraw();
+			//tutorialUI_->ThrowDraw();
 			// ゲージの描画
 			gauge_->Draw();
 			break;
 		case TutorialSteps::HookArcMove:
 			// フックの弧を描く移動のUIの描画
-			tutorialUI_->ArcDraw();
+			//tutorialUI_->ArcDraw();
 			// ゲージの描画
 			gauge_->Draw();
 			break;
 		case TutorialSteps::HookMove:
 			// フックの移動のUIの描画
-			tutorialUI_->MoveDraw();
+			//tutorialUI_->MoveDraw();
 			// ゲージの描画
 			gauge_->Draw();
 			break;
 		case TutorialSteps::Attack:
 			// 攻撃のUIの描画
-			tutorialUI_->AttackDraw();
+			//tutorialUI_->AttackDraw();
 			// ゲージの描画
 			gauge_->Draw();
 			break;
 
 		case TutorialSteps::End:
 			// チュートリアル終了のUIの描画
-			tutorialUI_->EndDraw();
+			//tutorialUI_->EndDraw();
 			break;
 		default:
 			break;
