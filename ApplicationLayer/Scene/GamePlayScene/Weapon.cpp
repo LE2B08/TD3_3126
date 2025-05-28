@@ -1,6 +1,8 @@
 #include "Weapon.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 #include "Enemy.h"
+#include "TutorialEnemy.h"
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
 
@@ -29,9 +31,16 @@ void Weapon::Initialize()
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Weapon.gltf");
 
-	object3D_->SetTranslate(player_->GetPosition());
-	object3D_->SetRotate(player_->GetRotation());
-	object3D_->SetScale(player_->GetScale() * Vector3(2.0f, 2.0f, 2.0f));
+	if (player_) {
+		object3D_->SetTranslate(player_->GetPosition());
+		object3D_->SetRotate(player_->GetRotation());
+		object3D_->SetScale(player_->GetScale());
+	}
+	else if (tutorialPlayer_) {
+		object3D_->SetTranslate(tutorialPlayer_->GetPosition());
+		object3D_->SetRotate(tutorialPlayer_->GetRotation());
+		object3D_->SetScale(tutorialPlayer_->GetScale());
+	}
 
 	radius_ = 2.0f;
 
@@ -45,12 +54,25 @@ void Weapon::Initialize()
 /// -------------------------------------------------------------
 void Weapon::Update()
 {
-	// 位置
-	position_ = player_->GetPosition();
-	// 回転
-	rotation_ = player_->GetRotation();
-	// スケール
-	scale_ = player_->GetScale() * Vector3(2.0f, 2.0f, 2.0f);
+	// プレイヤーが存在する場合
+	if (player_) {
+		// 位置
+		position_ = player_->GetPosition();
+		// 回転
+		rotation_ = player_->GetRotation();
+		// スケール
+		scale_ = player_->GetScale();
+	}
+	//プレイヤーがチュートリアル用になっている時
+	else if (tutorialPlayer_) {
+
+		// プレイヤーの位置を取得
+		position_ = tutorialPlayer_->GetPosition();
+		// プレイヤーの回転を取得
+		rotation_ = tutorialPlayer_->GetRotation();
+		// プレイヤーのスケールを取得
+		scale_ = tutorialPlayer_->GetScale();
+	}
 
 	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = { distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_) };
@@ -122,10 +144,19 @@ void Weapon::OnCollision(Collider* other)
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy))
 	{
 		Enemy* enemy = static_cast<Enemy*>(other);
-		uint32_t serialNumber = enemy->GetSerialNumber();
+		TutorialEnemy* tutorialEnemy = static_cast<TutorialEnemy*>(other);
+
+		uint32_t serialNumber = {};
+
+		if (enemy) {
+			enemy->GetSerialNumber();
+		}
+		else if (tutorialEnemy) {
+			serialNumber = tutorialEnemy->GetSerialNumber();
+		}
 
 		// 敵が無敵状態でない場合
-		if (!enemy->GetIsInvincible()) {
+		if (!enemy->GetIsInvincible() || !tutorialEnemy->GetIsInvincible()) {
 			isEnemyHit_ = true; // 敵に当たったフラグを立てる
 		}
 

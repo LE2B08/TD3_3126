@@ -4,6 +4,7 @@
 #include "Field.h"
 #include "Input.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
@@ -33,6 +34,13 @@ void Hook::Update() {
 		playerVelocity_ = player_->GetVelocity();
 		playerAcceleration_ = player_->GetAcceleration();
 		isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
+	}
+	else if (tutorialPlayer_) {
+		playerPosition_ = tutorialPlayer_->GetPosition();
+		playerRotation_ = tutorialPlayer_->GetRotation();
+		playerVelocity_ = tutorialPlayer_->GetVelocity();
+		playerAcceleration_ = tutorialPlayer_->GetAcceleration();
+		isHitPlayerToEnemy_ = tutorialPlayer_->GetIsHitEnemy();
 	}
 
 	// フックの状態ごとの更新を行う
@@ -199,6 +207,7 @@ void Hook::BehaviorThrowInitialize() {
 	isActive_ = false;
 	isThrowing_ = false;
 	isExtending_ = false;
+	isBack_ = false;
 	angularSpeed = 0.0f;
 	playerVelocity_ = {0.0f, 0.0f, 0.0f};
 	playerAcceleration_ = {0.0f, 0.0f, 0.0f};
@@ -271,7 +280,7 @@ void Hook::BehaviorThrowUpdate() {
 /// -------------------------------------------------------------
 ///						フックを伸ばす初期化処理
 /// -------------------------------------------------------------
-void Hook::BehaviorExtendInitialize() {}
+void Hook::BehaviorExtendInitialize() { isBack_ = false; }
 
 /// -------------------------------------------------------------
 ///						フックを伸ばす更新処理
@@ -307,6 +316,7 @@ void Hook::BehaviorExtendUpdate() {
 void Hook::BehaviorMoveInitialize() {
 	// フックの引っ張りフラグをリセット
 	isPulling_ = false;
+	isBack_ = false;
 
 	// 弧の移動速度・引っ張り移動速度をリセット
 	arcMoveVelocity_ = Vector3(0.0f, 0.0f, 0.0f);
@@ -355,6 +365,19 @@ void Hook::BehaviorMoveUpdate() {
 
 	// 右スティックの入力を取得
 	leftStick_ = Input::GetInstance()->GetLeftStick();
+
+	// isArcMove_の判定
+	if (!isPulling_) {
+		if (playerVelocity_.x != 0.0f || playerVelocity_.y != 0.0f || playerVelocity_.z != 0.0f) {
+			isArcMove_ = true;
+		}
+		else {
+			isArcMove_ = false;
+		}
+	}
+	else {
+		isArcMove_ = false;
+	}
 
 	// プレイヤーからフック終点へのベクトル
 	Vector3 toCenter = playerPosition_ - endPos_;
@@ -579,12 +602,15 @@ void Hook::BehaviorMoveUpdate() {
 /// -------------------------------------------------------------
 ///						フックを戻す初期化処理
 /// -------------------------------------------------------------
-void Hook::BehaviorBackInitialize() {}
+void Hook::BehaviorBackInitialize() { isBack_ = true; }
 
 /// -------------------------------------------------------------
 ///						フックを戻す更新処理
 /// -------------------------------------------------------------
 void Hook::BehaviorBackUpdate() {
+
+	isBack_ = true;
+
 	// フックの終了位置をプレイヤーの位置に設定
 	startPos_ = playerPosition_;
 	playerVelocity_ *= backDecelerationRate;

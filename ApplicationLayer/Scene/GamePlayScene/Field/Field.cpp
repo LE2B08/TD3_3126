@@ -89,3 +89,8 @@ void Field::ScalingAnimation() {
 		isScaleEnd_ = true;
 	}
 }
+
+void Field::TutorialScale() {
+	
+	scale_ = defaultScale_ * 2.0f;
+}
