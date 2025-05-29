@@ -23,6 +23,8 @@ public: /// ---------- メンバ関数 ---------- ///
 	// スタート時の拡縮の挙動
 	void ScalingAnimation();
 
+	void TutorialScale();
+
 public: /// ---------- ゲッター ---------- ///
 
 	Vector3 GetMinPosition() { return minPosition_; }
@@ -76,6 +78,6 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	const Vector3 startScale_ = { 0.0f,0.0f,0.0f };
 
-	const Vector3 defaultScale_ = { 10.0f,1.0f,10.0f };
+	const Vector3 defaultScale_ = { 10.0f * 3.0f,1.0f,10.0f * 3.0f };
 };
 

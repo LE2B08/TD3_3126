@@ -3,11 +3,13 @@
 
 /// === 前方宣言 === ///
 class Input;
+class SceneManager;
 
 // メニューの状態
 enum class MenuState {
 	ReturnToGame,
 	HowToPlay,
+	CameraShakeOn,
 	ReturnToTitle,
 };
 
@@ -40,6 +42,10 @@ public:
 public:
 
 	MenuState GetMenuState() const { return menuState_; }
+
+	bool IsCameraShakeOn() const {return isCameraShakeOn_;}
+
+	void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -94,9 +100,26 @@ private:
 	// 操作方法の位置
 	Vector2 HowToPlayPos_ = { 0.0f, 0.0f };
 
+	// カメラの揺れ : ON
+	std::unique_ptr<Sprite> cameraShakeOn_ = nullptr;
+
+	// カメラの揺れの位置
+	Vector2 cameraShakeOnTextPos_ = { 0.0f, 0.0f };
+
+	// カメラの揺れ : OFF
+	std::unique_ptr<Sprite> cameraShakeOff_ = nullptr;
+
+	// カメラの揺れの位置
+	Vector2 cameraShakeOffTextPos_ = { 0.0f, 0.0f };
+
 	// 選択しているメニューの状態
 	MenuState menuState_ = MenuState::ReturnToGame;
 
 	// 操作方法の表示フラグ
 	bool isHowToPlay_ = false;
+
+	// カメラ揺れON/OFFフラグ
+	bool isCameraShakeOn_ = true;
+
+	SceneManager* sceneManager_ = nullptr;
 };

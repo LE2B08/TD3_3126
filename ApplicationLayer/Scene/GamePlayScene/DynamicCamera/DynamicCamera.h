@@ -3,7 +3,9 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
+class TutorialEnemy;
 
 /// -------------------------------------------------------------
 ///					ダイナミックカメラクラス
@@ -34,11 +36,20 @@ public: /// ---------- セッター ---------- ///
 	// 移動の取得
 	const Vector3& GetTranslate() const { return worldTransform_.translate_; }
 
+	// 座標のセット
+	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
+
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
 
+	// チュートリアルプレイヤーの設定
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+
+	// チュートリアル敵の設定
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -48,8 +59,14 @@ private: /// ---------- メンバ変数 ---------- ///
 	// プレイヤー借りポインタ
 	Player* player_ = nullptr;
 
+	// チュートリアルプレイヤー借りポインタ
+	TutorialPlayer* tutorialPlayer_ = nullptr;
+
 	// 敵借りポインタ
 	Enemy* enemy_ = nullptr;
+
+	// チュートリアル敵借りポインタ
+	TutorialEnemy* tutorialEnemy_ = nullptr;
 	
 	// 中心座標
 	Vector3 centerPos_ = {};
@@ -61,9 +78,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	float zoom_ = 0.0f;
 
 	// ズーム最小値
-	const float zoomMin_ = 50.0f;
+	const float zoomMin_ = 50.0f + 20.0f;
 
 	// ズーム最大値
-	const float zoomMax_ = 150.0f;
+	const float zoomMax_ = 150.0f + 30.0f;
 };
 

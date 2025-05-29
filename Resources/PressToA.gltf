@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.1.62",
+		"generator":"Khronos glTF Blender I/O v4.1.63",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -15,13 +15,13 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"\u30c6\u30ad\u30b9\u30c8"
+			"name":"X\u30dc\u30bf\u30f3\u3067\u63fa\u308c\u306e\u5207\u308a\u66ff\u3048 : ON"
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb.001",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -33,7 +33,7 @@
 	],
 	"meshes":[
 		{
-			"name":"\u30c6\u30ad\u30b9\u30c8",
+			"name":"X\u30dc\u30bf\u30f3\u3067\u63fa\u308c\u306e\u5207\u308a\u66ff\u3048 : ON",
 			"primitives":[
 				{
 					"attributes":{
@@ -64,61 +64,61 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":2600,
+			"count":3822,
 			"max":[
-				2.131500244140625,
+				3.2209999561309814,
 				0.09999999403953552,
-				0.009000000543892384
+				0.08100000023841858
 			],
 			"min":[
-				-2.061500310897827,
+				-3.168999671936035,
 				-0.09999999403953552,
-				-0.6860000491142273
+				-0.8410000205039978
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":2600,
+			"count":3822,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":2600,
+			"count":3822,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":7668,
+			"count":11100,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":31200,
+			"byteLength":45864,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":31200,
-			"byteOffset":31200,
+			"byteLength":45864,
+			"byteOffset":45864,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":20800,
-			"byteOffset":62400,
+			"byteLength":30576,
+			"byteOffset":91728,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":15336,
-			"byteOffset":83200,
+			"byteLength":22200,
+			"byteOffset":122304,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":98536,
+			"byteLength":144504,
 			"uri":"PressToA.bin"
 		}
 	]

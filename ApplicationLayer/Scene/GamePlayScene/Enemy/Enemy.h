@@ -11,6 +11,7 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class EnemyBullet;
 class AttackCommand;
 class ParticleManager;
@@ -41,9 +42,6 @@ public: /// ---------- メンバ関数 ---------- ///
 	/// 描画
 	void Draw() override;
 
-	/// 移動
-	void Move();
-
 	/// ImGui
 	void ShowImGui(const char* name);
 
@@ -61,12 +59,6 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// シリアルナンバーを設定
 	void SetSerialNumber(uint32_t serialNumber) { serialNumber_ = serialNumber; }
-
-	// 向きをランダムに設定
-	Vector3 RondomDirection(float min, float max);
-
-	// 攻撃コマンドをランダムに設定
-	std::unique_ptr<AttackCommand> RandomAttackCommand();
 
 	// 敵の出現演出
 	void SpawnEffect();
@@ -111,6 +103,26 @@ public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// </summary>
 	void BehaviorAttackUpdate();
 
+///-------------------------------------------/// 
+/// クラス内処理
+///-------------------------------------------///
+private:
+
+	// 攻撃コマンドをランダムに設定
+	std::unique_ptr<AttackCommand> RandomAttackCommand();
+
+	// 角度をランダムに設定
+	float RandomRadian(float minRadian, float maxRadian);
+
+	/// 移動
+	void Move();
+
+	// 壁に当たった時の処理
+	void WallHit();
+
+	// 攻撃を受けたときのノックバック処理
+	void KnockBack();
+
 public: /// ---------- ゲッター ---------- ///
 	bool GetIsHit() const { return isHit_; }
 
@@ -129,6 +141,9 @@ public: /// ---------- ゲッター ---------- ///
 
 	//無敵時間
 	const bool& GetIsInvincible() const { return isInvincible_; }
+
+	// ダメージを受けたかどうか
+	bool CanGiveDamage();
 
 public: /// ---------- セッター ---------- ///
 	void SetPlayer(Player* player) { player_ = player; }
@@ -156,16 +171,22 @@ public: /// ---------- セッター ---------- ///
 	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
 
 private: /// ---------- メンバ変数 ---------- ///
+
 	// 速度
 	Vector3 velocity_;
 
 	// 向き
 	Vector3 direction_ = {};
 
-	ParticleManager* particleManager_ = nullptr;
+	// 敵の大きさを考慮した座標
+	Vector3 minPosition = {};
+	Vector3 maxPosition = {};
 
 	// プレイヤー
 	Player* player_;
+
+	// チュートリアルプレイヤー
+	TutorialPlayer* tutorialPlayer_;
 
 	// 状態
 	Behavior behavior_ = Behavior::Normal;
@@ -195,6 +216,11 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	/*------パーティクル------*/
 	std::unique_ptr<ParticleEmitter> particleEmitter_;
+	std::unique_ptr<ParticleEmitter> particleEmitter2_;
+	std::unique_ptr<ParticleEmitter> particleEmitter3_;
+
+	// 一度だけ出現演出を行うフラグ
+	bool hasEmittedDisappearEffect_ = false;
 
 	/*------ヒットフラグ------*/
 	bool isHit_ = false;
@@ -254,4 +280,43 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// 死亡フラグ
 	bool isDead_ = false;
+
+	// 移動の速さ
+	float moveSpeed_ = 0.1f;
+
+///-------------------------------------------/// 
+/// ノックバック処理用の変数
+///-------------------------------------------///
+
+	// ノックバック中
+	bool isKnockBack_ = false;
+
+	// ノックバックする速さ
+	float knockBackSpeed_ = 0.5f;
+
+	// ノックバックの時間
+	float knockBackTime_ = 0.0f;
+	// ノックバックの最大時間
+	float knockBackMaxTime_ = 0.5f; // 0.5秒
+
+///-------------------------------------------/// 
+/// 中心に戻る処理用の変数
+///-------------------------------------------///
+
+	// 中心に戻るフラグ
+	bool isReturnCenter_ = false;
+
+	// 中心に戻る速度
+	Vector3 returnVelocity_ = {};
+
+	// 開始位置
+	Vector3 returnStartPosition_ = {};
+
+	// 中心座標
+	Vector3 centerPosition_ = { 0.0f, 1.0f, 0.0f };
+
+	// 中心に戻る用タイマー
+	float returnTimer_ = 0.0f;
+	// 中心に戻る最大時間
+	float returnMaxTime_ = 1.0f; // 1秒
 };

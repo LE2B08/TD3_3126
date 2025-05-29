@@ -2,7 +2,6 @@
 #include <Sprite.h>
 #include <TextureManager.h>
 #include <Object3D.h>
-#include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
 #include "AnimationManager.h"
@@ -14,6 +13,7 @@
 #include "Weapon.h"
 #include "EnemyBullet.h"
 #include"Skydome.h"
+#include "PlayerDirectionalArrow.h"
 
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
@@ -107,11 +107,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	ParticleManager* particleManager = nullptr;
 	Camera* camera_ = nullptr;
 
-	std::unique_ptr<WavLoader> wavLoader_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 
-	std::unique_ptr<EffectManager> effectManager_;
+	EffectManager* effectManager_;
 
 	std::string particleGroupName;
 
@@ -149,7 +148,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<Skydome> skydome_ = nullptr;
 
 	/*------カメラの座標------*/
-	Vector3 cameraPosition_ = { 0.0f, 50.0f, 0.0f };
+	Vector3 cameraPosition_ = { 0.0f, 50.0f * 3.0f, 0.0f };
 
 	// カメラの揺れを管理する変数
 	bool isCameraShaking_ = false;
@@ -182,4 +181,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isGameOverTransitionStarted_ = false;
 	// ポーズメニュー
 	std::unique_ptr<PauseMenu> pauseMenu_ = nullptr;
+
+	// プレイヤーの矢印
+	std::unique_ptr<PlayerDirectionalArrow> playerDirectionalArrow_;
 };

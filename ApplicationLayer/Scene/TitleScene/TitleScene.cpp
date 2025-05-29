@@ -8,6 +8,7 @@
 #include <Object3DCommon.h>
 #include <SkyBoxManager.h>
 #include <WinApp.h>
+#include <AudioManager.h>
 
 
 /// -------------------------------------------------------------
@@ -18,7 +19,6 @@ void TitleScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
 
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
@@ -56,12 +56,21 @@ void TitleScene::Initialize()
 		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
 	}
 
-	// wavLoaderの初期化
-	wavLoader_->StreamAudioAsync("RPGBattle01.wav", 0.2f, 1.0f, true);
-
 	// タイトルオブジェクトの初期化
 	titleObject_ = std::make_unique<TitleObject>();
 	titleObject_->Initialize();
+
+	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOnText.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOffText.png");
+
+	// カメラシェイクの初期化
+	cameraShakeOnSprite_ = std::make_unique<Sprite>();
+	cameraShakeOnSprite_->Initialize("Resources/CameraShakeOnText.png");
+
+	cameraShakeOffSprite_ = std::make_unique<Sprite>();
+	cameraShakeOffSprite_->Initialize("Resources/CameraShakeOffText.png");
+
+	cameraShakeEnabled_ = sceneManager_->GetCameraShakeEnabled(); // カメラシェイクの状態を取得
 }
 
 /// -------------------------------------------------------------
@@ -83,6 +92,12 @@ void TitleScene::Update()
 	}
 #endif // _DEBUG
 
+	if (input->TriggerKey(DIK_F4)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("TutorialScene");
+		}
+	}
+
 	// Updateの中に状態管理追加
 	switch (titleState_) {
 	case TitleState::Appear:
@@ -100,7 +115,6 @@ void TitleScene::Update()
 			titleState_ = TitleState::Exit;
 			exitTimer_ = 0.0f;
 
-			wavLoader_->StopBGM();
 			titleObject_->StartExitAnimation(); // タイトルロゴの退場アニメーションを開始
 		}
 
@@ -109,6 +123,11 @@ void TitleScene::Update()
 		{
 			titleState_ = TitleState::Operate;
 		}
+
+		 // XボタンでカメラシェイクのON/OFF切り替え
+    if (input->TriggerButton(XButtons.X)) {
+        cameraShakeEnabled_ = !cameraShakeEnabled_;
+    }
 
 		break;
 
@@ -124,7 +143,7 @@ void TitleScene::Update()
 			if (titleObject_->IsExitAnimationComplete()) {
 				// 白フェードへ移行
 				fadeManager_->StartFadeToWhite(0.02f, [this]() {
-					sceneManager_->ChangeScene("GamePlayScene");
+					sceneManager_->ChangeScene("TutorialScene");
 					});
 
 				titleState_ = TitleState::Transition;
@@ -150,7 +169,9 @@ void TitleScene::Update()
 	for (auto& sprite : sprites_) {
 		sprite->Update();
 	}
+	cameraShakeOnSprite_->Update();
 
+	cameraShakeOffSprite_->Update();
 	// フェードマネージャーの更新処理
 	fadeManager_->Update();
 
@@ -159,6 +180,8 @@ void TitleScene::Update()
 
 	// カメラの更新処理
 	camera_->Update();
+
+	sceneManager_->SetCameraShakeEnabled(cameraShakeEnabled_);
 }
 
 /// -------------------------------------------------------------
@@ -189,6 +212,12 @@ void TitleScene::Draw()
 	// タイトルオブジェクトの描画
 	titleObject_->Draw();
 
+	if (cameraShakeEnabled_) {
+		titleObject_->DrawCameraShakeOn();
+	} else {
+		titleObject_->DrawCameraShakeOff();
+	}
+
 #pragma endregion
 
 
@@ -206,7 +235,11 @@ void TitleScene::Draw()
 			sprite->Draw();
 		}
 	}
-
+	/*if (cameraShakeEnabled_) {
+		cameraShakeOnSprite_->Draw();
+	}else {
+		cameraShakeOffSprite_->Draw();
+	}*/
 	// フェードの描画（最後尾に置く）
 	fadeManager_->Draw();
 
@@ -222,9 +255,7 @@ void TitleScene::Finalize()
 		sprites_.clear();
 	}
 
-	if (wavLoader_) {
-		wavLoader_.reset();
-	}
+	AudioManager::GetInstance()->StopBGM(); // BGMを停止
 }
 
 /// -------------------------------------------------------------
@@ -259,5 +290,8 @@ void TitleScene::DrawImGui()
 		titleObject_->DrawImGui();
 	}
 
+	ImGui::End();
+	ImGui::Begin("SceneManager");
+	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());
 	ImGui::End();
 }

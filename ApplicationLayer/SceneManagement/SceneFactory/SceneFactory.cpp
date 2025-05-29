@@ -1,5 +1,6 @@
 #include "SceneFactory.h"
 #include "TitleScene.h"  // TitleScene をインクルード
+#include "TutorialScene.h"
 #include "GamePlayScene.h" // GamePlayScene をインクルード
 #include "GameClearScene.h"
 #include "GameOverScene.h"
@@ -20,6 +21,9 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
     if (sceneName == "TitleScene")
     {
         return std::make_unique<TitleScene>();
+    }
+    if (sceneName == "TutorialScene") {
+        return std::make_unique<TutorialScene>();
     }
     else if (sceneName == "GamePlayScene")
     {

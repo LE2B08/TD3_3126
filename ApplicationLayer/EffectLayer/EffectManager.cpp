@@ -5,22 +5,25 @@
 #include "Field.h"
 #include <random>
 #include <Easing.h>
+#include <DynamicCamera.h>
 using namespace Easing;
 
+EffectManager* EffectManager::GetInstance() {
+    static EffectManager instance;
+    return &instance;
+}
 
 /// -------------------------------------------------------------
 ///					　		初期化処理
 /// -------------------------------------------------------------
-void EffectManager::Initialize(Camera* camera, Input* input, Player* player, Field* field)
+void EffectManager::Initialize(Input* input, Player* player, Field* field)
 {
 	// 各クラスのポインタを受け取る
-	camera_ = camera;
+	//camera_ = camera;
 	input_ = input;
 	player_ = player;
 	field_ = field;
 
-	// カメラの初期位置を取得
-	cameraPosition_ = camera_->GetTranslate();
 }
 
 
@@ -29,6 +32,8 @@ void EffectManager::Initialize(Camera* camera, Input* input, Player* player, Fie
 /// -------------------------------------------------------------
 void EffectManager::Update()
 {
+	// カメラの初期位置を取得
+	cameraPosition_ = dynamicCamera_->GetTranslate();
 	// カメラの揺れ
 	CameraShake();
 }
@@ -47,6 +52,12 @@ void EffectManager::StartGameEffect()
 	}
 }
 
+void EffectManager::StopShake()
+{
+	isCameraShaking_ = false;
+	input_->StopVibration();
+}
+
 
 /// -------------------------------------------------------------
 ///					　		カメラの揺れ
@@ -62,7 +73,7 @@ void EffectManager::CameraShake()
 		{
 			input_->StopVibration();
 			isCameraShaking_ = false;
-			camera_->SetTranslate(cameraPosition_);
+			dynamicCamera_->SetTranslate(cameraPosition_);
 			shakeElapsedTime_ = 0.0f;
 		}
 		else
@@ -71,7 +82,7 @@ void EffectManager::CameraShake()
 			std::mt19937 gen(rd());
 			std::uniform_real_distribution<float> dis(-shakeMagnitude_, shakeMagnitude_);
 			Vector3 shakeOffset = { dis(gen), dis(gen), dis(gen) };
-			camera_->SetTranslate(cameraPosition_ + shakeOffset);
+			dynamicCamera_->SetTranslate(cameraPosition_ + shakeOffset);
 			input_->SetVibration(100, 100);
 		}
 	}

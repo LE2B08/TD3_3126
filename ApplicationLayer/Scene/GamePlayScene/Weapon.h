@@ -8,8 +8,9 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
-
+class TutorialEnemy;
 
 /// -------------------------------------------------------------
 ///						　プレイヤークラス
@@ -55,26 +56,25 @@ public:
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// エネミーの設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
 	WorldTransform worldTransform_;
 	// オブジェクト3D
 	std::unique_ptr<Object3D> object3D_ = nullptr;
-
-	//パーティクル
-	std::unique_ptr<ParticleEmitter> particleEmitter_ = nullptr;
-	ParticleManager* particleManager_ = nullptr;
-
 	
 	// プレイヤー
 	Player* player_ = nullptr;
+	TutorialPlayer* tutorialPlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
+	TutorialEnemy* tutorialEnemy_ = nullptr;
 
 	bool isEnemyHit_ = false; // 敵に当たったかのフラグ
 
@@ -91,7 +91,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	//半径
 	float radius_ = 0.5f;
 	// プレイヤーと武器の距離
-	float distance_ = 2.0f;
+	float distance_ = 2.0f * 2.0f;
 
 	bool isAttack_ = false;
 

@@ -69,9 +69,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	Vector4 hpGaugeColor = {};
 
 	// Hpの枠のスプライト
-	std::unique_ptr<Sprite> hpSprite_;
-	// Hpの枠のスプライト
-	std::unique_ptr<Sprite> hpSprite2_;
+	std::unique_ptr<Sprite> hpFrameSprite_;
+	
 
 	// Hpのゲージのスプライト
 	std::unique_ptr<Sprite> hpGaugeSprite_;

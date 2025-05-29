@@ -2,7 +2,6 @@
 #include <Sprite.h>
 #include <TextureManager.h>
 #include <Object3D.h>
-#include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
 
@@ -42,7 +41,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	Input* input = nullptr;
 	Camera* camera_ = nullptr;
 
-	std::unique_ptr<WavLoader> wavLoader_;
 	std::unique_ptr<GameClearLogo> gameClearLogo_; // ゲームクリアロゴ
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
