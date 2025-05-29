@@ -219,4 +219,9 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// ゲージのデフォルトサイズ
 	const Vector2 gaugeDefaultSize_ = { 640.0f, 32.0f };
+
+	// Disappaer用の一度だけ通すためのフラグ
+	bool isDisappearOnce_ = false;
+
+	bool isAButtonReleased_ = false;
 };

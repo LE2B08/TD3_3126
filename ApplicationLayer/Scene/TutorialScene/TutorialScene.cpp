@@ -114,6 +114,8 @@ void TutorialScene::Initialize() {
 	gauge_ = std::make_unique<Sprite>();
 	gauge_->Initialize("Resources/Green.png");
 	gauge_->SetPosition(gaugePosition_);
+
+	tutorialUI_->TutorialIntroAppear();
 }
 
 ///-------------------------------------------/// 
@@ -341,7 +343,7 @@ void TutorialScene::Draw() {
 	case SceneStatus::Play:
 		// コントローラー用UIの描画
 		controllerUI_->Draw();
-
+		tutorialUI_->Draw();
 		switch (tutorialSteps_) {
 		case TutorialSteps::Start:
 			// チュートリアル開始のUIの描画
@@ -475,7 +477,7 @@ void TutorialScene::DrawImGui() {
 	ImGui::Text("%d / 3", playerAttackCount_);
 
 	ImGui::End();
-
+	tutorialUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
 }
 
@@ -513,6 +515,7 @@ void TutorialScene::CheckAllCollisions() {
 /// チュートリアル開始時初期化
 ///-------------------------------------------///
 void TutorialScene::TutorialStartInitialize() {
+	
 }
 
 ///-------------------------------------------/// 
@@ -522,7 +525,8 @@ void TutorialScene::TutorialStartUpdate() {
 
 	// Aボタンが押されたら
 	if (Input::GetInstance()->PushButton(0)) {
-
+		tutorialUI_->TutorialIntroDisappear(); // チュートリアルのイントロを非表示にする
+		tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 		// 次に行く処理
 		SetTutorialStep(TutorialSteps::PlayerRotation);
 	}
@@ -534,6 +538,7 @@ void TutorialScene::TutorialStartUpdate() {
 void TutorialScene::TutorialPlayerRotationInitialize() {
 
 	rotationStepTimer_ = 0.0f;
+	tutorialUI_->rightStickGuideAppear();
 }
 
 ///-------------------------------------------/// 
@@ -550,15 +555,23 @@ void TutorialScene::TutorialPlayerRotationUpdate() {
 	// ゲージの進行度を更新
 	GaugeProgress(rotationStepTimer_, kRotationStepWaitTime);
 
+	// タイマーが指定時間を超えたら一度だけDisappear
+	if (rotationStepTimer_ >= kRotationStepWaitTime && !isDisappearOnce_) {
+		tutorialUI_->rightStickGuideDisappear(); // ここでDisappear
+		isDisappearOnce_ = true;  // 一度だけ通す
+	}
+	
 	// タイマーが指定時間を超えたら
 	if (rotationStepTimer_ >= kRotationStepWaitTime) {
-
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
 
 			// チュートリアルステップをフックの投げ戻しに変更
 			SetTutorialStep(TutorialSteps::HookThrowAndBack);
 			rotationStepTimer_ = 0.0f;
+			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
+			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
+			isDisappearOnce_ = false; // Disappearを再度許可
 		}
 	}
 }
@@ -570,6 +583,7 @@ void TutorialScene::TutorialHookThrowAndBackInitialize() {
 
 	hookThrowCount_ = 0;
 	hookBackCount_ = 0;
+	tutorialUI_->RBGuideAppear(); // フックの投げ戻しのUIを表示
 }
 
 ///-------------------------------------------/// 
@@ -598,14 +612,22 @@ void TutorialScene::TutorialHookThrowAndBackUpdate() {
 	// ゲージの進行度を更新
 	GaugeProgress((float)hookThrowCount_, (float)maxHookThrowCount_);
 
+	// 進行度が一定値を超えたら一度だけDisappear
+	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_ && !isDisappearOnce_) {
+		tutorialUI_->RBGuideDisappear(); // ここでDisappear
+		isDisappearOnce_ = true;  // 一度だけ通す
+	}
+
 	// 投げ戻しの回数がそれぞれ最大値に達したら
 	if (hookThrowCount_ >= maxHookThrowCount_ && hookBackCount_ >= maxHookBackCount_) {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
-
+			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
+			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをフックの弧を描く移動に変更
 			SetTutorialStep(TutorialSteps::HookArcMove);
+			isDisappearOnce_ = false;
 		}
 	}
 }
@@ -616,6 +638,7 @@ void TutorialScene::TutorialHookThrowAndBackUpdate() {
 void TutorialScene::TutorialHookArcMoveInitialize() {
 
 	arcMoveStepTimer_ = 0.0f;
+	tutorialUI_->ArcGuideAppear();
 }
 
 ///-------------------------------------------/// 
@@ -632,15 +655,23 @@ void TutorialScene::TutorialHookArcMoveUpdate() {
 	// ゲージの進行度を更新
 	GaugeProgress(arcMoveStepTimer_, kArcMoveStepWaitTime);
 
+	// 進行度が一定値を超えたら一度だけDisappear
+	if (arcMoveStepTimer_ >= kArcMoveStepWaitTime && !isDisappearOnce_) {
+		tutorialUI_->ArcGuideDisappear(); // ここでDisappear
+		isDisappearOnce_ = true;  // 一度だけ通す
+	}
+
 	// タイマーが指定時間を超えたら
 	if (arcMoveStepTimer_ >= kArcMoveStepWaitTime) {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
-
+			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
+			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをフックの移動に変更
 			SetTutorialStep(TutorialSteps::HookMove);
 			arcMoveStepTimer_ = 0.0f;
+			isDisappearOnce_ = false; // Disappearを再度許可
 		}
 	}
 }
@@ -651,6 +682,7 @@ void TutorialScene::TutorialHookArcMoveUpdate() {
 void TutorialScene::TutorialHookMoveInitialize() {
 
 	hookActiveCount_ = 0;
+	tutorialUI_->RTGuideAppear(); // フックの移動のUIを表示
 }
 
 ///-------------------------------------------/// 
@@ -670,14 +702,22 @@ void TutorialScene::TutorialHookMoveUpdate() {
 	// ゲージの進行度を更新
 	GaugeProgress((float)hookActiveCount_, static_cast<float>(maxHookActiveCount_));
 
+	// 進行度が一定値を超えたら一度だけDisappear
+	if (hookActiveCount_ >= maxHookActiveCount_ && !isDisappearOnce_) {
+		tutorialUI_->RTGuideDisappear(); // ここでDisappear
+		isDisappearOnce_ = true;  // 一度だけ通す
+	}
+
 	// 最大回数になったら
 	if (hookActiveCount_ >= maxHookActiveCount_) {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
-
+			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
+			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップを攻撃に変更
 			SetTutorialStep(TutorialSteps::Attack);
+			isDisappearOnce_ = false; // Disappearを再度許可
 		}
 	}
 }
@@ -688,6 +728,7 @@ void TutorialScene::TutorialHookMoveUpdate() {
 void TutorialScene::TutorialAttackInitialize() {
 
 	playerAttackCount_ = 0;
+	tutorialUI_->LBGuideAppear(); // 攻撃のUIを表示
 }
 
 ///-------------------------------------------/// 
@@ -707,13 +748,22 @@ void TutorialScene::TutorialAttackUpdate() {
 	// ゲージの進行度を更新
 	GaugeProgress((float)playerAttackCount_, static_cast<float>(maxPlayerAttackCount_));
 
+	// 進行度が一定値を超えたら一度だけDisappear
+	if (playerAttackCount_ >= maxPlayerAttackCount_ && !isDisappearOnce_) {
+		tutorialUI_->LBGuideDisappear(); // ここでDisappear
+		isDisappearOnce_ = true;  // 一度だけ通す
+	}
+
 	// 最大回数になったら
 	if (playerAttackCount_ >= maxPlayerAttackCount_) {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
+			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
+			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをチュートリアル終了に変更
 			SetTutorialStep(TutorialSteps::End);
+			isDisappearOnce_ = false; // Disappearを再度許可
 		}
 	}
 }
@@ -819,12 +869,27 @@ void TutorialScene::PauseUpdate() {
 /// チュートリアル終了初期化
 ///-------------------------------------------///
 void TutorialScene::TutorialEndInitialize() {
+	tutorialUI_->TutorialEndUIAppear();
 }
 
 ///-------------------------------------------/// 
 /// チュートリアル終了更新
 ///-------------------------------------------///
 void TutorialScene::TutorialEndUpdate() {
+	
+	// Aボタンが離されたらフラグを立てる
+	if (!Input::GetInstance()->PushButton(0)) {
+		isAButtonReleased_ = true;
+	}
+	// フラグが立っていて、Aボタンが押されたら処理を通す
+	if (isAButtonReleased_ && Input::GetInstance()->PushButton(0)) {
+		tutorialUI_->TutorialEndUIDisappear();
+		tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
+		isAButtonReleased_ = false; // もう一度押すまで処理を通さない
+		if (sceneManager_) {
+			fadeManager_->StartFadeToWhite(0.02f, [this]() { sceneManager_->ChangeScene("GamePlayScene"); });
+		}
+	}
 }
 
 ///-------------------------------------------/// 
