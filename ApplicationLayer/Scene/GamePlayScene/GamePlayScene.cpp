@@ -453,30 +453,6 @@ void GamePlayScene::DrawImGui()
 	ImGui::Text("cameraShakeEnabled : %d", sceneManager_->GetCameraShakeEnabled());
 	ImGui::End();
 
-	//ImGui::Begin("GamePlayScene");
-	//
-	//// シーンの状態を表示
-	//switch (gameState_) {
-	//case GameSceneState::Start:
-	//	ImGui::Text("Game Start");
-	//	break;
-	//case GameSceneState::Play:
-	//	ImGui::Text("Game Play");
-	//	break;
-	//case GameSceneState::GameClear:
-	//	ImGui::Text("Game Clear");
-	//	break;
-	//case GameSceneState::GameOver:
-	//	ImGui::Text("Game Over");
-	//	break;
-	//case GameSceneState::Pause:
-	//  ImGui::Text("Game Pause");
-	//  break;
-	//default:
-	//	break;
-	//}
-	//
-	//ImGui::End();
 }
 
 
