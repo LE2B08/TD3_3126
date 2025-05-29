@@ -16,12 +16,8 @@ void EnemyUI::Initialize() {
 	hpRotation_ = static_cast<float>(M_PI) / 2; // ここを変更
 
 	// HPのスプライトの生成と初期化
-	hpSprite_ = std::make_unique<Sprite>();
-	hpSprite_->Initialize("Resources/playerHpUI.png");
-
-	// HPのスプライトの生成と初期化
-	hpSprite2_ = std::make_unique<Sprite>();
-	hpSprite2_->Initialize("Resources/playerHpUI.png");
+	hpFrameSprite_ = std::make_unique<Sprite>();
+	hpFrameSprite_->Initialize("Resources/playerHpUI.png");
 
 	// Hpのゲージのスプライト
 	hpGaugeSprite_ = std::make_unique<Sprite>();
@@ -59,17 +55,12 @@ void EnemyUI::Update() {
 	hpGaugeSprite_->SetAnchorPoint({ 0.0f, 0.5f }); // アンカーポイントを左上に設定
 	hpGaugeSprite_->Update();               // 更新
 
-	// HPのスプライトの更新
-	//hpSprite_->SetTextureRect({hpPosition_.x, hpPosition_.y}, {0.0f, 0.0f, 32.0f, 320.0f});
-	hpSprite_->SetPosition({ hpPosition_.x, hpPosition_.y - 280.0f }); // HPバーの位置を設定
-	hpSprite_->SetRotation(hpRotation_); // HPバーの回転を設定
-	hpSprite_->SetAnchorPoint({ 0.0f, 1.0f });                          // アンカーポイントを左上に設定
-	hpSprite_->Update();
-
-	hpSprite2_->SetPosition({ hpPosition_.x + xOffset, hpPosition_.y - 280.0f }); // HPバーの位置を設定
-	hpSprite2_->SetRotation(hpRotation_);                              // HPバーの回転を設定
-	hpSprite2_->SetAnchorPoint({ 0.0f, 1.0f });                                  // アンカーポイントを左上に設定
-	hpSprite2_->Update();
+	
+	hpFrameSprite_->SetPosition({ hpPosition_.x + xOffset, hpPosition_.y - 280.0f }); // HPバーの位置を設定
+	hpFrameSprite_->SetRotation(hpRotation_);                              // HPバーの回転を設定
+	hpFrameSprite_->SetAnchorPoint({ 0.0f, 1.0f });                                  // アンカーポイントを左上に設定
+	hpFrameSprite_->SetSize({32.0f, 320.0f*2.0f});                              // サイズを設定
+	hpFrameSprite_->Update();
 }
 
 /// -------------------------------------------------------------
@@ -77,8 +68,8 @@ void EnemyUI::Update() {
 /// -------------------------------------------------------------
 void EnemyUI::Draw() {
 	hpGaugeSprite_->Draw();
-	hpSprite_->Draw();
-	hpSprite2_->Draw();
+	
+	hpFrameSprite_->Draw();
 }
 
 /// -------------------------------------------------------------
