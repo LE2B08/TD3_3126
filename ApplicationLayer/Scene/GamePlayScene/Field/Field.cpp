@@ -10,6 +10,7 @@ using namespace Easing;
 /// -------------------------------------------------------------
 void Field::Initialize()
 {
+	scale_ = Vector3(100.0f, 1.0f, 100.0f); // フィールドのスケール
 
 	// 仮リソース
 	objectField_ = std::make_unique<Object3D>();

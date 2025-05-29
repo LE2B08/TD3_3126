@@ -144,7 +144,7 @@ void TutorialEnemy::ShowImGui(const char* name) {
 	// ImGui::Text("isInvincible : %s", isInvincible_ ? "true" : "false");
 	// ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
 	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
-	// ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
+	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
 	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
 	// ImGui::SliderFloat("Time", &stateTimer_, 0.0f, 10.0f);
 	ImGui::Text("isHit : %s", isHit_ ? "true" : "false");

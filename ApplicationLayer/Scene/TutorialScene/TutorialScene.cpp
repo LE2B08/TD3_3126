@@ -61,6 +61,7 @@ void TutorialScene::Initialize() {
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
+	player_->SetPosition({ 0.0f, 0.0f, -8.0f }); // プレイヤーの初期位置を設定
 
 	// 武器の初期化
 	weapon_->SetTutorialPlayer(player_.get()); // プレイヤーの情報を武器にセット
@@ -75,7 +76,7 @@ void TutorialScene::Initialize() {
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPosition({ 0.0f, 0.0f, 8.0f });
+	enemy_->SetPosition({ 0.0f, 0.0f, 0.0f });
 	// 敵の弾の情報をセット
 	// enemyBullets_ = &enemy_->GetBullets();
 
@@ -238,12 +239,12 @@ void TutorialScene::Update() {
 	}
 
 	// カメラの更新
+	dynamicCamera_->Update();
 	camera_->SetTranslate(cameraPosition_);
 	camera_->SetScale(dynamicCamera_->GetScale());
 	camera_->SetRotate(dynamicCamera_->GetRotate());
 	camera_->SetTranslate(dynamicCamera_->GetTranslate());
 	camera_->Update();
-	dynamicCamera_->Update();
 
 	field_->TutorialScale();
 	// フィールドの更新
@@ -474,6 +475,8 @@ void TutorialScene::DrawImGui() {
 	ImGui::Text("%d / 3", playerAttackCount_);
 
 	ImGui::End();
+
+	enemy_->ShowImGui("Enemy");
 }
 
 ///-------------------------------------------/// 
@@ -726,7 +729,12 @@ void TutorialScene::PlayInitialize() {
 ///-------------------------------------------///
 void TutorialScene::PlayUpdate() {
 
+	field_->Update();
+
+	hook_->SetTutorialEnemy(enemy_.get());
+	hook_->SetEnemyPosition(enemy_->GetPosition());
 	hook_->Update();
+
 	// プレイヤーの位置をフックにセット
 	player_->SetPosition(hook_->GetPlayerPosition());
 	// プレイヤーの向きをフックにセット
@@ -737,8 +745,6 @@ void TutorialScene::PlayUpdate() {
 	// プレイヤーの移動制限をフィールドにセット
 	player_->SetMinMoveLimit(field_->GetMinPosition());
 	player_->SetMaxMoveLimit(field_->GetMaxPosition());
-	// プレイヤーの更新
-	player_->Update();
 
 	enemy_->SetMinMoveLimit(field_->GetMinPosition());
 	enemy_->SetMaxMoveLimit(field_->GetMaxPosition());
@@ -748,6 +754,11 @@ void TutorialScene::PlayUpdate() {
 		enemy_->SetIsHitFromAttack(true);
 	}
 	enemy_->SetTutorialPlayer(player_.get());
+
+	// プレイヤーの更新
+	player_->Update();
+
+	// 敵の更新
 	enemy_->Update();
 
 	// コントローラー用UIの更新
