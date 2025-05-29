@@ -92,6 +92,12 @@ void TitleScene::Update()
 	}
 #endif // _DEBUG
 
+	if (input->TriggerKey(DIK_F4)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("TutorialScene");
+		}
+	}
+
 	// Updateの中に状態管理追加
 	switch (titleState_) {
 	case TitleState::Appear:
@@ -137,7 +143,7 @@ void TitleScene::Update()
 			if (titleObject_->IsExitAnimationComplete()) {
 				// 白フェードへ移行
 				fadeManager_->StartFadeToWhite(0.02f, [this]() {
-					sceneManager_->ChangeScene("GamePlayScene");
+					sceneManager_->ChangeScene("TutorialScene");
 					});
 
 				titleState_ = TitleState::Transition;

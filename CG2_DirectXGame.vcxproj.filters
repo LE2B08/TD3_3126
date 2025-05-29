@@ -96,10 +96,13 @@
     <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
     <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
-    <ClCompile Include="TutorialUI.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
     <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
     <ClCompile Include="EngineLayer\Audio\AudioManager.cpp" />
     <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
@@ -202,7 +205,7 @@
     <ClInclude Include="ApplicationLayer\EffectLayer\Particle.h" />
     <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
-    <ClInclude Include="TutorialUI.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
     <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
     <ClInclude Include="Externals\Audio\minimp3\minimp3.h" />
@@ -210,6 +213,9 @@
     <ClInclude Include="EngineLayer\Audio\AudioCategory.h" />
     <ClInclude Include="EngineLayer\Audio\AudioManager.h" />
     <ClInclude Include="EngineLayer\Audio\MP3Loader.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.h" />
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli" />

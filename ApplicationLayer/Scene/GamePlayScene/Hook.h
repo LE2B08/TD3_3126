@@ -8,7 +8,9 @@
 
 /// ---------- 前方宣言 ---------- ///
 class Player;
+class TutorialPlayer;
 class Enemy;
+class TutorialEnemy;
 class Field;
 
 /// -------------------------------------------------------------
@@ -65,9 +67,15 @@ public:
 	Vector3 GetEndPos() { return endPos_; }
 	float GetPullSpeed() { return pullSpeed_; }
 	bool GetIsActive() { return isActive_; }
+	bool GetIsPulling() { return isPulling_; }
+	bool GetIsExtending() { return isExtending_; }
+	bool GetIsMoving() { return isMoving_; }
+	bool GetIsThrowing() { return isThrowing_; }
+	bool GetIsBack() { return isBack_; }
 	bool GetEnemyHit() { return enemyHit_; }
 	bool GetIsHitPlayerToEnemy() { return isHitPlayerToEnemy_; }
 	Vector3 GetEnemyPosition() { return enemyPosition_; }
+	bool GetIsArcMove() const { return isArcMove_; }
 
 public:
 	///----------------------------
@@ -89,9 +97,11 @@ public:
 
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
 
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
@@ -128,7 +138,9 @@ private:
 	///----------------------------
 
 	Player* player_ = nullptr; // プレイヤー
+	TutorialPlayer* tutorialPlayer_ = nullptr; // チュートリアルプレイヤー
 	Enemy* enemy_ = nullptr;   // エネミー
+	TutorialEnemy* tutorialEnemy_ = nullptr; // チュートリアルエネミー
 	Field* field_ = nullptr;   // フィールド
 
 	///----------------------------
@@ -177,6 +189,7 @@ private:
 	bool isMoving_ = false;    // 移動中かどうか
 	bool isThrowing_;          // 投げ中かどうか
 	bool isPulling_ = false;   // フックの引っ張りフラグ
+	bool isBack_ = false;      // フックを戻すフラグ
 
 	///----------------------------
 	/// 敵・当たり判定関連
@@ -196,6 +209,7 @@ private:
 
 	Vector3 arcMoveVelocity_; // 弧の速度
 	Vector3 pullVelocity_;    // 引っ張り移動の速度
+	bool isArcMove_ = false;
 
 	///----------------------------
 	/// 状態管理

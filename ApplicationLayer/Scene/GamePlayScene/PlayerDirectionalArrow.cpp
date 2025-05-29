@@ -1,6 +1,7 @@
 #include "PlayerDirectionalArrow.h"
 #include "Object3DCommon.h"
 #include "Player.h"
+#include "TutorialPlayer.h"
 #include <imgui.h>
 
 void PlayerDirectionalArrow::Initialize(){
@@ -13,8 +14,17 @@ void PlayerDirectionalArrow::Initialize(){
 }
 
 void PlayerDirectionalArrow::Update(){
-	Vector3 playerPos = player_->GetPosition();
-	float yAngle = player_->GetRotation().y;
+
+	Vector3 playerPos = {};
+	float yAngle = {};
+	if (player_) {
+		playerPos = player_->GetPosition();
+		yAngle = player_->GetRotation().y;
+	}
+	else if (tutorialPlayer_) {
+		playerPos = tutorialPlayer_->GetPosition();
+		yAngle = tutorialPlayer_->GetRotation().y;
+	}
 
 	// 向いている方向ベクトル（Y軸回転のみ考慮）
 	Vector3 direction = { cos(yAngle),0.0f,sin(yAngle) };
