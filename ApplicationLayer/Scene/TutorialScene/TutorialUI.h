@@ -86,6 +86,7 @@ private:
 	std::unique_ptr<Sprite> playerHPGuide_; // プレイヤーHPガイドのスプライト
 	std::unique_ptr<Sprite> enemyHPGuide_; // 敵HPガイドのスプライト
 	std::unique_ptr<Sprite> tutorialEndUI_; // 右スティックのスプライト
+	std::unique_ptr<Sprite> skipUI_; // 右スキップのスプライト
 
 	/*------位置と拡大率の変数------*/
 	Vector2 decisionUIPos_ = { 0.0f, 0.0f }; // 決定UIの位置
@@ -123,6 +124,8 @@ private:
 
 	Vector2 tutorialEndPos_ = { 0.0f, 0.0f }; // チュートリアル終了時のUIの位置
 	Vector2 tutorialEndScale_ = { 1.0f, 1.0f }; // チュートリアル終了時のUIの拡大率
+
+	Vector2 skipUIPos_ = { 0.0f, 0.0f }; // スキップUIの位置
 
 	/*------アニメーションの変数------*/
 	float decisionUIAnimTime_ = 0.0f; // 決定UIのアニメーション時間

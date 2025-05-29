@@ -143,7 +143,7 @@ void TitleScene::Update()
 			if (titleObject_->IsExitAnimationComplete()) {
 				// 白フェードへ移行
 				fadeManager_->StartFadeToWhite(0.02f, [this]() {
-					sceneManager_->ChangeScene("GamePlayScene");
+					sceneManager_->ChangeScene("TutorialScene");
 					});
 
 				titleState_ = TitleState::Transition;

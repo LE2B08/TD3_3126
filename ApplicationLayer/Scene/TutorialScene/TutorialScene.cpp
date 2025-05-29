@@ -97,6 +97,7 @@ void TutorialScene::Initialize() {
 	// ポーズメニューの初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
+	pauseMenu_->SetSceneManager(sceneManager_);
 
 	playerDirectionalArrow_->Initialize();
 	playerDirectionalArrow_->SetTutorialPlayer(player_.get());
@@ -778,7 +779,11 @@ void TutorialScene::PlayInitialize() {
 /// シーン更新
 ///-------------------------------------------///
 void TutorialScene::PlayUpdate() {
-
+	if (Input::GetInstance()->PushButton(13)) {
+		if (sceneManager_) {
+			fadeManager_->StartFadeToWhite(0.02f, [this]() { sceneManager_->ChangeScene("GamePlayScene"); });
+		}
+	}
 	field_->Update();
 
 	hook_->SetTutorialEnemy(enemy_.get());

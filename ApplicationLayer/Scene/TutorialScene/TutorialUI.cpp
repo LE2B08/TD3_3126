@@ -18,6 +18,7 @@ TutorialUI::TutorialUI(){
 	TextureManager::GetInstance()->LoadTexture("Resources/playerHPGuide.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/enemyHPGuide.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/TutorialEnd.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/Skip.png");
 	
 	decisionUIPos_ = Vector2(650.0f, 620.0f); // 初期位置を設定
 	tutorialIntroPos_ = Vector2(658.0f, 130.0f); // 初期位置を設定
@@ -31,6 +32,7 @@ TutorialUI::TutorialUI(){
 	playerHPPos_ = Vector2(350.0f, 583.0f); // 初期位置を設定
 	enemyHPPos_ = Vector2(650.0f, 115.0f); // 初期位置を設定
 	tutorialEndPos_ = Vector2(650.0f, 165.0f); // 初期位置を設定
+	skipUIPos_ = Vector2(950.0f, 640.0f); // 初期位置を設定
 
 	decisionUIScale_ = Vector2(0.0f, 0.0f); // 初期スケールを設定
 	tutorialIntroScale_ = Vector2(0.0f, 0.0f); // 初期スケールを設定
@@ -95,6 +97,10 @@ void TutorialUI::Initialize() {
 	tutorialEndUI_ = std::make_unique<Sprite>();
 	tutorialEndUI_->Initialize("Resources/TutorialEnd.png");
 	tutorialEndUI_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
+
+	// スキップUIの生成
+	skipUI_ = std::make_unique<Sprite>();
+	skipUI_->Initialize("Resources/Skip.png");
 }
 
 void TutorialUI::Update(){
@@ -135,6 +141,8 @@ void TutorialUI::Update(){
 	tutorialEndUI_->SetPosition(tutorialEndPos_);
 	tutorialEndUI_->SetSize(tutorialEndScale_);
 
+	skipUI_->SetPosition(skipUIPos_);
+
 	AnimationUpdate();
 	decisionUI_->Update();
 	tutorialIntroUI_->Update();
@@ -148,6 +156,7 @@ void TutorialUI::Update(){
 	playerHPGuide_->Update();
 	enemyHPGuide_->Update();
 	tutorialEndUI_->Update();
+	skipUI_->Update();
 }
 
 void TutorialUI::Draw(){
@@ -175,6 +184,8 @@ void TutorialUI::Draw(){
 	enemyHPGuide_->Draw();
 	// チュートリアル終了の描画
 	tutorialEndUI_->Draw();
+	// スキップUIの描画
+	skipUI_->Draw();
 }
 
 void TutorialUI::DrawImGui(){
@@ -193,6 +204,7 @@ void TutorialUI::DrawImGui(){
 	ImGui::SliderFloat2("Player HP Position", &playerHPPos_.x, 0.0f, 800.0f); // 画面幅に合わせて調整
 	ImGui::SliderFloat2("Enemy HP Position", &enemyHPPos_.x, 0.0f, 800.0f); // 画面幅に合わせて調整
 	ImGui::SliderFloat2("Tutorial End Position", &tutorialEndPos_.x, 0.0f, 800.0f); // 画面幅に合わせて調整
+	ImGui::SliderFloat2("Skip UI Position", &skipUIPos_.x, 0.0f, 800.0f); // 画面幅に合わせて調整
 	ImGui::End();
 }
 
