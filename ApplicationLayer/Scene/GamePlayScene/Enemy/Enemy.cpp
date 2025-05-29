@@ -264,7 +264,6 @@ void Enemy::ShowImGui(const char* name) {
 	ImGui::SliderFloat("ReturnCenterTime", &returnTimer_, 0.0f, returnMaxTime_);
 	ImGui::DragFloat3("ReturnStartPosition", &returnStartPosition_.x, 0.01f);
 	ImGui::DragFloat3("ReturnVelocity", &returnVelocity_.x, 0.01f);
-	ImGui::SliderFloat("t", &et, 0.0f, 1.0f);
 	ImGui::End();
 }
 
@@ -435,8 +434,10 @@ void Enemy::FaildAnimation() {
 	worldTransform_.rotate_ = Vector3::Lerp(rotation, rotationEnd, Easing::easeInOut(rotationStartT_ / rotationMaxT_)); // 回転を補間
 	worldTransform_.scale_ = Vector3::Lerp(scale, Vector3(0.0f, 0.0f, 0.0f), Easing::easeInOutElastic(rotationStartT_ / rotationMaxT_));
 
-	if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f) {
-		if (!hasEmittedDisappearEffect_) {
+	if (scale.x == 0.0f && scale.y == 0.0f && scale.z == 0.0f)
+	{
+		if (!hasEmittedDisappearEffect_)
+		{
 			// パーティクルの位置を設定
 			particleEmitter3_->SetPosition(GetCenterPosition());
 			particleEmitter3_->SetEmissionRate(5.0f); // エミッションレートを設定
@@ -671,32 +672,13 @@ void Enemy::Move() {
 			returnTimer_ += kDeltaTime;
 
 			// イージング用タイマー
-			et = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, returnMaxTime_);
+			float t = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, returnMaxTime_);
 
 			// イージングで補間
-			float outSineT = easeOutSine(et);
-
-			Vector3 outSinePosition = Vector3::Lerp(returnStartPosition_, centerPosition_, outSineT);
-
-			float outQuartT = easeOutQuart(et);
-
-			// タイマーが0~0.5秒のとき
-			if (0.0f <= et && et <= 0.5f) {
-
-				// OutQuartで打ち上げる
-				outQuartPosition = Vector3::Lerp(returnStartPosition_, highPosition_, outQuartT);
-			}
-			// タイマーが0.5~1.0秒のとき
-			else if (0.5f < et && et <= 1.0f) {
-
-				// OutQuartで落下する
-				outQuartPosition = Vector3::Lerp(highPosition_, centerPosition_, outQuartT);
-			}
-
-			Vector3 resultPosition = { outSinePosition.x, outQuartPosition.y, outSinePosition.z };
+			float easeT = easeOut(t);
 
 			// 中心に戻る
-			worldTransform_.translate_ = resultPosition;
+			worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
 		}
 
 		return;
@@ -783,12 +765,11 @@ void Enemy::KnockBack() {
 		// プレイヤーの位置を確認
 		Vector3 playerPosition = player_->GetPosition();
 
-		// ノックバックX,Z方向の速度を計算
+		// ノックバック方向のを計算
 		Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
 
 		// 敵の向きにノックバックの速度を加算
 		velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
-		velocity_.y = 0.0f; // Y方向の速度は0にする
 	}
 }
 
