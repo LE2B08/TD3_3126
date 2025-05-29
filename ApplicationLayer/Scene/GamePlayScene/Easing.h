@@ -23,5 +23,9 @@ namespace Easing
 	float bezierCurve(float t, float p0, float p1, float p2, float p3);
 
 	float easeInSine(float t);
+
+	float easeOutQuart(float t);
+
+	float easeOutSine(float t);
 };
 
