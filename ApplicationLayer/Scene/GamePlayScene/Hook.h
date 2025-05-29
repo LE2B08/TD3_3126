@@ -87,6 +87,9 @@ public:
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
 	void SetEnemyPosition(const Vector3& enemyPosition) { enemyPosition_ = enemyPosition; }
 
+	// カメラの設定
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -130,6 +133,7 @@ private:
 	Player* player_ = nullptr; // プレイヤー
 	Enemy* enemy_ = nullptr;   // エネミー
 	Field* field_ = nullptr;   // フィールド
+	Camera* camera_ = nullptr; // カメラ
 
 	///----------------------------
 	/// 移動制限・プレイヤー情報
@@ -142,6 +146,12 @@ private:
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
 	Vector3 playerVelocity_ = {};                 // プレイヤーの速度
 	Vector3 playerAcceleration_ = {};             // プレイヤーの加速度
+
+
+	///----------------------------	
+	/// フックのオブジェクト
+	///-----------------------------
+	std::unique_ptr<Object3D> hookObject_; // フックの3Dオブジェクト
 
 	///----------------------------
 	/// フックの座標・物理量
