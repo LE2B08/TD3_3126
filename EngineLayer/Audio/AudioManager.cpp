@@ -40,12 +40,13 @@ void AudioManager::PlaySE(const std::string& filePath, float volume, float pitch
 	{
 		auto loader = std::make_unique<WavLoader>();
 		loader->StreamAudioAsync(filePath, actualVolume, pitch, loop);
-		// 🔁 必要であれば loader を std::list で保持
+		seWavLoaders_.push_back(std::move(loader));
 	}
 	else if (ext == ".mp3")
 	{
 		auto loader = std::make_unique<Mp3Loader>();
 		loader->StreamAudioAsync(filePath, actualVolume, pitch, loop);
+		seMp3Loaders_.push_back(std::move(loader));
 	}
 	else
 	{
