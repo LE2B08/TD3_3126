@@ -111,13 +111,3 @@ float Easing::easeInSine(float t)
 {
 	return 1.0f - cosf((t * (float)M_PI) / 2.0f);
 }
-
-float Easing::easeOutQuart(float t) {
-
-	return 1.0f - powf(1.0f - t, 4.0f);
-}
-
-float Easing::easeOutSine(float t) {
-
-	return sinf((t * (float)M_PI) / 2.0f);
-}

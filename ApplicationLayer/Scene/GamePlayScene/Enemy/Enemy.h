@@ -315,13 +315,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	// 中心座標
 	Vector3 centerPosition_ = { 0.0f, 1.0f, 0.0f };
 
-	// 最大の高さ
-	Vector3 highPosition_ = { 0.0f, 10.0f, 0.0f };
-
 	// 中心に戻る用タイマー
 	float returnTimer_ = 0.0f;
 	// 中心に戻る最大時間
 	float returnMaxTime_ = 1.0f; // 1秒
-	float et;
-	Vector3 outQuartPosition = {};
 };
