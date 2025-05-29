@@ -2,6 +2,8 @@
 #include "AudioCategory.h"
 #include "WavLoader.h"
 #include "Mp3Loader.h"
+
+#include <list>
 #include <string>
 #include <memory>
 
@@ -63,6 +65,11 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	std::unique_ptr<WavLoader> wavLoader_;
 	std::unique_ptr<Mp3Loader> mp3Loader_;
+
+	std::list<std::unique_ptr<WavLoader>> seWavLoaders_;
+	std::list<std::unique_ptr<Mp3Loader>> seMp3Loaders_;
+	std::list<std::unique_ptr<WavLoader>> voiceWavLoaders_;
+	std::list<std::unique_ptr<Mp3Loader>> voiceMp3Loaders_;
 
 private: /// ---------- コピー禁止 ---------- ///
 
