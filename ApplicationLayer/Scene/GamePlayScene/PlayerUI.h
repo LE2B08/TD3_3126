@@ -90,4 +90,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	float maxSpeed_ = 10.0f;
 	// 速度の最小値
 	float minSpeed_ = 0.0f;
+
+	// 顔のスプライト
+	std::unique_ptr<Sprite> headSprite_ = nullptr;
+	// 顔の位置
+	Vector2 headPosition_ = { 85.0f, 650.0f };
 };

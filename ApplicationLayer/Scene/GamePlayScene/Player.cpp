@@ -33,7 +33,7 @@ void Player::Initialize() {
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	//worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f * 3.0f };
+	worldTransform_.translate_ = startAnimationPos_;
 
 	ParticleManager::GetInstance()->CreateParticleGroup("ExplosionEffect", "circle.png", ParticleEffectType::Explosion);
 	ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", "gradationLine.png", ParticleEffectType::Ring);

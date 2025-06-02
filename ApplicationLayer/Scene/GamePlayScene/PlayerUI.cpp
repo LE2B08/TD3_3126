@@ -11,6 +11,7 @@ void PlayerUI::Initialize() {
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("Resources/playerHpUI.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/hpGauge.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/PlayerHead.png");
 
 	//  テクスチャを180度回転
 	hpRotation_ = static_cast<float>(M_PI); // ここを変更
@@ -22,6 +23,10 @@ void PlayerUI::Initialize() {
 	// Hpのゲージのスプライト
 	hpGaugeSprite_ = std::make_unique<Sprite>();
 	hpGaugeSprite_->Initialize("Resources/hpGauge.png");
+
+	// 顔のスプライトの生成と初期化
+	headSprite_ = std::make_unique<Sprite>();
+	headSprite_->Initialize("Resources/PlayerHead.png");
 }
 
 /// -------------------------------------------------------------
@@ -63,6 +68,10 @@ void PlayerUI::Update() {
 	// HPのスプライトの更新
 	hpSprite_->SetTextureRect({ hpPosition_.x, hpPosition_.y }, { 0.0f, 0.0f, 32.0f, 320.0f });
 	hpSprite_->Update();
+
+	// 顔のスプライトの更新
+	headSprite_->SetPosition(headPosition_);
+	headSprite_->Update();
 }
 
 /// -------------------------------------------------------------
@@ -71,6 +80,7 @@ void PlayerUI::Update() {
 void PlayerUI::Draw() {
 	hpGaugeSprite_->Draw();
 	hpSprite_->Draw();
+	headSprite_->Draw();
 }
 
 /// -------------------------------------------------------------
@@ -81,5 +91,7 @@ void PlayerUI::DrawImGui() {
 	ImGui::Begin("PlayerUI");
 	ImGui::DragInt("HP", &hp_, 1, 0, 10);
 	ImGui::DragFloat("Speed", &speed_, 0.1f, 0.0f, 10.0f);
+
+	ImGui::DragFloat2("headPos", &headPosition_.x, 0.1f);
 	ImGui::End();
 }
