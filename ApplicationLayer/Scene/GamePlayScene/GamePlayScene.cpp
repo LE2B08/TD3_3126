@@ -488,6 +488,8 @@ void GamePlayScene::GameStartInitialize() {
 
 	// アニメーションフラグを下げておく
 	isStartAnimation_ = false;
+
+	player_->SetPosition(Vector3(0.0f, -20.0f, 8.0f)); // プレイヤーの初期位置をセット
 }
 
 /// -------------------------------------------------------------

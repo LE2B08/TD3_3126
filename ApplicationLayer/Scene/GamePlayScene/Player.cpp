@@ -33,7 +33,7 @@ void Player::Initialize() {
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f * 3.0f };
+	//worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f * 3.0f };
 
 	ParticleManager::GetInstance()->CreateParticleGroup("ExplosionEffect", "circle.png", ParticleEffectType::Explosion);
 	ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", "gradationLine.png", ParticleEffectType::Ring);
@@ -232,7 +232,7 @@ void Player::FallingAnimation() {
 	}
 
 	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f * 3.0f }, { 0.0f, 1.0f, -8.0f * 3.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+	worldTransform_.translate_ = Vector3::Lerp(startAnimationPos_, endAnimationPos_, easeOutBounce(fallingTimer_ / maxFallingTime));
 	worldTransform_.rotate_.y = -1.55f;
 	// タイマーと最大値が等しい場合
 	if (fallingTimer_ == maxFallingTime) {
