@@ -94,12 +94,6 @@ void TitleScene::Update()
 	}
 #endif // _DEBUG
 
-	if (input->TriggerKey(DIK_F4)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("TutorialScene");
-		}
-	}
-
 	// Updateの中に状態管理追加
 	switch (titleState_) {
 	case TitleState::Appear:
@@ -111,8 +105,7 @@ void TitleScene::Update()
 		// Idle中の点滅演出など（今の titleObject_->Update() に書かれてるかも）
 
 		// 入力によるシーン切り替え
-		if (titleState_ == TitleState::Idle &&
-			input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
+		if (titleState_ == TitleState::Idle && input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 		{
 			AudioManager::GetInstance()->PlaySE("wire.mp3"); // SEを再生
 
