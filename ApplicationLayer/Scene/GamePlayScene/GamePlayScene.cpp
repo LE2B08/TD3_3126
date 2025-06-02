@@ -35,7 +35,8 @@ void GamePlayScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
-	particleManager = ParticleManager::GetInstance();
+
+	AudioManager::GetInstance()->PlayBGM("gamescene.mp3", 0.2f, 1.0f, true); // BGMを再生
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();

@@ -3,6 +3,7 @@
 #include "PlayerUI.h"
 #include <ParticleManager.h>
 #include <ParticleEmitter.h>
+#include "ContactRecord.h"
 
 #include <optional>
 #include <Easing.h>
@@ -117,6 +118,8 @@ private: /// ---------- ルートビヘイビア用メンバ関数 ---------- //
 	void BehaviorAttackUpdate();
 
 private: /// ---------- メンバ変数 ---------- ///
+
+	ContactRecord contactRecord_;
 
 	// 振る舞い
 	Behavior behavior_ = Behavior::kRoot; // 現在の行動

@@ -8,6 +8,7 @@
 #include <Wireframe.h>
 #include <algorithm>
 #include <imgui.h>
+#include <AudioManager.h>
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -288,6 +289,9 @@ void Enemy::OnCollision(Collider* other) {
 			isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
+
+			// 敵の位置にパーティクルを生成
+			AudioManager::GetInstance()->PlaySE("slash.mp3");
 		}
 
 		// ノックバック中や中心に戻る途中だったら

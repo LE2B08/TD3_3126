@@ -21,6 +21,8 @@ void GameOverScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	input_ = Input::GetInstance();
 
+	AudioManager::GetInstance()->PlayBGM("gameover.mp3", 0.4f);
+
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
 	camera_->SetRotate({ 1.57f,0.0f,0.0f });
@@ -139,7 +141,7 @@ void GameOverScene::Draw()
 	// スプライトの更新処理
 	for (auto& sprite : sprites_)
 	{
-	//	sprite->Draw();
+		//	sprite->Draw();
 	}
 
 #pragma endregion

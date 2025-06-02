@@ -5,7 +5,6 @@
 #include <Object3D.h>
 #include <Sprite.h>
 #include <TextureManager.h>
-#include <WavLoader.h>
 
 #include "CollisionManager.h"
 #include "Field.h"
@@ -24,6 +23,7 @@
 #include "AABB.h"
 #include "OBB.h"
 #include <SkyBox.h>
+#include <WavLoader.h>
 
 // チュートリアルの流れ
 enum class TutorialSteps {
@@ -128,9 +128,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	TextureManager* textureManager = nullptr;
 	ParticleManager* particleManager = nullptr;
 
-	std::unique_ptr<WavLoader> wavLoader_;
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
+	std::unique_ptr<WavLoader> wavLoader_ = nullptr;
 
 	std::string particleGroupName;
 
@@ -224,4 +224,6 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isDisappearOnce_ = false;
 
 	bool isAButtonReleased_ = false;
+
+	bool isSEEnabled_ = false; // SEの有効/無効フラグ
 };

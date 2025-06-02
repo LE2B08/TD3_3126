@@ -6,6 +6,10 @@
 #include <BaseScene.h>
 
 #include "TitleObject.h"
+#include "WavLoader.h"
+#include <MP3Loader.h>
+
+#include <memory>
 
 
 /// ---------- 前方宣言 ---------- ///
@@ -53,6 +57,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	Input* input = nullptr;
 	Camera* camera_ = nullptr;
 
+	std::unique_ptr<WavLoader> wavLoader_;
+	std::unique_ptr<Mp3Loader> mp3Loader_;
 
 	TitleState titleState_ = TitleState::Appear;
 	float exitTimer_ = 0.0f;
@@ -65,6 +71,9 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::vector<std::string> texturePaths_;
 
 	bool cameraShakeEnabled_;
+
+	// SEの有効/無効
+	bool isSEEnabled_ = false;
 
 	std::unique_ptr<Sprite> cameraShakeOnSprite_;
 
