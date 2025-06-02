@@ -420,7 +420,7 @@ void DirectXCommon::InitializeFixFPS()
 void DirectXCommon::UpdateFixFPS()
 {
 	// 1/60秒ピッタリの時間
-	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 120.0f));
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
 
 	// 現在の時間を取得する
 	auto now = std::chrono::steady_clock::now();
