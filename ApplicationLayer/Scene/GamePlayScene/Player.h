@@ -200,4 +200,10 @@ private: /// ---------- 定数 ---------- ///
 
 	// 落下アニメーションが終わったかどうか
 	bool isFallEnd_ = false;
+
+	// 落下アニメーションの開始位置
+	Vector3 startAnimationPos_ = { 0.0f, 20.0f, -150.0f };
+
+	// 落下アニメーションの終了位置
+	Vector3 endAnimationPos_ = { 0.0f, 1.0f, -75.0f };
 };
