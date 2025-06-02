@@ -1,11 +1,8 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.1.62",
+		"generator":"Khronos glTF Blender I/O v4.1.63",
 		"version":"2.0"
 	},
-	"extensionsUsed":[
-		"KHR_materials_specular"
-	],
 	"scene":0,
 	"scenes":[
 		{
@@ -18,35 +15,30 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"\u7403",
-			"rotation":[
-				0.7071068286895752,
-				0,
-				0,
-				0.7071068286895752
+			"name":"ICO\u7403",
+			"scale":[
+				0.5,
+				0.5,
+				0.5
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"extensions":{
-				"KHR_materials_specular":{
-					"specularFactor":0
-				}
-			},
 			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
 				},
-				"metallicFactor":0
+				"metallicFactor":0,
+				"roughnessFactor":0.5
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"\u7403",
+			"name":"ICO\u7403",
 			"primitives":[
 				{
 					"attributes":{
@@ -69,69 +61,69 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"Skydome",
-			"uri":"Skydome.png"
+			"name":"white",
+			"uri":"white.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":2072,
+			"count":720,
 			"max":[
-				0.9999989867210388,
-				0.9999989867210388,
-				1
+				0.9468827843666077,
+				0.9805266857147217,
+				0.9765384197235107
 			],
 			"min":[
-				-1,
-				-1,
-				-1
+				-0.9468827843666077,
+				-0.9805266857147217,
+				-0.9765384197235107
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":2072,
+			"count":720,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":2072,
+			"count":720,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":2880,
+			"count":1188,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":24864,
+			"byteLength":8640,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":24864,
-			"byteOffset":24864,
-			"target":34962
-		},
-		{
-			"buffer":0,
-			"byteLength":16576,
-			"byteOffset":49728,
+			"byteLength":8640,
+			"byteOffset":8640,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":5760,
-			"byteOffset":66304,
+			"byteOffset":17280,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":2376,
+			"byteOffset":23040,
 			"target":34963
 		}
 	],
@@ -143,8 +135,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":72064,
-			"uri":"Skydome.bin"
+			"byteLength":25416,
+			"uri":"skydome.bin"
 		}
 	]
 }

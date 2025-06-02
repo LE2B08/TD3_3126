@@ -22,8 +22,8 @@ void Skydome::Initialize() {
 
 void Skydome::Update() {
 
-	rotation_.x += 0.001f;
-	rotation_.z += 0.001f;
+	rotation_.y += 0.001f;
+	//rotation_.z += 0.001f;
 	// 位置
 	object3D_->SetTranslate(position_);
 	// 回転
