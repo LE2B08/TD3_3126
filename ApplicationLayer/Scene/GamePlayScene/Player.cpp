@@ -129,6 +129,7 @@ void Player::Draw() {
 	if (isAttack_ && weapon_) {
 		weapon_->Draw();
 	}
+
 #ifdef _DEBUG
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = { cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y) };

@@ -19,7 +19,7 @@ void Hook::Initialize() {
 	
 	//オブジェクト
 	hookObject_ = std::make_unique<Object3D>();
-	hookObject_->Initialize("Voxel_Enemy.gltf");
+	hookObject_->Initialize("DirectionalArrow.gltf");
 
 
 
@@ -103,11 +103,12 @@ void Hook::Update() {
 
 	// フックの位置を更新
 	hookObject_->SetTranslate(endPos_);
-	hookObject_->SetRotate(Vector3(0.0f, playerRotation_.y, 0.0f));
+	hookObject_->SetRotate(Vector3(0.0f, playerTempRotation_.y, 0.0f));
 	// フックのスケールを更新
-	hookObject_->SetScale(Vector3(1.0f, 1.0f, 1.0f));	
+	hookObject_->SetScale(Vector3(0.5f,0.5f,0.5f));	
 	hookObject_->SetCamera(camera_);
 	hookObject_->Update();
+
 }
 
 /// -------------------------------------------------------------
@@ -205,6 +206,7 @@ void Hook::BehaviorNoneInitialize() {
 	// フックの位置を初期化
 	startPos_ = playerPosition_;
 	endPos_ = playerPosition_;
+	playerTempRotation_ = playerRotation_;
 }
 
 /// -------------------------------------------------------------

@@ -144,6 +144,7 @@ private:
 
 	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの回転
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
+	Vector3 playerTempRotation_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの一時的な回転（投げるときに使う）	
 	Vector3 playerVelocity_ = {};                 // プレイヤーの速度
 	Vector3 playerAcceleration_ = {};             // プレイヤーの加速度
 
