@@ -66,6 +66,7 @@ void GamePlayScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
+	player_->SetPosition({ 0.0f, 500.0f, -50.0f }); // プレイヤーの初期位置を設定
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
@@ -489,7 +490,7 @@ void GamePlayScene::GameStartInitialize() {
 	// アニメーションフラグを下げておく
 	isStartAnimation_ = false;
 
-	player_->SetPosition(Vector3(0.0f, -20.0f, 8.0f)); // プレイヤーの初期位置をセット
+	player_->SetPosition(Vector3(0.0f, 100.0f, -50.0f)); // プレイヤーの初期位置をセット
 }
 
 /// -------------------------------------------------------------
@@ -539,6 +540,9 @@ void GamePlayScene::GameStartUpdate() {
 		// 状態をゲームプレイに変更
 		nextGameState_ = GameSceneState::Play;
 	}
+
+	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
 
 	// プレイヤー更新
 	player_->Update();
