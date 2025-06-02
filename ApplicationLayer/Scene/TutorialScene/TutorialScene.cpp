@@ -901,11 +901,11 @@ void TutorialScene::TutorialEndUpdate() {
 
 	// Aボタンが離されたらフラグを立てる
 	if (!Input::GetInstance()->PushButton(0)) {
-		isSEEnabled_ = true; // SEを有効にする
 		isAButtonReleased_ = true;
 	}
 	// フラグが立っていて、Aボタンが押されたら処理を通す
 	if (isAButtonReleased_ && Input::GetInstance()->PushButton(0)) {
+		isSEEnabled_ = true; // SEを有効にする
 		tutorialUI_->TutorialEndUIDisappear();
 		tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 		isAButtonReleased_ = false; // もう一度押すまで処理を通さない
