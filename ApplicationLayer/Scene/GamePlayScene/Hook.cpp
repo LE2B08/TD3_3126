@@ -265,7 +265,7 @@ void Hook::BehaviorThrowUpdate() {
 	// フックの開始位置をプレイヤーの位置に設定
 	endPos_ = playerPosition_;
 	// プレイヤーとフックの長さ
-	maxDistance_ = 100.0f;
+	maxDistance_ = 200.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
 	direction_ = Vector3{cos(playerRotation_.y), 0.0f, sin(playerRotation_.y)};
 

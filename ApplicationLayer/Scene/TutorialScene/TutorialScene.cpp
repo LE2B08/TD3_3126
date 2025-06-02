@@ -76,7 +76,7 @@ void TutorialScene::Initialize() {
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPosition({ 0.0f, 0.0f, 0.0f });
+	enemy_->SetPosition({ 0.0f, 1.5f, 0.0f });
 	// 敵の弾の情報をセット
 	// enemyBullets_ = &enemy_->GetBullets();
 
@@ -154,11 +154,11 @@ void TutorialScene::Update() {
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_RETURN)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("GamePlayScene"); // ゲームプレイシーンに戻る
-		}
-	}
+	//if (input_->TriggerKey(DIK_RETURN)) {
+	//	if (sceneManager_) {
+	//		sceneManager_->ChangeScene("GamePlayScene"); // ゲームプレイシーンに戻る
+	//	}
+	//}
 #endif // _DEBUG
 
 	// 次の状態がリクエストされたら
@@ -480,6 +480,7 @@ void TutorialScene::DrawImGui() {
 	ImGui::End();
 	tutorialUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
+	hook_->ImGuiDraw();
 }
 
 ///-------------------------------------------/// 

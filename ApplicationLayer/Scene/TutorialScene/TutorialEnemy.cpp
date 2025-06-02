@@ -30,9 +30,13 @@ void TutorialEnemy::Initialize() {
 
 	// コライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
+	// コライダーの半径を設定
+	Collider::SetRadius(1.5f);
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	// 初期のスケールを設定
+	worldTransform_.scale_ = { 1.5f, 1.5f, 1.5f };
 	// 画面外に移動させる
 	worldTransform_.translate_ = { 0.0f, 100.0f, 8.0f };
 	// オブジェクトの生成・初期化
@@ -69,7 +73,7 @@ void TutorialEnemy::Update() {
 			HitParticle();
 
 			// ノックバックさせる
-			KnockBack();
+			//KnockBack();
 
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする

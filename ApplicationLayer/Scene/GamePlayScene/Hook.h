@@ -183,9 +183,9 @@ private:
 	/// フックの速度・挙動パラメータ
 	///----------------------------
 
-	float extendSpeed_ = 5.0f;         // フックを張る速さ
-	float pullSpeed_ = 30.0f;          // フックを引っ張る速さ
-	float backSpeed_ = 15.0f;          // フックの戻る速度
+	float extendSpeed_ = 3.0f;         // フックを張る速さ
+	float pullSpeed_ = 60.0f;          // フックを引っ張る速さ
+	float backSpeed_ = 25.0f;          // フックの戻る速度
 	float backDecelerationRate = 0.9f; // フックの戻る速度の減速率
 	float maxDistance_ = 50.0f;        // 最大距離
 
