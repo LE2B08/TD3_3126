@@ -8,6 +8,7 @@
 #include "Weapon.h"
 #include "Wireframe.h"
 #include <Easing.h>
+#include <AudioManager.h>
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -33,7 +34,7 @@ void Player::Initialize() {
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Human.gltf");
-	worldTransform_.translate_ = { 8.0f, 20.0f, 8.0f * 3.0f };
+	worldTransform_.translate_ = startAnimationPos_;
 
 	ParticleManager::GetInstance()->CreateParticleGroup("ExplosionEffect", "circle.png", ParticleEffectType::Explosion);
 	ParticleManager::GetInstance()->CreateParticleGroup("RingEffect", "gradationLine.png", ParticleEffectType::Ring);
@@ -129,6 +130,7 @@ void Player::Draw() {
 	if (isAttack_ && weapon_) {
 		weapon_->Draw();
 	}
+
 #ifdef _DEBUG
 	// プレイヤーの向きを示す線を描画
 	Vector3 direction = { cos(worldTransform_.rotate_.y), 0.0f, sin(worldTransform_.rotate_.y) };
@@ -146,6 +148,9 @@ void Player::OnCollision(Collider* other) {
 
 	if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemy)) // 敵と衝突した場合
 	{
+		Enemy* enemy = static_cast<Enemy*>(other);
+		uint32_t serialNumber = {};
+
 		if (!isInvincible_) {
 
 			// 敵がダメージを与えられる状態の時
@@ -157,6 +162,10 @@ void Player::OnCollision(Collider* other) {
 				// isDead_ = true; // 死亡フラグを立てる
 				isEnemyHit_ = false; // 敵に当たったフラグを解除
 			}
+
+			// SE
+			AudioManager::GetInstance()->PlaySE("dageki.mp3", 0.4f);
+
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
 		}
@@ -168,6 +177,14 @@ void Player::OnCollision(Collider* other) {
 			particleEmitter2_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
 			particleEmitter2_->Update(1.0f / 60.0f); // パーティクルの更新
 		}
+
+		// 接触記録があれば何もせずに抜ける
+		if (contactRecord_.Check(serialNumber)) return;
+
+		// 接触記録に追加
+		contactRecord_.Add(serialNumber);
+
+
 	}
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet)) // 敵の弾と衝突した場合
 	{
@@ -182,6 +199,8 @@ void Player::OnCollision(Collider* other) {
 			// }
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
+
+			AudioManager::GetInstance()->PlaySE("dageki.mp3");
 		}
 
 		particleEmitter_->SetPosition(GetCenterPosition()); // 衝突した位置にパーティクルを発生させる
@@ -232,7 +251,7 @@ void Player::FallingAnimation() {
 	}
 
 	// イージング結果を位置に代入
-	worldTransform_.translate_ = Vector3::Lerp({ 0.0f, 20.0f, -8.0f * 3.0f }, { 0.0f, 1.0f, -8.0f * 3.0f }, easeOutBounce(fallingTimer_ / maxFallingTime));
+	worldTransform_.translate_ = Vector3::Lerp(startAnimationPos_, endAnimationPos_, easeOutBounce(fallingTimer_ / maxFallingTime));
 	worldTransform_.rotate_.y = -1.55f;
 	// タイマーと最大値が等しい場合
 	if (fallingTimer_ == maxFallingTime) {

@@ -45,6 +45,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// 音楽を再開する
 	void ResumeBGM();
 
+	// 更新処理
+	void Update();
+
 public: /// ---------- セッター ---------- ///
 
 	/// <summary>
@@ -54,7 +57,7 @@ public: /// ---------- セッター ---------- ///
 	/// <param name="volume">音量</param>
 	void SetCategoryVolume(AudioCategory category, float volume) { categoryVolumes[static_cast<int>(category)] = std::clamp(volume, 0.0f, 1.0f); }
 
-private: /// ---------- ゲッタ ---------- ///
+public: /// ---------- ゲッタ ---------- ///
 
 	// カテゴリーを取得する
 	float GetCategoryVolume(AudioCategory category) const { return categoryVolumes[static_cast<int>(category)]; }

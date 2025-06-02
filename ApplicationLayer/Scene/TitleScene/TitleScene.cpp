@@ -25,6 +25,8 @@ void TitleScene::Initialize()
 	camera_->SetRotate({ 1.57f,0.0f,0.0f });
 	camera_->SetTranslate({ 0.0f,50.0f, 0.0f });
 
+	AudioManager::GetInstance()->PlayBGM("title.mp3", 0.3f, 1.0f, true); // タイトルシーンのBGMを再生（ループ再生）
+
 	// フェードマネージャーの初期化
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -112,6 +114,8 @@ void TitleScene::Update()
 		if (titleState_ == TitleState::Idle &&
 			input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 		{
+			AudioManager::GetInstance()->PlaySE("wire.mp3"); // SEを再生
+
 			titleState_ = TitleState::Exit;
 			exitTimer_ = 0.0f;
 
@@ -121,13 +125,16 @@ void TitleScene::Update()
 		// 操作方法の表示 Bボタンで表示
 		if (input->TriggerButton(XButtons.B))
 		{
+			// 操作方法の表示状態に遷移
 			titleState_ = TitleState::Operate;
+			isSEEnabled_ = true; // 操作方法表示時はSEを有効にする
 		}
 
-		 // XボタンでカメラシェイクのON/OFF切り替え
-    if (input->TriggerButton(XButtons.X)) {
-        cameraShakeEnabled_ = !cameraShakeEnabled_;
-    }
+		// XボタンでカメラシェイクのON/OFF切り替え
+		if (input->TriggerButton(XButtons.X)) {
+			isSEEnabled_ = true; // カメラシェイクの切り替え時はSEを有効にする
+			cameraShakeEnabled_ = !cameraShakeEnabled_;
+		}
 
 		break;
 
@@ -160,9 +167,16 @@ void TitleScene::Update()
 	case TitleState::Operate:
 		// 操作方法の表示 Bボタンで非表示
 		if (input->TriggerButton(XButtons.B)) {
+			isSEEnabled_ = true; // 操作方法非表示時はSEを有効にする
 			titleState_ = TitleState::Idle;
 		}
 		break;
+	}
+
+	if (isSEEnabled_)
+	{
+		AudioManager::GetInstance()->PlaySE("tekkin.mp3", 0.4f);
+		isSEEnabled_ = false; // SEは1回だけ再生するため、フラグをリセット
 	}
 
 	// スプライトの更新処理
@@ -214,7 +228,8 @@ void TitleScene::Draw()
 
 	if (cameraShakeEnabled_) {
 		titleObject_->DrawCameraShakeOn();
-	} else {
+	}
+	else {
 		titleObject_->DrawCameraShakeOff();
 	}
 

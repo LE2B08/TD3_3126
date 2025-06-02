@@ -35,7 +35,8 @@ void GamePlayScene::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
-	particleManager = ParticleManager::GetInstance();
+
+	AudioManager::GetInstance()->PlayBGM("gamescene.mp3", 0.2f, 1.0f, true); // BGMを再生
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -66,6 +67,7 @@ void GamePlayScene::Initialize()
 	// Playerクラスの初期化
 	player_->Initialize();
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
+	player_->SetPosition({ 0.0f, 500.0f, -50.0f }); // プレイヤーの初期位置を設定
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
@@ -488,6 +490,8 @@ void GamePlayScene::GameStartInitialize() {
 
 	// アニメーションフラグを下げておく
 	isStartAnimation_ = false;
+
+	player_->SetPosition(Vector3(0.0f, 100.0f, -50.0f)); // プレイヤーの初期位置をセット
 }
 
 /// -------------------------------------------------------------
@@ -538,6 +542,9 @@ void GamePlayScene::GameStartUpdate() {
 		nextGameState_ = GameSceneState::Play;
 	}
 
+	player_->SetMinMoveLimit(field_->GetMinPosition());
+	player_->SetMaxMoveLimit(field_->GetMaxPosition());
+
 	// プレイヤー更新
 	player_->Update();
 
@@ -578,6 +585,7 @@ void GamePlayScene::GamePlayUpdate() {
 		nextGameState_ = GameSceneState::GameClear;
 	}
 
+	hook_->SetCamera(camera_);                      // フックにカメラをセット
 	hook_->SetEnemyPosition(enemy_->GetPosition()); // フックに敵の位置をセット
 	// フックの更新処理
 	hook_->Update();

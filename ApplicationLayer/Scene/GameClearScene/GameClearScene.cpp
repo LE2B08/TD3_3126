@@ -20,6 +20,8 @@ void GameClearScene::Initialize()
 	textureManager = TextureManager::GetInstance();
 	input = Input::GetInstance();
 
+	AudioManager::GetInstance()->PlayBGM("gameclear.mp3", 0.4f);
+
 	camera_ = Object3DCommon::GetInstance()->GetDefaultCamera();
 	// カメラの初期化
 	camera_->SetRotate({ 1.57f,0.0f,0.0f });

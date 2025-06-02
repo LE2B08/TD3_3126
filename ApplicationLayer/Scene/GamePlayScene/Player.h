@@ -3,6 +3,7 @@
 #include "PlayerUI.h"
 #include <ParticleManager.h>
 #include <ParticleEmitter.h>
+#include "ContactRecord.h"
 
 #include <optional>
 #include <Easing.h>
@@ -118,6 +119,8 @@ private: /// ---------- ルートビヘイビア用メンバ関数 ---------- //
 
 private: /// ---------- メンバ変数 ---------- ///
 
+	ContactRecord contactRecord_;
+
 	// 振る舞い
 	Behavior behavior_ = Behavior::kRoot; // 現在の行動
 
@@ -200,4 +203,10 @@ private: /// ---------- 定数 ---------- ///
 
 	// 落下アニメーションが終わったかどうか
 	bool isFallEnd_ = false;
+
+	// 落下アニメーションの開始位置
+	Vector3 startAnimationPos_ = { 0.0f, 40.0f, -50.0f };
+
+	// 落下アニメーションの終了位置
+	Vector3 endAnimationPos_ = { 0.0f, 1.0f, -25.0f };
 };

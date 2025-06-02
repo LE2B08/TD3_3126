@@ -17,6 +17,13 @@ void Hook::Initialize() {
 	// フックのコライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kHook));
 
+	
+	//オブジェクト
+	hookObject_ = std::make_unique<Object3D>();
+	hookObject_->Initialize("DirectionalArrow.gltf");
+
+
+
 	// フックの初期化
 	isExtending_ = false;
 	isThrowing_ = false;
@@ -100,15 +107,35 @@ void Hook::Update() {
 	default:
 		break;
 	}
+
+
+	// フックの位置を更新
+	hookObject_->SetTranslate(endPos_);
+	hookObject_->SetRotate(Vector3(0.0f, playerTempRotation_.y, 0.0f));
+	// フックのスケールを更新
+	hookObject_->SetScale(Vector3(0.5f,0.5f,0.5f));	
+	hookObject_->SetCamera(camera_);
+	hookObject_->Update();
+
 }
 
 /// -------------------------------------------------------------
 ///							描画処理
 /// -------------------------------------------------------------
 void Hook::Draw() {
-	// フックの線
-	Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
+
+	
+	//フックの状態が何もしていなかったら描画しない
+	if (behavior_ != Behavior::None) {
+		// フックの線
+		Wireframe::GetInstance()->DrawLine(startPos_, endPos_, {1.0f, 1.0f, 1.0f, 1.0f});
+		// フックのオブジェクトを描画
+		hookObject_->Draw();
+	}
 }
+
+
+
 void Hook::ImGuiDraw() {
 
 	ImGui::Begin("Hook Speed");
@@ -187,6 +214,7 @@ void Hook::BehaviorNoneInitialize() {
 	// フックの位置を初期化
 	startPos_ = playerPosition_;
 	endPos_ = playerPosition_;
+	playerTempRotation_ = playerRotation_;
 }
 
 /// -------------------------------------------------------------
@@ -237,7 +265,7 @@ void Hook::BehaviorThrowUpdate() {
 	// フックの開始位置をプレイヤーの位置に設定
 	endPos_ = playerPosition_;
 	// プレイヤーとフックの長さ
-	maxDistance_ = 100.0f;
+	maxDistance_ = 200.0f;
 	// プレイヤーの向きからフックの方向ベクトルを計算
 	direction_ = Vector3{cos(playerRotation_.y), 0.0f, sin(playerRotation_.y)};
 

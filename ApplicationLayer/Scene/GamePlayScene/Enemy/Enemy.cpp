@@ -8,6 +8,7 @@
 #include <Wireframe.h>
 #include <algorithm>
 #include <imgui.h>
+#include <AudioManager.h>
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -29,9 +30,13 @@ void Enemy::Initialize() {
 
 	// コライダーの設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemy));
+	// コライダーの半径を設定
+	Collider::SetRadius(1.5f);
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	// 初期のスケールを設定
+	worldTransform_.scale_ = { 1.5f, 1.5f, 1.5f };
 	// 画面外に移動させる
 	worldTransform_.translate_ = { 0.0f, 1000.0f, 8.0f };
 	// オブジェクトの生成・初期化
@@ -284,6 +289,9 @@ void Enemy::OnCollision(Collider* other) {
 			isHitFromAttack_ = true; // プレイヤーの攻撃に当たったフラグを解除
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
+
+			// 敵の位置にパーティクルを生成
+			AudioManager::GetInstance()->PlaySE("slash.mp3");
 		}
 
 		// ノックバック中や中心に戻る途中だったら
@@ -355,7 +363,7 @@ void Enemy::SpawnEffect() {
 	float t = cameraMoveT_ / cameraMoveMaxT_;
 	moveCameraRotation.x = bezierCurve(t, 0.0f, -1.0f, -1.0f, 0.0f); // カメラの回転をベジエ曲線で補間
 
-	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.0f, 8.0f * 3.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
+	worldTransform_.translate_ = Vector3::Lerp(worldTransform_.translate_, Vector3(0.0f, 1.5f, 8.0f * 3.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_)); // エネミーの位置を補間
 	// moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), -1.0f * easeOutBounce(cameraMoveT_ / cameraMoveMaxT_)); // カメラの回転を補間
 	//  カメラの位置をプレイヤーの位置に設定
 	camera_->SetTranslate(cameraOffset);

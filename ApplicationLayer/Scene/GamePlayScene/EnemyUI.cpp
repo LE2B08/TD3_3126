@@ -11,6 +11,7 @@ void EnemyUI::Initialize() {
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture("Resources/playerHpUI.png");
 	TextureManager::GetInstance()->LoadTexture("Resources/hpGauge.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/EnemyHead.png");
 
 	//  テクスチャを180度回転
 	hpRotation_ = static_cast<float>(M_PI) / 2; // ここを変更
@@ -22,6 +23,10 @@ void EnemyUI::Initialize() {
 	// Hpのゲージのスプライト
 	hpGaugeSprite_ = std::make_unique<Sprite>();
 	hpGaugeSprite_->Initialize("Resources/hpGauge.png");
+
+	// 顔のスプライトの生成と初期化
+	headSprite_ = std::make_unique<Sprite>();
+	headSprite_->Initialize("Resources/EnemyHead.png");
 }
 
 /// -------------------------------------------------------------
@@ -61,6 +66,10 @@ void EnemyUI::Update() {
 	hpFrameSprite_->SetAnchorPoint({ 0.0f, 1.0f });                                  // アンカーポイントを左上に設定
 	hpFrameSprite_->SetSize({32.0f, 320.0f*2.0f});                              // サイズを設定
 	hpFrameSprite_->Update();
+
+	// 顔のスプライトの更新
+	headSprite_->SetPosition(headPosition_);
+	headSprite_->Update();
 }
 
 /// -------------------------------------------------------------
@@ -70,6 +79,9 @@ void EnemyUI::Draw() {
 	hpGaugeSprite_->Draw();
 	
 	hpFrameSprite_->Draw();
+
+	// 顔のスプライトの描画
+	headSprite_->Draw();
 }
 
 /// -------------------------------------------------------------
@@ -82,6 +94,8 @@ void EnemyUI::DrawImGui() {
 	ImGui::Begin("EnemyUI");
 	ImGui::DragInt("HP", &hp_, 1, 0, 10);
 	ImGui::DragFloat3("Position", &hpPosition_.x);
+
+	ImGui::DragFloat2("headPos", &headPosition_.x, 0.1f);
 
 	ImGui::End();
 }

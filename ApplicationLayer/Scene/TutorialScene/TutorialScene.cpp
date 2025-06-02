@@ -17,6 +17,7 @@
 #endif // _DEBUG
 #include <SkyBoxManager.h>
 #include <SpriteManager.h>
+#include <AudioManager.h>
 
 using namespace Easing;
 
@@ -34,8 +35,9 @@ void TutorialScene::Initialize() {
 	input_ = Input::GetInstance();
 	textureManager = TextureManager::GetInstance();
 	particleManager = ParticleManager::GetInstance();
-	wavLoader_ = std::make_unique<WavLoader>();
-	wavLoader_->StreamAudioAsync("Get-Ready.wav", 0.1f, 1.0f, true);
+
+	// BGMの再生
+	AudioManager::GetInstance()->PlayBGM("tutorial.mp3", 0.2f, 1.0f, true);
 
 	fadeManager_ = std::make_unique<FadeManager>();
 	fadeManager_->Initialize();
@@ -76,7 +78,7 @@ void TutorialScene::Initialize() {
 
 	// 敵の初期化
 	enemy_->Initialize();
-	enemy_->SetPosition({ 0.0f, 0.0f, 0.0f });
+	enemy_->SetPosition({ 0.0f, 1.5f, 0.0f });
 	// 敵の弾の情報をセット
 	// enemyBullets_ = &enemy_->GetBullets();
 
@@ -154,11 +156,11 @@ void TutorialScene::Update() {
 	}
 
 	// シーン切り替え
-	if (input_->TriggerKey(DIK_RETURN)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("GamePlayScene"); // ゲームプレイシーンに戻る
-		}
-	}
+	//if (input_->TriggerKey(DIK_RETURN)) {
+	//	if (sceneManager_) {
+	//		sceneManager_->ChangeScene("GamePlayScene"); // ゲームプレイシーンに戻る
+	//	}
+	//}
 #endif // _DEBUG
 
 	// 次の状態がリクエストされたら
@@ -239,6 +241,12 @@ void TutorialScene::Update() {
 
 	default:
 		break;
+	}
+
+	if (isSEEnabled_)
+	{
+		AudioManager::GetInstance()->PlaySE("denshion.mp3", 0.4f, 1.0f); // SEを再生
+		isSEEnabled_ = false; // SEを無効にする
 	}
 
 	// カメラの更新
@@ -416,6 +424,9 @@ void TutorialScene::Draw() {
 /// 終了処理
 ///-------------------------------------------///
 void TutorialScene::Finalize() {
+
+	// 音楽を止める
+	AudioManager::GetInstance()->StopBGM();
 }
 
 ///-------------------------------------------/// 
@@ -480,6 +491,7 @@ void TutorialScene::DrawImGui() {
 	ImGui::End();
 	tutorialUI_->DrawImGui();
 	enemy_->ShowImGui("Enemy");
+	hook_->ImGuiDraw();
 }
 
 ///-------------------------------------------/// 
@@ -516,7 +528,7 @@ void TutorialScene::CheckAllCollisions() {
 /// チュートリアル開始時初期化
 ///-------------------------------------------///
 void TutorialScene::TutorialStartInitialize() {
-	
+
 }
 
 ///-------------------------------------------/// 
@@ -525,7 +537,8 @@ void TutorialScene::TutorialStartInitialize() {
 void TutorialScene::TutorialStartUpdate() {
 
 	// Aボタンが押されたら
-	if (Input::GetInstance()->PushButton(0)) {
+	if (Input::GetInstance()->PushButton(0)) {///
+		isSEEnabled_ = true; // SEを有効にする
 		tutorialUI_->TutorialIntroDisappear(); // チュートリアルのイントロを非表示にする
 		tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 		// 次に行く処理
@@ -561,12 +574,12 @@ void TutorialScene::TutorialPlayerRotationUpdate() {
 		tutorialUI_->rightStickGuideDisappear(); // ここでDisappear
 		isDisappearOnce_ = true;  // 一度だけ通す
 	}
-	
+
 	// タイマーが指定時間を超えたら
 	if (rotationStepTimer_ >= kRotationStepWaitTime) {
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
-
+			isSEEnabled_ = true; // SEを有効にする
 			// チュートリアルステップをフックの投げ戻しに変更
 			SetTutorialStep(TutorialSteps::HookThrowAndBack);
 			rotationStepTimer_ = 0.0f;
@@ -624,6 +637,7 @@ void TutorialScene::TutorialHookThrowAndBackUpdate() {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
+			isSEEnabled_ = true; // SEを有効にする
 			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
 			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをフックの弧を描く移動に変更
@@ -667,6 +681,7 @@ void TutorialScene::TutorialHookArcMoveUpdate() {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
+			isSEEnabled_ = true; // SEを有効にする
 			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
 			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをフックの移動に変更
@@ -714,6 +729,7 @@ void TutorialScene::TutorialHookMoveUpdate() {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
+			isSEEnabled_ = true; // SEを有効にする
 			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
 			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップを攻撃に変更
@@ -760,6 +776,7 @@ void TutorialScene::TutorialAttackUpdate() {
 
 		// Aボタンが押されたら
 		if (Input::GetInstance()->PushButton(0)) {
+			isSEEnabled_ = true; // SEを有効にする
 			tutorialUI_->successDisappear(); // 成功のUIを非表示にする
 			tutorialUI_->DecisionUIDisappear(); // 決定UIを非表示にする
 			// チュートリアルステップをチュートリアル終了に変更
@@ -881,9 +898,10 @@ void TutorialScene::TutorialEndInitialize() {
 /// チュートリアル終了更新
 ///-------------------------------------------///
 void TutorialScene::TutorialEndUpdate() {
-	
+
 	// Aボタンが離されたらフラグを立てる
 	if (!Input::GetInstance()->PushButton(0)) {
+		isSEEnabled_ = true; // SEを有効にする
 		isAButtonReleased_ = true;
 	}
 	// フラグが立っていて、Aボタンが押されたら処理を通す

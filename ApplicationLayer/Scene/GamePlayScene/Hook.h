@@ -95,6 +95,9 @@ public:
 	void SetIsHitPlayerToEnemy(bool isHitPlayerToEnemy) { isHitPlayerToEnemy_ = isHitPlayerToEnemy; }
 	void SetEnemyPosition(const Vector3& enemyPosition) { enemyPosition_ = enemyPosition; }
 
+	// カメラの設定
+	void SetCamera(Camera* camera) { camera_ = camera; }
+
 	// プレイヤーの設定
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
@@ -142,6 +145,7 @@ private:
 	Enemy* enemy_ = nullptr;   // エネミー
 	TutorialEnemy* tutorialEnemy_ = nullptr; // チュートリアルエネミー
 	Field* field_ = nullptr;   // フィールド
+	Camera* camera_ = nullptr; // カメラ
 
 	///----------------------------
 	/// 移動制限・プレイヤー情報
@@ -152,8 +156,15 @@ private:
 
 	Vector3 playerRotation_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの回転
 	Vector3 playerPosition_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの位置
+	Vector3 playerTempRotation_ = {0.0f, 0.0f, 0.0f}; // プレイヤーの一時的な回転（投げるときに使う）	
 	Vector3 playerVelocity_ = {};                 // プレイヤーの速度
 	Vector3 playerAcceleration_ = {};             // プレイヤーの加速度
+
+
+	///----------------------------	
+	/// フックのオブジェクト
+	///-----------------------------
+	std::unique_ptr<Object3D> hookObject_; // フックの3Dオブジェクト
 
 	///----------------------------
 	/// フックの座標・物理量
@@ -172,9 +183,9 @@ private:
 	/// フックの速度・挙動パラメータ
 	///----------------------------
 
-	float extendSpeed_ = 5.0f;         // フックを張る速さ
-	float pullSpeed_ = 30.0f;          // フックを引っ張る速さ
-	float backSpeed_ = 15.0f;          // フックの戻る速度
+	float extendSpeed_ = 3.0f;         // フックを張る速さ
+	float pullSpeed_ = 60.0f;          // フックを引っ張る速さ
+	float backSpeed_ = 25.0f;          // フックの戻る速度
 	float backDecelerationRate = 0.9f; // フックの戻る速度の減速率
 	float maxDistance_ = 50.0f;        // 最大距離
 

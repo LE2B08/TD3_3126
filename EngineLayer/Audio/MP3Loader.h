@@ -14,7 +14,7 @@
 /// -------------------------------------------------------------
 class Mp3Loader
 {
-private: /// ---------- 構造体 ---------- ///
+public: /// ---------- 構造体 ---------- ///
 
 	/// ---------- 再生状態 ---------- ///
 	enum class PlaybackState
@@ -46,6 +46,9 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// BGMを再開
 	void ResumeBGM();
+
+	/// 効果音（SE）用の一時再生（非同期）
+	void PlaySEAsync(const std::string& fileName, float volume = 1.0f, float pitch = 1.0f);
 
 public: /// ---------- セッター ---------- ///
 

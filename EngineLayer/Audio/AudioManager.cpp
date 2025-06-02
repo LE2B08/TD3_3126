@@ -45,7 +45,7 @@ void AudioManager::PlaySE(const std::string& filePath, float volume, float pitch
 	else if (ext == ".mp3")
 	{
 		auto loader = std::make_unique<Mp3Loader>();
-		loader->StreamAudioAsync(filePath, actualVolume, pitch, loop);
+		loader->PlaySEAsync(filePath, actualVolume, pitch);
 		seMp3Loaders_.push_back(std::move(loader));
 	}
 	else
@@ -94,4 +94,15 @@ void AudioManager::ResumeBGM()
 {
 	if (wavLoader_) wavLoader_->ResumeBGM();
 	if (mp3Loader_) mp3Loader_->ResumeBGM();
+}
+
+void AudioManager::Update()
+{
+	seWavLoaders_.remove_if([](const std::unique_ptr<WavLoader>& loader) {
+		return loader->GetPlaybackState() == PlaybackState::Stopped;
+		});
+
+	seMp3Loaders_.remove_if([](const std::unique_ptr<Mp3Loader>& loader) {
+		return loader->GetPlaybackState() == Mp3Loader::PlaybackState::Stopped;
+		});
 }
