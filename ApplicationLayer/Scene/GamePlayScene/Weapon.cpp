@@ -5,6 +5,7 @@
 #include "TutorialEnemy.h"
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
+#include "AudioManager.h"
 
 #include <cmath>
 
