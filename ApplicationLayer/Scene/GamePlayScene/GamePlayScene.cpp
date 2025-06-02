@@ -578,6 +578,7 @@ void GamePlayScene::GamePlayUpdate() {
 		nextGameState_ = GameSceneState::GameClear;
 	}
 
+	hook_->SetCamera(camera_);                      // フックにカメラをセット
 	hook_->SetEnemyPosition(enemy_->GetPosition()); // フックに敵の位置をセット
 	// フックの更新処理
 	hook_->Update();
