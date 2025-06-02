@@ -76,7 +76,7 @@ void GameOverScene::Initialize()
 void GameOverScene::Update()
 {
 	// 入力によるシーン切り替え
-	if (input_->TriggerKey(DIK_RETURN) || input_->TriggerButton(XButtons.A)) // Enterキーが押されたら
+	if (input_->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
 		if (sceneManager_)
 		{

@@ -44,7 +44,7 @@ void GameClearScene::Initialize()
 void GameClearScene::Update()
 {
 	// 入力によるシーン切り替え
-	if (input->TriggerKey(DIK_RETURN) || input->TriggerButton(XButtons.A)) // Enterキーが押されたら
+	if (input->TriggerButton(XButtons.A)) // Enterキーが押されたら
 	{
 		if (sceneManager_)
 		{
