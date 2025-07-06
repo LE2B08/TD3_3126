@@ -99,6 +99,9 @@ private: /// ---------- メンバ関数 ---------- ///
 	// ポーズ更新
 	void PauseUpdate();
 
+	// デバッグ更新処理
+	void DebugUpdate();
+
 private: /// ---------- メンバ変数 ---------- ///
 
 	DirectXCommon* dxCommon_ = nullptr;

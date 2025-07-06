@@ -132,33 +132,8 @@ void GamePlayScene::Initialize()
 void GamePlayScene::Update()
 {
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_F12)) {
-		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
-		Wireframe::GetInstance()->SetDebugCamera(!Wireframe::GetInstance()->GetDebugCamera());
-		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
-		isDebugCamera_ = !isDebugCamera_;
-	}
-
-	// シーン切り替え
-	if (input_->TriggerKey(DIK_F1)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("TuboScene");
-		}
-	}
-
-	// シーン切り替え
-	if (input_->TriggerKey(DIK_F2)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("AkimotoScene");
-		}
-	}
-
-	// シーン切り替え
-	if (input_->TriggerKey(DIK_F3)) {
-		if (sceneManager_) {
-			sceneManager_->ChangeScene("SatouScene");
-		}
-	}
+	// デバッグ時更新処理
+	DebugUpdate();
 #endif // _DEBUG
 
 	if (player_->GetIsHitEnemy() && enemy_->CanGiveDamage()) {
@@ -727,6 +702,37 @@ void GamePlayScene::PauseUpdate() {
 					sceneManager_->ChangeScene("TitleScene");
 					});
 			}
+		}
+	}
+}
+
+void GamePlayScene::DebugUpdate()
+{
+	if (input_->TriggerKey(DIK_F12)) {
+		Object3DCommon::GetInstance()->SetDebugCamera(!Object3DCommon::GetInstance()->GetDebugCamera());
+		Wireframe::GetInstance()->SetDebugCamera(!Wireframe::GetInstance()->GetDebugCamera());
+		skyBox_->SetDebugCamera(!skyBox_->GetDebugCamera());
+		isDebugCamera_ = !isDebugCamera_;
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_F1)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("TuboScene");
+		}
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_F2)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("AkimotoScene");
+		}
+	}
+
+	// シーン切り替え
+	if (input_->TriggerKey(DIK_F3)) {
+		if (sceneManager_) {
+			sceneManager_->ChangeScene("SatouScene");
 		}
 	}
 }
