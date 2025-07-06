@@ -1,228 +1,886 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\Object3d.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Object3d.VS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Particle.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Particle.VS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Wireframe.VS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Wireframe.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Sprite.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\Sprite.VS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Object3d.PS.hlsl">
+      <Filter>Shaders\Object3d</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Object3d.VS.hlsl">
+      <Filter>Shaders\Object3d</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Sprite.PS.hlsl">
+      <Filter>Shaders\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Sprite.VS.hlsl">
+      <Filter>Shaders\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Particle.PS.hlsl">
+      <Filter>Shaders\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Particle.VS.hlsl">
+      <Filter>Shaders\Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Wireframe.PS.hlsl">
+      <Filter>Shaders\Wireframe</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Wireframe.VS.hlsl">
+      <Filter>Shaders\Wireframe</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.cpp" />
-    <ClCompile Include="EngineLayer\Math\Quaternion\Quaternion.cpp" />
-    <ClCompile Include="EngineLayer\Managers\AnimationManager\AnimationManager.cpp" />
-    <ClCompile Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.cpp" />
-    <ClCompile Include="ApplicationLayer\Colliders\Collider.cpp" />
-    <ClCompile Include="ApplicationLayer\Colliders\CollisionManager.cpp" />
-    <ClCompile Include="ApplicationLayer\Colliders\ContactRecord.cpp" />
-    <ClCompile Include="ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.cpp" />
-    <ClCompile Include="ApplicationLayer\SceneManagement\BaseScene\BaseScene.cpp" />
-    <ClCompile Include="EngineLayer\CameraManagement\Camera\Camera.cpp" />
-    <ClCompile Include="EngineLayer\WorldTransform\WorldTransform.cpp" />
-    <ClCompile Include="EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="EngineLayer\Base\DXLib\DX12DepthStencil\DX12DepthStencil.cpp" />
-    <ClCompile Include="EngineLayer\Base\DXLib\DirectXCommon\DirectXCommon.cpp" />
-    <ClCompile Include="EngineLayer\Base\DXLib\DX12Descriptor\DX12Descriptor.cpp" />
-    <ClCompile Include="EngineLayer\Base\DXLib\DX12Device\DX12Device.cpp" />
-    <ClCompile Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.cpp" />
-    <ClCompile Include="Externals\imgui\imgui.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_tables.cpp" />
-    <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ImGuiManager\ImGuiManager.cpp" />
-    <ClCompile Include="EngineLayer\Input\Input.cpp" />
-    <ClCompile Include="EngineLayer\Base\FrameworkLayer\Framework\GameEngine.cpp" />
-    <ClCompile Include="EngineLayer\Base\FrameworkLayer\Framework\Framework.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\GamePlayScene.cpp" />
-    <ClCompile Include="EngineLayer\Math\Matrix\Matrix4x4.cpp" />
-    <ClCompile Include="EngineLayer\3D\Model\Model.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ModelManager\ModelManager.cpp" />
-    <ClCompile Include="EngineLayer\3D\Object3D\Object3D.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ResourceManager\ResourceManager.cpp" />
-    <ClCompile Include="EngineLayer\ResourceChecker\ReleaseCheck\ResourceObject.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ShaderManager\ShaderManager.cpp" />
-    <ClCompile Include="EngineLayer\2D\Sprite\Sprite.cpp" />
-    <ClCompile Include="EngineLayer\Managers\TextureManager\TextureManager.cpp" />
-    <ClCompile Include="EngineLayer\Math\Vectors\Vector2.cpp" />
-    <ClCompile Include="EngineLayer\Math\Vectors\Vector3.cpp" />
-    <ClCompile Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.cpp" />
-    <ClCompile Include="EngineLayer\3D\Object3DCommon\Object3DCommon.cpp" />
-    <ClCompile Include="ApplicationLayer\EffectLayer\ParticleEmitter.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleManager.cpp" />
-    <ClCompile Include="EngineLayer\Audio\WavLoader.cpp" />
-    <ClCompile Include="EngineLayer\Managers\SRVManager\SRVManager.cpp" />
-    <ClCompile Include="ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.cpp" />
-    <ClCompile Include="ApplicationLayer\SceneManagement\SceneManager\SceneManager.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleScene.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ParameterManager\ParameterManager.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\OtherScene\TuboScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\OtherScene\SatouScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Weapon.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.cpp" />
     <ClCompile Include="WinMain.cpp" />
-    <ClCompile Include="EngineLayer\2D\Wireframe\Wireframe.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Hook.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Easing.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\OtherScene\FadeManager.cpp" />
-    <ClCompile Include="EngineLayer\Managers\SpriteManager\SpriteManager.cpp" />
-    <ClCompile Include="EngineLayer\Managers\LightManager\LightManager.cpp" />
-    <ClCompile Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.cpp" />
-    <ClCompile Include="EngineLayer\3D\SkyBox\SkyBox.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.cpp" />
-    <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp" />
-    <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleObject.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.cpp" />
-    <ClCompile Include="EngineLayer\WorldTransform\ParticleTransform.cpp" />
-    <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp" />
-    <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp" />
-    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp" />
-    <ClCompile Include="EngineLayer\Audio\AudioManager.cpp" />
-    <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.cpp" />
-    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp" />
+    <ClCompile Include="Externals\imgui\imgui.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Colliders\Collider.cpp">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Colliders\CollisionManager.cpp">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Colliders\ContactRecord.cpp">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearScene.cpp">
+      <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.cpp">
+      <Filter>ApplicationLayer\Scene\GameOverScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleScene.cpp">
+      <Filter>ApplicationLayer\Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.cpp">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\GamePlayScene.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.cpp">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\SatouScene.cpp">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\TuboScene.cpp">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.cpp">
+      <Filter>ApplicationLayer\SceneManagement\AbstractSceneFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\SceneManagement\BaseScene\BaseScene.cpp">
+      <Filter>ApplicationLayer\SceneManagement\BaseScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.cpp">
+      <Filter>ApplicationLayer\SceneManagement\SceneFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\SceneManagement\SceneManager\SceneManager.cpp">
+      <Filter>ApplicationLayer\SceneManagement\SceneMangaer</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\EffectLayer\ParticleEmitter.cpp">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\2D\Wireframe\Wireframe.cpp">
+      <Filter>EngineLayer\2D\Wireframe</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\2D\Sprite\Sprite.cpp">
+      <Filter>EngineLayer\2D\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\3D\SkyBox\SkyBox.cpp">
+      <Filter>EngineLayer\3D\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\3D\Object3D\Object3D.cpp">
+      <Filter>EngineLayer\3D\Object3D</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\3D\Object3DCommon\Object3DCommon.cpp">
+      <Filter>EngineLayer\3D\Object3DCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\DynamicCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Field</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Pause</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.cpp">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.cpp">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Easing.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Hook.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Weapon.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp">
+      <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.cpp">
+      <Filter>ApplicationLayer\Scene\GameOverScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\TitleScene\TitleObject.cpp">
+      <Filter>ApplicationLayer\Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\3D\Model\Model.cpp">
+      <Filter>EngineLayer\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Math\Vectors\Vector2.cpp">
+      <Filter>EngineLayer\Math\Vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Math\Vectors\Vector3.cpp">
+      <Filter>EngineLayer\Math\Vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Math\Matrix\Matrix4x4.cpp">
+      <Filter>EngineLayer\Math\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Math\Quaternion\Quaternion.cpp">
+      <Filter>EngineLayer\Math\Quaternion</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Input\Input.cpp">
+      <Filter>EngineLayer\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\AnimationManager\AnimationManager.cpp">
+      <Filter>EngineLayer\Managers\AnimationManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\OtherScene\FadeManager.cpp">
+      <Filter>EngineLayer\Managers\FadeManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ImGuiManager\ImGuiManager.cpp">
+      <Filter>EngineLayer\Managers\ImGuiManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\LightManager\LightManager.cpp">
+      <Filter>EngineLayer\Managers\LightManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ModelManager\ModelManager.cpp">
+      <Filter>EngineLayer\Managers\ModelManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ParameterManager\ParameterManager.cpp">
+      <Filter>EngineLayer\Managers\ParameterManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleManager.cpp">
+      <Filter>EngineLayer\Managers\ParticleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ResourceManager\ResourceManager.cpp">
+      <Filter>EngineLayer\Managers\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ShaderManager\ShaderManager.cpp">
+      <Filter>EngineLayer\Managers\ShaderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.cpp">
+      <Filter>EngineLayer\Managers\SkyBoxManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\TextureManager\TextureManager.cpp">
+      <Filter>EngineLayer\Managers\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\SpriteManager\SpriteManager.cpp">
+      <Filter>EngineLayer\Managers\SpriteManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\SRVManager\SRVManager.cpp">
+      <Filter>EngineLayer\Managers\SRVManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Audio\AudioManager.cpp">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Audio\MP3Loader.cpp">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Audio\WavLoader.cpp">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\WorldTransform\WorldTransform.cpp">
+      <Filter>EngineLayer\WorldTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\WorldTransform\ParticleTransform.cpp">
+      <Filter>EngineLayer\WorldTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Material\ParticleMaterial.cpp">
+      <Filter>EngineLayer\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\CameraManagement\Camera\Camera.cpp">
+      <Filter>EngineLayer\CameraManagement\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.cpp">
+      <Filter>EngineLayer\CameraManagement\DebugCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.cpp">
+      <Filter>EngineLayer\Base\FrameworkLayer\LogString</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.cpp">
+      <Filter>EngineLayer\Base\FrameworkLayer\WindowsAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\FrameworkLayer\Framework\Framework.cpp">
+      <Filter>EngineLayer\Base\FrameworkLayer\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\FrameworkLayer\Framework\GameEngine.cpp">
+      <Filter>EngineLayer\Base\FrameworkLayer\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.cpp">
+      <Filter>EngineLayer\ResourceChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\ResourceChecker\ReleaseCheck\ResourceObject.cpp">
+      <Filter>EngineLayer\ResourceChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Managers\ParticleManager\ParticleFactory.cpp">
+      <Filter>EngineLayer\Managers\ParticleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Mesh\ParticleMesh.cpp">
+      <Filter>EngineLayer\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\DXLib\DirectXCommon\DirectXCommon.cpp">
+      <Filter>EngineLayer\Base\DXLib\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\DXLib\DX12DepthStencil\DX12DepthStencil.cpp">
+      <Filter>EngineLayer\Base\DXLib\DX12DepthStencil</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\DXLib\DX12Descriptor\DX12Descriptor.cpp">
+      <Filter>EngineLayer\Base\DXLib\DX12Descriptor</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\DXLib\DX12Device\DX12Device.cpp">
+      <Filter>EngineLayer\Base\DXLib\DX12Device</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.cpp">
+      <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h" />
-    <ClInclude Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.h" />
-    <ClInclude Include="EngineLayer\Math\Quaternion\Quaternion.h" />
-    <ClInclude Include="EngineLayer\Managers\AnimationManager\AnimationManager.h" />
-    <ClInclude Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.h" />
-    <ClInclude Include="ApplicationLayer\Colliders\Collider.h" />
-    <ClInclude Include="ApplicationLayer\Colliders\CollisionManager.h" />
-    <ClInclude Include="ApplicationLayer\Colliders\CollisionTypeIdDef.h" />
-    <ClInclude Include="ApplicationLayer\Colliders\ContactRecord.h" />
-    <ClInclude Include="ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.h" />
-    <ClInclude Include="ApplicationLayer\SceneManagement\BaseScene\BaseScene.h" />
-    <ClInclude Include="EngineLayer\Math\AABB.h" />
-    <ClInclude Include="EngineLayer\Audio\AudioStructs.h" />
-    <ClInclude Include="ApplicationLayer\EffectLayer\Emitter.h" />
-    <ClInclude Include="EngineLayer\CameraManagement\Camera\Camera.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\VertexData.h" />
-    <ClInclude Include="EngineLayer\WorldTransform\WorldTransform.h" />
-    <ClInclude Include="EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DX12DepthStencil\DX12DepthStencil.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DirectXCommon\DirectXCommon.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DX12Descriptor\DX12Descriptor.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DX12Device\DX12Device.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DX12Include.h" />
-    <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\BlendModeType.h" />
-    <ClInclude Include="Externals\imgui\imconfig.h" />
-    <ClInclude Include="Externals\imgui\imgui.h" />
-    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="Externals\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="Externals\imgui\imgui_internal.h" />
-    <ClInclude Include="Externals\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Externals\imgui\imstb_textedit.h" />
-    <ClInclude Include="Externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="EngineLayer\Managers\ImGuiManager\ImGuiManager.h" />
-    <ClInclude Include="EngineLayer\Input\Input.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\Material.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\MaterialData.h" />
-    <ClInclude Include="EngineLayer\Math\Matrix\Matrix4x4.h" />
-    <ClInclude Include="EngineLayer\3D\Model\Model.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\ModelData.h" />
-    <ClInclude Include="EngineLayer\Managers\ModelManager\ModelManager.h" />
-    <ClInclude Include="EngineLayer\3D\Object3D\Object3D.h" />
-    <ClInclude Include="EngineLayer\Managers\ResourceManager\ResourceManager.h" />
-    <ClInclude Include="EngineLayer\ResourceChecker\ReleaseCheck\ResourceObject.h" />
-    <ClInclude Include="EngineLayer\Managers\ShaderManager\ShaderManager.h" />
-    <ClInclude Include="EngineLayer\2D\Sprite\Sprite.h" />
-    <ClInclude Include="EngineLayer\Managers\TextureManager\TextureManager.h" />
-    <ClInclude Include="EngineLayer\Math\Vectors\Vector2.h" />
-    <ClInclude Include="EngineLayer\Math\Vectors\Vector3.h" />
-    <ClInclude Include="EngineLayer\Math\Vectors\Vector4.h" />
-    <ClInclude Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.h" />
-    <ClInclude Include="EngineLayer\3D\Object3DCommon\Object3DCommon.h" />
-    <ClInclude Include="ApplicationLayer\EffectLayer\ParticleEmitter.h" />
-    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleManager.h" />
-    <ClInclude Include="EngineLayer\Audio\WavLoader.h" />
-    <ClInclude Include="EngineLayer\Base\FrameworkLayer\Framework\GameEngine.h" />
-    <ClInclude Include="EngineLayer\Managers\SRVManager\SRVManager.h" />
-    <ClInclude Include="EngineLayer\Audio\WavLoaderException.h" />
-    <ClInclude Include="EngineLayer\Base\FrameworkLayer\Framework\Framework.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\GamePlayScene.h" />
-    <ClInclude Include="ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.h" />
-    <ClInclude Include="ApplicationLayer\SceneManagement\SceneManager\SceneManager.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleScene.h" />
-    <ClInclude Include="EngineLayer\Managers\ParameterManager\ParameterManager.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearScene.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.h" />
-    <ClInclude Include="EngineLayer\Math\OBB.h" />
-    <ClInclude Include="EngineLayer\2D\Wireframe\Wireframe.h" />
-    <ClInclude Include="ApplicationLayer\Scene\OtherScene\TuboScene.h" />
-    <ClInclude Include="ApplicationLayer\Scene\OtherScene\SatouScene.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Weapon.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Easing.h" />
-    <ClInclude Include="ApplicationLayer\Scene\OtherScene\FadeManager.h" />
-    <ClInclude Include="EngineLayer\Managers\SpriteManager\SpriteManager.h" />
-    <ClInclude Include="EngineLayer\Managers\LightManager\LightManager.h" />
-    <ClInclude Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.h" />
-    <ClInclude Include="EngineLayer\3D\SkyBox\SkyBox.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.h" />
-    <ClInclude Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.h" />
-    <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h" />
-    <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleObject.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.h" />
-    <ClInclude Include="EngineLayer\WorldTransform\ParticleTransform.h" />
-    <ClInclude Include="EngineLayer\Mesh\ParticleMesh.h" />
-    <ClInclude Include="ApplicationLayer\EffectLayer\Particle.h" />
-    <ClInclude Include="EngineLayer\Material\ParticleMaterial.h" />
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h" />
-    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h" />
-    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h" />
-    <ClInclude Include="Externals\Audio\minimp3\minimp3.h" />
-    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h" />
-    <ClInclude Include="EngineLayer\Audio\AudioCategory.h" />
-    <ClInclude Include="EngineLayer\Audio\AudioManager.h" />
-    <ClInclude Include="EngineLayer\Audio\MP3Loader.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.h" />
-    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h" />
+    <ClInclude Include="Externals\imgui\imconfig.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_internal.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_textedit.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_truetype.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\Audio\minimp3\minimp3.h">
+      <Filter>Externals\minimp3</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\Audio\minimp3\minimp3_ex.h">
+      <Filter>Externals\minimp3</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Colliders\Collider.h">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Colliders\CollisionManager.h">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Colliders\CollisionTypeIdDef.h">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Colliders\ContactRecord.h">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearScene.h">
+      <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverScene.h">
+      <Filter>ApplicationLayer\Scene\GameOverScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleScene.h">
+      <Filter>ApplicationLayer\Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialScene.h">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\GamePlayScene.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\AkimotoScene.h">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\SatouScene.h">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\TuboScene.h">
+      <Filter>ApplicationLayer\Scene\OtherScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\SceneManagement\AbstractSceneFactory\AbstractSceneFactory.h">
+      <Filter>ApplicationLayer\SceneManagement\AbstractSceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\SceneManagement\BaseScene\BaseScene.h">
+      <Filter>ApplicationLayer\SceneManagement\BaseScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\SceneManagement\SceneFactory\SceneFactory.h">
+      <Filter>ApplicationLayer\SceneManagement\SceneFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\SceneManagement\SceneManager\SceneManager.h">
+      <Filter>ApplicationLayer\SceneManagement\SceneMangaer</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\EffectLayer\Emitter.h">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\EffectLayer\Particle.h">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\EffectLayer\ParticleEmitter.h">
+      <Filter>ApplicationLayer\EffectLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\2D\Wireframe\Wireframe.h">
+      <Filter>EngineLayer\2D\Wireframe</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\2D\Sprite\Sprite.h">
+      <Filter>EngineLayer\2D\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\3D\SkyBox\SkyBox.h">
+      <Filter>EngineLayer\3D\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\3D\Object3D\Object3D.h">
+      <Filter>EngineLayer\3D\Object3D</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\3D\Object3DCommon\Object3DCommon.h">
+      <Filter>EngineLayer\3D\Object3DCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera\DynamicCamera.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\DynamicCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\Enemy.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Field\Field.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Field</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Pause\PauseMenu.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Pause</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\ControllerUI.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialEnemy.h">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialPlayer.h">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h">
+      <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Easing.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Weapon.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h">
+      <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GameOverScene\GameOverLogo.h">
+      <Filter>ApplicationLayer\Scene\GameOverScene</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\TitleScene\TitleObject.h">
+      <Filter>ApplicationLayer\Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\3D\Model\Model.h">
+      <Filter>EngineLayer\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\AABB.h">
+      <Filter>EngineLayer\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\OBB.h">
+      <Filter>EngineLayer\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\Vectors\Vector2.h">
+      <Filter>EngineLayer\Math\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\Vectors\Vector3.h">
+      <Filter>EngineLayer\Math\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\Vectors\Vector4.h">
+      <Filter>EngineLayer\Math\Vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\Matrix\Matrix4x4.h">
+      <Filter>EngineLayer\Math\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Math\Quaternion\Quaternion.h">
+      <Filter>EngineLayer\Math\Quaternion</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Input\Input.h">
+      <Filter>EngineLayer\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\AnimationManager\AnimationManager.h">
+      <Filter>EngineLayer\Managers\AnimationManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\OtherScene\FadeManager.h">
+      <Filter>EngineLayer\Managers\FadeManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ImGuiManager\ImGuiManager.h">
+      <Filter>EngineLayer\Managers\ImGuiManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\LightManager\LightManager.h">
+      <Filter>EngineLayer\Managers\LightManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ModelManager\ModelManager.h">
+      <Filter>EngineLayer\Managers\ModelManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ParameterManager\ParameterManager.h">
+      <Filter>EngineLayer\Managers\ParameterManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleManager.h">
+      <Filter>EngineLayer\Managers\ParticleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ResourceManager\ResourceManager.h">
+      <Filter>EngineLayer\Managers\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ShaderManager\ShaderManager.h">
+      <Filter>EngineLayer\Managers\ShaderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\SkyBoxManager\SkyBoxManager.h">
+      <Filter>EngineLayer\Managers\SkyBoxManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\TextureManager\TextureManager.h">
+      <Filter>EngineLayer\Managers\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\SpriteManager\SpriteManager.h">
+      <Filter>EngineLayer\Managers\SpriteManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\SRVManager\SRVManager.h">
+      <Filter>EngineLayer\Managers\SRVManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\AudioStructs.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\AudioCategory.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\AudioManager.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\MP3Loader.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\WavLoader.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Audio\WavLoaderException.h">
+      <Filter>EngineLayer\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\WorldTransform\WorldTransform.h">
+      <Filter>EngineLayer\WorldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\WorldTransform\ParticleTransform.h">
+      <Filter>EngineLayer\WorldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Material\ParticleMaterial.h">
+      <Filter>EngineLayer\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\CameraManagement\Camera\Camera.h">
+      <Filter>EngineLayer\CameraManagement\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\CameraManagement\DebugCamera\DebugCamera.h">
+      <Filter>EngineLayer\CameraManagement\DebugCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\BlendModeType.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\Material.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\MaterialData.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\ModelData.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\VertexData.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\MultipleStructs\TransformationMatrix.h">
+      <Filter>EngineLayer\Base\MultipleStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\FrameworkLayer\LogString\LogString.h">
+      <Filter>EngineLayer\Base\FrameworkLayer\LogString</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\FrameworkLayer\WindowsAPI\WinApp.h">
+      <Filter>EngineLayer\Base\FrameworkLayer\WindowsAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\FrameworkLayer\Framework\Framework.h">
+      <Filter>EngineLayer\Base\FrameworkLayer\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\FrameworkLayer\Framework\GameEngine.h">
+      <Filter>EngineLayer\Base\FrameworkLayer\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DX12Include.h">
+      <Filter>EngineLayer\Base\DXLib</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\ResourceChecker\LeakCheck\D3DResourceLeakChecker.h">
+      <Filter>EngineLayer\ResourceChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\ResourceChecker\ReleaseCheck\ResourceObject.h">
+      <Filter>EngineLayer\ResourceChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleEffectType.h">
+      <Filter>EngineLayer\Managers\ParticleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Managers\ParticleManager\ParticleFactory.h">
+      <Filter>EngineLayer\Managers\ParticleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Mesh\ParticleMesh.h">
+      <Filter>EngineLayer\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DirectXCommon\DirectXCommon.h">
+      <Filter>EngineLayer\Base\DXLib\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DX12DepthStencil\DX12DepthStencil.h">
+      <Filter>EngineLayer\Base\DXLib\DX12DepthStencil</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DX12Descriptor\DX12Descriptor.h">
+      <Filter>EngineLayer\Base\DXLib\DX12Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DX12Device\DX12Device.h">
+      <Filter>EngineLayer\Base\DXLib\DX12Device</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h">
+      <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Shaders\Object3d.hlsli" />
-    <None Include="Resources\Shaders\Particle.hlsli" />
-    <None Include="Resources\Shaders\Sprite.hlsli" />
+    <None Include="Resources\Shaders\Object3d.hlsli">
+      <Filter>Shaders\Object3d</Filter>
+    </None>
+    <None Include="Resources\Shaders\Sprite.hlsli">
+      <Filter>Shaders\Sprite</Filter>
+    </None>
+    <None Include="Resources\Shaders\Particle.hlsli">
+      <Filter>Shaders\Particle</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Externals\imgui\LICENSE.txt" />
+    <Filter Include="ApplicationLayer">
+      <UniqueIdentifier>{7845cc10-c075-4d89-9463-f12932d370f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer">
+      <UniqueIdentifier>{d2cf04ac-80be-4ba4-a09d-4adaaca99c8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{d6288018-affb-47ce-9598-f6b84b4b89b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{3f2630ae-9577-49ce-8332-256fc7199928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Object3d">
+      <UniqueIdentifier>{34abea4c-b580-45d2-8d86-7aea3803483a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Sprite">
+      <UniqueIdentifier>{ddce00da-e5e7-4333-93fb-841dba9d4fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Particle">
+      <UniqueIdentifier>{28cf0990-76a0-4559-a83e-f8ec9a5b5462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Wireframe">
+      <UniqueIdentifier>{0423d4ed-dae8-466e-90d7-e71d211aff32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Math">
+      <UniqueIdentifier>{0ea310e9-6b41-45af-8bc9-31520d8716ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\imgui">
+      <UniqueIdentifier>{ca364d66-2903-4e47-bfb3-f5c7600b7b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\minimp3">
+      <UniqueIdentifier>{a8a79697-e67b-40cd-b021-a45075351d79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Colliders">
+      <UniqueIdentifier>{84e4522c-6387-4a39-b1a7-af21dc1098b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene">
+      <UniqueIdentifier>{98de5075-44c4-4fee-a4f4-6cc6e39e8bf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\SceneManagement">
+      <UniqueIdentifier>{437b38a3-e30b-4644-818c-ddc5e53c6ee6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GameOverScene">
+      <UniqueIdentifier>{22d7b7a7-db6b-487c-9cf8-61355d95722b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GameClearScene">
+      <UniqueIdentifier>{51d5bbc5-3bf0-46b2-8248-8d78f3267488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene">
+      <UniqueIdentifier>{250e6605-a426-4885-bbe8-c8fa7d860818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\TitleScene">
+      <UniqueIdentifier>{ce4e4312-e1f4-4cd8-9ec3-ac237b7f67fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\OtherScene">
+      <UniqueIdentifier>{25b543d9-4aec-4bea-be24-3ae778a62542}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\TutorialScene">
+      <UniqueIdentifier>{8a8cb47e-a256-4edb-94b1-e82057822cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\SceneManagement\AbstractSceneFactory">
+      <UniqueIdentifier>{cd783e8f-3f95-4ed2-840a-f964ab64915c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\SceneManagement\BaseScene">
+      <UniqueIdentifier>{99ea8aa3-cba6-4499-bc4d-996d07de5421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\SceneManagement\SceneFactory">
+      <UniqueIdentifier>{41dc7f08-2a9d-403e-9477-3e49b6196d18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\SceneManagement\SceneMangaer">
+      <UniqueIdentifier>{43a2e795-c9e0-429f-8425-ebf2e46e63c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\EffectLayer">
+      <UniqueIdentifier>{506a71b5-e657-476b-a66e-99a901601a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\2D">
+      <UniqueIdentifier>{d32a59ef-6f37-4368-99d9-66ea1dd01c8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\3D">
+      <UniqueIdentifier>{a5498c9d-7148-4ea7-9a1a-57cd33ce2f62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\2D\Sprite">
+      <UniqueIdentifier>{bb0270a7-e421-4e4d-a811-aa2d72daefd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\2D\Wireframe">
+      <UniqueIdentifier>{7ee41dd6-117f-4212-abda-499ac9dfc536}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\3D\Object3D">
+      <UniqueIdentifier>{b3ae4bfd-ddd1-41a1-a634-7fb8e6e30aa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\3D\Object3DCommon">
+      <UniqueIdentifier>{623e5ff8-507f-4656-beb0-910ee7f0f9ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\3D\Model">
+      <UniqueIdentifier>{d6affcca-ce01-460c-88ce-f29483d4e32e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\3D\Skybox">
+      <UniqueIdentifier>{857bb230-79d9-4acd-a76a-9383eef57641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\DynamicCamera">
+      <UniqueIdentifier>{70043ee2-8ac2-4550-9a33-9d6c92276288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Enemy">
+      <UniqueIdentifier>{abd91a99-8d5c-44e1-9e28-a6c990ac6a92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Field">
+      <UniqueIdentifier>{b9613f75-83e2-491a-9de2-7d9c1e109cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Pause">
+      <UniqueIdentifier>{ecdb3d43-5edd-472b-8cf9-2d3176391cf2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\UI">
+      <UniqueIdentifier>{f720f6ca-06d5-4c0e-b3f7-f897f71f0ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Math\Vectors">
+      <UniqueIdentifier>{a57c84aa-112d-4b30-9fea-8b404fa466a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Math\Matrix">
+      <UniqueIdentifier>{1abbe919-824d-4f84-a1ca-8609c8b3e045}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Math\Quaternion">
+      <UniqueIdentifier>{8e1489e4-6a32-48aa-9feb-b57c971254ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Material">
+      <UniqueIdentifier>{c0b66f36-31a0-43c6-9633-f32ae6afcd83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\WorldTransform">
+      <UniqueIdentifier>{665851a3-f19c-4bea-8f58-27ed4e79a58c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Audio">
+      <UniqueIdentifier>{fa49088d-1f5d-4205-8e59-ef3b02743c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base">
+      <UniqueIdentifier>{41c9580d-4a6f-45c7-bb9b-7d70a8723437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\CameraManagement">
+      <UniqueIdentifier>{9ace7ff4-e088-472d-804e-5264721374ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Input">
+      <UniqueIdentifier>{53b0d2c2-f7e0-4485-ac06-c79f43c681ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers">
+      <UniqueIdentifier>{7a7ca612-82b1-45d2-aa06-3f27b5a70055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\AnimationManager">
+      <UniqueIdentifier>{4bf9d13b-a479-4438-aa34-0e65060275c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\FadeManager">
+      <UniqueIdentifier>{1f83c077-e884-4964-8e95-deb19c0de08c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ImGuiManager">
+      <UniqueIdentifier>{096d606f-1a77-45dd-9214-e0bb745bd0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\LightManager">
+      <UniqueIdentifier>{20c6d344-0394-41f6-ac61-31b763f53cb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ModelManager">
+      <UniqueIdentifier>{8d0532c5-be63-4b87-b47e-4e3ce8bc596c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ParameterManager">
+      <UniqueIdentifier>{9d668975-a2ce-4425-b87f-0e349f8936ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ParticleManager">
+      <UniqueIdentifier>{5a7bf362-b96a-4810-b6e7-c773353f0a08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ResourceManager">
+      <UniqueIdentifier>{87b39527-b3ba-48b3-b8d9-395df5b33c72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\ShaderManager">
+      <UniqueIdentifier>{45bf7a59-faaf-4005-a438-37f7b57d654b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\SkyBoxManager">
+      <UniqueIdentifier>{3d8a03fc-5297-483e-9df9-6af6638b758c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\TextureManager">
+      <UniqueIdentifier>{b11e33ab-73c1-4128-9f43-6350c46d0b39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\SpriteManager">
+      <UniqueIdentifier>{0be37ed6-b9a9-454c-842e-2fd3f734936d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Managers\SRVManager">
+      <UniqueIdentifier>{e7212d4c-95e5-41a3-b5b7-29aeda630690}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\CameraManagement\Camera">
+      <UniqueIdentifier>{958dc7d7-13dc-4891-bcd3-7a6229eaf0ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\CameraManagement\DebugCamera">
+      <UniqueIdentifier>{533bf3f8-394c-4cfd-9217-311b8dcbc06b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\MultipleStructs">
+      <UniqueIdentifier>{b63857da-88bf-4c14-a97e-6cb332d319b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib">
+      <UniqueIdentifier>{5c78b57a-aac5-4fa7-bcf2-916ee38312d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\FrameworkLayer">
+      <UniqueIdentifier>{22c263b5-c7ec-440a-bf40-6678de83a76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\FrameworkLayer\Framework">
+      <UniqueIdentifier>{07fd99b1-9dd7-4153-87cf-d32333bffc4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\FrameworkLayer\WindowsAPI">
+      <UniqueIdentifier>{83ee0542-83ee-4a2e-a42b-94bf54bc31c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\FrameworkLayer\LogString">
+      <UniqueIdentifier>{b722d2b7-4d16-44cf-a53b-8fa64fdffe4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\ResourceChecker">
+      <UniqueIdentifier>{7ed2f4a4-3f75-469f-906d-6436024d5f41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Mesh">
+      <UniqueIdentifier>{cb891436-c887-4739-b6aa-9d20b5fd80d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib\DirectXCommon">
+      <UniqueIdentifier>{243a07c3-409b-438b-b614-72aaabc0935b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib\DX12DepthStencil">
+      <UniqueIdentifier>{522efbe4-86bc-4d77-9eaa-c23e145365d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib\DX12Descriptor">
+      <UniqueIdentifier>{c701b515-f10f-4142-ad16-fc9ee81f4cae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib\DX12Device">
+      <UniqueIdentifier>{bed1cc76-4e85-4a94-80e5-9f411e0e4403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineLayer\Base\DXLib\DX12SwapChain">
+      <UniqueIdentifier>{e0a530e2-55e0-4bb5-98c4-af26a4fa6cbb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Externals\imgui\LICENSE.txt">
+      <Filter>Externals\imgui</Filter>
+    </Text>
   </ItemGroup>
 </Project>
