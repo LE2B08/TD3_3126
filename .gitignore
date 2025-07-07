@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# --- ImGui の設定ファイル ---
+imgui.ini
+
+# --- DirectX Shader DLL ---
+dxil.dll
+dxcompiler.dll
