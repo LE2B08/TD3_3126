@@ -5,6 +5,20 @@
 #include "PlayerUI.h" // PlayerUIのインクルードを追加
 
 /// -------------------------------------------------------------
+/// プレイヤー用調整パラメータ構造体
+/// -------------------------------------------------------------
+struct PlayerParams {
+    static constexpr float kMoveSpeed = 0.25f;      // 移動速度
+    static constexpr float kJumpPower = 0.6f;      // ジャンプ力
+    static constexpr float kGravity = 0.03f;       // 重力加速度
+    static constexpr float kAttackPower = 1.0f;    // 攻撃力
+    static constexpr float kInvincibleDuration = 60.0f; // 無敵時間（フレーム）
+    static constexpr float kAttackDuration = 30.0f;     // 攻撃持続時間（フレーム）
+    static constexpr float kMaxHp = 10.0f;         // 最大HP
+    // 必要に応じて他のパラメータも追加
+};
+
+/// -------------------------------------------------------------
 ///                         プレイヤークラス
 /// -------------------------------------------------------------
 class Player : public BasePlayer
