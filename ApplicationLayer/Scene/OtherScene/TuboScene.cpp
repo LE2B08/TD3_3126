@@ -57,12 +57,12 @@ void TuboScene::Initialize() {
 	player_->SetPosition({1000.0f, 1000.0f, 1000.0f});
 
 	// 武器の初期化
-	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
+	weapon_->SetBasePlayer(player_.get()); // プレイヤーの情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());       // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
-	hook_->SetPlayer(player_.get());
+	hook_->SetBasePlayer(player_.get());
 	hook_->SetEnemy(enemy_.get());
 	hook_->SetField(field_.get());
 	hook_->Initialize();
@@ -90,7 +90,7 @@ void TuboScene::Initialize() {
 
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
-	dynamicCamera_->SetPlayer(player_.get());
+	dynamicCamera_->SetBasePlayer(player_.get());
 	dynamicCamera_->SetEnemy(enemy_.get());
 
 	// 衝突マネージャの生成

@@ -1,6 +1,8 @@
 #pragma once
 #include "WorldTransform.h"
 
+class BasePlayer; // 追加: BasePlayerの前方宣言
+
 /// ---------- 前方宣言 ---------- ///
 class Player;
 class TutorialPlayer;
@@ -39,11 +41,7 @@ public: /// ---------- セッター ---------- ///
 	// 座標のセット
 	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
 
-	// プレイヤーの設定
-	void SetPlayer(Player* player) { player_ = player; }
-
-	// チュートリアルプレイヤーの設定
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+	void SetBasePlayer(BasePlayer* player) { player_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -57,10 +55,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 
 	// プレイヤー借りポインタ
-	Player* player_ = nullptr;
-
-	// チュートリアルプレイヤー借りポインタ
-	TutorialPlayer* tutorialPlayer_ = nullptr;
+	BasePlayer* player_ = nullptr;
 
 	// 敵借りポインタ
 	Enemy* enemy_ = nullptr;

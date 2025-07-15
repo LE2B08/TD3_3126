@@ -11,6 +11,7 @@ class Player;
 class TutorialPlayer;
 class Enemy;
 class TutorialEnemy;
+class BasePlayer; // 追加: BasePlayerの前方宣言
 
 /// -------------------------------------------------------------
 ///						　プレイヤークラス
@@ -55,8 +56,7 @@ public:
 	void SetCamera(Camera* camera) { object3D_->SetCamera(camera); }
 
 	// プレイヤーの設定
-	void SetPlayer(Player* player) { player_ = player; }
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+	void SetBasePlayer(BasePlayer* player) { basePlayer_ = player; }
 
 	// エネミーの設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -69,8 +69,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	std::unique_ptr<Object3D> object3D_ = nullptr;
 	
 	// プレイヤー
-	Player* player_ = nullptr;
-	TutorialPlayer* tutorialPlayer_ = nullptr;
+	BasePlayer* basePlayer_ = nullptr;
 
 	// エネミー
 	Enemy* enemy_ = nullptr;
