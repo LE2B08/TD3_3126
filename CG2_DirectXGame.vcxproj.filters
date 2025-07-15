@@ -145,33 +145,6 @@
     <ClCompile Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.cpp">
       <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
     </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Easing.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Hook.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Weapon.cpp">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.cpp">
       <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
     </ClCompile>
@@ -301,7 +274,6 @@
     <ClCompile Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.cpp">
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClCompile>
-    <ClCompile Include="BasePlayer.cpp" />
     <ClCompile Include="ApplicationLayer\Colliders\CollisionWorld.cpp">
       <Filter>ApplicationLayer\Colliders</Filter>
     </ClCompile>
@@ -310,6 +282,36 @@
     </ClCompile>
     <ClCompile Include="EngineLayer\3D\LevelData\LevelObjectManager.cpp">
       <Filter>EngineLayer\3D\LevelData</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\EnemyUI.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\UI\PlayerUI.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseCharacter.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Base\BasePlayer.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Weapon\Weapon.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Skydome\Skydome.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Skydome</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Hook\Hook.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Hook</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player\Player.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Easing\Easing.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -447,33 +449,6 @@
     </ClInclude>
     <ClInclude Include="ApplicationLayer\Scene\TutorialScene\TutorialUI.h">
       <Filter>ApplicationLayer\Scene\TutorialScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\BaseCharacter.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Easing.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerDirectionalArrow.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\PlayerUI.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
-    </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Weapon.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene</Filter>
     </ClInclude>
     <ClInclude Include="ApplicationLayer\Scene\GameClearScene\GameClearLogo.h">
       <Filter>ApplicationLayer\Scene\GameClearScene</Filter>
@@ -646,7 +621,6 @@
     <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h">
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClInclude>
-    <ClInclude Include="BasePlayer.h" />
     <ClInclude Include="ApplicationLayer\Colliders\CollisionWorld.h">
       <Filter>ApplicationLayer\Colliders</Filter>
     </ClInclude>
@@ -658,6 +632,36 @@
     </ClInclude>
     <ClInclude Include="EngineLayer\3D\LevelData\LevelObjectManager.h">
       <Filter>EngineLayer\3D\LevelData</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\EnemyUI.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\UI\PlayerUI.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Base\BasePlayer.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseCharacter.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Weapon\Weapon.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome\Skydome.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Skydome</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook\Hook.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Hook</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player\Player.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Easing\Easing.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -713,9 +717,6 @@
     </Filter>
     <Filter Include="ApplicationLayer\SceneManagement">
       <UniqueIdentifier>{437b38a3-e30b-4644-818c-ddc5e53c6ee6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ApplicationLayer\Scene\GameOverScene">
-      <UniqueIdentifier>{22d7b7a7-db6b-487c-9cf8-61355d95722b}</UniqueIdentifier>
     </Filter>
     <Filter Include="ApplicationLayer\Scene\GameClearScene">
       <UniqueIdentifier>{51d5bbc5-3bf0-46b2-8248-8d78f3267488}</UniqueIdentifier>
@@ -902,6 +903,27 @@
     </Filter>
     <Filter Include="EngineLayer\3D\LevelData">
       <UniqueIdentifier>{95680033-f117-4c4a-ad50-e651d10e91c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Weapon">
+      <UniqueIdentifier>{b8b68cc6-e81c-4261-b51c-11f86042cc11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Skydome">
+      <UniqueIdentifier>{57043411-2f70-4658-af40-da9cc2d4e99e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GameOverScene">
+      <UniqueIdentifier>{22d7b7a7-db6b-487c-9cf8-61355d95722b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Hook">
+      <UniqueIdentifier>{c2ff1b80-693e-4f7d-b53a-b49c369016cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Player">
+      <UniqueIdentifier>{97f56ef6-9d2b-4332-9fb6-6c396df6d0cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Easing">
+      <UniqueIdentifier>{c7dbe89f-f61d-4dbe-a624-3e17d966db61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ApplicationLayer\Scene\GamePlayScene\Base">
+      <UniqueIdentifier>{a059a5fc-7150-4789-9f9f-3d6a41c89d3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
