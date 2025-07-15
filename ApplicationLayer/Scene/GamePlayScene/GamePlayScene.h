@@ -8,6 +8,7 @@
 
 #include "CollisionManager.h"
 #include "Player.h"
+#include "PlayerUI.h"
 #include "Enemy.h"
 #include "Field.h"
 #include "Weapon.h"

@@ -301,6 +301,7 @@
     <ClCompile Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.cpp">
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClCompile>
+    <ClCompile Include="BasePlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -636,6 +637,7 @@
     <ClInclude Include="EngineLayer\Base\DXLib\DX12SwapChain\DX12SwapChain.h">
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClInclude>
+    <ClInclude Include="BasePlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli">

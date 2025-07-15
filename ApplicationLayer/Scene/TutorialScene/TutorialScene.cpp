@@ -66,12 +66,12 @@ void TutorialScene::Initialize() {
 	player_->SetPosition({ 0.0f, 0.0f, -8.0f }); // プレイヤーの初期位置を設定
 
 	// 武器の初期化
-	weapon_->SetTutorialPlayer(player_.get()); // プレイヤーの情報を武器にセット
+	weapon_->SetBasePlayer(player_.get()); // プレイヤーの情報を武器にセット
 	weapon_->SetTutorialEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
-	hook_->SetTutorialPlayer(player_.get());
+	hook_->SetBasePlayer(player_.get());
 	hook_->SetTutorialEnemy(enemy_.get());
 	hook_->SetField(field_.get());
 	hook_->Initialize();
@@ -93,7 +93,7 @@ void TutorialScene::Initialize() {
 
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
-	dynamicCamera_->SetTutorialPlayer(player_.get());
+	dynamicCamera_->SetBasePlayer(player_.get());
 	dynamicCamera_->SetTutorialEnemy(enemy_.get());
 
 	// ポーズメニューの初期化
@@ -102,7 +102,7 @@ void TutorialScene::Initialize() {
 	pauseMenu_->SetSceneManager(sceneManager_);
 
 	playerDirectionalArrow_->Initialize();
-	playerDirectionalArrow_->SetTutorialPlayer(player_.get());
+	playerDirectionalArrow_->SetPlayer(player_.get());
 
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -803,6 +803,7 @@ void TutorialScene::PlayUpdate() {
 	}
 	field_->Update();
 
+	hook_->SetBasePlayer(player_.get());
 	hook_->SetTutorialEnemy(enemy_.get());
 	hook_->SetEnemyPosition(enemy_->GetPosition());
 	hook_->Update();
@@ -951,6 +952,7 @@ void TutorialScene::SetTutorialStep(TutorialSteps step) {
 void TutorialScene::GaugeProgress(float count, float maxCount) {
 
 	// カウントが最大値を超えたら
+
 	if (count > maxCount) {
 
 		count = maxCount; // 最大値に制限

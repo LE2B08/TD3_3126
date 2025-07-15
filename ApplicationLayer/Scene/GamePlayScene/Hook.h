@@ -1,14 +1,13 @@
 #pragma once
 #include "Collider.h"
 #include "Object3D.h"
+#include "BasePlayer.h"
 
 #include <chrono>
 #include <deque>
 #include <optional>
 
 /// ---------- 前方宣言 ---------- ///
-class Player;
-class TutorialPlayer;
 class Enemy;
 class TutorialEnemy;
 class Field;
@@ -52,6 +51,9 @@ public:
 
 	// 中心座標を取得する純粋仮想関数
 	Vector3 GetCenterPosition() const override;
+
+	// プレイヤー情報をまとめて更新する
+	void UpdatePlayerInfo();
 
 public:
 	///----------------------------
@@ -99,8 +101,7 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	// プレイヤーの設定
-	void SetPlayer(Player* player) { player_ = player; }
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+	void SetBasePlayer(BasePlayer* player) { basePlayer_ = player; }
 
 	// 敵の設定
 	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
@@ -140,8 +141,7 @@ private:
 	/// 参照・管理オブジェクト
 	///----------------------------
 
-	Player* player_ = nullptr; // プレイヤー
-	TutorialPlayer* tutorialPlayer_ = nullptr; // チュートリアルプレイヤー
+	BasePlayer* basePlayer_ = nullptr; // 共通ポインタ
 	Enemy* enemy_ = nullptr;   // エネミー
 	TutorialEnemy* tutorialEnemy_ = nullptr; // チュートリアルエネミー
 	Field* field_ = nullptr;   // フィールド

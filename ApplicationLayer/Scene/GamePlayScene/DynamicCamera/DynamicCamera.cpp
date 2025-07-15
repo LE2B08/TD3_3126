@@ -1,47 +1,38 @@
 #include "DynamicCamera.h"
-#include "Player.h"
-#include "TutorialPlayer.h"
 #include "Enemy.h"
+#include "Player.h"
 #include "TutorialEnemy.h"
+#include "TutorialPlayer.h"
 
 #include <imgui.h>
-
 
 /// -------------------------------------------------------------
 ///						　初期化処理
 /// -------------------------------------------------------------
-void DynamicCamera::Initialize()
-{
+void DynamicCamera::Initialize() {
 
 	// ワールド変換初期化
 	worldTransform_.Initialize();
 
 	// 向きの設定
-	worldTransform_.rotate_ = { 1.57f, 0.0f, 0.0f };
+	worldTransform_.rotate_ = {1.57f, 0.0f, 0.0f};
 }
-
 
 /// -------------------------------------------------------------
 ///						　	更新処理
 /// -------------------------------------------------------------
-void DynamicCamera::Update()
-{
+void DynamicCamera::Update() {
 
 	// プレイヤーの位置を取得
 	Vector3 playerPos = {};
-	if (player_) {
-		playerPos = player_->GetPosition();
-	}
-	else if (tutorialPlayer_) {
-		playerPos = tutorialPlayer_->GetPosition();
-	}
+
+	playerPos = player_->GetPosition();
 
 	// 敵の位置を取得
 	Vector3 enemyPos = {};
 	if (enemy_) {
 		enemyPos = enemy_->GetPosition();
-	}
-	else if (tutorialEnemy_) {
+	} else if (tutorialEnemy_) {
 		enemyPos = tutorialEnemy_->GetPosition();
 	}
 
@@ -58,18 +49,16 @@ void DynamicCamera::Update()
 	zoom_ = std::clamp(zoom_, zoomMin_, zoomMax_);
 
 	// カメラの位置を設定
-	worldTransform_.translate_ = { centerPos_.x, zoom_, centerPos_.z };
+	worldTransform_.translate_ = {centerPos_.x, zoom_, centerPos_.z};
 
 	// ワールド変換更新
 	worldTransform_.Update();
 }
 
-
 /// -------------------------------------------------------------
 ///						　ImGuiの描画
 /// -------------------------------------------------------------
-void DynamicCamera::ShowImGui(const char* name)
-{
+void DynamicCamera::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
