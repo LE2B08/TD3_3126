@@ -7,6 +7,7 @@
 #include "AnimationManager.h"
 
 #include "CollisionManager.h"
+#include "CollisionWorld.h"
 #include "Player.h"
 #include "PlayerUI.h"
 #include "Enemy.h"
@@ -64,9 +65,6 @@ public: /// ---------- メンバ関数 ---------- ///
 
 private: /// ---------- メンバ関数 ---------- ///
 
-	// 衝突判定と応答
-	void CheckAllCollisions();
-
 	/*------カメラのシェイク------*/
 	void CameraShake();
 
@@ -113,6 +111,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
+	std::unique_ptr<CollisionWorld> collisionWorld_;
 
 	EffectManager* effectManager_;
 
