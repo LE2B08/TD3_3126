@@ -5,11 +5,11 @@
 #include <WavLoader.h>
 #include "ParticleManager.h"
 #include <BaseScene.h>
-#include "GamePlayScene/Enemy/Enemy.h"
-#include "GamePlayScene/Field/Field.h"
+#include "Enemy.h"
+#include "Field.h"
 #include "Player.h"
 #include "Camera.h"
-#include "GamePlayScene/DynamicCamera/DynamicCamera.h"
+#include "DynamicCamera.h"
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
