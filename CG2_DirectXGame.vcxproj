@@ -121,6 +121,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ApplicationLayer\EffectLayer\EffectManager.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.cpp" />
     <ClCompile Include="BasePlayer.cpp" />
+    <ClCompile Include="ApplicationLayer\Colliders\CollisionWorld.cpp" />
     <ClCompile Include="EngineLayer\3D\SkyBox\SkyBox.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.cpp" />
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
@@ -260,6 +261,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="ApplicationLayer\EffectLayer\EffectManager.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\EnemyUI.h" />
     <ClInclude Include="BasePlayer.h" />
+    <ClInclude Include="ApplicationLayer\Colliders\CollisionWorld.h" />
     <ClInclude Include="EngineLayer\3D\SkyBox\SkyBox.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\AttackCommand.h" />
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Enemy\EnemyBullet.h" />

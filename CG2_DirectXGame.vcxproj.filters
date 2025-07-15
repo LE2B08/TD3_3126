@@ -302,6 +302,9 @@
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClCompile>
     <ClCompile Include="BasePlayer.cpp" />
+    <ClCompile Include="ApplicationLayer\Colliders\CollisionWorld.cpp">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -638,6 +641,9 @@
       <Filter>EngineLayer\Base\DXLib\DX12SwapChain</Filter>
     </ClInclude>
     <ClInclude Include="BasePlayer.h" />
+    <ClInclude Include="ApplicationLayer\Colliders\CollisionWorld.h">
+      <Filter>ApplicationLayer\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli">
