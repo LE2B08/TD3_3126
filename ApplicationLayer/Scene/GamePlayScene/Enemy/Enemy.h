@@ -6,6 +6,7 @@
 #include <DynamicCamera.h>
 #include <memory>
 #include <optional>
+#include <json.hpp>
 
 #include"EnemyUI.h"
 
@@ -73,6 +74,9 @@ public: /// ---------- メンバ関数 ---------- ///
 
 	// エネミーが死んだときのカメラワーク
 	void FaildCameraMove();
+
+	// エネミーの初期値の設定
+	void InitializeValues(const std::string& filePath);
 
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
@@ -234,10 +238,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	bool isHitFromAttack_ = false;
 
 	/*------ヒットの時間------*/
-	float hitTime_ = 0.0f;
+	float hitTime_;
 
 	/*------ヒットの最大時間------*/
-	float hitMaxTime_ = 60.0f;
+	const float hitMaxTime_ = 60.0f;
 
 	// シリアルナンバー
 	uint32_t serialNumber_ = 0;
@@ -250,7 +254,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// カメラのタイマー
 	float cameraMoveT_ = 0.0f;
-	float cameraMoveMaxT_ = 160.0f;
+	const float cameraMoveMaxT_ = 160.0f;
 
 	// エネミーのカメラ演出用フラグ
 	bool isEnemyCameraEffect_ = true;
@@ -266,23 +270,23 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	// カメラの戻る演出のタイマー
 	float cameraBackEffectT_ = 0.0f;
-	float cameraBackEffectMaxT_ = 160.0f;
+	const float cameraBackEffectMaxT_ = 160.0f;
 
 	// 回転の始まり
 	float rotationStartT_ = 0.0f;
 
 	// 回転の最大値
-	float rotationMaxT_ = 160.0f;
+	const float rotationMaxT_ = 160.0f;
 
 	/*------カメラの移動タイマー------*/
 	float DeathCameraMoveT_ = 0.0f; // カメラの移動時間
-	float DeathCameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
+	const float DeathCameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
 
 	// 死亡フラグ
 	bool isDead_ = false;
 
 	// 移動の速さ
-	float moveSpeed_ = 0.1f;
+	float moveSpeed_;
 
 ///-------------------------------------------/// 
 /// 状態処理用の変数
@@ -332,7 +336,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	Vector3 knockBackDirection = {};
 
 	// ノックバックする速さ
-	float knockBackSpeed_ = 0.5f;
+	float knockBackSpeed_;
 
 	// ノックバックする秒数
 	const float kKnockBackTime_ = 0.5f; // 0.5秒
@@ -345,7 +349,7 @@ private: /// ---------- メンバ変数 ---------- ///
 	Vector3 returnStartPosition_ = {};
 
 	// 中心座標
-	Vector3 centerPosition_ = { 0.0f, 1.0f, 0.0f };
+	Vector3 centerPosition_;
 
 	// 中心に戻るまでの秒数
 	const float kReturnTime_ = 1.0f; // 1秒

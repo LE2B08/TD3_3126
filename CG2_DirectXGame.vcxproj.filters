@@ -674,6 +674,7 @@
     <None Include="Resources\Shaders\Particle.hlsli">
       <Filter>Shaders\Particle</Filter>
     </None>
+    <None Include="Resources\Json\Enemy.json" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ApplicationLayer">
