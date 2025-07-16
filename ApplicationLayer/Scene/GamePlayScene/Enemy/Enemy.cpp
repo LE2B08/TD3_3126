@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <imgui.h>
 #include <AudioManager.h>
+#include <iostream>
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -35,20 +36,13 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	// 初期のスケールを設定
-	worldTransform_.scale_ = { 1.5f, 1.5f, 1.5f };
-	// 画面外に移動させる
-	worldTransform_.translate_ = { 0.0f, 1000.0f, 8.0f };
+	
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
-	// ヒットタイム
-	hitTime_ = 0;
-
-	// 体力を20設定
-	hp_ = 20;
-
+	// エネミーの各種値を初期化
+	InitializeValues("Resources/Json/Enemy.json");
 
 	// パーティクルマネージャー
 	ParticleManager::GetInstance()->CreateParticleGroup("HitParticle", "gradationLine.png", ParticleEffectType::Slash);
@@ -522,6 +516,50 @@ void Enemy::FaildCameraMove() {
 	camera_->SetTranslate(moveCameraPosition);
 
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
+}
+
+void Enemy::InitializeValues(const std::string& filePath)
+{
+	std::ifstream file(filePath);
+
+	// ファイルが開けない場合のエラーチェック
+	if (file.fail())
+	{
+		std::cerr << "ファイルを開くことができません: " << filePath << std::endl;
+		assert(false && "ファイルを開くことができません");
+	}
+
+	nlohmann::json data;
+	file >> data;
+
+	// Enemyデータを取得
+	auto& enemyData = data["Enemy"];
+
+	// スケール
+	worldTransform_.scale_.x = enemyData["Scale"][0];
+	worldTransform_.scale_.y = enemyData["Scale"][1];
+	worldTransform_.scale_.z = enemyData["Scale"][2];
+
+	// 回転
+	worldTransform_.rotate_.x = enemyData["Rotate"][0];
+	worldTransform_.rotate_.y = enemyData["Rotate"][1];
+	worldTransform_.rotate_.z = enemyData["Rotate"][2];
+
+	// 位置
+	worldTransform_.translate_.x = enemyData["Translate"][0];
+	worldTransform_.translate_.y = enemyData["Translate"][1];
+	worldTransform_.translate_.z = enemyData["Translate"][2];
+
+	// HP
+	hp_ = enemyData["HP"];
+
+	moveSpeed_ = enemyData["MoveSpeed"];
+
+	knockBackSpeed_ = enemyData["KnockBackSpeed"];
+
+	centerPosition_.x = enemyData["CenterPosition"][0];
+	centerPosition_.y = enemyData["CenterPosition"][1];
+	centerPosition_.z = enemyData["CenterPosition"][2];
 }
 
 /// -------------------------------------------------------------
