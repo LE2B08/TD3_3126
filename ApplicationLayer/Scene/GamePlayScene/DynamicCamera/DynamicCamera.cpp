@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "TutorialEnemy.h"
 #include "TutorialPlayer.h"
+#include"BaseEnemy.h"
+#include "BasePlayer.h"
 
 #include <imgui.h>
 
@@ -32,9 +34,7 @@ void DynamicCamera::Update() {
 	Vector3 enemyPos = {};
 	if (enemy_) {
 		enemyPos = enemy_->GetPosition();
-	} else if (tutorialEnemy_) {
-		enemyPos = tutorialEnemy_->GetPosition();
-	}
+	} 
 
 	// カメラの位置をプレイヤーと敵の中間に設定
 	centerPos_ = (playerPos + enemyPos) / 2.0f;

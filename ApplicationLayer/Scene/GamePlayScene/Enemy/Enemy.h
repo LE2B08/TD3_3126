@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseCharacter.h"
+#include "BaseEnemy.h"
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
@@ -19,7 +19,7 @@ class ParticleManager;
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
-class Enemy : public BaseCharacter {
+class Enemy : public BaseEnemy {
 private: /// ---------- 列挙型 ---------- ///
 	// 振る舞い
 	enum class Behavior {

@@ -6,6 +6,8 @@
 #include "Player.h"
 #include "TutorialEnemy.h"
 #include "TutorialPlayer.h"
+#include"BaseEnemy.h"
+#include "BasePlayer.h"
 
 #include <cmath>
 
@@ -29,9 +31,9 @@ void Weapon::Initialize() {
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Weapon.gltf");
 
-	object3D_->SetTranslate(basePlayer_->GetPosition());
-	object3D_->SetRotate(basePlayer_->GetRotation());
-	object3D_->SetScale(basePlayer_->GetScale());
+	object3D_->SetTranslate(player_->GetPosition());
+	object3D_->SetRotate(player_->GetRotation());
+	object3D_->SetScale(player_->GetScale());
 
 	radius_ = 2.0f;
 
@@ -46,11 +48,11 @@ void Weapon::Update() {
 	// プレイヤーが存在する場合
 
 	// 位置
-	position_ = basePlayer_->GetPosition();
+	position_ = player_->GetPosition();
 	// 回転
-	rotation_ = basePlayer_->GetRotation();
+	rotation_ = player_->GetRotation();
 	// スケール
-	scale_ = basePlayer_->GetScale();
+	scale_ = player_->GetScale();
 
 	// プレイヤーの向いている方向に武器を配置
 	Vector3 offset = {distance_ * std::cos(attackRotationAngle_), 0.0f, distance_ * std::sin(attackRotationAngle_)};
