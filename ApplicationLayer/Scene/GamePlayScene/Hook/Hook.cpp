@@ -107,12 +107,12 @@ void Hook::Update() {
 }
 
 void Hook::UpdatePlayerInfo() {
-    if (basePlayer_) {
-        playerPosition_ = basePlayer_->GetPosition();
-        playerRotation_ = basePlayer_->GetRotation();
-        playerVelocity_ = basePlayer_->GetVelocity();
-        playerAcceleration_ = basePlayer_->GetAcceleration();
-        isHitPlayerToEnemy_ = basePlayer_->GetIsHitEnemy();
+    if (player_) {
+        playerPosition_ = player_->GetPosition();
+        playerRotation_ = player_->GetRotation();
+        playerVelocity_ = player_->GetVelocity();
+        playerAcceleration_ = player_->GetAcceleration();
+        isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
     }
 }
 

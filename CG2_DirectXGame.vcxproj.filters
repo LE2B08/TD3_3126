@@ -313,6 +313,7 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.cpp">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClCompile>
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -663,6 +664,7 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.h">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli">

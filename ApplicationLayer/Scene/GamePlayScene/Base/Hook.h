@@ -2,14 +2,13 @@
 #include "Collider.h"
 #include "Object3D.h"
 #include "BasePlayer.h"
+#include "BaseEnemy.h"
 
 #include <chrono>
 #include <deque>
 #include <optional>
 
 /// ---------- 前方宣言 ---------- ///
-class Enemy;
-class TutorialEnemy;
 class Field;
 
 /// -------------------------------------------------------------
@@ -101,11 +100,10 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	// プレイヤーの設定
-	void SetBasePlayer(BasePlayer* player) { basePlayer_ = player; }
+	void SetPlayer(BasePlayer* player) { player_ = player; }
 
 	// 敵の設定
-	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
+	void SetEnemy(BaseEnemy* enemy) { enemy_ = enemy; }
 
 	// フィールドの設定
 	void SetField(Field* field) { field_ = field; }
@@ -141,9 +139,8 @@ private:
 	/// 参照・管理オブジェクト
 	///----------------------------
 
-	BasePlayer* basePlayer_ = nullptr; // 共通ポインタ
-	Enemy* enemy_ = nullptr;   // エネミー
-	TutorialEnemy* tutorialEnemy_ = nullptr; // チュートリアルエネミー
+	BasePlayer* player_ = nullptr; // 共通ポインタ
+	BaseEnemy* enemy_ = nullptr;   // 共通ポインタ
 	Field* field_ = nullptr;   // フィールド
 	Camera* camera_ = nullptr; // カメラ
 

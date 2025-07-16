@@ -214,7 +214,7 @@ void TutorialEnemy::HitParticle() {
 void TutorialEnemy::KnockBack() {
 
 	// プレイヤーの位置を確認
-	Vector3 playerPosition = tutorialPlayer_->GetPosition();
+	Vector3 playerPosition = player_->GetPosition();
 
 	// ノックバック方向のを計算
 	Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);

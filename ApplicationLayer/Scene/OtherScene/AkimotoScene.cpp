@@ -34,7 +34,7 @@ void AkimotoScene::Initialize()
 
 	dynamicCamera_ = std::make_unique<DynamicCamera>();
 	dynamicCamera_->Initialize();
-	dynamicCamera_->SetBasePlayer(player_.get());
+	dynamicCamera_->SetPlayer(player_.get());
 	dynamicCamera_->SetEnemy(enemy_.get());
 
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera_);

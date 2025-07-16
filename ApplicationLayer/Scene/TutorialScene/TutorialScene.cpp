@@ -66,13 +66,13 @@ void TutorialScene::Initialize() {
 	player_->SetPosition({ 0.0f, 0.0f, -8.0f }); // プレイヤーの初期位置を設定
 
 	// 武器の初期化
-	weapon_->SetBasePlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetTutorialEnemy(enemy_.get());   // 敵の情報を武器にセット
+	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
-	hook_->SetBasePlayer(player_.get());
-	hook_->SetTutorialEnemy(enemy_.get());
+	hook_->SetPlayer(player_.get());
+	hook_->SetEnemy(enemy_.get());
 	hook_->SetField(field_.get());
 	hook_->Initialize();
 
@@ -93,8 +93,8 @@ void TutorialScene::Initialize() {
 
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
-	dynamicCamera_->SetBasePlayer(player_.get());
-	dynamicCamera_->SetTutorialEnemy(enemy_.get());
+	dynamicCamera_->SetPlayer(player_.get());
+	dynamicCamera_->SetEnemy(enemy_.get());
 
 	// ポーズメニューの初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
@@ -803,8 +803,8 @@ void TutorialScene::PlayUpdate() {
 	}
 	field_->Update();
 
-	hook_->SetBasePlayer(player_.get());
-	hook_->SetTutorialEnemy(enemy_.get());
+	hook_->SetPlayer(player_.get());
+	hook_->SetEnemy(enemy_.get());
 	hook_->SetEnemyPosition(enemy_->GetPosition());
 	hook_->Update();
 
@@ -826,7 +826,7 @@ void TutorialScene::PlayUpdate() {
 	if (weapon_->GetIsAttack() && enemy_->GetIsHit()) {
 		enemy_->SetIsHitFromAttack(true);
 	}
-	enemy_->SetTutorialPlayer(player_.get());
+	enemy_->SetPlayer(player_.get());
 
 	// プレイヤーの更新
 	player_->Update();

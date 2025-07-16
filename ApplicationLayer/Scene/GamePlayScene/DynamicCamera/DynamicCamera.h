@@ -1,13 +1,13 @@
 #pragma once
 #include "WorldTransform.h"
 
-class BasePlayer; // 追加: BasePlayerの前方宣言
-
 /// ---------- 前方宣言 ---------- ///
 class Player;
 class TutorialPlayer;
 class Enemy;
 class TutorialEnemy;
+class BasePlayer;
+class BaseEnemy; 
 
 /// -------------------------------------------------------------
 ///					ダイナミックカメラクラス
@@ -41,13 +41,11 @@ public: /// ---------- セッター ---------- ///
 	// 座標のセット
 	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
 
-	void SetBasePlayer(BasePlayer* player) { player_ = player; }
+	void SetPlayer(BasePlayer* player) { player_ = player; }
 
 	// 敵の設定
-	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
-	// チュートリアル敵の設定
-	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
+	void SetEnemy(BaseEnemy* enemy) { enemy_ = enemy; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -57,11 +55,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	// プレイヤー借りポインタ
 	BasePlayer* player_ = nullptr;
 
-	// 敵借りポインタ
-	Enemy* enemy_ = nullptr;
-
-	// チュートリアル敵借りポインタ
-	TutorialEnemy* tutorialEnemy_ = nullptr;
+	// 敵の借りポインタ
+	BaseEnemy* enemy_ = nullptr;
 	
 	// 中心座標
 	Vector3 centerPos_ = {};
