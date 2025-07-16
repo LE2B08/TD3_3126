@@ -136,22 +136,16 @@ void Enemy::Update() {
 	}
 
 	// 弾の削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		// 弾が死んでいる場合
-		if (!bullet->IsAlive()) {
-
-			// リセット
-			bullet.reset();
-			return true;
-		}
-
-		return false;
-		});
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return !bullet->IsAlive(); });
 
 	// カメラの演出が終わるまでかhpが無くなったときは移動しない
 	if (isCameraEffectEnd_ && hp_ >= 1) {
-		// 移動
-		Move();
+
+		// 中心に戻る状態以外のとき
+		if (behavior_ != Behavior::ReturnCenter) {
+			// 移動
+			Move();
+		}
 	}
 
 	// 弾の更新
@@ -301,7 +295,10 @@ void Enemy::ShowImGui(const char* name) {
 	}
 
 	// ステートタイマーの表示
-	ImGui::SliderFloat("State Timer", &behaviorTimer_, 0.0f, 5.0f);
+	ImGui::SliderFloat("Behavior Timer", &behaviorTimer_, 0.0f, 5.0f);
+	
+	// 中心に戻るときの開始位置
+	ImGui::DragFloat3("ReturnStartPosition", &returnStartPosition_.x, 0.01f);
 
 	ImGui::End();
 }
@@ -532,8 +529,8 @@ void Enemy::FaildCameraMove() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalInitialize() {
 
-	// タイマーを設定
-	behaviorTimer_ = kWaitTime_;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -541,16 +538,16 @@ void Enemy::BehaviorNormalInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalUpdate() {
 
-	// タイマーが0になったら
-	if (behaviorTimer_ <= 0) {
+	// タイマーが既定値より大きかったら
+	if (behaviorTimer_ >= kWaitTime_) {
 
 		// 探索状態にする
 		requestBehavior_ = Behavior::Sarch;
 	}
 	else {
 
-		// タイマーを減らす
-		behaviorTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 	}
 }
 
@@ -559,8 +556,8 @@ void Enemy::BehaviorNormalUpdate() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorSarchInitialize() {
 
-	// タイマーを設定
-	behaviorTimer_ = kSarchTime_;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -568,8 +565,8 @@ void Enemy::BehaviorSarchInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorSarchUpdate() {
 
-	// タイマーが0になったときと壁にあたったとき
-	if (behaviorTimer_ <= 0 || WallHit() == true) {
+	// タイマーが設定値より大きかったときと壁にあたったとき
+	if (behaviorTimer_ >= kSarchTime_ || WallHit() == true) {
 
 		// ±30度の範囲をランダムに決定
 		float randomAngle = RandomRadian(std::numbers::pi_v<float> / 6.0f, std::numbers::pi_v<float> / 6.0f);
@@ -578,12 +575,12 @@ void Enemy::BehaviorSarchUpdate() {
 		direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
 
 		// タイマーをリセット
-		behaviorTimer_ = 2.0f;
+		behaviorTimer_ = 0.0f;
 	}
 	else {
 
-		// タイマーを減らす
-		behaviorTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 	}
 
 	// 速度を向きに合わせる
@@ -638,8 +635,8 @@ void Enemy::BehaviorAttackUpdate() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorKnockBackInitialize() {
 
-	// タイマーを設定
-	behaviorTimer_ = kKnockBackTime_;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 
 	// プレイヤーの位置を確認
 	Vector3 playerPosition = player_->GetPosition();
@@ -656,14 +653,14 @@ void Enemy::BehaviorKnockBackInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorKnockBackUpdate() {
 
-	// タイマーが0になったら
-	if (behaviorTimer_ <= 0.0f) {
+	// タイマーが設定値より大きかったら
+	if (behaviorTimer_ >= kKnockBackTime_) {
 
 		// 速度をリセット
 		velocity_ = { 0.0f, 0.0f, 0.0f };
 
 		// 前に行っていた状態にする
-		behavior_ = preBehavior_;
+		requestBehavior_ = preBehavior_;
 	}
 	else {
 
@@ -674,11 +671,11 @@ void Enemy::BehaviorKnockBackUpdate() {
 		if (WallHit() == true) {
 
 			// 中心に戻る状態にする
-			behavior_ = Behavior::ReturnCenter;
+			requestBehavior_ = Behavior::ReturnCenter;
 		}
 
-		// タイマーをカウントダウン
-		behaviorTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 	}
 }
 
@@ -690,8 +687,8 @@ void Enemy::BehaviorReturnCenterInitialize() {
 	// 開始位置を当たった時の場所に設定
 	returnStartPosition_ = worldTransform_.translate_;
 
-	// タイマーを設定
-	behaviorTimer_ = kReturnTime_;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -699,19 +696,19 @@ void Enemy::BehaviorReturnCenterInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorReturnCenterUpdate() {
 
-	// タイマーが0になったら
-	if (behaviorTimer_ <= 0.0f) {
+	// タイマーが設定値より大きかったら
+	if (behaviorTimer_ >= kReturnTime_) {
 
 		// 速度をリセット
 		velocity_ = { 0.0f, 0.0f, 0.0f };
 
 		// 前に行っていた状態にする
-		behavior_ = preBehavior_;
+		requestBehavior_ = preBehavior_;
 	}
 	else {
 
-		// タイマーをカウントダウン
-		behaviorTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 
 		// イージング用タイマー
 		float t = std::clamp(behaviorTimer_ / kReturnTime_, 0.0f, kReturnTime_);
