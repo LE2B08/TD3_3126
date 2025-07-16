@@ -27,14 +27,6 @@
 #include "OBB.h"
 #include <SkyBox.h>
 
-enum class GameSceneState {
-	Start,
-	Play,
-	GameClear,
-	GameOver,
-	Pause
-};
-
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
 class Input;
@@ -100,6 +92,16 @@ private: /// ---------- メンバ関数 ---------- ///
 
 	// デバッグ更新処理
 	void DebugUpdate();
+
+public: /// ---------- 列挙型 ---------- ///
+
+	enum class GameSceneState {
+		Start,
+		Play,
+		GameClear,
+		GameOver,
+		Pause
+	};
 
 private: /// ---------- メンバ変数 ---------- ///
 
