@@ -1,0 +1,9 @@
+{
+  "Player": {
+    "HP": 10,
+    "StartAnimationPos": [ 0.0, 40.0, -50.0 ],
+    "EndAnimationPos": [ 0.0, 1.0, -25.0 ],
+    "MaxMoveLimit": [ 24.0, 0.0, 24.0 ],
+    "MinMoveLimit": [ -24.0, 0.0, -24.0 ]
+  }
+}

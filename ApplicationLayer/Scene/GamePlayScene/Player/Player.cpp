@@ -8,6 +8,7 @@
 #include "Wireframe.h"
 #include <Easing.h>
 #include <AudioManager.h>
+#include <iostream>
 using namespace Easing;
 
 // Playerの静的メンバ変数の定義
@@ -34,6 +35,8 @@ void Player::Initialize() {
     // 3Dオブジェクトの生成・初期化
     object3D_ = std::make_unique<Object3D>();
     object3D_->Initialize("Voxel_Human.gltf");
+	// jsonファイルからパラメータを読み込み
+	InitializeValues("Resources/Json/Player.json");
     // 初期位置をアニメーション用の座標に設定
     worldTransform_.translate_ = startAnimationPos_;
     // パーティクルグループの生成（爆発・リング）
@@ -241,6 +244,36 @@ void Player::DeathCameraMove() {
     moveCameraRotation = Vector3::Lerp(cameraRotation, Vector3(0.0f, 0.0f, 0.0f), easeIn(cameraMoveT_ / cameraMoveMaxT_));
     camera_->SetTranslate(moveCameraPosition);
     camera_->SetRotate(moveCameraRotation);
+}
+
+void Player::InitializeValues(const std::string& filePath) {
+    // JSONファイルから初期化値を読み込む
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "ファイルを開くことができません: " << filePath << std::endl;
+        assert(false && "ファイルを開くことができません");
+    }
+    nlohmann::json jsonData;
+    file >> jsonData;
+	auto& playerData = jsonData["Player"];
+    // 各パラメータを設定
+    hp_ = playerData["HP"];
+    
+	maxMoveLimit_.x = playerData["MaxMoveLimit"][0];
+    maxMoveLimit_.y = playerData["MaxMoveLimit"][1];
+    maxMoveLimit_.z = playerData["MaxMoveLimit"][2];
+
+    minMoveLimit_.x = playerData["MinMoveLimit"][0];
+    minMoveLimit_.y = playerData["MinMoveLimit"][1];
+    minMoveLimit_.z = playerData["MinMoveLimit"][2];
+    // 初期位置をアニメーション用の座標に設定
+    startAnimationPos_.x = playerData["StartAnimationPos"][0];
+	startAnimationPos_.y = playerData["StartAnimationPos"][1];
+    startAnimationPos_.z = playerData["StartAnimationPos"][2];
+	// 落下アニメーションの終了位置
+	endAnimationPos_.x = playerData["EndAnimationPos"][0];
+	endAnimationPos_.y = playerData["EndAnimationPos"][1];
+	endAnimationPos_.z = playerData["EndAnimationPos"][2];
 }
 
 // -------------------------------------------------------------

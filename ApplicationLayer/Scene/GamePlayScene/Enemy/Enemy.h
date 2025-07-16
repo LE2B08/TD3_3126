@@ -194,23 +194,11 @@ public: /// ---------- セッター ---------- ///
 	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
 
 private: /// ---------- メンバ変数 ---------- ///
-
-	// 速度
-	Vector3 velocity_;
-
-	// 向き
-	Vector3 direction_ = {};
-
 	// プレイヤー
 	Player* player_;
 
 	// チュートリアルプレイヤー
 	TutorialPlayer* tutorialPlayer_;
-
-	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = {};
-	//  移動制限の最小値
-	Vector3 minMoveLimit_ = {};
 
 	// 弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
@@ -218,75 +206,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
 
-	/*------パーティクル------*/
-	std::unique_ptr<ParticleEmitter> particleEmitter_;
-	std::unique_ptr<ParticleEmitter> particleEmitter2_;
-	std::unique_ptr<ParticleEmitter> particleEmitter3_;
-
 	// 一度だけ出現演出を行うフラグ
 	bool hasEmittedDisappearEffect_ = false;
 
-	/*------ヒットフラグ------*/
-	bool isHit_ = false;
-
-	/*------無敵時間の設定------*/
-	bool isInvincible_ = false;              // 無敵状態かどうか
-	const float invincibleDuration_ = 60.0f; // 無敵時間（秒）
-	float invincibleTime_ = 0;               // 無敵時間の経過時間
-
-	/*------プレイヤーの攻撃によるヒット------*/
-	bool isHitFromAttack_ = false;
-
-	/*------ヒットの時間------*/
-	float hitTime_;
-
-	/*------ヒットの最大時間------*/
-	const float hitMaxTime_ = 60.0f;
-
-	// シリアルナンバー
-	uint32_t serialNumber_ = 0;
-	// 次のシリアルナンバー
-	uint32_t nextSerialNumber_;
-
-	// 乱数生成器
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine;
-
-	// カメラのタイマー
-	float cameraMoveT_ = 0.0f;
-	const float cameraMoveMaxT_ = 160.0f;
-
-	// エネミーのカメラ演出用フラグ
-	bool isEnemyCameraEffect_ = true;
-
-	// エネミーのカメラ演出用のタイマー
-	float enemyCameraEffectT_ = 0.0f;
-
-	// カメラ演出の終わり
-	bool isCameraEffectEnd_ = false;
-
-	// カメラが戻る演出のフラグ
-	bool isCameraBackEffect_ = false;
-
-	// カメラの戻る演出のタイマー
-	float cameraBackEffectT_ = 0.0f;
-	const float cameraBackEffectMaxT_ = 160.0f;
-
-	// 回転の始まり
-	float rotationStartT_ = 0.0f;
-
-	// 回転の最大値
-	const float rotationMaxT_ = 160.0f;
-
-	/*------カメラの移動タイマー------*/
-	float DeathCameraMoveT_ = 0.0f; // カメラの移動時間
-	const float DeathCameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
-
-	// 死亡フラグ
-	bool isDead_ = false;
-
-	// 移動の速さ
-	float moveSpeed_;
+	
 
 ///-------------------------------------------/// 
 /// 状態処理用の変数

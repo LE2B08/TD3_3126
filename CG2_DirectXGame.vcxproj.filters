@@ -677,6 +677,7 @@
       <Filter>Shaders\Particle</Filter>
     </None>
     <None Include="Resources\Json\Enemy.json" />
+    <None Include="Resources\Json\Player.json" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ApplicationLayer">
