@@ -1,11 +1,12 @@
 #pragma once
-#include "BaseCharacter.h"
+#include "BaseEnemy.h"
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
 #include <DynamicCamera.h>
 #include <memory>
 #include <optional>
+#include <json.hpp>
 
 #include"EnemyUI.h"
 
@@ -19,7 +20,7 @@ class ParticleManager;
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
-class Enemy : public BaseCharacter {
+class Enemy : public BaseEnemy {
 private: /// ---------- 列挙型 ---------- ///
 	// 振る舞い
 	enum class Behavior {
@@ -27,6 +28,8 @@ private: /// ---------- 列挙型 ---------- ///
 		Normal, // 通常
 		Sarch,  // 探索
 		Attack, // 攻撃
+		KnockBack, // ノックバック
+		ReturnCenter, // 中心に戻る
 	};
 
 public: /// ---------- メンバ関数 ---------- ///
@@ -72,6 +75,9 @@ public: /// ---------- メンバ関数 ---------- ///
 	// エネミーが死んだときのカメラワーク
 	void FaildCameraMove();
 
+	// エネミーの初期値の設定
+	void InitializeValues(const std::string& filePath);
+
 public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// <summary>
 	/// 通常時初期化
@@ -103,6 +109,26 @@ public: /// ---------- メンバ関数 ・行動別処理 ---------- ///
 	/// </summary>
 	void BehaviorAttackUpdate();
 
+	/// <summary>
+	/// ノックバック時初期化
+	/// </summary>
+	void BehaviorKnockBackInitialize();
+
+	/// <summary>
+	/// ノックバック時更新
+	/// </summary>
+	void BehaviorKnockBackUpdate();
+
+	/// <summary>
+	/// 中心に戻る時の初期化
+	/// </summary>
+	void BehaviorReturnCenterInitialize();
+
+	/// <summary>
+	/// 中心に戻る時の更新
+	/// </summary>
+	void BehaviorReturnCenterUpdate();
+
 ///-------------------------------------------/// 
 /// クラス内処理
 ///-------------------------------------------///
@@ -118,10 +144,7 @@ private:
 	void Move();
 
 	// 壁に当たった時の処理
-	void WallHit();
-
-	// 攻撃を受けたときのノックバック処理
-	void KnockBack();
+	bool WallHit();
 
 public: /// ---------- ゲッター ---------- ///
 	bool GetIsHit() const { return isHit_; }
@@ -171,152 +194,86 @@ public: /// ---------- セッター ---------- ///
 	void SetIsEnemyCameraEffect(bool isEnemyCameraEffect) { isEnemyCameraEffect_ = isEnemyCameraEffect; }
 
 private: /// ---------- メンバ変数 ---------- ///
-
-	// 速度
-	Vector3 velocity_;
-
-	// 向き
-	Vector3 direction_ = {};
-
-	// 敵の大きさを考慮した座標
-	Vector3 minPosition = {};
-	Vector3 maxPosition = {};
-
 	// プレイヤー
 	Player* player_;
 
 	// チュートリアルプレイヤー
 	TutorialPlayer* tutorialPlayer_;
 
-	// 状態
-	Behavior behavior_ = Behavior::Normal;
-
-	// 状態リクエスト
-	std::optional<Behavior> requestBehavior_ = std::nullopt;
-
-	//  移動制限の最大値
-	Vector3 maxMoveLimit_ = {};
-	//  移動制限の最小値
-	Vector3 minMoveLimit_ = {};
-
 	// 弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-
-	// アタックコマンド
-	std::unique_ptr<AttackCommand> attackCommand_;
-
-	// 発見までの距離
-	const float foundDistance_ = 4.0f;
-
-	// 各状態で使うカウントダウンタイマー
-	float stateTimer_ = 5.0f;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
 
-	/*------パーティクル------*/
-	std::unique_ptr<ParticleEmitter> particleEmitter_;
-	std::unique_ptr<ParticleEmitter> particleEmitter2_;
-	std::unique_ptr<ParticleEmitter> particleEmitter3_;
-
 	// 一度だけ出現演出を行うフラグ
 	bool hasEmittedDisappearEffect_ = false;
 
-	/*------ヒットフラグ------*/
-	bool isHit_ = false;
+	
 
-	/*------無敵時間の設定------*/
-	bool isInvincible_ = false;              // 無敵状態かどうか
-	const float invincibleDuration_ = 60.0f; // 無敵時間（秒）
-	float invincibleTime_ = 0;               // 無敵時間の経過時間
+///-------------------------------------------/// 
+/// 状態処理用の変数
+///-------------------------------------------///
 
-	/*------プレイヤーの攻撃によるヒット------*/
-	bool isHitFromAttack_ = false;
+	// 状態
+	Behavior behavior_ = Behavior::Normal;
 
-	/*------ヒットの時間------*/
-	float hitTime_ = 0.0f;
+	// 一個前の状態
+	Behavior preBehavior_ = Behavior::Normal;
 
-	/*------ヒットの最大時間------*/
-	float hitMaxTime_ = 60.0f;
+	// 状態リクエスト
+	std::optional<Behavior> requestBehavior_ = std::nullopt;
 
-	// シリアルナンバー
-	uint32_t serialNumber_ = 0;
-	// 次のシリアルナンバー
-	uint32_t nextSerialNumber_;
+	// 各状態で使うカウントアップタイマー(秒)
+	float behaviorTimer_ = 0.0f;
 
-	// 乱数生成器
-	std::random_device seedGenerator;
-	std::mt19937 randomEngine;
+///-------------------------------------------/// 
+/// 通常処理用の変数
+///-------------------------------------------///
 
-	// カメラのタイマー
-	float cameraMoveT_ = 0.0f;
-	float cameraMoveMaxT_ = 160.0f;
+	// 待機する秒数
+	const float kWaitTime_ = 2.0f; // 2秒
 
-	// エネミーのカメラ演出用フラグ
-	bool isEnemyCameraEffect_ = true;
+///-------------------------------------------/// 
+/// 探索処理用の変数
+///-------------------------------------------///
 
-	// エネミーのカメラ演出用のタイマー
-	float enemyCameraEffectT_ = 0.0f;
+	// 発見までの距離
+	const float kFoundDistance_ = 4.0f;
 
-	// カメラ演出の終わり
-	bool isCameraEffectEnd_ = false;
+	// 1回あたりの探索の秒数
+	const float kSarchTime_ = 4.0f; // 4秒
 
-	// カメラが戻る演出のフラグ
-	bool isCameraBackEffect_ = false;
-
-	// カメラの戻る演出のタイマー
-	float cameraBackEffectT_ = 0.0f;
-	float cameraBackEffectMaxT_ = 160.0f;
-
-	// 回転の始まり
-	float rotationStartT_ = 0.0f;
-
-	// 回転の最大値
-	float rotationMaxT_ = 160.0f;
-
-	/*------カメラの移動タイマー------*/
-	float DeathCameraMoveT_ = 0.0f; // カメラの移動時間
-	float DeathCameraMoveMaxT_ = 80.0f; // カメラの移動時間の最大値
-
-	// 死亡フラグ
-	bool isDead_ = false;
-
-	// 移動の速さ
-	float moveSpeed_ = 0.1f;
+///-------------------------------------------/// 
+/// 攻撃処理用の変数
+///-------------------------------------------///
+	
+	// アタックコマンド
+	std::unique_ptr<AttackCommand> attackCommand_;
 
 ///-------------------------------------------/// 
 /// ノックバック処理用の変数
 ///-------------------------------------------///
-
-	// ノックバック中
-	bool isKnockBack_ = false;
+	
+	// ノックバックする向き
+	Vector3 knockBackDirection = {};
 
 	// ノックバックする速さ
-	float knockBackSpeed_ = 0.5f;
+	float knockBackSpeed_;
 
-	// ノックバックの時間
-	float knockBackTime_ = 0.0f;
-	// ノックバックの最大時間
-	float knockBackMaxTime_ = 0.5f; // 0.5秒
+	// ノックバックする秒数
+	const float kKnockBackTime_ = 0.5f; // 0.5秒
 
 ///-------------------------------------------/// 
 /// 中心に戻る処理用の変数
 ///-------------------------------------------///
 
-	// 中心に戻るフラグ
-	bool isReturnCenter_ = false;
-
-	// 中心に戻る速度
-	Vector3 returnVelocity_ = {};
-
 	// 開始位置
 	Vector3 returnStartPosition_ = {};
 
 	// 中心座標
-	Vector3 centerPosition_ = { 0.0f, 1.0f, 0.0f };
+	Vector3 centerPosition_;
 
-	// 中心に戻る用タイマー
-	float returnTimer_ = 0.0f;
-	// 中心に戻る最大時間
-	float returnMaxTime_ = 1.0f; // 1秒
+	// 中心に戻るまでの秒数
+	const float kReturnTime_ = 1.0f; // 1秒
 };

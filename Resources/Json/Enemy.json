@@ -1,0 +1,11 @@
+{
+  "Enemy": {
+    "Scale": [ 1.5, 1.5, 1.5 ],
+    "Rotate": [ 0.0, 0.0, 0.0 ],
+    "Translate": [ 0.0, 1000.0, 8.0 ],
+    "HP": 20,
+    "MoveSpeed": 0.1,
+    "KnockBackSpeed": 0.5,
+    "CenterPosition": [ 0.0, 1.0, 0.0 ]
+  }
+}

@@ -6,6 +6,8 @@ class Player;
 class TutorialPlayer;
 class Enemy;
 class TutorialEnemy;
+class BasePlayer;
+class BaseEnemy; 
 
 /// -------------------------------------------------------------
 ///					ダイナミックカメラクラス
@@ -39,17 +41,11 @@ public: /// ---------- セッター ---------- ///
 	// 座標のセット
 	void SetTranslate(const Vector3& translate) { worldTransform_.translate_ = translate; }
 
-	// プレイヤーの設定
-	void SetPlayer(Player* player) { player_ = player; }
-
-	// チュートリアルプレイヤーの設定
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+	void SetPlayer(BasePlayer* player) { player_ = player; }
 
 	// 敵の設定
-	void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
 
-	// チュートリアル敵の設定
-	void SetTutorialEnemy(TutorialEnemy* enemy) { tutorialEnemy_ = enemy; }
+	void SetEnemy(BaseEnemy* enemy) { enemy_ = enemy; }
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -57,16 +53,10 @@ private: /// ---------- メンバ変数 ---------- ///
 	WorldTransform worldTransform_;
 
 	// プレイヤー借りポインタ
-	Player* player_ = nullptr;
+	BasePlayer* player_ = nullptr;
 
-	// チュートリアルプレイヤー借りポインタ
-	TutorialPlayer* tutorialPlayer_ = nullptr;
-
-	// 敵借りポインタ
-	Enemy* enemy_ = nullptr;
-
-	// チュートリアル敵借りポインタ
-	TutorialEnemy* tutorialEnemy_ = nullptr;
+	// 敵の借りポインタ
+	BaseEnemy* enemy_ = nullptr;
 	
 	// 中心座標
 	Vector3 centerPos_ = {};

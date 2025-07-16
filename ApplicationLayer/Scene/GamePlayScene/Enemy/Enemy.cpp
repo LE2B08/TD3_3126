@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <imgui.h>
 #include <AudioManager.h>
+#include <iostream>
 using namespace Easing;
 
 /// -------------------------------------------------------------
@@ -35,20 +36,13 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	// 初期のスケールを設定
-	worldTransform_.scale_ = { 1.5f, 1.5f, 1.5f };
-	// 画面外に移動させる
-	worldTransform_.translate_ = { 0.0f, 1000.0f, 8.0f };
+	
 	// オブジェクトの生成・初期化
 	object3D_ = std::make_unique<Object3D>();
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
-	// ヒットタイム
-	hitTime_ = 0;
-
-	// 体力を20設定
-	hp_ = 20;
-
+	// エネミーの各種値を初期化
+	InitializeValues("Resources/Json/Enemy.json");
 
 	// パーティクルマネージャー
 	ParticleManager::GetInstance()->CreateParticleGroup("HitParticle", "gradationLine.png", ParticleEffectType::Slash);
@@ -90,6 +84,14 @@ void Enemy::Update() {
 			BehaviorAttackInitialize();
 			break;
 
+		case Enemy::Behavior::KnockBack:
+			BehaviorKnockBackInitialize();
+			break;
+
+		case Enemy::Behavior::ReturnCenter:
+			BehaviorReturnCenterInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -115,32 +117,29 @@ void Enemy::Update() {
 		}
 		break;
 
+	case Enemy::Behavior::KnockBack:
+		BehaviorKnockBackUpdate();
+		break;
+
+	case Enemy::Behavior::ReturnCenter:
+		BehaviorReturnCenterUpdate();
+		break;
+
 	default:
 		break;
 	}
 
 	// 弾の削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		// 弾が死んでいる場合
-		if (!bullet->IsAlive()) {
-
-			// リセット
-			bullet.reset();
-			return true;
-		}
-
-		return false;
-		});
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return !bullet->IsAlive(); });
 
 	// カメラの演出が終わるまでかhpが無くなったときは移動しない
 	if (isCameraEffectEnd_ && hp_ >= 1) {
-		// 移動
-		Move();
-	}
 
-	// ノックバック中
-	if (isKnockBack_) {
-		KnockBack();
+		// 中心に戻る状態以外のとき
+		if (behavior_ != Behavior::ReturnCenter) {
+			// 移動
+			Move();
+		}
 	}
 
 	// 弾の更新
@@ -156,9 +155,6 @@ void Enemy::Update() {
 
 			// ヒット時のパーティクルを生成
 			HitParticle();
-
-			// ノックバックさせる
-			isKnockBack_ = true;
 
 			hitTime_++;
 			// タイマーが最大値に達したらヒットフラグをオフにする
@@ -211,7 +207,7 @@ void Enemy::Draw() {
 #ifdef _DEBUG
 
 	// 発見までの距離の可視化
-	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, foundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
+	Wireframe::GetInstance()->DrawCircle(worldTransform_.translate_, kFoundDistance_, 64, { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// 向きの可視化
 	Wireframe::GetInstance()->DrawLine(worldTransform_.translate_, worldTransform_.translate_ + direction_ * 2.0f, { 1.0f, 0.0f, 0.0f, 1.0f });
@@ -225,6 +221,18 @@ void Enemy::Draw() {
 void Enemy::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
+
+	// ワールド変換の表示
+	if (ImGui::TreeNode("WorldTransform")) {
+
+		ImGui::DragFloat3("Scale", &worldTransform_.scale_.x, 0.01f);
+		ImGui::SliderAngle("Rotate X", &worldTransform_.rotate_.x, -180.0f, 180.0f);
+		ImGui::SliderAngle("Rotate Y", &worldTransform_.rotate_.y, -180.0f, 180.0f);
+		ImGui::SliderAngle("Rotate Z", &worldTransform_.rotate_.z, -180.0f, 180.0f);
+		ImGui::DragFloat3("Translate", &worldTransform_.translate_.x, 0.01f);
+
+		ImGui::TreePop();
+	}
 
 	// 状態の表示
 	switch (behavior_) {
@@ -241,34 +249,51 @@ void Enemy::ShowImGui(const char* name) {
 		ImGui::Text("Behavior: Attack");
 		break;
 
+	case Behavior::KnockBack:
+		ImGui::Text("Behavior: KnockBack");
+		break;
+
+	case Behavior::ReturnCenter:
+		ImGui::Text("Behavior: ReturnCenter");
+		break;
+
 	default:
 		break;
 	}
 
-	// ステートタイマー
-	ImGui::SliderFloat("StateTimer", &stateTimer_, 0.0f, 5.0f);
+	// 前の状態の表示
+	switch (preBehavior_) {
 
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate_.x, 0.01f);
-	ImGui::DragFloat3("Position", &worldTransform_.translate_.x, 0.01f);
-	ImGui::DragFloat3("Velocity", &velocity_.x, 0.01f);
+	case Behavior::Normal:
+		ImGui::Text("PreBehavior: Normal");
+		break;
 
+	case Behavior::Sarch:
+		ImGui::Text("PreBehavior: Sarch");
+		break;
 
-	ImGui::DragFloat3("Direction", &direction_.x, 0.01f);
+	case Behavior::Attack:
+		ImGui::Text("PreBehavior: Attack");
+		break;
 
-	// Directionを角度を表示
-	float angle = std::atan2(-direction_.z, -direction_.x) * (180.0f / std::numbers::pi_v<float>);
-	ImGui::Text("Direction Angle: %f", angle);
+	case Behavior::KnockBack:
+		ImGui::Text("PreBehavior: KnockBack");
+		break;
 
-	ImGui::Checkbox("isHit", &isHit_);
-	ImGui::Checkbox("isHitFromAttack", &isHitFromAttack_);
-	// ノックバックの情報
-	ImGui::Checkbox("isKnokBack", &isKnockBack_);
-	ImGui::SliderFloat("KnockBackTime", &knockBackTime_, 0.0f, knockBackMaxTime_);
-	// リターンセンターの情報
-	ImGui::Checkbox("isReturnCenter", &isReturnCenter_);
-	ImGui::SliderFloat("ReturnCenterTime", &returnTimer_, 0.0f, returnMaxTime_);
+	case Behavior::ReturnCenter:
+		ImGui::Text("PreBehavior: ReturnCenter");
+		break;
+
+	default:
+		break;
+	}
+
+	// ステートタイマーの表示
+	ImGui::SliderFloat("Behavior Timer", &behaviorTimer_, 0.0f, 5.0f);
+	
+	// 中心に戻るときの開始位置
 	ImGui::DragFloat3("ReturnStartPosition", &returnStartPosition_.x, 0.01f);
-	ImGui::DragFloat3("ReturnVelocity", &returnVelocity_.x, 0.01f);
+
 	ImGui::End();
 }
 
@@ -290,22 +315,13 @@ void Enemy::OnCollision(Collider* other) {
 			isInvincible_ = true; // 無敵状態にする
 			invincibleTime_ = 0;  // 無敵時間の初期化
 
-			// 敵の位置にパーティクルを生成
+			// ヒット時のSEを再生
 			AudioManager::GetInstance()->PlaySE("slash.mp3");
-		}
 
-		// ノックバック中や中心に戻る途中だったら
-		if (isKnockBack_ || isReturnCenter_) {
+			preBehavior_ = behavior_; // 現在の状態を保存
 
-			// パーティクルを発生させる
-			particleEmitter_->SetPosition(GetCenterPosition());
-			particleEmitter_->Update(1.0f / 60.0f);
-
-			particleEmitter2_->SetPosition(GetCenterPosition());
-			particleEmitter2_->Update(1.0f / 60.0f);
-
-			particleEmitter3_->SetPosition(GetCenterPosition());
-			particleEmitter3_->Update(1.0f / 60.0f);
+			// ノックバック状態にする
+			requestBehavior_ = Behavior::KnockBack;
 		}
 	}
 }
@@ -324,6 +340,15 @@ Vector3 Enemy::GetCenterPosition() const {
 /// -------------------------------------------------------------
 void Enemy::HitParticle() {
 
+	// パーティクルを発生させる
+	particleEmitter_->SetPosition(GetCenterPosition());
+	particleEmitter_->Update(1.0f / 60.0f);
+
+	particleEmitter2_->SetPosition(GetCenterPosition());
+	particleEmitter2_->Update(1.0f / 60.0f);
+
+	particleEmitter3_->SetPosition(GetCenterPosition());
+	particleEmitter3_->Update(1.0f / 60.0f);
 }
 
 void Enemy::SpawnEffect() {
@@ -493,13 +518,57 @@ void Enemy::FaildCameraMove() {
 	camera_->SetRotate(moveCameraRotation); // カメラの回転をリセット
 }
 
+void Enemy::InitializeValues(const std::string& filePath)
+{
+	std::ifstream file(filePath);
+
+	// ファイルが開けない場合のエラーチェック
+	if (file.fail())
+	{
+		std::cerr << "ファイルを開くことができません: " << filePath << std::endl;
+		assert(false && "ファイルを開くことができません");
+	}
+
+	nlohmann::json data;
+	file >> data;
+
+	// Enemyデータを取得
+	auto& enemyData = data["Enemy"];
+
+	// スケール
+	worldTransform_.scale_.x = enemyData["Scale"][0];
+	worldTransform_.scale_.y = enemyData["Scale"][1];
+	worldTransform_.scale_.z = enemyData["Scale"][2];
+
+	// 回転
+	worldTransform_.rotate_.x = enemyData["Rotate"][0];
+	worldTransform_.rotate_.y = enemyData["Rotate"][1];
+	worldTransform_.rotate_.z = enemyData["Rotate"][2];
+
+	// 位置
+	worldTransform_.translate_.x = enemyData["Translate"][0];
+	worldTransform_.translate_.y = enemyData["Translate"][1];
+	worldTransform_.translate_.z = enemyData["Translate"][2];
+
+	// HP
+	hp_ = enemyData["HP"];
+
+	moveSpeed_ = enemyData["MoveSpeed"];
+
+	knockBackSpeed_ = enemyData["KnockBackSpeed"];
+
+	centerPosition_.x = enemyData["CenterPosition"][0];
+	centerPosition_.y = enemyData["CenterPosition"][1];
+	centerPosition_.z = enemyData["CenterPosition"][2];
+}
+
 /// -------------------------------------------------------------
 ///						通常状態の初期化処理
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalInitialize() {
 
-	// タイマー初期化
-	stateTimer_ = 5.0f;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -507,16 +576,16 @@ void Enemy::BehaviorNormalInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorNormalUpdate() {
 
-	// タイマーが0になったら
-	if (stateTimer_ <= 0) {
+	// タイマーが既定値より大きかったら
+	if (behaviorTimer_ >= kWaitTime_) {
 
 		// 探索状態にする
 		requestBehavior_ = Behavior::Sarch;
 	}
 	else {
 
-		// タイマーを減らす
-		stateTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 	}
 }
 
@@ -525,8 +594,8 @@ void Enemy::BehaviorNormalUpdate() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorSarchInitialize() {
 
-	// タイマー初期化
-	stateTimer_ = 5.0f;
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
 }
 
 /// -------------------------------------------------------------
@@ -534,8 +603,8 @@ void Enemy::BehaviorSarchInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorSarchUpdate() {
 
-	// タイマーが0になったら
-	if (stateTimer_ <= 0) {
+	// タイマーが設定値より大きかったときと壁にあたったとき
+	if (behaviorTimer_ >= kSarchTime_ || WallHit() == true) {
 
 		// ±30度の範囲をランダムに決定
 		float randomAngle = RandomRadian(std::numbers::pi_v<float> / 6.0f, std::numbers::pi_v<float> / 6.0f);
@@ -544,12 +613,12 @@ void Enemy::BehaviorSarchUpdate() {
 		direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
 
 		// タイマーをリセット
-		stateTimer_ = 2.0f;
+		behaviorTimer_ = 0.0f;
 	}
 	else {
 
-		// タイマーを減らす
-		stateTimer_ -= kDeltaTime;
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
 	}
 
 	// 速度を向きに合わせる
@@ -559,7 +628,7 @@ void Enemy::BehaviorSarchUpdate() {
 	const float distance = Vector3::Distance(player_->GetPosition(), worldTransform_.translate_);
 
 	// プレイヤーが発見までの距離に入ったら
-	if (distance < foundDistance_) {
+	if (distance < kFoundDistance_) {
 		// 攻撃状態にする
 		requestBehavior_ = Behavior::Attack;
 	}
@@ -585,13 +654,6 @@ void Enemy::BehaviorAttackInitialize() {
 /// -------------------------------------------------------------
 void Enemy::BehaviorAttackUpdate() {
 
-	// ノックバック中だったら
-	if (isKnockBack_) {
-
-		// 何もしない(早期リターン)
-		return;
-	}
-
 	// プレイヤーの方向を向く
 	direction_ = Vector3::Normalize(player_->GetPosition() - worldTransform_.translate_);
 
@@ -603,6 +665,97 @@ void Enemy::BehaviorAttackUpdate() {
 
 		// 通常状態にする
 		requestBehavior_ = Behavior::Normal;
+	}
+}
+
+/// -------------------------------------------------------------
+///					 ノックバック状態の初期化処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorKnockBackInitialize() {
+
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
+
+	// プレイヤーの位置を確認
+	Vector3 playerPosition = player_->GetPosition();
+
+	// ノックバック方向のを計算
+	knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
+
+	// Y軸は動かさない
+	knockBackDirection.y = 0.0f;
+}
+
+/// -------------------------------------------------------------
+///					 ノックバック状態の更新処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorKnockBackUpdate() {
+
+	// タイマーが設定値より大きかったら
+	if (behaviorTimer_ >= kKnockBackTime_) {
+
+		// 速度をリセット
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+
+		// 前に行っていた状態にする
+		requestBehavior_ = preBehavior_;
+	}
+	else {
+
+		// 敵の向きにノックバックの速度を加算
+		velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
+
+		// 壁に当たったら
+		if (WallHit() == true) {
+
+			// 中心に戻る状態にする
+			requestBehavior_ = Behavior::ReturnCenter;
+		}
+
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
+	}
+}
+
+/// -------------------------------------------------------------
+///					 中心に戻る状態の初期化処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorReturnCenterInitialize() {
+
+	// 開始位置を当たった時の場所に設定
+	returnStartPosition_ = worldTransform_.translate_;
+
+	// タイマーを初期化
+	behaviorTimer_ = 0.0f;
+}
+
+/// -------------------------------------------------------------
+///					 中心に戻る状態の更新処理
+/// -------------------------------------------------------------
+void Enemy::BehaviorReturnCenterUpdate() {
+
+	// タイマーが設定値より大きかったら
+	if (behaviorTimer_ >= kReturnTime_) {
+
+		// 速度をリセット
+		velocity_ = { 0.0f, 0.0f, 0.0f };
+
+		// 前に行っていた状態にする
+		requestBehavior_ = preBehavior_;
+	}
+	else {
+
+		// タイマーをカウントアップ
+		behaviorTimer_ += kDeltaTime;
+
+		// イージング用タイマー
+		float t = std::clamp(behaviorTimer_ / kReturnTime_, 0.0f, kReturnTime_);
+
+		// イージングで補間
+		float easeT = easeOut(t);
+
+		// 中心に戻る
+		worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
 	}
 }
 
@@ -662,44 +815,11 @@ float Enemy::RandomRadian(float minRadian, float maxRadian) {
 /// -------------------------------------------------------------
 void Enemy::Move() {
 
-	// 中心に戻るなら
-	if (isReturnCenter_) {
-
-		// タイマーが最大値に達したら
-		if (returnTimer_ >= returnMaxTime_) {
-
-			// フラグをオフにする
-			isReturnCenter_ = false;
-
-			// 速度をリセット
-			velocity_ = { 0.0f, 0.0f, 0.0f };
-		}
-		else {
-
-			// タイマーを加算
-			returnTimer_ += kDeltaTime;
-
-			// イージング用タイマー
-			float t = std::clamp(returnTimer_ / returnMaxTime_, 0.0f, returnMaxTime_);
-
-			// イージングで補間
-			float easeT = easeOut(t);
-
-			// 中心に戻る
-			worldTransform_.translate_ = Vector3::Lerp(returnStartPosition_, centerPosition_, easeT);
-		}
-
-		return;
-	}
-
 	// 速度を位置に加算
 	worldTransform_.translate_ += velocity_;
 
 	// 向きを合わせる
 	worldTransform_.rotate_.y = std::atan2(-direction_.z, -direction_.x);
-
-	// 壁にあたったときの処理
-	WallHit();
 
 	// 移動制限
 	worldTransform_.translate_.x = std::clamp(worldTransform_.translate_.x, minMoveLimit_.x, maxMoveLimit_.x);
@@ -709,82 +829,26 @@ void Enemy::Move() {
 ///-------------------------------------------/// 
 /// 壁に当たった時の処理
 ///-------------------------------------------///
-void Enemy::WallHit() {
+bool Enemy::WallHit() {
 
 	// 敵の大きさを考慮した座標
-	minPosition = worldTransform_.translate_ - (worldTransform_.scale_ / 2.0f);
-	maxPosition = worldTransform_.translate_ + (worldTransform_.scale_ / 2.0f);
+	Vector3 minPosition = worldTransform_.translate_ - (worldTransform_.scale_ / 2.0f);
+	Vector3 maxPosition = worldTransform_.translate_ + (worldTransform_.scale_ / 2.0f);
 
 	// 壁に当たったら向きをランダムに抽選
-	if (maxPosition.x >= maxMoveLimit_.x || // 右の壁に当たった
-		minPosition.x <= minMoveLimit_.x || // 左の壁に当たった
-		maxPosition.z >= maxMoveLimit_.z || // 上の壁に当たった
-		minPosition.z <= minMoveLimit_.z) { // 下の壁に当たった
+	if (maxPosition.x >= maxMoveLimit_.x || minPosition.x <= minMoveLimit_.x ||
+		maxPosition.z >= maxMoveLimit_.z || minPosition.z <= minMoveLimit_.z) {
 
-		// ノックバック中だったら
-		if (isKnockBack_) {
-
-			// 中心に戻るフラグを立てる
-			isReturnCenter_ = true;
-
-			// 開始位置を当たった時の場所に設定
-			returnStartPosition_ = worldTransform_.translate_;
-
-			// タイマーリセット
-			returnTimer_ = 0.0f;
-		}
-		// ノックバック中でなければ
-		else {
-
-			// ±30度の範囲をランダムに決定
-			float randomAngle = RandomRadian(std::numbers::pi_v<float> / 6.0f, std::numbers::pi_v<float> / 6.0f);
-
-			// Directionに代入
-			direction_ = Vector3::Normalize(Vector3(std::cos(randomAngle), 0.0f, std::sin(randomAngle)));
-
-			// 速度を向きに合わせる
-			velocity_ = direction_ * moveSpeed_;
-		}
+		return true; // 壁に当たった
 	}
-}
 
-/// -------------------------------------------------------------
-///					   	ノックバック処理
-/// -------------------------------------------------------------
-void Enemy::KnockBack() {
-
-	// タイマーが最大値に達したら
-	if (knockBackTime_ >= knockBackMaxTime_) {
-
-		// タイマーをリセット
-		knockBackTime_ = 0.0f;
-
-		// 速度をリセット
-		velocity_ = { 0.0f, 0.0f, 0.0f };
-
-		// ノックバックフラグをオフにする
-		isKnockBack_ = false;
-	}
-	else {
-
-		// タイマーをカウントアップ
-		knockBackTime_ += kDeltaTime;
-
-		// プレイヤーの位置を確認
-		Vector3 playerPosition = player_->GetPosition();
-
-		// ノックバック方向のを計算
-		Vector3 knockBackDirection = Vector3::Normalize(worldTransform_.translate_ - playerPosition);
-
-		// 敵の向きにノックバックの速度を加算
-		velocity_ = knockBackDirection * knockBackSpeed_; // ノックバックの速度を加算
-	}
+	return false; // 壁に当たっていない
 }
 
 bool Enemy::CanGiveDamage() {
 
 	// ノックバック中や中心に戻る途中だったら
-	if (isKnockBack_ || isReturnCenter_) {
+	if (behavior_ == Behavior::KnockBack || behavior_ == Behavior::ReturnCenter) {
 
 		// ダメージを与えられない
 		return false;

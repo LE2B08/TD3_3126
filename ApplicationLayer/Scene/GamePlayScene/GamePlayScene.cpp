@@ -123,6 +123,11 @@ void GamePlayScene::Initialize()
 	// 衝突マネージャの生成
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
+
+	// 衝突ワールドの生成
+	collisionWorld_ = std::make_unique<CollisionWorld>();
+	collisionWorld_->Initialize(collisionManager_.get(),
+		{ player_.get(), weapon_.get(), hook_.get(), enemy_.get(), enemyBullets_ });
 }
 
 
@@ -231,9 +236,8 @@ void GamePlayScene::Update()
 
 	sceneManager_->SetCameraShakeEnabled(sceneManager_->GetCameraShakeEnabled());
 
-	// 衝突マネージャの更新
-	collisionManager_->Update();
-	CheckAllCollisions();// 衝突判定と応答
+	// 衝突ワールドの更新
+	collisionWorld_->Update();
 
 	// フェードマネージャの更新（ここから下は書かない）
 	fadeManager_->Update();
@@ -413,50 +417,6 @@ void GamePlayScene::DrawImGui()
 
 }
 
-
-/// -------------------------------------------------------------
-///				　			衝突判定と応答
-/// -------------------------------------------------------------
-void GamePlayScene::CheckAllCollisions()
-{
-	// 衝突マネージャのリセット
-	collisionManager_->Reset();
-
-	// コライダーをリストに登録
-	collisionManager_->AddCollider(player_.get());
-
-	// 攻撃フラグを取得したらコライダーを追加
-	if (player_->GetIsAttack())
-	{
-		collisionManager_->AddCollider(weapon_.get());
-	}
-	collisionManager_->AddCollider(hook_.get());
-	collisionManager_->AddCollider(enemy_.get());
-
-	// 複数についてコライダーをリストに登録
-	for (const auto& bullet : *enemyBullets_)
-	{
-		collisionManager_->AddCollider(bullet.get());
-	}
-
-	// プレイヤーが死亡したらコライダーを削除または敵が死亡したらコライダーを削除
-	if (player_->GetHp() <= 0 || enemy_->GetHp() <= 0)
-	{
-		collisionManager_->RemoveCollider(player_.get());
-		collisionManager_->RemoveCollider(weapon_.get());
-		collisionManager_->RemoveCollider(hook_.get());
-		collisionManager_->RemoveCollider(enemy_.get());
-
-		// 複数についてコライダーを削除
-		for (const auto& bullet : *enemyBullets_)
-		{
-			collisionManager_->RemoveCollider(bullet.get());
-		}
-	}
-
-	// 衝突判定と応答
-	collisionManager_->CheckAllCollisions();
-}
 
 /// -------------------------------------------------------------
 ///				　		ゲームスタート初期化

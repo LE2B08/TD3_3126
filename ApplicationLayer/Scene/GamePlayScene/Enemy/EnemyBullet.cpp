@@ -25,7 +25,7 @@ void EnemyBullet::Initialize()
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIdDef::kEnemyBullet));
 
 	isAlive_ = true;
-	lifeFrame_ = 180;
+	lifeFrame_ = 420;
 
 	isMove_ = false;
 
@@ -52,14 +52,14 @@ void EnemyBullet::Update()
 
 		// 移動
 		Move();
+	}
 
-		// 生存フレームの更新
-		if (lifeFrame_ > 0) {
-			lifeFrame_--;
-		}
-		else {
-			isAlive_ = false;
-		}
+	// 生存フレームの更新
+	if (lifeFrame_ > 0) {
+		lifeFrame_--;
+	}
+	else {
+		isAlive_ = false;
 	}
 
 	// WorldTransformの更新

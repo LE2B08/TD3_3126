@@ -1,5 +1,5 @@
 #pragma once
-#include "BaseCharacter.h"
+#include "BaseEnemy.h"
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "TextureManager.h"
@@ -20,7 +20,7 @@ class ParticleManager;
 /// -------------------------------------------------------------
 ///						　エネミークラス
 /// -------------------------------------------------------------
-class TutorialEnemy : public BaseCharacter {
+class TutorialEnemy : public BaseEnemy {
 private: /// ---------- 列挙型 ---------- ///
 
 
@@ -81,7 +81,7 @@ public: /// ---------- ゲッター ---------- ///
 	const bool& GetIsInvincible() const { return isInvincible_; }
 
 public: /// ---------- セッター ---------- ///
-	void SetTutorialPlayer(TutorialPlayer* player) { tutorialPlayer_ = player; }
+	void SetPlayer(BasePlayer* player) { player_ = player; }
 
 	/*------ヒットの取得、セット------*/
 	void SetIsHit(bool isHit) { isHit_ = isHit; }
@@ -116,7 +116,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 
 	// チュートリアルプレイヤー
-	TutorialPlayer* tutorialPlayer_;
+	BasePlayer* player_;
 
 
 	//  移動制限の最大値

@@ -6,8 +6,9 @@
 #include"Camera.h"
 
 #include "Player.h"
-#include "GamePlayScene/Enemy/Enemy.h"
-#include "GamePlayScene/Field/Field.h"
+#include "PlayerUI.h" // PlayerUIのインクルードを追加
+#include "Enemy.h"
+#include "Field.h"
 #include "CollisionManager.h"
 
 /// ---------- 前方宣言 ---------- ///

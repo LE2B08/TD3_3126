@@ -7,7 +7,9 @@
 #include "AnimationManager.h"
 
 #include "CollisionManager.h"
+#include "CollisionWorld.h"
 #include "Player.h"
+#include "PlayerUI.h"
 #include "Enemy.h"
 #include "Field.h"
 #include "Weapon.h"
@@ -17,21 +19,13 @@
 
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
-#include "Pause/PauseMenu.h"
+#include "PauseMenu.h"
 
 #include "EffectManager.h"
 
 #include "AABB.h"
 #include "OBB.h"
 #include <SkyBox.h>
-
-enum class GameSceneState {
-	Start,
-	Play,
-	GameClear,
-	GameOver,
-	Pause
-};
 
 /// ---------- 前方宣言 ---------- ///
 class DirectXCommon;
@@ -62,9 +56,6 @@ public: /// ---------- メンバ関数 ---------- ///
 
 
 private: /// ---------- メンバ関数 ---------- ///
-
-	// 衝突判定と応答
-	void CheckAllCollisions();
 
 	/*------カメラのシェイク------*/
 	void CameraShake();
@@ -102,6 +93,16 @@ private: /// ---------- メンバ関数 ---------- ///
 	// デバッグ更新処理
 	void DebugUpdate();
 
+public: /// ---------- 列挙型 ---------- ///
+
+	enum class GameSceneState {
+		Start,
+		Play,
+		GameClear,
+		GameOver,
+		Pause
+	};
+
 private: /// ---------- メンバ変数 ---------- ///
 
 	DirectXCommon* dxCommon_ = nullptr;
@@ -112,6 +113,7 @@ private: /// ---------- メンバ変数 ---------- ///
 
 	std::vector<std::unique_ptr<Sprite>> sprites_;
 	std::unique_ptr<CollisionManager> collisionManager_;
+	std::unique_ptr<CollisionWorld> collisionWorld_;
 
 	EffectManager* effectManager_;
 

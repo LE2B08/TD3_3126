@@ -15,7 +15,7 @@
 
 #include "ControllerUI.h"
 #include "DynamicCamera.h"
-#include "Pause/PauseMenu.h"
+#include "PauseMenu.h"
 #include "TutorialUI.h"
 
 #include "EffectManager.h"

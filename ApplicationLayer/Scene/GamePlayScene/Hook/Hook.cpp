@@ -3,8 +3,7 @@
 #include "Enemy.h"
 #include "Field.h"
 #include "Input.h"
-#include "Player.h"
-#include "TutorialPlayer.h"
+#include "BasePlayer.h"
 
 #include "CollisionTypeIdDef.h"
 #include "ImGuiManager.h"
@@ -35,20 +34,8 @@ void Hook::Initialize() {
 ///							更新処理
 /// -------------------------------------------------------------
 void Hook::Update() {
-	if (player_) {
-		playerPosition_ = player_->GetPosition();
-		playerRotation_ = player_->GetRotation();
-		playerVelocity_ = player_->GetVelocity();
-		playerAcceleration_ = player_->GetAcceleration();
-		isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
-	}
-	else if (tutorialPlayer_) {
-		playerPosition_ = tutorialPlayer_->GetPosition();
-		playerRotation_ = tutorialPlayer_->GetRotation();
-		playerVelocity_ = tutorialPlayer_->GetVelocity();
-		playerAcceleration_ = tutorialPlayer_->GetAcceleration();
-		isHitPlayerToEnemy_ = tutorialPlayer_->GetIsHitEnemy();
-	}
+    // プレイヤー情報をまとめて更新
+    UpdatePlayerInfo();
 
 	// フックの状態ごとの更新を行う
 	if (field_) {
@@ -117,6 +104,16 @@ void Hook::Update() {
 	hookObject_->SetCamera(camera_);
 	hookObject_->Update();
 
+}
+
+void Hook::UpdatePlayerInfo() {
+    if (player_) {
+        playerPosition_ = player_->GetPosition();
+        playerRotation_ = player_->GetRotation();
+        playerVelocity_ = player_->GetVelocity();
+        playerAcceleration_ = player_->GetAcceleration();
+        isHitPlayerToEnemy_ = player_->GetIsHitEnemy();
+    }
 }
 
 /// -------------------------------------------------------------

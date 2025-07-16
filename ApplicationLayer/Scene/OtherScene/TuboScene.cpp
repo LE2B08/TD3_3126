@@ -58,7 +58,7 @@ void TuboScene::Initialize() {
 
 	// 武器の初期化
 	weapon_->SetPlayer(player_.get()); // プレイヤーの情報を武器にセット
-	weapon_->SetEnemy(enemy_.get());   // 敵の情報を武器にセット
+	weapon_->SetEnemy(enemy_.get());       // 敵の情報を武器にセット
 	weapon_->Initialize();
 
 	// フックの生成 初期化
