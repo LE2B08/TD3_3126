@@ -2,28 +2,28 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <FxCompile Include="Resources\Shaders\Object3d.PS.hlsl">
-      <Filter>Shaders\Object3d</Filter>
+      <Filter>Resources\Shaders\Object3d</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Object3d.VS.hlsl">
-      <Filter>Shaders\Object3d</Filter>
+      <Filter>Resources\Shaders\Object3d</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Sprite.PS.hlsl">
-      <Filter>Shaders\Sprite</Filter>
+      <Filter>Resources\Shaders\Sprite</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Sprite.VS.hlsl">
-      <Filter>Shaders\Sprite</Filter>
+      <Filter>Resources\Shaders\Sprite</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Particle.PS.hlsl">
-      <Filter>Shaders\Particle</Filter>
+      <Filter>Resources\Shaders\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Particle.VS.hlsl">
-      <Filter>Shaders\Particle</Filter>
+      <Filter>Resources\Shaders\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Wireframe.PS.hlsl">
-      <Filter>Shaders\Wireframe</Filter>
+      <Filter>Resources\Shaders\Wireframe</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Wireframe.VS.hlsl">
-      <Filter>Shaders\Wireframe</Filter>
+      <Filter>Resources\Shaders\Wireframe</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +313,9 @@
     <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.cpp">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClCompile>
-    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.cpp" />
+    <ClCompile Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.cpp">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -652,9 +654,6 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Skydome\Skydome.h">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Skydome</Filter>
     </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook\Hook.h">
-      <Filter>ApplicationLayer\Scene\GamePlayScene\Hook</Filter>
-    </ClInclude>
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player\Player.h">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClInclude>
@@ -664,20 +663,29 @@
     <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Player\PlayerDirectionalArrow.h">
       <Filter>ApplicationLayer\Scene\GamePlayScene\Player</Filter>
     </ClInclude>
-    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.h" />
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Hook\Hook.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Hook</Filter>
+    </ClInclude>
+    <ClInclude Include="ApplicationLayer\Scene\GamePlayScene\Base\BaseEnemy.h">
+      <Filter>ApplicationLayer\Scene\GamePlayScene\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Object3d.hlsli">
-      <Filter>Shaders\Object3d</Filter>
+      <Filter>Resources\Shaders\Object3d</Filter>
     </None>
     <None Include="Resources\Shaders\Sprite.hlsli">
-      <Filter>Shaders\Sprite</Filter>
+      <Filter>Resources\Shaders\Sprite</Filter>
     </None>
     <None Include="Resources\Shaders\Particle.hlsli">
-      <Filter>Shaders\Particle</Filter>
+      <Filter>Resources\Shaders\Particle</Filter>
     </None>
-    <None Include="Resources\Json\Enemy.json" />
-    <None Include="Resources\Json\Player.json" />
+    <None Include="Resources\Json\Enemy.json">
+      <Filter>Resources\json</Filter>
+    </None>
+    <None Include="Resources\Json\Player.json">
+      <Filter>Resources\json</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ApplicationLayer">
@@ -686,23 +694,8 @@
     <Filter Include="EngineLayer">
       <UniqueIdentifier>{d2cf04ac-80be-4ba4-a09d-4adaaca99c8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{d6288018-affb-47ce-9598-f6b84b4b89b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Externals">
       <UniqueIdentifier>{3f2630ae-9577-49ce-8332-256fc7199928}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Object3d">
-      <UniqueIdentifier>{34abea4c-b580-45d2-8d86-7aea3803483a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Sprite">
-      <UniqueIdentifier>{ddce00da-e5e7-4333-93fb-841dba9d4fe1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Particle">
-      <UniqueIdentifier>{28cf0990-76a0-4559-a83e-f8ec9a5b5462}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Wireframe">
-      <UniqueIdentifier>{0423d4ed-dae8-466e-90d7-e71d211aff32}</UniqueIdentifier>
     </Filter>
     <Filter Include="EngineLayer\Math">
       <UniqueIdentifier>{0ea310e9-6b41-45af-8bc9-31520d8716ec}</UniqueIdentifier>
@@ -928,6 +921,27 @@
     </Filter>
     <Filter Include="ApplicationLayer\Scene\GamePlayScene\Base">
       <UniqueIdentifier>{a059a5fc-7150-4789-9f9f-3d6a41c89d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{a1da9814-7866-45c3-b41b-4060da3e56eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\json">
+      <UniqueIdentifier>{8181bf0d-11e1-4152-876b-87ddf924fa47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders">
+      <UniqueIdentifier>{d6288018-affb-47ce-9598-f6b84b4b89b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders\Object3d">
+      <UniqueIdentifier>{34abea4c-b580-45d2-8d86-7aea3803483a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders\Sprite">
+      <UniqueIdentifier>{ddce00da-e5e7-4333-93fb-841dba9d4fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders\Particle">
+      <UniqueIdentifier>{28cf0990-76a0-4559-a83e-f8ec9a5b5462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Shaders\Wireframe">
+      <UniqueIdentifier>{0423d4ed-dae8-466e-90d7-e71d211aff32}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
