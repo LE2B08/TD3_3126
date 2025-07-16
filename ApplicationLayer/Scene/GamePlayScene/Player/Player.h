@@ -67,6 +67,9 @@ public: /// ---------- メンバ関数 ---------- ///
     // 出現演出
     void AppearFromAbove(float t) override;
 
+    // 初期化の値をjsonから取得
+    void InitializeValues(const std::string& filePath);
+
 private: /// ---------- メンバ関数 ---------- ///
 
     // 移動処理
