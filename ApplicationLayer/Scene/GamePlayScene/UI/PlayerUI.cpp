@@ -9,24 +9,24 @@
 /// -------------------------------------------------------------
 void PlayerUI::Initialize() {
 	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/playerHpUI.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/hpGauge.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/PlayerHead.png");
+	TextureManager::GetInstance()->LoadTexture("playerHpUI.png");
+	TextureManager::GetInstance()->LoadTexture("hpGauge.png");
+	TextureManager::GetInstance()->LoadTexture("PlayerHead.png");
 
 	//  テクスチャを180度回転
 	hpRotation_ = static_cast<float>(M_PI); // ここを変更
 
 	// HPのスプライトの生成と初期化
 	hpSprite_ = std::make_unique<Sprite>();
-	hpSprite_->Initialize("Resources/playerHpUI.png");
+	hpSprite_->Initialize("playerHpUI.png");
 
 	// Hpのゲージのスプライト
 	hpGaugeSprite_ = std::make_unique<Sprite>();
-	hpGaugeSprite_->Initialize("Resources/hpGauge.png");
+	hpGaugeSprite_->Initialize("hpGauge.png");
 
 	// 顔のスプライトの生成と初期化
 	headSprite_ = std::make_unique<Sprite>();
-	headSprite_->Initialize("Resources/PlayerHead.png");
+	headSprite_->Initialize("PlayerHead.png");
 }
 
 /// -------------------------------------------------------------

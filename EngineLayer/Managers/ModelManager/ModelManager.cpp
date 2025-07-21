@@ -260,7 +260,7 @@ ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const st
 
 	// 2. Assimp でモデルを読み込む
 	Assimp::Importer importer;
-	std::string filePath = directoryPath + "/" + filename;
+	std::string filePath = directoryPath + "/Models/" + filename;
 	const aiScene* scene = nullptr;
 
 	if (extension == "obj")
@@ -516,7 +516,11 @@ void ModelManager::ParseMeshes(const aiScene* scene, const std::string& director
 		{
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+
+			std::filesystem::path texturePath = textureFilePath.C_Str();
+			std::string textureFileName = texturePath.filename().string();
+
+			modelData.material.textureFilePath = directoryPath + "/Textures/" + textureFileName;
 		}
 		else
 		{

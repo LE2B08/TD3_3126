@@ -89,7 +89,7 @@ void TutorialScene::Initialize() {
 
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize("rostock_laage_airport_4k.dds");
+	skyBox_->Initialize("skybox.dds");
 
 	// ダイナミックカメラの初期化
 	dynamicCamera_->Initialize();
@@ -111,11 +111,9 @@ void TutorialScene::Initialize() {
 	// チュートリアルUIの初期化
 	tutorialUI_->Initialize();
 
-	// テクスチャの読み込み
-	textureManager->LoadTexture("Resources/Green.png");
 	// スプライトの初期化
 	gauge_ = std::make_unique<Sprite>();
-	gauge_->Initialize("Resources/Green.png");
+	gauge_->Initialize("Green.png");
 	gauge_->SetPosition(gaugePosition_);
 
 	tutorialUI_->TutorialIntroAppear();

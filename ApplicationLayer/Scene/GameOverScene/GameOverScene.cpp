@@ -34,36 +34,6 @@ void GameOverScene::Initialize()
 	// シーン開始時に白からフェードアウトする（白 → 透明）
 	fadeManager_->StartFadeFromWhite(0.02f);
 
-	// テクスチャのパスをリストで管理
-	texturePaths_ = {
-		"Resources/monsterBall.png",
-		//"Resources/uvChecker.png",
-	};
-
-	/// ---------- TextureManagerの初期化 ----------///
-	for (auto& texture : texturePaths_)
-	{
-		textureManager->LoadTexture(texture);
-	}
-
-	/// ---------- Spriteの初期化 ---------- ///
-	for (uint32_t i = 0; i < 1; i++)
-	{
-		sprites_.push_back(std::make_unique<Sprite>());
-
-		// テクスチャの範囲をチェック
-		if (!texturePaths_.empty())
-		{
-			sprites_[i]->Initialize(texturePaths_[i % texturePaths_.size()]);
-		}
-		else
-		{
-			throw std::runtime_error("Texture paths list is empty!");
-		}
-
-		sprites_[i]->SetPosition(Vector2(100.0f * i, 100.0f * i));
-	}
-
 	// タイトルオブジェクトの初期化
 	gameOverLogo_ = std::make_unique<GameOverLogo>();
 	gameOverLogo_->Initialize();

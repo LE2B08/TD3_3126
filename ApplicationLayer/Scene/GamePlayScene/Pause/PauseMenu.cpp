@@ -7,16 +7,16 @@
 PauseMenu::PauseMenu() {
 
 	// テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/BlackFilter.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/PauseText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/ReturnToGameText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/HowToPlayText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/ReturnToTitleText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/Decision.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/SelectionArrow.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/HowToPlay.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOnText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOffText.png");
+	TextureManager::GetInstance()->LoadTexture("BlackFilter.png");
+	TextureManager::GetInstance()->LoadTexture("PauseText.png");
+	TextureManager::GetInstance()->LoadTexture("ReturnToGameText.png");
+	TextureManager::GetInstance()->LoadTexture("HowToPlayText.png");
+	TextureManager::GetInstance()->LoadTexture("ReturnToTitleText.png");
+	TextureManager::GetInstance()->LoadTexture("Decision.png");
+	TextureManager::GetInstance()->LoadTexture("SelectionArrow.png");
+	TextureManager::GetInstance()->LoadTexture("HowToPlay.png");
+	TextureManager::GetInstance()->LoadTexture("CameraShakeOnText.png");
+	TextureManager::GetInstance()->LoadTexture("CameraShakeOffText.png");
 
 	// テキストの位置
 	pauseTextPos_ = { 488.0f, 60.0f };
@@ -43,48 +43,48 @@ void PauseMenu::Initialize() {
 
 	// 黒のフィルターの生成&初期化
 	blackFilter_ = std::make_unique<Sprite>();
-	blackFilter_->Initialize("Resources/BlackFilter.png");
+	blackFilter_->Initialize("BlackFilter.png");
 	blackFilter_->SetColor({ 0.0f, 0.0f, 0.0f, 0.75f }); // 黒色
 
 	// テキストの生成&初期化
 	pauseText_ = std::make_unique<Sprite>();
-	pauseText_->Initialize("Resources/PauseText.png");
+	pauseText_->Initialize("PauseText.png");
 	pauseText_->SetPosition(pauseTextPos_);
 
 	returnToGameText_ = std::make_unique<Sprite>();
-	returnToGameText_->Initialize("Resources/ReturnToGameText.png");
+	returnToGameText_->Initialize("ReturnToGameText.png");
 	returnToGameText_->SetPosition(returnToGameTextPos_);
 
 	howToPlayText_ = std::make_unique<Sprite>();
-	howToPlayText_->Initialize("Resources/HowToPlayText.png");
+	howToPlayText_->Initialize("HowToPlayText.png");
 	howToPlayText_->SetPosition(howToPlayTextPos_);
 
 	returnToTitleText_ = std::make_unique<Sprite>();
-	returnToTitleText_->Initialize("Resources/ReturnToTitleText.png");
+	returnToTitleText_->Initialize("ReturnToTitleText.png");
 	returnToTitleText_->SetPosition(returnToTitleTextPos_);
 
 	// 決定ボタンの生成&初期化
 	decisionButton_ = std::make_unique<Sprite>();
-	decisionButton_->Initialize("Resources/Decision.png");
+	decisionButton_->Initialize("Decision.png");
 	decisionButton_->SetPosition(decisionButtonPos_);
 
 	// 選択している矢印の生成&初期化
 	selectionArrow_ = std::make_unique<Sprite>();
-	selectionArrow_->Initialize("Resources/SelectionArrow.png");
+	selectionArrow_->Initialize("SelectionArrow.png");
 	selectionArrow_->SetPosition(selectionArrowPos_);
 
 	// 遊び方の説明の生成&初期化
 	HowToPlay = std::make_unique<Sprite>();
-	HowToPlay->Initialize("Resources/HowToPlay.png");
+	HowToPlay->Initialize("HowToPlay.png");
 	HowToPlay->SetPosition(HowToPlayPos_);
 
 	// カメラの揺れの設定の生成&初期化
 	cameraShakeOn_ = std::make_unique<Sprite>();
-	cameraShakeOn_->Initialize("Resources/CameraShakeOnText.png");
+	cameraShakeOn_->Initialize("CameraShakeOnText.png");
 	cameraShakeOn_->SetPosition(cameraShakeOnTextPos_);
 
 	cameraShakeOff_ = std::make_unique<Sprite>();
-	cameraShakeOff_->Initialize("Resources/CameraShakeOffText.png");
+	cameraShakeOff_->Initialize("CameraShakeOffText.png");
 	cameraShakeOff_->SetPosition(cameraShakeOffTextPos_);
 }
 

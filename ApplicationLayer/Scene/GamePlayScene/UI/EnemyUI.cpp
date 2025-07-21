@@ -9,24 +9,24 @@
 /// -------------------------------------------------------------
 void EnemyUI::Initialize() {
 	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/playerHpUI.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/hpGauge.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/EnemyHead.png");
+	TextureManager::GetInstance()->LoadTexture("playerHpUI.png");
+	TextureManager::GetInstance()->LoadTexture("hpGauge.png");
+	TextureManager::GetInstance()->LoadTexture("EnemyHead.png");
 
 	//  テクスチャを180度回転
 	hpRotation_ = static_cast<float>(M_PI) / 2; // ここを変更
 
 	// HPのスプライトの生成と初期化
 	hpFrameSprite_ = std::make_unique<Sprite>();
-	hpFrameSprite_->Initialize("Resources/playerHpUI.png");
+	hpFrameSprite_->Initialize("playerHpUI.png");
 
 	// Hpのゲージのスプライト
 	hpGaugeSprite_ = std::make_unique<Sprite>();
-	hpGaugeSprite_->Initialize("Resources/hpGauge.png");
+	hpGaugeSprite_->Initialize("hpGauge.png");
 
 	// 顔のスプライトの生成と初期化
 	headSprite_ = std::make_unique<Sprite>();
-	headSprite_->Initialize("Resources/EnemyHead.png");
+	headSprite_->Initialize("EnemyHead.png");
 }
 
 /// -------------------------------------------------------------

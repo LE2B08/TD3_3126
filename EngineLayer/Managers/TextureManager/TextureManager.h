@@ -70,6 +70,14 @@ public: /// ---------- ゲッター ---------- ///
 
 private: /// ---------- メンバ変数 ---------- ///
 
+	std::string NormalizeTexturePath(const std::string& filePath)
+	{
+		if (filePath.starts_with("Resources/Textures/")) return filePath;
+		return "Resources/Textures/" + filePath;
+	}
+
+private: /// ---------- メンバ変数 ---------- ///
+
 	DirectXCommon* dxCommon_ = nullptr;
 
 	// テクスチャデータ
