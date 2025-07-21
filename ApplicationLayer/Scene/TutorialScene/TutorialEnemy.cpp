@@ -44,7 +44,7 @@ void TutorialEnemy::Initialize() {
 	object3D_->Initialize("Voxel_Enemy.gltf");
 
 	particleManager_ = ParticleManager::GetInstance();
-	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
+	TextureManager::GetInstance()->LoadTexture("gradationLine.png");
 	// パーティクルグループの追加
 	particleManager_->CreateParticleGroup("EnemyHitParticles", "gradationLine.png", ParticleEffectType::Ring);
 

@@ -12,9 +12,10 @@ void Sprite::Initialize(const std::string& filePath)
 {
 	dxCommon = DirectXCommon::GetInstance();
 
-	filePath_ = filePath;
+	// テクスチャの初期化
+	TextureManager::GetInstance()->LoadTexture(filePath);
 
-	gpuHandle_ = TextureManager::GetInstance()->GetSrvHandleGPU(filePath_);
+	gpuHandle_ = TextureManager::GetInstance()->GetSrvHandleGPU(filePath);
 
 	// スプライトのインデックスバッファを作成および設定する
 	CreateIndexBuffer();
@@ -26,7 +27,11 @@ void Sprite::Initialize(const std::string& filePath)
 	CreateVertexBufferResource();
 
 	// テクスチャサイズに合わせる
-	AdjustTextureSize();
+	AdjustTextureSize(filePath);
+
+	// メタデータ取得
+	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(filePath);
+	metaData_ = metaData;
 }
 
 
@@ -55,14 +60,11 @@ void Sprite::Update()
 		bottom = -bottom;
 	}
 
-	// メタデータ取得
-	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(filePath_);
-
 	// テクスチャ範囲指定
-	float tex_left = textureLeftTop_.x / metaData.width;
-	float tex_right = (textureLeftTop_.x + textureSize_.x) / metaData.width;
-	float tex_top = textureLeftTop_.y / metaData.height;
-	float tex_bottom = (textureLeftTop_.y + textureSize_.y) / metaData.height;
+	float tex_left = textureLeftTop_.x / metaData_.width;
+	float tex_right = (textureLeftTop_.x + textureSize_.x) / metaData_.width;
+	float tex_top = textureLeftTop_.y / metaData_.height;
+	float tex_bottom = (textureLeftTop_.y + textureSize_.y) / metaData_.height;
 
 	/// ---------- 頂点データ設定 ---------- ///
 
@@ -169,7 +171,7 @@ void Sprite::SetHPBar(float HPRatio, const Vector2& worldPos, const Vector4& tex
 	switch (direction)
 	{
 	case DecreaseHpDirection::BottomToTop:// 下から上に減少
-		
+
 		textureSize_.y *= HPRatio; // 高さを縮める
 		newSize.y *= HPRatio; // スプライトのサイズも縮める
 		break;
@@ -183,7 +185,7 @@ void Sprite::SetHPBar(float HPRatio, const Vector2& worldPos, const Vector4& tex
 		break;
 
 	case DecreaseHpDirection::LeftToRight:// 左から右に減少
-		
+
 		textureLeftTop_.x += textureRect.z * (1.0f - HPRatio); // テクスチャの左上座標をずらす
 		textureSize_.x *= HPRatio; // 幅を縮める
 		newWorldPos.x += newSize.x * (1.0f - HPRatio); // ワールド座標も調整
@@ -272,10 +274,10 @@ void Sprite::CreateIndexBuffer()
 /// -------------------------------------------------------------
 ///			　テクスチャサイズをイメージに合わせる
 /// -------------------------------------------------------------
-void Sprite::AdjustTextureSize()
+void Sprite::AdjustTextureSize(const std::string& filePath)
 {
 	// テクスチャメタデータを取得
-	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(filePath_);
+	const DirectX::TexMetadata& metaData = TextureManager::GetInstance()->GetMetaData(filePath);
 
 	textureSize_.x = static_cast<float>(metaData.width);
 	textureSize_.y = static_cast<float>(metaData.height);

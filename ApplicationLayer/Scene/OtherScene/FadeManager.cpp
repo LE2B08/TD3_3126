@@ -7,11 +7,8 @@
 /// -------------------------------------------------------------
 void FadeManager::Initialize()
 {
-	// テクスチャの初期化
-	TextureManager::GetInstance()->LoadTexture("Resources/white.png");
-
 	fadeSprite_ = std::make_unique<Sprite>();
-	fadeSprite_->Initialize("Resources/white.png");
+	fadeSprite_->Initialize("white.png");
 	//fadeSprite_->SetSize({ static_cast<float>(width), static_cast<float>(height) });
 	//fadeSprite_->SetPosition({ static_cast<float>(width) / 2.0f, static_cast<float>(height) / 2.0f });
 	fadeSprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });

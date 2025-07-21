@@ -35,7 +35,7 @@ void TitleScene::Initialize()
 
 	// テクスチャのパスをリストで管理
 	texturePaths_ = {
-		"Resources/HowToPlayForTitle.png",
+		"HowToPlayForTitle.png",
 	};
 
 	/// ---------- TextureManagerの初期化 ----------///
@@ -62,15 +62,15 @@ void TitleScene::Initialize()
 	titleObject_ = std::make_unique<TitleObject>();
 	titleObject_->Initialize();
 
-	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOnText.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/CameraShakeOffText.png");
+	TextureManager::GetInstance()->LoadTexture("CameraShakeOnText.png");
+	TextureManager::GetInstance()->LoadTexture("CameraShakeOffText.png");
 
 	// カメラシェイクの初期化
 	cameraShakeOnSprite_ = std::make_unique<Sprite>();
-	cameraShakeOnSprite_->Initialize("Resources/CameraShakeOnText.png");
+	cameraShakeOnSprite_->Initialize("CameraShakeOnText.png");
 
 	cameraShakeOffSprite_ = std::make_unique<Sprite>();
-	cameraShakeOffSprite_->Initialize("Resources/CameraShakeOffText.png");
+	cameraShakeOffSprite_->Initialize("CameraShakeOffText.png");
 
 	cameraShakeEnabled_ = sceneManager_->GetCameraShakeEnabled(); // カメラシェイクの状態を取得
 }

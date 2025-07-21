@@ -29,7 +29,7 @@ void TutorialPlayer::Initialize() {
     // パーティクルマネージャ取得
     ParticleManager* particleManager = ParticleManager::GetInstance();
     // テクスチャの読み込み
-    TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
+    TextureManager::GetInstance()->LoadTexture("gradationLine.png");
     // パーティクルグループの追加
     particleManager->CreateParticleGroup("PlayerHitParticles", "gradationLine.png", ParticleEffectType::Ring);
     // パーティクルエミッターの初期化
