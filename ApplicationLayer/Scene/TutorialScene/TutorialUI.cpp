@@ -6,19 +6,19 @@
 
 TutorialUI::TutorialUI(){
 	// テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/Decision2.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/TutorialIntro.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/rightStickGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/OK.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/RBGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/ArcMovementGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/RTGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/LBGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/poseGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/playerHPGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/enemyHPGuide.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/TutorialEnd.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/Skip.png");
+	TextureManager::GetInstance()->LoadTexture("Decision2.png");
+	TextureManager::GetInstance()->LoadTexture("TutorialIntro.png");
+	TextureManager::GetInstance()->LoadTexture("rightStickGuide.png");
+	TextureManager::GetInstance()->LoadTexture("OK.png");
+	TextureManager::GetInstance()->LoadTexture("RBGuide.png");
+	TextureManager::GetInstance()->LoadTexture("ArcMovementGuide.png");
+	TextureManager::GetInstance()->LoadTexture("RTGuide.png");
+	TextureManager::GetInstance()->LoadTexture("LBGuide.png");
+	TextureManager::GetInstance()->LoadTexture("poseGuide.png");
+	TextureManager::GetInstance()->LoadTexture("playerHPGuide.png");
+	TextureManager::GetInstance()->LoadTexture("enemyHPGuide.png");
+	TextureManager::GetInstance()->LoadTexture("TutorialEnd.png");
+	TextureManager::GetInstance()->LoadTexture("Skip.png");
 	
 	decisionUIPos_ = Vector2(650.0f, 620.0f); // 初期位置を設定
 	tutorialIntroPos_ = Vector2(658.0f, 130.0f); // 初期位置を設定
@@ -51,56 +51,56 @@ TutorialUI::TutorialUI(){
 void TutorialUI::Initialize() {
 	// UIの初期化
 	decisionUI_ = std::make_unique<Sprite>();
-	decisionUI_->Initialize("Resources/Decision2.png");
+	decisionUI_->Initialize("Decision2.png");
 	decisionUI_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// チュートリアルイントロの生成
 	tutorialIntroUI_ = std::make_unique<Sprite>();
-	tutorialIntroUI_->Initialize("Resources/TutorialIntro.png");
+	tutorialIntroUI_->Initialize("TutorialIntro.png");
 	tutorialIntroUI_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// 右スティックガイドの生成
 	rightStickGuide_ = std::make_unique<Sprite>();
-	rightStickGuide_->Initialize("Resources/rightStickGuide.png");
+	rightStickGuide_->Initialize("rightStickGuide.png");
 	rightStickGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// RBガイドの生成
 	RBGuide_ = std::make_unique<Sprite>();
-	RBGuide_->Initialize("Resources/RBGuide.png");
+	RBGuide_->Initialize("RBGuide.png");
 	RBGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// アーク移動ガイドの生成
 	arcGuide_ = std::make_unique<Sprite>();
-	arcGuide_->Initialize("Resources/ArcMovementGuide.png");
+	arcGuide_->Initialize("ArcMovementGuide.png");
 	arcGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// RTガイドの生成
 	RTGuide_ = std::make_unique<Sprite>();
-	RTGuide_->Initialize("Resources/RTGuide.png");
+	RTGuide_->Initialize("RTGuide.png");
 	RTGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// LBガイドの生成（必要に応じて追加）
 	LBGuide_ = std::make_unique<Sprite>();
-	LBGuide_->Initialize("Resources/LBGuide.png");
+	LBGuide_->Initialize("LBGuide.png");
 	LBGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// ポーズガイドの生成（必要に応じて追加）
 	poseGuide_ = std::make_unique<Sprite>();
-	poseGuide_->Initialize("Resources/poseGuide.png");
+	poseGuide_->Initialize("poseGuide.png");
 	poseGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// OKボタンの生成
 	Success_ = std::make_unique<Sprite>();
-	Success_->Initialize("Resources/OK.png");
+	Success_->Initialize("OK.png");
 	Success_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// プレイヤーHPガイドの生成
 	playerHPGuide_ = std::make_unique<Sprite>();
-	playerHPGuide_->Initialize("Resources/playerHPGuide.png");
+	playerHPGuide_->Initialize("playerHPGuide.png");
 	playerHPGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// 敵HPガイドの生成
 	enemyHPGuide_ = std::make_unique<Sprite>();
-	enemyHPGuide_->Initialize("Resources/enemyHPGuide.png");
+	enemyHPGuide_->Initialize("enemyHPGuide.png");
 	enemyHPGuide_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 	// チュートリアル終了の生成
 	tutorialEndUI_ = std::make_unique<Sprite>();
-	tutorialEndUI_->Initialize("Resources/TutorialEnd.png");
+	tutorialEndUI_->Initialize("TutorialEnd.png");
 	tutorialEndUI_->SetAnchorPoint(Vector2(0.5f, 0.5f)); // 中心をアンカーポイントに設定
 
 	// スキップUIの生成
 	skipUI_ = std::make_unique<Sprite>();
-	skipUI_->Initialize("Resources/Skip.png");
+	skipUI_->Initialize("Skip.png");
 }
 
 void TutorialUI::Update(){

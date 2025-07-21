@@ -9,20 +9,20 @@
 ControllerUI::ControllerUI()
 {
 	// テクスチャ読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/xbox_rb.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/xbox_lb.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/xbox_rt.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/xbox_rs.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/xbox_button_a.png");
+	TextureManager::GetInstance()->LoadTexture("xbox_rb.png");
+	TextureManager::GetInstance()->LoadTexture("xbox_lb.png");
+	TextureManager::GetInstance()->LoadTexture("xbox_rt.png");
+	TextureManager::GetInstance()->LoadTexture("xbox_rs.png");
+	TextureManager::GetInstance()->LoadTexture("xbox_button_a.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/throw_ui.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/back_ui.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/wind_ui.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/attack_ui.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/direction_ui.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/game_start_ui.png");
+	TextureManager::GetInstance()->LoadTexture("throw_ui.png");
+	TextureManager::GetInstance()->LoadTexture("back_ui.png");
+	TextureManager::GetInstance()->LoadTexture("wind_ui.png");
+	TextureManager::GetInstance()->LoadTexture("attack_ui.png");
+	TextureManager::GetInstance()->LoadTexture("direction_ui.png");
+	TextureManager::GetInstance()->LoadTexture("game_start_ui.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/SelectPause.png");
+	TextureManager::GetInstance()->LoadTexture("SelectPause.png");
 
 	// 位置の初期化
 	RButtonPosition_ = { 1000.0f, 0.0f };
@@ -49,51 +49,51 @@ void ControllerUI::Initialize()
 {
 	// Rボタンの生成&初期化
 	RButton_ = std::make_unique<Sprite>();
-	RButton_->Initialize("Resources/xbox_rb.png");
+	RButton_->Initialize("xbox_rb.png");
 
 	// Lボタンの生成&初期化
 	LButton_ = std::make_unique<Sprite>();
-	LButton_->Initialize("Resources/xbox_lb.png");
+	LButton_->Initialize("xbox_lb.png");
 
 	// Rトリガーの生成&初期化
 	RTrigger_ = std::make_unique<Sprite>();
-	RTrigger_->Initialize("Resources/xbox_rt.png");
+	RTrigger_->Initialize("xbox_rt.png");
 
 	// Rスティックの生成&初期化
 	RStick_ = std::make_unique<Sprite>();
-	RStick_->Initialize("Resources/xbox_rs.png");
+	RStick_->Initialize("xbox_rs.png");
 
 	// Aボタンの生成&初期化
 	AButton_ = std::make_unique<Sprite>();
-	AButton_->Initialize("Resources/xbox_button_a.png");
+	AButton_->Initialize("xbox_button_a.png");
 
 	// 投げるの生成&初期化
 	throw_ = std::make_unique<Sprite>();
-	throw_->Initialize("Resources/throw_ui.png");
+	throw_->Initialize("throw_ui.png");
 
 	// 戻すの生成&初期化
 	back_ = std::make_unique<Sprite>();
-	back_->Initialize("Resources/back_ui.png");
+	back_->Initialize("back_ui.png");
 
 	// 巻くの生成&初期化
 	wind_ = std::make_unique<Sprite>();
-	wind_->Initialize("Resources/wind_ui.png");
+	wind_->Initialize("wind_ui.png");
 
 	// 攻撃の生成&初期化
 	attack_ = std::make_unique<Sprite>();
-	attack_->Initialize("Resources/attack_ui.png");
+	attack_->Initialize("attack_ui.png");
 
 	// 向きの生成&初期化
 	direction_ = std::make_unique<Sprite>();
-	direction_->Initialize("Resources/direction_ui.png");
+	direction_->Initialize("direction_ui.png");
 
 	// ゲームスタートの生成&初期化
 	gameStart_ = std::make_unique<Sprite>();
-	gameStart_->Initialize("Resources/game_start_ui.png");
+	gameStart_->Initialize("game_start_ui.png");
 
 	// ポーズボタンの生成&初期化
 	pauseButton_ = std::make_unique<Sprite>();
-	pauseButton_->Initialize("Resources/SelectPause.png");
+	pauseButton_->Initialize("SelectPause.png");
 }
 
 

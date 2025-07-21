@@ -66,6 +66,7 @@ void GamePlayScene::Initialize()
 
 	// Playerクラスの初期化
 	player_->Initialize();
+	player_->SetCamera(camera_); // カメラの情報をプレイヤーにセット
 	player_->SetWeapon(weapon_.get()); // プレイヤーに武器をセット
 	player_->SetPosition({ 0.0f, 500.0f, -50.0f }); // プレイヤーの初期位置を設定
 
@@ -102,7 +103,7 @@ void GamePlayScene::Initialize()
 
 	// スカイボックス
 	skyBox_ = std::make_unique<SkyBox>();
-	skyBox_->Initialize("rostock_laage_airport_4k.dds");
+	skyBox_->Initialize("skybox.dds");
 
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();

@@ -1,6 +1,7 @@
 #pragma once
 #include "DX12Include.h"
 #include "WorldTransform.h"
+#include <DirectXTex.h>
 
 #include "Vector2.h"
 #include "Vector4.h"
@@ -154,7 +155,7 @@ private: /// ---------- メンバ関数 ---------- ///
 	void CreateIndexBuffer();
 
 	// テクスチャ債ぞをイメージに合わせる
-	void AdjustTextureSize();
+	void AdjustTextureSize(const std::string& filePath);
 
 private: /// ---------- メンバ変数 ---------- ///
 
@@ -182,6 +183,8 @@ private: /// ---------- メンバ変数 ---------- ///
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 
 	std::string filePath_;
+
+	DirectX::TexMetadata metaData_;
 
 private: /// ---------- メンバ変数 ---------- ///
 
